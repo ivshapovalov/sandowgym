@@ -44,4 +44,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void btTrainings_onClick(View view) {
+    }
+
+    public void bt_NewTraining_onClick(View view) {
+    }
 }

@@ -21,8 +21,10 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     public static final boolean isDebug = true;
     private final String TAG = this.getClass().getSimpleName();
+    private final int mNumOfView = 10000;
 
     DatabaseManager db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,25 +33,39 @@ public class ExercisesListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exercises_list);
 
 
-
         db = new DatabaseManager(this);
 
         showExercises();
 
     }
 
+    // Вызывается в начале "активного" состояния.
+    @Override
+    public void onResume() {
+        super.onResume();
 
-    private void buttonHome_onClick(View view) {
+        showExercises();
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        Intent intent = getIntent();
+        int id = intent.getIntExtra("id", 0);
 
+        TableRow mRow = (TableRow) findViewById(mNumOfView + id);
+        if (mRow != null) {
+        int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
+        ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+        if (mScrollView != null) {
+
+                mScrollView.requestChildFocus(mRow, mRow);
+            }
+        }
     }
+
 
     public void bt_ExercisesAdd_onClick(View view) {
 
-        //showExercises();
+        Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
+        intent.putExtra("IsNew", true);
+        startActivity(intent);
 
     }
 
@@ -62,8 +78,8 @@ public class ExercisesListActivity extends AppCompatActivity {
         MyLogger(TAG, "До добавления");
 
         ArrayList<Exercise> exercises = CreateDefaultExercises();
-        for (Exercise ex:exercises) {
-             db.addExercise(ex);
+        for (Exercise ex : exercises) {
+            db.addExercise(ex);
 
             MyLogger(TAG, "Добавили " + String.valueOf(ex.getID()));
         }
@@ -79,7 +95,7 @@ public class ExercisesListActivity extends AppCompatActivity {
         Log.d("Reading: ", "Reading all exercises..");
         List<Exercise> exercises = db.getAllExercises();
 
-        ScrollView sv=(ScrollView) findViewById(R.id.svTableExercises);
+        ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
         //TableLayout layout = (TableLayout) findViewById(R.id.tableExercises);
         sv.removeAllViews();
 
@@ -92,7 +108,7 @@ public class ExercisesListActivity extends AppCompatActivity {
 
         for (int numEx = 0; numEx < exercises.size(); numEx++) {
             TableRow mRow = new TableRow(this);
-            mRow.setId(10000 + exercises.get(numEx).getID());
+            mRow.setId(mNumOfView + exercises.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,37 +135,6 @@ public class ExercisesListActivity extends AppCompatActivity {
             txt.setLayoutParams(params);
             mRow.addView(txt);
 
-//            txt = new TextView(this);
-//            txt.setId(30000 + numEx);
-//            txt.setText(String.valueOf(exercises.get(numEx).getExplanation()));
-//           txt.setGravity(Gravity.CENTER);
-//           txt.setBackgroundResource(R.drawable.textview_border);
-//            //params.span=10;
-//            txt.setLayoutParams(params);
-//            mRow.addView(txt);
-
-//            txt = new TextView(this);
-//            txt.setId(40000 + numEx);
-//            txt.setGravity(Gravity.CENTER);
-//            txt.setBackgroundResource(R.drawable.ic_book);
-//            params.span=5;
-//           txt.setLayoutParams(params);
-//            mRow.addView(txt);
-//            txt = new TextView(this);
-//            txt.setId(50000 + numEx);
-//            txt.setGravity(Gravity.CENTER);
-//            txt.setBackgroundResource(R.drawable.ic_backup_2);
-//            params.span=5;
-//            txt.setLayoutParams(params);
-//            mRow.addView(txt);
-//            txt = new TextView(this);
-//            txt.setId(60000 + numEx);
-//            txt.setGravity(Gravity.CENTER);
-//            txt.setBackgroundResource(R.drawable.ic_bin);
-//            params.span=5;
-//            txt.setLayoutParams(params);
-//            mRow.addView(txt);
-
             mRow.setBackgroundResource(R.drawable.textview_border);
             layout.addView(mRow);
         }
@@ -159,11 +144,15 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     private void rowExercise_onClick(TableRow v) {
 
-        int a = v.getId() % 100;
-        System.out.println(String.valueOf(a));
+        int id = v.getId() % 100;
+        //System.out.println(String.valueOf(a));
 
-        Exercise Ex = db.getExercise(a);
-        System.out.println(Ex);
+        Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("id", id);
+        intent.putExtra("IsNew", false);
+        startActivity(intent);
+
     }
 
     public static void MyLogger(String TAG, String statement) {
@@ -182,71 +171,78 @@ public class ExercisesListActivity extends AppCompatActivity {
     private ArrayList<Exercise> CreateDefaultExercises() {
         ArrayList<Exercise> exercises = new ArrayList<>();
         Exercise Ex;
-        int i=0;
-        int maxNum=db.getExerciseMaxNumber()+1;
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями вдоль туловища, ладони обращены вперед (хват снизу), смотреть прямо перед собой.\n" +
+        int i = 0;
+        int maxNum = db.getExerciseMaxNumber() + 1;
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища, ладони обращены вперед (хват снизу), смотреть прямо перед собой.\n" +
                 "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
-               "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы).","120","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями вдоль туловища, ладони обращены назад (хват сверху), смотреть прямо перед собой.\n" +
+                "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы).", "120", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища, ладони обращены назад (хват сверху), смотреть прямо перед собой.\n" +
                 "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
-                "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы).","53","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями в стороны, ладони вверх," +
+                "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы).", "53", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями в стороны, ладони вверх," +
                 " смотреть прямо перед собой. Поочередно сгибайте и разгибайте руки в локтевых суставах. Во время упражнения локти не опускать." +
                 " Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча и " +
-                "трехглавые мышцы плеча(трицепсы).","24","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями в стороны, ладони вверх. Одновременно " +
+                "трехглавые мышцы плеча(трицепсы).", "24", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями в стороны, ладони вверх. Одновременно " +
                 "сгибайте и разгибайте руки в локтевых суставах. Сгибая руки, делайте вдох, разгибая — выдох. Упражнение" +
-                " развивает бицепсы и трицепсы.","14","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями подняты вперед, ладони внутрь. " +
+                " развивает бицепсы и трицепсы.", "14", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями подняты вперед, ладони внутрь. " +
                 "Разведите прямые руки в стороны и сделайте вдох, быстро вернитесь в исходное положение — выдох." +
-                "Упражнение развивает грудные мышцы, мышцы спины и плечевого пояса.","12","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями к плечам, разверните плечи, смотрите прямо перед собой." +
+                "Упражнение развивает грудные мышцы, мышцы спины и плечевого пояса.", "12", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями к плечам, разверните плечи, смотрите прямо перед собой." +
                 " Попеременно поднимайте и опускайте руки. Дыхание равномерное. " +
-                "Упражнение развивает трехглавые мышцы плеча, дельтовидные и трапециевидные мышцы.","22","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями вдоль туловища, спина несколько согнута. " +
+                "Упражнение развивает трехглавые мышцы плеча, дельтовидные и трапециевидные мышцы.", "22", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища, спина несколько согнута. " +
                 "Поочередно поднимайте прямые руки вперед до уровня плеч." +
                 "Поднимая правую руку, делайте вдох, поднимая левую — выдох." +
-                "Упражнение развивает дельтовидные мышцы.","17","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями в стороны, ладони вниз. Одновременно и быстро" +
+                "Упражнение развивает дельтовидные мышцы.", "17", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями в стороны, ладони вниз. Одновременно и быстро" +
                 " поворачивайте кисти вверх и вниз, затем вперед и назад. Дыхание равномерное. Упражнение выполнять до наступления усталости. " +
-                "Развивает мышцы предплечья и укрепляет лучезапястные суставы.","--","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Возьмите гантели за один конец и разведите руки в стороны. " +
+                "Развивает мышцы предплечья и укрепляет лучезапястные суставы.", "--", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Возьмите гантели за один конец и разведите руки в стороны. " +
                 "Не сгибая рук, вращайте кисти вперед и назад. Дыхание равномерное. Упражнение выполняйте до утомления." +
-                "Упражнение развивает мышцы предплечья и укрепляет лучезапястные суставы.","--","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями подняты вверх. Не сгибая колен, наклонитесь" +
+                "Упражнение развивает мышцы предплечья и укрепляет лучезапястные суставы.", "--", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями подняты вверх. Не сгибая колен, наклонитесь" +
                 " вперед и коснитесь руками пола — выдох. Вернитесь в исходное положение — вдох. Первое время упражнение выполняйте без гантелей." +
-                "Упражнение развивает мышцы спины.","17","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями вдоль туловища. Сделайте выпад левой ногой" +
+                "Упражнение развивает мышцы спины.", "17", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища. Сделайте выпад левой ногой" +
                 " вперед, правую руку дугообразным движением поднимите на уровень груди — вдох. Вернитесь в исходное положение — выдох." +
                 " Затем сделайте выпад правой ногой, а левую руку поднимите вперед. Упражнение развивает дельтовидные мышцы и мышцы ног" +
-                ".","17","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки вдоль туловища, смотрите прямо перед собой. Поднимите прямые руки через " +
+                ".", "17", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки вдоль туловища, смотрите прямо перед собой. Поднимите прямые руки через " +
                 "стороны вверх — вдох. Опустите в исходное положение — выдох. " +
-                "Упражнение развивает дельтовидные и трапециевидные мышцы.","17","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Отжимания в упоре лежа на полу. Туловище и ноги должны составлять прямую линию." +
+                "Упражнение развивает дельтовидные и трапециевидные мышцы.", "17", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Отжимания в упоре лежа на полу. Туловище и ноги должны составлять прямую линию." +
                 " Сгибая руки, делайте вдох, разгибая — выдох. Сгибая руки, касайтесь грудью пола. Упражнение развивает трехглавые мышцы плеча, " +
-                "грудные мышцы и мышцы плечевого пояса.","7","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями вдоль туловища. Наклоните туловище в левую сторону, " +
+                "грудные мышцы и мышцы плечевого пояса.", "7", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища. Наклоните туловище в левую сторону, " +
                 "правую руку согните так, чтобы гантелью коснуться подмышки. Затем проделайте наклон в другую сторону, сгибая левую руку. Наклоняясь, " +
                 "делайте выдох, возвращаясь в исходное положение — вдох. Упражнение развивает боковые мышцы живота, бицепсы, трапециевидные и" +
-                " дельтовидные мышцы.","53","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Лежа на спине на полу, ноги закреплены за" +
+                " дельтовидные мышцы.", "53", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Лежа на спине на полу, ноги закреплены за" +
                 " неподвижную опору, руки с гантелями подняты вверх, Сядьте и сделайте наклон вперед — выдох. Медленно вернитесь" +
                 " в исходное положение — вдох. Первое время упражнение можно выполнять без гантелей. Упражнение развивает мышцы " +
-                "брюшного пресса.","10","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Лежа на спине на полу, руки за головой." +
+                "брюшного пресса.", "10", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Лежа на спине на полу, руки за головой." +
                 " Поднимите прямые ноги вверх — выдох. Медленно опустите ноги в исходное положение — вдох. Упражнение развивает мышцы" +
-                " брюшного пресса и четырехглавые мышцы бедра","7","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, пятки вместе, носки врозь, руки с гантелями " +
+                " брюшного пресса и четырехглавые мышцы бедра", "7", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, пятки вместе, носки врозь, руки с гантелями " +
                 "опущены вдоль туловища. Медленно поднимитесь на носки — вдох, затем, опускаясь на пятки, присядьте — выдох. " +
-                "Упражнение развивает икроножные мышцы и четырехглавые мышцы бедра.","17","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Стоя, руки с гантелями опущены вдоль туловища." +
+                "Упражнение развивает икроножные мышцы и четырехглавые мышцы бедра.", "17", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями опущены вдоль туловища." +
                 " Сгибайте и разгибайте кисти в лучезапястных суставах. Упражнение развивает мышцы" +
-                " предплечья и укрепляет лучезапястные суставы.","53","ic_ex_"+String.valueOf(i)));
-        exercises.add(new Exercise(maxNum+(i++),1,"Упражнение "+String.valueOf(i),"Подтягивания на перекладине любым хватом.","--","--"));
-
+                " предплечья и укрепляет лучезапястные суставы.", "53", "ic_ex_" + String.valueOf(i)));
+        exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Подтягивания на перекладине любым хватом.", "--", "--"));
 
 
         return exercises;
     }
+
+    public void buttonHome_onClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+
 }

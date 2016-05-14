@@ -21,7 +21,7 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
@@ -31,7 +31,7 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="Добавить"
                 android:id="@+id/btExercisesAdd"
@@ -41,7 +41,7 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="Заполнить по умолчанию"
                 android:id="@+id/btExercisesFillDefault"

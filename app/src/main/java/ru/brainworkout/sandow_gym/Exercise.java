@@ -18,7 +18,10 @@ public class Exercise {
     public Exercise() {
 
     }
+    public Exercise(int _id) {
+        this._id=_id;
 
+    }
     public String getPicture() {
         return _picture;
     }

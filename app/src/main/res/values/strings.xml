@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Гимнастика Сандова</string>
-    <string name="exercises_list_name">Справочник "Упражнения"</string>
+    <string name="exercises_list_name">Упражнения</string>
     <string name="exercise_name">Упражнение"</string>
 </resources>
