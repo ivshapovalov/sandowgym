@@ -2,4 +2,7 @@
     <string name="app_name">Гимнастика Сандова</string>
     <string name="exercises_list_name">Упражнения</string>
     <string name="exercise_name">Упражнение"</string>
+    <string name="trainings_list_name">Тренировки</string>
+    <string name="training_name">Тренировка"</string>
+
 </resources>

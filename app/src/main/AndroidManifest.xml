@@ -23,6 +23,14 @@
             android:name=".ExerciseActivity"
             android:label="@string/exercise_name"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".TrainingsListActivity"
+            android:label="@string/trainings_list_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TrainingActivity"
+            android:label="@string/training_name"
+            android:screenOrientation="portrait" />
         <activity android:name="ru.brainworkout.sandow_gym.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light"/>
     </application>

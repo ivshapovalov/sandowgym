@@ -2,14 +2,12 @@ package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 /**
@@ -64,12 +62,14 @@ public class ExerciseActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) {
-                    CurrentExercise.setIsActive(1);
-                } else {
-                    CurrentExercise.setIsActive(0);
-                }
+                if (CurrentExercise != null) {
+                    if (isChecked) {
+                        CurrentExercise.setIsActive(1);
+                    } else {
+                        CurrentExercise.setIsActive(0);
+                    }
 
+                }
             }
         });
 

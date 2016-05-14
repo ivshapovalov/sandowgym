@@ -1,13 +1,11 @@
 package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -51,9 +49,9 @@ public class ExercisesListActivity extends AppCompatActivity {
 
         TableRow mRow = (TableRow) findViewById(mNumOfView + id);
         if (mRow != null) {
-        int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
-        ScrollView mScrollView = (ScrollView) findViewById(mScrID);
-        if (mScrollView != null) {
+            int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
+            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+            if (mScrollView != null) {
 
                 mScrollView.requestChildFocus(mRow, mRow);
             }
@@ -97,14 +95,17 @@ public class ExercisesListActivity extends AppCompatActivity {
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
         //TableLayout layout = (TableLayout) findViewById(R.id.tableExercises);
-        sv.removeAllViews();
+        try {
+            sv.removeAllViews();
+        } catch (Exception e) {
+        }
 
         TableLayout layout = new TableLayout(this);
         //layout.removeAllViews();
         layout.setStretchAllColumns(true);
         //layout.setShrinkAllColumns(true);
 
-        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT, 0f);
+        //TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0f);
 
         for (int numEx = 0; numEx < exercises.size(); numEx++) {
             TableRow mRow = new TableRow(this);
@@ -119,20 +120,20 @@ public class ExercisesListActivity extends AppCompatActivity {
             TextView txt = new TextView(this);
             //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getID()));
-            txt.setGravity(Gravity.CENTER);
+            txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
-            params.span = 3;
-            txt.setLayoutParams(params);
+            //params.span = 3;
+            //txt.setLayoutParams(params);
 
             mRow.addView(txt);
 
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getName()));
-            txt.setGravity(Gravity.CENTER);
+            txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
-            params.span = 15;
-            txt.setLayoutParams(params);
+            //params.span = 15;
+            //txt.setLayoutParams(params);
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.textview_border);
@@ -170,7 +171,6 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     private ArrayList<Exercise> CreateDefaultExercises() {
         ArrayList<Exercise> exercises = new ArrayList<>();
-        Exercise Ex;
         int i = 0;
         int maxNum = db.getExerciseMaxNumber() + 1;
         exercises.add(new Exercise(maxNum + (i++), 1, "Упражнение " + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища, ладони обращены вперед (хват снизу), смотреть прямо перед собой.\n" +
@@ -245,4 +245,10 @@ public class ExercisesListActivity extends AppCompatActivity {
     }
 
 
+    public void btDeleteAllExercises_onClick(View view) {
+
+        db.deleteAllExercises();
+        showExercises();
+
+    }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="ru.brainworkout.sandow_gym.ExercisesListActivity">
+    tools:context="ru.brainworkout.sandow_gym.TrainingsListActivity">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -29,18 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Добавить"
-                android:id="@+id/btExercisesAdd"
-                android:onClick="bt_ExercisesAdd_onClick"
-                android:layout_gravity="center_vertical"
-                android:layout_span="15" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Заполнить"
-                android:id="@+id/btExercisesFillDefault"
-                android:onClick="bt_ExercisesFillDefault_onClick"
+                android:id="@+id/btTrainingsAdd"
+                android:onClick="bt_TrainingsAdd_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="15" />
 
@@ -60,7 +50,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/button8"
                 android:background="@android:drawable/ic_menu_delete"
-                android:onClick="btDeleteAllExercises_onClick"
+                android:onClick="btDeleteAllTrainings_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="7" />
 
@@ -70,7 +60,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/svTableExercises"
+            android:id="@+id/svTableTrainings"
             android:layout_marginTop="20dp">
 
         </ScrollView>

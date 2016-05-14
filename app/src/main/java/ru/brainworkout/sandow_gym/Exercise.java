@@ -1,8 +1,5 @@
 package ru.brainworkout.sandow_gym;
 
-/**
- * Created by Ivan on 13.05.2016.
- */
 public class Exercise {
 
     //private variables

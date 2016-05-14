@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="ru.brainworkout.sandow_gym.ExerciseActivity">
+    tools:context="ru.brainworkout.sandow_gym.TrainingActivity">
 
 
     <TableLayout
@@ -73,13 +73,6 @@
                             android:layout_span="5"
                             style="@android:style/TextAppearance.Small"/>
 
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Активное"
-                            android:id="@+id/cb_IsActive"
-                            android:layout_span="10"
-                            style="@android:style/TextAppearance.Small"/>
                     </TableRow>
 
                     <TableRow
@@ -89,7 +82,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Имя"
+                            android:text="Дата"
                             android:id="@+id/textView2"
                             android:layout_span="7"
                             style="@android:style/TextAppearance.Small"/>
@@ -109,68 +102,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="Описание"
-                            android:id="@+id/textView3"
-                            android:layout_span="7"
-                            style="@android:style/TextAppearance.Small"/>
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
-                            android:id="@+id/et_Explanation"
-                            android:layout_span="24"
-                            style="@android:style/TextAppearance.Small"/>
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
+                        <TableLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Картинка"
-                            android:id="@+id/textView4"
-                            android:layout_span="7"
-                            style="@android:style/TextAppearance.Small"/>
+                            android:stretchColumns="*"
+                            android:shrinkColumns="*"
+                            android:layout_weight="100"
+                            android:id="@+id/table_Training_content">
 
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/et_Picture"
-                            android:layout_span="24"
-                            style="@android:style/TextAppearance.Small"/>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="Количество"
-                            android:id="@+id/textView5"
-                            android:layout_span="7"
-                            style="@android:style/TextAppearance.Small"/>
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/et_VolumeDefault"
-                            android:layout_span="24"
-                            style="@android:style/TextAppearance.Small"/>
-
+                        </TableLayout>
                     </TableRow>
 
                 </TableLayout>
             </ScrollView>
-
 
 
     </TableLayout>

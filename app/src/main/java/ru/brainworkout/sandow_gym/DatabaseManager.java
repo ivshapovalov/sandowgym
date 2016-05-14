@@ -11,9 +11,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Ivan on 13.05.2016.
- */
 public class DatabaseManager extends SQLiteOpenHelper {
     // All Static variables
     // Database Version
@@ -104,6 +101,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    public void addTraining(Training training) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRAINING_ID, training.getID());
+        values.put(KEY_TRAINING_DAY, training.getDay());
+        // Inserting Row
+        db.insert(TABLE_TRAININGS, null, values);
+        db.close(); // Closing database connection
+    }
+
     public Exercise getExercise(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -112,15 +120,50 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-
-        Exercise exercise = new Exercise(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),cursor.getString(2),
-                cursor.getString(3), cursor.getString(4), cursor.getString(5));
+        Exercise exercise=null;
+        try {
+            exercise = new Exercise(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2),
+                    cursor.getString(3), cursor.getString(4), cursor.getString(5));
+        } catch (NullPointerException e) {
+            exercise = new Exercise(Integer.parseInt(cursor.getString(1)), cursor.getString(2),
+                    cursor.getString(3), cursor.getString(4), cursor.getString(5));
+        }
         // return contact
         return exercise;
     }
 
+    public Training getTraining(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID,KEY_TRAINING_DAY}, KEY_EXERCISE_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        Training training=new Training(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
+
+        // return contact
+        return training;
+    }
+
+    public void deleteAllExercises() {
+
+            // Select All Query
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EXERCISES,null,null);
+
+
+    }
+
+    public void deleteAllTrainings() {
+
+        // Select All Query
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRAININGS,null,null);
+
+    }
+
     public List<Exercise> getAllExercises() {
-        List<Exercise> exerciseList = new ArrayList<Exercise>();
+        List<Exercise> exerciseList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES;
 
@@ -131,8 +174,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise();
-                exercise.setID(Integer.parseInt(cursor.getString(0)));
-                exercise.setIsActive(Integer.parseInt(cursor.getString(1)));
+                exercise.setID(cursor.getInt(0));
+                exercise.setIsActive(cursor.getInt(1));
                 exercise.setName(cursor.getString(2));
                 exercise.setExplanation(cursor.getString(3));
                 exercise.setVolumeDefault(cursor.getString(4));
@@ -147,6 +190,31 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return exerciseList;
     }
 
+    public List<Training> getAllTrainings() {
+        List<Training> trainingsList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Training training= new Training();
+                training.setID(cursor.getInt(0));
+                training.setDay(cursor.getString(1));
+
+
+                // Adding contact to list
+                trainingsList.add(training);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return trainingsList;
+    }
+
     public int getExercisesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_EXERCISES;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -159,9 +227,34 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
+    public int getTrainingsCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_TRAININGS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+
+        // return count
+        return cursor.getCount();
+    }
+
 
     public int getExerciseMaxNumber() {
         String countQuery = "SELECT  MAX(" + KEY_EXERCISE_ID + ") FROM " + TABLE_EXERCISES + "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            return cursor.getInt(0);
+        } else {
+            cursor.close();
+            return 0;
+        }
+
+    }
+
+    public int getTrainingMaxNumber() {
+        String countQuery = "SELECT  MAX(" + KEY_TRAINING_ID + ") FROM " + TABLE_TRAININGS + "";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -190,6 +283,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 new String[]{String.valueOf(exercise.getID())});
     }
 
+    public int updateTraining(Training training) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_TRAINING_DAY, training.getDay());
+
+        // updating row
+        return db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",
+                new String[]{String.valueOf(training.getID())});
+    }
+
+
     public void deleteExercise(Exercise exercise) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EXERCISES, KEY_EXERCISE_ID + " = ?",
@@ -197,13 +303,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteTraining(Training training) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRAININGS, KEY_TRAINING_ID + " = ?",
+                new String[]{String.valueOf(training.getID())});
+        db.close();
+    }
+
+
     public ArrayList<Cursor> getData(String Query) {
         //get writable database
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         String[] columns = new String[]{"mesage"};
         //an array list of cursor to save two cursors one has results from the query
         //other cursor stores error message if any errors are triggered
-        ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+        ArrayList<Cursor> alc = new ArrayList<>(2);
         MatrixCursor Cursor2 = new MatrixCursor(columns);
         alc.add(null);
         alc.add(null);
