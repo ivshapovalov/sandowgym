@@ -15,6 +15,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ExercisesListActivity"
+            android:label="@string/exercises_list_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ExerciseActivity"
+            android:label="@string/exercise_name"
+            android:screenOrientation="portrait" />
+        <activity android:name="ru.brainworkout.sandow_gym.AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light"/>
     </application>
 
 </manifest>
