@@ -90,12 +90,28 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
                             android:ems="10"
-                            android:id="@+id/et_Name"
+                            android:id="@+id/et_Day"
                             android:layout_span="24"
-                            style="@android:style/TextAppearance.Small"/>
+                            style="@android:style/TextAppearance.Small"
+                            android:inputType="date" />
 
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <DatePicker
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:id="@+id/dPickerTrainingDate"
+                            android:visibility="gone" />
+
+                        <CalendarView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/calendarView" />
                     </TableRow>
 
                     <TableRow

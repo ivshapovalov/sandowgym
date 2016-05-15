@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseManager extends SQLiteOpenHelper {
@@ -52,18 +55,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //упражнения
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
-                + KEY_EXERCISE_ID + " INTEGER PRIMARY KEY," + KEY_EXERCISE_IS_ACTIVE + " INTEGER, "
+                + KEY_EXERCISE_ID + " INTEGER UNIQUE PRIMARY KEY," + KEY_EXERCISE_IS_ACTIVE + " INTEGER, "
                 + KEY_EXERCISE_NAME + " TEXT,"+KEY_EXERCISE_EXPLANATION + " TEXT,"
                 + KEY_EXERCISE_VOLUME_DEFAULT + " TEXT,"+ KEY_EXERCISE_PICTURE_NAME + " TEXT"+")";
         db.execSQL(CREATE_EXERCISES_TABLE);
 
         //тренировки
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
-                + KEY_TRAINING_ID + " INTEGER PRIMARY KEY," + KEY_TRAINING_DAY + " STRING" + ")";
+                + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY," + KEY_TRAINING_DAY + " STRING" + ")";
         db.execSQL(CREATE_TRAININGS_TABLE);
 
         String CREATE_TRAINING_CONTENT_TABLE = "CREATE TABLE " + TABLE_TRAINING_CONTENT + "("
-                + KEY_TRAINING_CONTENT_ID + " INTEGER PRIMARY KEY," + KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
+                + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY," + KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
                 + KEY_TRAINING_CONTENT_ID_TRAINING + " INTEGER," + KEY_TRAINING_CONTENT_VOLUME + " TEXT,"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS + "(" + KEY_TRAINING_ID + "),"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_EXERCISE + ") REFERENCES " + TABLE_EXERCISES + "(" + KEY_EXERCISE_ID + ")"
@@ -106,7 +109,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
-        values.put(KEY_TRAINING_DAY, training.getDay());
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+        String sDate = dateformat.format(training.getDay());
+
+        values.put(KEY_TRAINING_DAY, sDate);
         // Inserting Row
         db.insert(TABLE_TRAININGS, null, values);
         db.close(); // Closing database connection
@@ -132,14 +138,22 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return exercise;
     }
 
-    public Training getTraining(int id) {
+    public Training getTraining(int id)  {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID,KEY_TRAINING_DAY}, KEY_EXERCISE_ID + "=?",
+        Cursor cursor = db.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID,KEY_TRAINING_DAY}, KEY_TRAINING_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        Training training=new Training(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        Date d = null;
+        try {
+            d = dateFormat.parse(cursor.getString(1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Training training=new Training(Integer.parseInt(cursor.getString(0)),d );
 
         // return contact
         return training;
@@ -203,7 +217,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
             do {
                 Training training= new Training();
                 training.setID(cursor.getInt(0));
-                training.setDay(cursor.getString(1));
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                Date d = null;
+                try {
+                    d = dateFormat.parse(cursor.getString(1));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    training.setDay(d);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
 
                 // Adding contact to list
@@ -288,7 +313,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
 
-        values.put(KEY_TRAINING_DAY, training.getDay());
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+        String sDate = dateformat.format(training.getDay());
+
+        values.put(KEY_TRAINING_DAY,sDate);
 
         // updating row
         return db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",

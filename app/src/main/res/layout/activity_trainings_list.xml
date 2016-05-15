@@ -30,6 +30,7 @@
                 android:layout_height="match_parent"
                 android:text="Добавить"
                 android:id="@+id/btTrainingsAdd"
+
                 android:onClick="bt_TrainingsAdd_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="15" />

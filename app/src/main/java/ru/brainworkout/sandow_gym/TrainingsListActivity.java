@@ -26,8 +26,7 @@ public class TrainingsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exercises_list);
-
+        setContentView(R.layout.activity_trainings_list);
 
         db = new DatabaseManager(this);
 
@@ -47,7 +46,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         TableRow mRow = (TableRow) findViewById(mNumOfView + id);
         if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
+            int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
             if (mScrollView != null) {
 
@@ -67,7 +66,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     private void showTrainings() {
 
-        Log.d("Reading: ", "Reading all exercises..");
+        Log.d("Reading: ", "Reading all trainings..");
         List<Training> trainings = db.getAllTrainings();
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
@@ -94,19 +93,20 @@ public class TrainingsListActivity extends AppCompatActivity {
                 }
             });
             //mRow.setGravity(Gravity.LEFT);
+//            TextView txt = new TextView(this);
+//            //txt.setId(10000 + numEx);
+//            txt.setText(String.valueOf(trainings.get(numEx).getID()));
+//            txt.setGravity(Gravity.LEFT);
+//            txt.setBackgroundResource(R.drawable.textview_border);
+//            //params.span = 3;
+//            //txt.setLayoutParams(params);
+//
+//            mRow.addView(txt);
+
             TextView txt = new TextView(this);
-            //txt.setId(10000 + numEx);
-            txt.setText(String.valueOf(trainings.get(numEx).getID()));
-            txt.setGravity(Gravity.LEFT);
-            txt.setBackgroundResource(R.drawable.textview_border);
-            //params.span = 3;
-            //txt.setLayoutParams(params);
-
-            mRow.addView(txt);
-
-            txt = new TextView(this);
             //txt.setId(20000 + numEx);
-            txt.setText(String.valueOf(trainings.get(numEx).getDay()));
+            String data=String.valueOf(trainings.get(numEx).getDay().getYear()+1900)+"-"+String.valueOf(trainings.get(numEx).getDay().getMonth()+"-"+String.valueOf(trainings.get(numEx).getDay().getDate()));
+            txt.setText(data);
             txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
             //params.span = 15;
@@ -122,7 +122,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     private void rowTraining_onClick(TableRow v) {
 
-        int id = v.getId() % 100;
+        int id = v.getId() % mNumOfView;
         //System.out.println(String.valueOf(a));
 
         Intent intent = new Intent(getApplicationContext(), TrainingActivity.class);

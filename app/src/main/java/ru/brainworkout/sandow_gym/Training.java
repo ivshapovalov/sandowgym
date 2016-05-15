@@ -1,16 +1,20 @@
 package ru.brainworkout.sandow_gym;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Ivan on 14.05.2016.
  */
 public class Training {
     private int _id;
-    private String _day;
+    private Date _day;
 
     public Training() {
     }
 
-    public Training(int _id, String _day) {
+    public Training(int _id, Date _day) {
         this._id = _id;
         this._day = _day;
     }
@@ -28,12 +32,15 @@ public class Training {
         this._id = _id;
     }
 
-    public String getDay() {
+    public Date getDay() {
+
         return _day;
     }
 
-    public void setDay(String _day) {
+
+    public void setDay(Date _day) throws ParseException {
         this._day = _day;
     }
+
 }
 

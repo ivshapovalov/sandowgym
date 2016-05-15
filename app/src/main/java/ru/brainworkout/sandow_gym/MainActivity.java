@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btTrainings_onClick(View view) {
+        Intent intent = new Intent(MainActivity.this, TrainingsListActivity.class);
+        startActivity(intent);
     }
 
     public void bt_NewTraining_onClick(View view) {
