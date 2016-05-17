@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -46,25 +47,38 @@ public class TrainingActivity extends AppCompatActivity {
         if (mTrainingIsNew) {
             CurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
         } else {
-            int id = intent.getIntExtra("id", 0);
-            CurrentTraining = db.getTraining(id);
+            int id = intent.getIntExtra("CurrentID", 0);
+            if (id==0) {
+                CurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
+            } else {
+                CurrentTraining = db.getTraining(id);
+            }
         }
 
+        String mCurrentDate = intent.getStringExtra("CurrentDate");
+
+        if (!"".equals(mCurrentDate) && mCurrentDate!=null) {
+            try {
+                CurrentTraining.setDay(ConvertStringToDate(mCurrentDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         showTrainingOnScreen();
     }
 
     private void showTrainingOnScreen() {
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
             tvID.setText(String.valueOf(CurrentTraining.getID()));
         }
         //Имя
-        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
-        EditText etDay = (EditText) findViewById(mDayID);
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView etDay = (TextView) findViewById(mDayID);
         if (etDay != null) {
             if (CurrentTraining.getDay() == null) {
                 etDay.setText("");
@@ -76,24 +90,28 @@ public class TrainingActivity extends AppCompatActivity {
 //            Date d=CurrentTraining.getDay();
 //            mDatePicker.updateDate(d.getYear()+1900, d.getMonth(), d.getDate());
 
-            Date d = CurrentTraining.getDay();
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
-
-            CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-            calendarView.setMinDate(calendar.getTimeInMillis() - 2000);
-
-            calendarView.setDate(calendar.getTimeInMillis(), true, false);
         }
         }
 
     }
 
     private String ConvertDateToString(Date date) {
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String sDate = dateformat.format(date);
 
         return  sDate;
+    }
+
+    private Date ConvertStringToDate(String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date d = null;
+        try {
+            d = dateFormat.parse(String.valueOf(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+
+        }
+        return d;
     }
 
     public void btClose_onClick(View view) {
@@ -106,7 +124,7 @@ public class TrainingActivity extends AppCompatActivity {
     private void getPropertiesFromScreen() {
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -114,22 +132,18 @@ public class TrainingActivity extends AppCompatActivity {
 
         }
         //Имя
-        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
-        EditText etDay = (EditText) findViewById(mDayID);
-        if (etDay != null) {
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView tvDay = (TextView) findViewById(mDayID);
+        if (tvDay != null) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-            Date d = null;
-            try {
-                d = dateFormat.parse(String.valueOf(etDay.getText()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            Date d=ConvertStringToDate(String.valueOf(tvDay.getText()));
 
-            try {
-                CurrentTraining.setDay(d);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if (d!=null) {
+                try {
+                    CurrentTraining.setDay(d);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -177,5 +191,21 @@ public class TrainingActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    public void tvDay_onClick(View view) {
+
+        Intent intent = new Intent(TrainingActivity.this, CalendarViewActivity.class);
+
+        intent.putExtra("IsNew",mTrainingIsNew);
+        if (!mTrainingIsNew) {
+        intent.putExtra("CurrentID",CurrentTraining.getID());
+        }
+        if (CurrentTraining.getDay()==null) {
+            intent.putExtra("CurrentDate","");
+        }else {
+        intent.putExtra("CurrentDate",ConvertDateToString(CurrentTraining.getDay()));}
+
+        startActivity(intent);
     }
 }

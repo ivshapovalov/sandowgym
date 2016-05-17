@@ -63,14 +63,14 @@
                             android:layout_height="wrap_content"
                             android:text="ID"
                             android:id="@+id/textView"
-                            android:layout_span="7"
+                            android:layout_span="2"
                             style="@android:style/TextAppearance.Small"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tv_ID"
-                            android:layout_span="5"
+                            android:id="@+id/tvID"
+                            android:layout_span="8"
                             style="@android:style/TextAppearance.Small"/>
 
                     </TableRow>
@@ -84,17 +84,15 @@
                             android:layout_height="match_parent"
                             android:text="Дата"
                             android:id="@+id/textView2"
-                            android:layout_span="7"
-                            style="@android:style/TextAppearance.Small"/>
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:id="@+id/et_Day"
-                            android:layout_span="24"
                             style="@android:style/TextAppearance.Small"
-                            android:inputType="date" />
+                            android:layout_span="2" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvDay"
+                            android:layout_span="8"
+                            android:onClick="tvDay_onClick" />
 
                     </TableRow>
 
@@ -102,16 +100,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <DatePicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:id="@+id/dPickerTrainingDate"
-                            android:visibility="gone" />
-
-                        <CalendarView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/calendarView" />
                     </TableRow>
 
                     <TableRow

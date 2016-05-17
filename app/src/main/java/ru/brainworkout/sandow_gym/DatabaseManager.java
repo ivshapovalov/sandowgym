@@ -109,12 +109,25 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String sDate = dateformat.format(training.getDay());
 
         values.put(KEY_TRAINING_DAY, sDate);
         // Inserting Row
         db.insert(TABLE_TRAININGS, null, values);
+        db.close(); // Closing database connection
+    }
+
+    public void addTrainingContent(TrainingContent trainingContent) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRAINING_CONTENT_ID, trainingContent.getID());
+        values.put(KEY_TRAINING_CONTENT_VOLUME, trainingContent.getVolume());
+        values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getIdExercise());
+        values.put(KEY_TRAINING_CONTENT_ID_TRAINING, trainingContent.getIdTraining());
+        // Inserting Row
+        db.insert(TABLE_TRAINING_CONTENT, null, values);
         db.close(); // Closing database connection
     }
 
@@ -146,7 +159,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date d = null;
         try {
             d = dateFormat.parse(cursor.getString(1));
@@ -158,6 +171,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // return contact
         return training;
     }
+
+    public TrainingContent getTrainingContent(int id)  {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,KEY_TRAINING_CONTENT_VOLUME,KEY_TRAINING_CONTENT_ID_EXERCISE,KEY_TRAINING_CONTENT_ID_TRAINING}, KEY_TRAINING_CONTENT_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        TrainingContent trainingContent=new TrainingContent(Integer.parseInt(cursor.getString(0)),cursor.getString(1),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)));
+
+        // return contact
+        return trainingContent;
+    }
+
 
     public void deleteAllExercises() {
 
@@ -173,6 +200,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // Select All Query
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAININGS,null,null);
+
+    }
+
+    public void deleteAllTrainingContent() {
+
+        // Select All Query
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRAINING_CONTENT,null,null);
 
     }
 
@@ -217,7 +252,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             do {
                 Training training= new Training();
                 training.setID(cursor.getInt(0));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date d = null;
                 try {
                     d = dateFormat.parse(cursor.getString(1));
@@ -238,6 +273,33 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         // return contact list
         return trainingsList;
+    }
+
+    public List<TrainingContent> getAllTrainingContentOfTraining() {
+        List<TrainingContent> trainingContentList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                TrainingContent trainingContent = new TrainingContent();
+                trainingContent.setID(cursor.getInt(0));
+                trainingContent.setVolume(cursor.getString(1));
+                trainingContent.setIdExercise(cursor.getInt(2));
+                trainingContent.setIdTraining(cursor.getInt(3));
+
+
+                // Adding contact to list
+                trainingContentList.add(trainingContent);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return trainingContentList;
     }
 
     public int getExercisesCount() {
@@ -263,6 +325,16 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
 
+    public int getTrainingContentCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+
+        // return count
+        return cursor.getCount();
+    }
+
     public int getExerciseMaxNumber() {
         String countQuery = "SELECT  MAX(" + KEY_EXERCISE_ID + ") FROM " + TABLE_EXERCISES + "";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -280,6 +352,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public int getTrainingMaxNumber() {
         String countQuery = "SELECT  MAX(" + KEY_TRAINING_ID + ") FROM " + TABLE_TRAININGS + "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            return cursor.getInt(0);
+        } else {
+            cursor.close();
+            return 0;
+        }
+
+    }
+
+    public int getTrainingContentMaxNumber() {
+        String countQuery = "SELECT  MAX(" + KEY_TRAINING_CONTENT_ID + ") FROM " + TABLE_TRAINING_CONTENT + "";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -313,7 +400,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
 
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String sDate = dateformat.format(training.getDay());
 
         values.put(KEY_TRAINING_DAY,sDate);
@@ -321,6 +408,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // updating row
         return db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",
                 new String[]{String.valueOf(training.getID())});
+    }
+
+    public int updateTrainingContent(TrainingContent trainingContent) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+
+        values.put(KEY_TRAINING_CONTENT_VOLUME,trainingContent.getVolume());
+        values.put(KEY_TRAINING_CONTENT_ID_EXERCISE,trainingContent.getIdExercise());
+        values.put(KEY_TRAINING_CONTENT_ID_TRAINING,trainingContent.getIdTraining());
+
+        // updating row
+        return db.update(TABLE_TRAINING_CONTENT, values, KEY_TRAINING_CONTENT_ID + " = ?",
+                new String[]{String.valueOf(trainingContent.getID())});
     }
 
 
@@ -335,6 +437,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAININGS, KEY_TRAINING_ID + " = ?",
                 new String[]{String.valueOf(training.getID())});
+        db.close();
+    }
+
+    public void deleteTrainingContent(TrainingContent trainingContent) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID + " = ?",
+                new String[]{String.valueOf(trainingContent.getID())});
         db.close();
     }
 

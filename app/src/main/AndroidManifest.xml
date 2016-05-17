@@ -31,6 +31,10 @@
             android:name=".TrainingActivity"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".CalendarViewActivity"
+            android:label="@string/calendar_view_name"
+            android:screenOrientation="portrait" />
         <activity android:name="ru.brainworkout.sandow_gym.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light"/>
     </application>
