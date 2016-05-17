@@ -205,6 +205,7 @@ public class TrainingActivity extends AppCompatActivity{
 
         intent.putExtra("CurrentTraining",CurrentTraining);
         intent.putExtra("IsNew",mTrainingIsNew);
+        intent.putExtra("CurrentActivity","TrainingActivity");
 //        if (!mTrainingIsNew) {
 //        intent.putExtra("CurrentID",CurrentTraining.getID());
 //        }

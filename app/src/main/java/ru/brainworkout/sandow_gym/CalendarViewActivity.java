@@ -20,7 +20,9 @@ public class CalendarViewActivity extends AppCompatActivity {
     //private String mCurrentDate;
     private boolean mTrainingIsNew;
    // private int mCurrentID;
-    private Training mCurrentTraining;
+    private Training mTrainingCurrent;
+    private Training mTrainingNew;
+    private String mCurrentActivity;
 
     private boolean isChecked;
 
@@ -34,17 +36,20 @@ public class CalendarViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
+        mCurrentActivity = intent.getStringExtra("CurrentActivity");
 
-        mCurrentTraining = intent.getParcelableExtra("CurrentTraining");
+        mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
 
-        if (mCurrentTraining!=null &mCurrentTraining.getDay()!=null) {
+        if (mTrainingCurrent!=null &mTrainingCurrent.getDay()!=null) {
 
-            Date d = mCurrentTraining.getDay();
+            Date d = mTrainingCurrent.getDay();
 
             if (d != null) {
                 calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
             }
         }
+
+        mTrainingNew=new Training(mTrainingCurrent.getID(),mTrainingCurrent.getDay());
         //mCurrentID = intent.getIntExtra("CurrentID", 0);
         //mCurrentDate = intent.getStringExtra("CurrentDate");
 
@@ -71,7 +76,7 @@ public class CalendarViewActivity extends AppCompatActivity {
                 int mYear = year;
                 int mMonth = month;
                 int mDay = dayOfMonth;
-                mCurrentTraining.setDayString(new StringBuilder().append(mYear)
+                mTrainingNew.setDayString(new StringBuilder().append(mYear)
                         .append("-").append(mMonth + 1).append("-").append(mDay)
                         .append("").toString());
             }
@@ -81,9 +86,15 @@ public class CalendarViewActivity extends AppCompatActivity {
     }
 
     public void btSave_onClick(View view) {
-        Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
+        Class<?> myClass = null;
+        try {
+            myClass = Class.forName(getPackageName()+"."+mCurrentActivity);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(CalendarViewActivity.this, 	myClass);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentTraining", mCurrentTraining);
+        intent.putExtra("CurrentTraining", mTrainingNew);
 //        intent.putExtra("CurrentID", mCurrentID);
 //        intent.putExtra("CurrentDate", mCurrentDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -91,9 +102,16 @@ public class CalendarViewActivity extends AppCompatActivity {
     }
 
     public void btClose_onClick(View view) {
-        Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
+        Class<?> myClass = null;
+        try {
+            myClass = Class.forName(getPackageName()+"."+mCurrentActivity);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(CalendarViewActivity.this, 	myClass);
+        //Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentTraining", mCurrentTraining);
+        intent.putExtra("CurrentTraining", mTrainingCurrent);
 //        intent.putExtra("CurrentID", mCurrentID);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

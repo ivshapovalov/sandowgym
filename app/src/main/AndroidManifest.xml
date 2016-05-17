@@ -28,7 +28,11 @@
             android:label="@string/trainings_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TrainingActivity"
+        android:name=".TrainingActivity"
+        android:label="@string/training_name"
+        android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewTrainingActivity"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
