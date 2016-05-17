@@ -159,14 +159,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date d = null;
-        try {
-            d = dateFormat.parse(cursor.getString(1));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Training training=new Training(Integer.parseInt(cursor.getString(0)),d );
+        Training training=new Training(Integer.parseInt(cursor.getString(0)),cursor.getString(1) );
 
         // return contact
         return training;
@@ -242,7 +235,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public List<Training> getAllTrainings() {
         List<Training> trainingsList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS;
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS+" ORDER BY " +KEY_TRAINING_DAY;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -252,20 +245,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             do {
                 Training training= new Training();
                 training.setID(cursor.getInt(0));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date d = null;
-                try {
-                    d = dateFormat.parse(cursor.getString(1));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    training.setDay(d);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-
+               training.setDayString(cursor.getString(1));
                 // Adding contact to list
                 trainingsList.add(training);
             } while (cursor.moveToNext());

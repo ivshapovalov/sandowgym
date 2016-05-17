@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +23,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by Ivan on 14.05.2016.
  */
-public class TrainingActivity extends AppCompatActivity {
+public class TrainingActivity extends AppCompatActivity{
 
     public static final boolean isDebug = true;
     private final String TAG = this.getClass().getSimpleName();
@@ -44,26 +45,30 @@ public class TrainingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
 
-        if (mTrainingIsNew) {
-            CurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
-        } else {
-            int id = intent.getIntExtra("CurrentID", 0);
-            if (id==0) {
+        CurrentTraining = intent.getParcelableExtra("CurrentTraining");
+
+        if (CurrentTraining==null ) {
+            if (mTrainingIsNew) {
                 CurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
             } else {
-                CurrentTraining = db.getTraining(id);
+                int id = intent.getIntExtra("CurrentID", 0);
+                if (id == 0) {
+                    CurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
+                } else {
+                    CurrentTraining = db.getTraining(id);
+                }
             }
         }
 
-        String mCurrentDate = intent.getStringExtra("CurrentDate");
-
-        if (!"".equals(mCurrentDate) && mCurrentDate!=null) {
-            try {
-                CurrentTraining.setDay(ConvertStringToDate(mCurrentDate));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
+//        String mCurrentDate = intent.getStringExtra("CurrentDate");
+//
+//        if (!"".equals(mCurrentDate) && mCurrentDate!=null) {
+//            try {
+//                CurrentTraining.setDay(ConvertStringToDate(mCurrentDate));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
         showTrainingOnScreen();
     }
 
@@ -166,6 +171,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
         intent.putExtra("id", CurrentTraining.getID());
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -197,14 +203,15 @@ public class TrainingActivity extends AppCompatActivity {
 
         Intent intent = new Intent(TrainingActivity.this, CalendarViewActivity.class);
 
+        intent.putExtra("CurrentTraining",CurrentTraining);
         intent.putExtra("IsNew",mTrainingIsNew);
-        if (!mTrainingIsNew) {
-        intent.putExtra("CurrentID",CurrentTraining.getID());
-        }
-        if (CurrentTraining.getDay()==null) {
-            intent.putExtra("CurrentDate","");
-        }else {
-        intent.putExtra("CurrentDate",ConvertDateToString(CurrentTraining.getDay()));}
+//        if (!mTrainingIsNew) {
+//        intent.putExtra("CurrentID",CurrentTraining.getID());
+//        }
+//        if (CurrentTraining.getDay()==null) {
+//            intent.putExtra("CurrentDate","");
+//        }else {
+//        intent.putExtra("CurrentDate",ConvertDateToString(CurrentTraining.getDay()));}
 
         startActivity(intent);
     }

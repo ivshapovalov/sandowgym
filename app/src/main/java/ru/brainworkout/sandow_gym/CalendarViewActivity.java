@@ -17,9 +17,10 @@ import java.util.Date;
  */
 public class CalendarViewActivity extends AppCompatActivity {
 
-    private String mCurrentDate;
+    //private String mCurrentDate;
     private boolean mTrainingIsNew;
-    private int mCurrentID;
+   // private int mCurrentID;
+    private Training mCurrentTraining;
 
     private boolean isChecked;
 
@@ -33,22 +34,33 @@ public class CalendarViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
-        mCurrentID = intent.getIntExtra("CurrentID", 0);
-        mCurrentDate = intent.getStringExtra("CurrentDate");
 
-        if (!"".equals(mCurrentDate) && mCurrentDate != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date d = null;
-            try {
-                d = dateFormat.parse(String.valueOf(mCurrentDate));
-            } catch (Exception e) {
-                d = null;
-            }
+        mCurrentTraining = intent.getParcelableExtra("CurrentTraining");
+
+        if (mCurrentTraining!=null &mCurrentTraining.getDay()!=null) {
+
+            Date d = mCurrentTraining.getDay();
 
             if (d != null) {
                 calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
             }
         }
+        //mCurrentID = intent.getIntExtra("CurrentID", 0);
+        //mCurrentDate = intent.getStringExtra("CurrentDate");
+
+//        if (!"".equals(mCurrentDate) && mCurrentDate != null) {
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            Date d = null;
+//            try {
+//                d = dateFormat.parse(String.valueOf(mCurrentDate));
+//            } catch (Exception e) {
+//                d = null;
+//            }
+//
+//            if (d != null) {
+//                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+//            }
+//        }
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
         calendarView.setDate(calendar.getTimeInMillis(), true, false);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -59,9 +71,9 @@ public class CalendarViewActivity extends AppCompatActivity {
                 int mYear = year;
                 int mMonth = month;
                 int mDay = dayOfMonth;
-                mCurrentDate = new StringBuilder().append(mYear)
+                mCurrentTraining.setDayString(new StringBuilder().append(mYear)
                         .append("-").append(mMonth + 1).append("-").append(mDay)
-                        .append("").toString();
+                        .append("").toString());
             }
         });
 
@@ -71,8 +83,9 @@ public class CalendarViewActivity extends AppCompatActivity {
     public void btSave_onClick(View view) {
         Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentID", mCurrentID);
-        intent.putExtra("CurrentDate", mCurrentDate);
+        intent.putExtra("CurrentTraining", mCurrentTraining);
+//        intent.putExtra("CurrentID", mCurrentID);
+//        intent.putExtra("CurrentDate", mCurrentDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -80,7 +93,8 @@ public class CalendarViewActivity extends AppCompatActivity {
     public void btClose_onClick(View view) {
         Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentID", mCurrentID);
+        intent.putExtra("CurrentTraining", mCurrentTraining);
+//        intent.putExtra("CurrentID", mCurrentID);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

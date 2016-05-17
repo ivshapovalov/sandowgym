@@ -1,5 +1,9 @@
 package ru.brainworkout.sandow_gym;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,16 +11,61 @@ import java.util.Date;
 /**
  * Created by Ivan on 14.05.2016.
  */
-public class Training {
+public class Training  implements Parcelable{
     private int _id;
     private Date _day;
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+//        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+//        String sDate = dateformat.format(_day);
+        dest.writeStringArray(new String[] { String.valueOf(_id), getDayString() });
+    }
+
+    public static final Parcelable.Creator<Training> CREATOR = new Parcelable.Creator<Training>() {
+
+        @Override
+        public Training createFromParcel(Parcel source) {
+            return new Training(source);
+        }
+
+        @Override
+        public Training[] newArray(int size) {
+            return new Training[size];
+        }
+    };
+    public Training(Parcel in) {
+        String[] data = new String[2];
+        in.readStringArray(data);
+        _id = Integer.parseInt(data[0]);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date d = null;
+//        try {
+//            d = dateFormat.parse(String.valueOf(data[1]));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        _day = d;
+
+        setDayString(data[1]);
+
+    }
     public Training() {
     }
 
     public Training(int _id, Date _day) {
         this._id = _id;
         this._day = _day;
+    }
+
+    public Training(int _id, String _day) {
+        this._id = _id;
+        setDayString(_day);
     }
 
     public Training(int _id) {
@@ -37,9 +86,37 @@ public class Training {
         return _day;
     }
 
+    public String getDayString() {
+
+        String sDate;
+        if (_day==null) {
+            sDate="";
+        }
+        else {
+            SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+            sDate = dateformat.format(_day);
+        }
+        return sDate;
+    }
+
 
     public void setDay(Date _day) throws ParseException {
         this._day = _day;
+    }
+
+    public void setDayString(String _day) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date d = null;
+        try {
+            d = dateFormat.parse(String.valueOf(_day));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            d=null;
+        }
+
+        this._day = d;
+
     }
 
 }
