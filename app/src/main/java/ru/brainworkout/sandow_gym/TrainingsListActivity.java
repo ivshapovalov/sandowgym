@@ -105,7 +105,11 @@ public class TrainingsListActivity extends AppCompatActivity {
 
             TextView txt = new TextView(this);
             //txt.setId(20000 + numEx);
-            String data=String.valueOf(trainings.get(numEx).getDay().getYear()+1900)+"-"+String.valueOf(trainings.get(numEx).getDay().getMonth()+1)+"-"+String.valueOf(trainings.get(numEx).getDay().getDate());
+            String data="";
+            if (trainings.get(numEx).getDay() != null) {
+                data = String.valueOf(trainings.get(numEx).getDay().getYear() + 1900) + "-" + String.valueOf(trainings.get(numEx).getDay().getMonth() + 1) + "-" + String.valueOf(trainings.get(numEx).getDay().getDate());
+            }
+
             txt.setText(data);
             txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);

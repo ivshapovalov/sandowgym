@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Ivan on 17.05.2016.
@@ -19,12 +24,13 @@ public class CalendarViewActivity extends AppCompatActivity {
 
     //private String mCurrentDate;
     private boolean mTrainingIsNew;
-   // private int mCurrentID;
+    // private int mCurrentID;
     private Training mTrainingCurrent;
     private Training mTrainingNew;
     private String mCurrentActivity;
 
     private boolean isChecked;
+
 
 
     @Override
@@ -40,7 +46,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
 
-        if (mTrainingCurrent!=null &mTrainingCurrent.getDay()!=null) {
+        if (mTrainingCurrent != null & mTrainingCurrent.getDay() != null) {
 
             Date d = mTrainingCurrent.getDay();
 
@@ -49,23 +55,14 @@ public class CalendarViewActivity extends AppCompatActivity {
             }
         }
 
-        mTrainingNew=new Training(mTrainingCurrent.getID(),mTrainingCurrent.getDay());
-        //mCurrentID = intent.getIntExtra("CurrentID", 0);
-        //mCurrentDate = intent.getStringExtra("CurrentDate");
+        try {
+            mTrainingCurrent.setDay(new Date());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-//        if (!"".equals(mCurrentDate) && mCurrentDate != null) {
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            Date d = null;
-//            try {
-//                d = dateFormat.parse(String.valueOf(mCurrentDate));
-//            } catch (Exception e) {
-//                d = null;
-//            }
-//
-//            if (d != null) {
-//                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
-//            }
-//        }
+        mTrainingNew = new Training(mTrainingCurrent.getID(), mTrainingCurrent.getDay());
+
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
         calendarView.setDate(calendar.getTimeInMillis(), true, false);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -85,14 +82,15 @@ public class CalendarViewActivity extends AppCompatActivity {
 
     }
 
+
     public void btSave_onClick(View view) {
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName()+"."+mCurrentActivity);
+            myClass = Class.forName(getPackageName() + "." + mCurrentActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(CalendarViewActivity.this, 	myClass);
+        Intent intent = new Intent(CalendarViewActivity.this, myClass);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("CurrentTraining", mTrainingNew);
 //        intent.putExtra("CurrentID", mCurrentID);
@@ -104,11 +102,11 @@ public class CalendarViewActivity extends AppCompatActivity {
     public void btClose_onClick(View view) {
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName()+"."+mCurrentActivity);
+            myClass = Class.forName(getPackageName() + "." + mCurrentActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(CalendarViewActivity.this, 	myClass);
+        Intent intent = new Intent(CalendarViewActivity.this, myClass);
         //Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("CurrentTraining", mTrainingCurrent);

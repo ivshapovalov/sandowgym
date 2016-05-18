@@ -110,7 +110,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate = dateformat.format(training.getDay());
+        String sDate;
+        try {
+             sDate = dateformat.format(training.getDay());
+        } catch (Exception e) {
+             sDate=null;
+        }
 
         values.put(KEY_TRAINING_DAY, sDate);
         // Inserting Row
@@ -178,6 +183,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingContent;
     }
 
+    public TrainingContent getTrainingContent(int id,int exercise_id, int training_id)  {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,KEY_TRAINING_CONTENT_VOLUME,KEY_TRAINING_CONTENT_ID_EXERCISE,KEY_TRAINING_CONTENT_ID_TRAINING}, KEY_TRAINING_CONTENT_ID + "=?,"+KEY_TRAINING_CONTENT_ID_EXERCISE + "=?,"+KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
+                new String[]{String.valueOf(id),String.valueOf(exercise_id),String.valueOf(training_id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        TrainingContent trainingContent=new TrainingContent(Integer.parseInt(cursor.getString(0)),cursor.getString(1),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)));
+
+        // return contact
+        return trainingContent;
+    }
+
 
     public void deleteAllExercises() {
 
@@ -232,6 +250,34 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return exerciseList;
     }
 
+    public List<Exercise> getAllActiveExercises() {
+        List<Exercise> exerciseList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES+" WHERE "+KEY_EXERCISE_IS_ACTIVE+" = 1";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Exercise exercise = new Exercise();
+                exercise.setID(cursor.getInt(0));
+                exercise.setIsActive(cursor.getInt(1));
+                exercise.setName(cursor.getString(2));
+                exercise.setExplanation(cursor.getString(3));
+                exercise.setVolumeDefault(cursor.getString(4));
+                exercise.setPicture(cursor.getString(5));
+
+                // Adding contact to list
+                exerciseList.add(exercise);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return exerciseList;
+    }
+
     public List<Training> getAllTrainings() {
         List<Training> trainingsList = new ArrayList<>();
         // Select All Query
@@ -255,10 +301,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public List<TrainingContent> getAllTrainingContentOfTraining() {
+    public List<TrainingContent> getAllTrainingContentOfTraining(int training_id) {
         List<TrainingContent> trainingContentList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT;
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT +" WHERE " + KEY_TRAINING_CONTENT_ID_TRAINING +"="+training_id;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -381,8 +427,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate = dateformat.format(training.getDay());
-
+        String sDate="";
+        if (training.getDay()!=null) {
+            sDate = dateformat.format(training.getDay());
+        }
         values.put(KEY_TRAINING_DAY,sDate);
 
         // updating row
