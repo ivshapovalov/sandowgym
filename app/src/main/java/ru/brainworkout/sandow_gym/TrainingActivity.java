@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,14 @@ public class TrainingActivity extends AppCompatActivity {
         if (mCurrentTraining == null) {
             if (mTrainingIsNew) {
                 mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
+                //Calendar calendar = Calendar.getInstance();
+                String cal = ((Date) Calendar.getInstance().getTime()).toLocaleString();
+                try {
+                    mCurrentTraining.setDay((Date) Calendar.getInstance().getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 int id = intent.getIntExtra("CurrentID", 0);
                 if (id == 0) {
@@ -194,20 +203,40 @@ public class TrainingActivity extends AppCompatActivity {
         mActiveExercises = db.getAllActiveExercises();
         Log.d("Reading: ", "Reading all exercises of training ..");
         mTrainingContentList = db.getAllTrainingContentOfTraining(mCurrentTraining.getID());
+
+        for (TrainingContent tr:mTrainingContentList
+             ) {
+            boolean isFound= false;
+            int id_ex=tr.getIdExercise();
+            for (Exercise ex:mActiveExercises
+                 ) {
+                if (ex.getID()==id_ex) {
+                    isFound=true;
+                    break;
+                }
+
+            }
+            if (!isFound) {
+                //добавим в список упражнений упражнение старое
+                Exercise ex1=db.getExercise(id_ex);
+            }
+        };
         Exercise ex1;
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
             ex1 = mActiveExercises.get(mCurrentExerciseNumberInList);
             //покажем первое упражнение
-            showTrainingContentOnScreen(ex1);
+
 
             if (mTrainingContentList.size() != 0) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 int maxNum = db.getTrainingContentMaxNumber() + 1;
                 mCurrentTrainingContent = new TrainingContent(maxNum, "", ex1.getID(), mCurrentTraining.getID());
+                db.addTrainingContent(mCurrentTrainingContent);
             }
-            db.addTrainingContent(mCurrentTrainingContent);
+            showTrainingContentOnScreen(ex1);
+
         }
     }
 
@@ -378,6 +407,14 @@ public class TrainingActivity extends AppCompatActivity {
             }
 
         }
+        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        if (etVolume != null) {
+            try {
+                mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+            } catch (Exception e) {
+
+            }
+        }
 
     }
 
@@ -419,17 +456,19 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btDelete_onClick(View view) {
 //
-//        if (!mTrainingIsNew) {
-//
-//            MyLogger(TAG, "Удалили " + String.valueOf(CurrentTraining.getID()));
-//            //потом закрываем
-//            db.deleteTraining(CurrentTraining);
-//
-//            Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(intent);
-//
-//        }
+        if (!mTrainingIsNew) {
+
+            MyLogger(TAG, "Удалили " + String.valueOf(mCurrentTraining.getID()));
+            //потом закрываем
+            db.deleteTrainingContentOfTraining(mCurrentTraining.getID());
+
+            db.deleteTraining(mCurrentTraining);
+
+            Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+        }
 
     }
 
@@ -439,7 +478,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         intent.putExtra("CurrentTraining", mCurrentTraining);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentActivity", "NewTrainingActivity");
+        intent.putExtra("CurrentActivity", "TrainingActivity");
 //        if (!mTrainingIsNew) {
 //        intent.putExtra("CurrentID",CurrentTraining.getID());
 //        }

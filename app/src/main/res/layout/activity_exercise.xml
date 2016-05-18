@@ -168,6 +168,18 @@
 
                     </TableRow>
 
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/ivPicture"
+                            android:layout_span="32"
+                            android:minHeight="300dp" />
+                    </TableRow>
+
                 </TableLayout>
             </ScrollView>
 

@@ -41,9 +41,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     //  Training content Table Columns names
     private static final String KEY_TRAINING_CONTENT_ID = "training_content_id";
+    private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
     private static final String KEY_TRAINING_CONTENT_ID_EXERCISE = "training_content_id_exercise";
     private static final String KEY_TRAINING_CONTENT_ID_TRAINING = "training_content_id_training";
-    private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
+
 
 
     public DatabaseManager(Context context) {
@@ -66,8 +67,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_TRAININGS_TABLE);
 
         String CREATE_TRAINING_CONTENT_TABLE = "CREATE TABLE " + TABLE_TRAINING_CONTENT + "("
-                + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY," + KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
-                + KEY_TRAINING_CONTENT_ID_TRAINING + " INTEGER," + KEY_TRAINING_CONTENT_VOLUME + " TEXT,"
+                + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY," + KEY_TRAINING_CONTENT_VOLUME + " TEXT,"+
+                KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
+                + KEY_TRAINING_CONTENT_ID_TRAINING + " INTEGER,"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS + "(" + KEY_TRAINING_ID + "),"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_EXERCISE + ") REFERENCES " + TABLE_EXERCISES + "(" + KEY_EXERCISE_ID + ")"
                 + ")";
@@ -472,6 +474,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID + " = ?",
                 new String[]{String.valueOf(trainingContent.getID())});
+        db.close();
+    }
+    public void deleteTrainingContentOfTraining(int id_traning) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID_TRAINING+ " = ?",
+                new String[]{String.valueOf(id_traning)});
         db.close();
     }
 

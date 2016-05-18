@@ -43,7 +43,6 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
         mCurrentActivity = intent.getStringExtra("CurrentActivity");
-
         mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
 
         if (mTrainingCurrent != null & mTrainingCurrent.getDay() != null) {

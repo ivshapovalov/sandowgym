@@ -93,17 +93,17 @@ public class TrainingsListActivity extends AppCompatActivity {
                 }
             });
             //mRow.setGravity(Gravity.LEFT);
-//            TextView txt = new TextView(this);
-//            //txt.setId(10000 + numEx);
-//            txt.setText(String.valueOf(trainings.get(numEx).getID()));
-//            txt.setGravity(Gravity.LEFT);
-//            txt.setBackgroundResource(R.drawable.textview_border);
-//            //params.span = 3;
-//            //txt.setLayoutParams(params);
-//
-//            mRow.addView(txt);
-
             TextView txt = new TextView(this);
+            //txt.setId(10000 + numEx);
+            txt.setText(String.valueOf(trainings.get(numEx).getID()));
+            txt.setGravity(Gravity.LEFT);
+            txt.setBackgroundResource(R.drawable.textview_border);
+            //params.span = 3;
+            //txt.setLayoutParams(params);
+
+            mRow.addView(txt);
+
+            txt = new TextView(this);
             //txt.setId(20000 + numEx);
             String data="";
             if (trainings.get(numEx).getDay() != null) {
@@ -161,6 +161,7 @@ public class TrainingsListActivity extends AppCompatActivity {
     public void btDeleteAllTrainings_onClick(View view) {
 
         db.deleteAllTrainings();
+        db.deleteAllTrainingContent();
         showTrainings();
 
     }

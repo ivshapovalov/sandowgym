@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -107,6 +108,10 @@ public class ExerciseActivity extends AppCompatActivity {
             etVolume.setText(CurrentExercise.getVolumeDefault());
         }
 
+        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        if (ivPicture != null) {
+            ivPicture.setImageResource(getResources().getIdentifier(CurrentExercise.getPicture(), "drawable", getPackageName()));
+        }
     }
 
     public void btClose_onClick(View view) {
