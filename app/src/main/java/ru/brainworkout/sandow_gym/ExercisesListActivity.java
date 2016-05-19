@@ -3,6 +3,7 @@ package ru.brainworkout.sandow_gym;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +23,10 @@ public class ExercisesListActivity extends AppCompatActivity {
     private final int mNumOfView = 10000;
 
     DatabaseManager db;
+
+    private int mHeight = 0;
+    private int mWidth = 0;
+    private int mTextSize = 0;
 
 
     @Override
@@ -100,6 +105,19 @@ public class ExercisesListActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
 
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
+
+        //допустим 15 строк тренировок
+        mHeight = displaymetrics.heightPixels / 17;
+        mWidth = displaymetrics.widthPixels/2;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
+
+        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+
+        if (trowButtons != null) {
+            trowButtons.setMinimumHeight(mHeight);
+        }
+
         TableLayout layout = new TableLayout(this);
         //layout.removeAllViews();
         layout.setStretchAllColumns(true);
@@ -116,12 +134,20 @@ public class ExercisesListActivity extends AppCompatActivity {
                     rowExercise_onClick((TableRow) v);
                 }
             });
+            mRow.setMinimumHeight(mHeight);
+            mRow.setBackgroundResource(R.drawable.textview_border);
+            //mRow.setBackgroundResource(R.drawable.textview_border);
+
+            //mRow.setPadding(0,40,0,40);
             //mRow.setGravity(Gravity.LEFT);
             TextView txt = new TextView(this);
             //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getID()));
-            txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setHeight(mHeight);
+            txt.setTextSize(mTextSize);
+            //txt.setBackgroundResource(R.drawable.textview_border);
             //params.span = 3;
             //txt.setLayoutParams(params);
 
@@ -130,10 +156,10 @@ public class ExercisesListActivity extends AppCompatActivity {
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getName()));
-            txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
-            //params.span = 15;
-            //txt.setLayoutParams(params);
+            txt.setGravity(Gravity.CENTER);
+            txt.setHeight(mHeight);
+            txt.setTextSize(mTextSize);
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.textview_border);

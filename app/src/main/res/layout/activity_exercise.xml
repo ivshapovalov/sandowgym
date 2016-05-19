@@ -123,7 +123,7 @@
                             android:inputType="textMultiLine"
                             android:id="@+id/et_Explanation"
                             android:layout_span="24"
-                            style="@android:style/TextAppearance.Small"/>
+                            style="@android:style/TextAppearance.Small" />
                     </TableRow>
 
                     <TableRow

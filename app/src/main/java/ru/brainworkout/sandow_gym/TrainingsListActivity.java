@@ -2,10 +2,14 @@ package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -21,6 +25,10 @@ public class TrainingsListActivity extends AppCompatActivity {
     private final int mNumOfView = 20000;
 
     DatabaseManager db;
+
+    private int mHeight = 0;
+    private int mWidth = 0;
+    private int mTextSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,19 @@ public class TrainingsListActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
 
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
+
+        //допустим 15 строк тренировок
+        mHeight = displaymetrics.heightPixels / 17;
+        mWidth = displaymetrics.widthPixels / 2;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
+
+        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+
+        if (trowButtons != null) {
+            trowButtons.setMinimumHeight(mHeight);
+        }
+
         TableLayout layout = new TableLayout(this);
         //layout.removeAllViews();
         layout.setStretchAllColumns(true);
@@ -85,6 +106,13 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         for (int numEx = 0; numEx < trainings.size(); numEx++) {
             TableRow mRow = new TableRow(this);
+//            TableLayout.LayoutParams params=new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            params.setMargins(0,20,0,20);
+//            mRow.setGravity(Gravity.CENTER_VERTICAL);
+//            mRow.setLayoutParams(params);
+            //mRow.setPadding(0,30,0,30);
+            mRow.setMinimumHeight(mHeight);
+            mRow.setBackgroundResource(R.drawable.textview_border);
             mRow.setId(mNumOfView + trainings.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -96,8 +124,11 @@ public class TrainingsListActivity extends AppCompatActivity {
             TextView txt = new TextView(this);
             //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(trainings.get(numEx).getID()));
-            txt.setGravity(Gravity.LEFT);
             txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setHeight(mHeight);
+            txt.setTextSize(mTextSize);
+
             //params.span = 3;
             //txt.setLayoutParams(params);
 
@@ -105,16 +136,16 @@ public class TrainingsListActivity extends AppCompatActivity {
 
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
-            String data="";
+            String data = "";
             if (trainings.get(numEx).getDay() != null) {
                 data = String.valueOf(trainings.get(numEx).getDay().getYear() + 1900) + "-" + String.valueOf(trainings.get(numEx).getDay().getMonth() + 1) + "-" + String.valueOf(trainings.get(numEx).getDay().getDate());
             }
 
             txt.setText(data);
-            txt.setGravity(Gravity.LEFT);
+            txt.setGravity(Gravity.CENTER);
+            txt.setHeight(mHeight);
+            txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.textview_border);
-            //params.span = 15;
-            //txt.setLayoutParams(params);
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.textview_border);

@@ -17,6 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +97,12 @@ public class TrainingActivity extends AppCompatActivity {
 
 
 
+    }
+
+    class ExerciseComp implements Comparator {
+        public int compare(Object ex1, Object ex2) {
+            return ((Exercise) (ex1)).getID()-((Exercise) (ex2)).getID();
+        }
     }
 
     private void setNextExercise() {
@@ -216,11 +224,15 @@ public class TrainingActivity extends AppCompatActivity {
                 }
 
             }
+            //если в текущих активных не нашли - добавляем новое
             if (!isFound) {
                 //добавим в список упражнений упражнение старое
-                Exercise ex1=db.getExercise(id_ex);
+                Exercise ex=db.getExercise(id_ex);
+                mActiveExercises.add(ex);
             }
         };
+        //отсортируем по ID список упражнений
+        Collections.sort(mActiveExercises,new ExerciseComp());
         Exercise ex1;
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
@@ -228,8 +240,8 @@ public class TrainingActivity extends AppCompatActivity {
             //покажем первое упражнение
 
 
-            if (mTrainingContentList.size() != 0) {
-                mCurrentTrainingContent = mTrainingContentList.get(0);
+            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise()==ex1.getID()) {
+                    mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 int maxNum = db.getTrainingContentMaxNumber() + 1;
                 mCurrentTrainingContent = new TrainingContent(maxNum, "", ex1.getID(), mCurrentTraining.getID());
@@ -281,7 +293,7 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
             if (mCurrentTrainingContent != null) {
                 String vol = mCurrentTrainingContent.getVolume();
-                if (vol != null) {
+                if (vol != null && vol!="") {
                     etVolume.setText(vol);
                 } else {
                     etVolume.setText("");

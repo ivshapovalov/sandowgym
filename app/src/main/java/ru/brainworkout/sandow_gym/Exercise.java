@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym;
 
+import java.util.Comparator;
+
 public class Exercise {
 
     //private variables
@@ -103,5 +105,7 @@ public class Exercise {
     public void setVolumeDefault(String _volume_default) {
         this._volume_default = _volume_default;
     }
+
+
 }
 

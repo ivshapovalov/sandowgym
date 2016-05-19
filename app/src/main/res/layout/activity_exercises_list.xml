@@ -12,57 +12,59 @@
         android:stretchColumns="*">
 
         <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/trowButtons"
+            android:background="@drawable/textview_border">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
-                android:background="@drawable/ic_house"
-                android:layout_span="7" />
+                android:layout_span="7"
+                android:foreground="@drawable/ic_house"
+                android:background="@drawable/ic_house" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Добавить"
+                android:layout_height="wrap_content"
+                android:text="ADD"
                 android:id="@+id/btExercisesAdd"
                 android:onClick="bt_ExercisesAdd_onClick"
+                android:layout_span="15"
                 android:layout_gravity="center_vertical"
-                android:layout_span="15" />
+                android:background="@drawable/textview_border" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Заполнить"
+                android:layout_height="wrap_content"
+                android:text="FILL"
                 android:id="@+id/btExercisesFillDefault"
                 android:onClick="bt_ExercisesFillDefault_onClick"
-                android:layout_gravity="center_vertical"
-                android:layout_span="15" />
+                android:layout_span="15"
+                android:background="@drawable/textview_border" />
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/button2"
                 android:onClick="bt_Edit_onClick"
                 style="?android:attr/buttonStyleSmall"
-                android:layout_gravity="center_vertical"
-                android:background="@android:drawable/ic_menu_edit"
-                android:layout_span="7" />
+                android:layout_span="7"
+                android:background="@android:drawable/ic_menu_edit" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/button8"
-                android:background="@android:drawable/ic_menu_delete"
                 android:onClick="btDeleteAllExercises_onClick"
-                android:layout_gravity="center_vertical"
-                android:layout_span="7" />
+                android:layout_span="7"
+                android:background="@android:drawable/ic_menu_delete" />
 
 
         </TableRow>
