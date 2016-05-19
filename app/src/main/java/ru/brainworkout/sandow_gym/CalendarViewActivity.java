@@ -2,6 +2,7 @@ package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,9 +29,9 @@ public class CalendarViewActivity extends AppCompatActivity {
     private Training mTrainingCurrent;
     private Training mTrainingNew;
     private String mCurrentActivity;
+    private Boolean mBeginDate;
 
     private boolean isChecked;
-
 
 
     @Override
@@ -41,43 +42,72 @@ public class CalendarViewActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         Intent intent = getIntent();
 
+        mBeginDate = intent.getBooleanExtra("BEGIN", true);
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
         mCurrentActivity = intent.getStringExtra("CurrentActivity");
         mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
 
-        if (mTrainingCurrent != null & mTrainingCurrent.getDay() != null) {
+        if (mCurrentActivity == "TrainingActicity") {
 
-            Date d = mTrainingCurrent.getDay();
+            if (mTrainingCurrent != null & mTrainingCurrent.getDay() != null) {
+
+                Date d = mTrainingCurrent.getDay();
+
+                if (d != null) {
+                    calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                }
+            }
+
+            try {
+                mTrainingCurrent.setDay(new Date());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            mTrainingNew = new Training(mTrainingCurrent.getID(), mTrainingCurrent.getDay());
+
+            CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
+            calendarView.setDate(calendar.getTimeInMillis(), true, false);
+            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+                @Override
+                public void onSelectedDayChange(CalendarView view, int year,
+                                                int month, int dayOfMonth) {
+                    int mYear = year;
+                    int mMonth = month;
+                    int mDay = dayOfMonth;
+                    mTrainingNew.setDayString(new StringBuilder().append(mYear)
+                            .append("-").append(mMonth + 1).append("-").append(mDay)
+                            .append("").toString());
+                }
+            });
+        } else {
+
+            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
 
             if (d != null) {
-                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                try {
+                    mCurrentTraining.setDay(d);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
+            CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
+            calendarView.setDate(calendar.getTimeInMillis(), true, false);
+            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+                @Override
+                public void onSelectedDayChange(CalendarView view, int year,
+                                                int month, int dayOfMonth) {
+                    int mYear = year;
+                    int mMonth = month;
+                    int mDay = dayOfMonth;
+                    mTrainingNew.setDayString(new StringBuilder().append(mYear)
+                            .append("-").append(mMonth + 1).append("-").append(mDay)
+                            .append("").toString());
+                }
+            });
         }
-
-        try {
-            mTrainingCurrent.setDay(new Date());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        mTrainingNew = new Training(mTrainingCurrent.getID(), mTrainingCurrent.getDay());
-
-        CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-        calendarView.setDate(calendar.getTimeInMillis(), true, false);
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year,
-                                            int month, int dayOfMonth) {
-                int mYear = year;
-                int mMonth = month;
-                int mDay = dayOfMonth;
-                mTrainingNew.setDayString(new StringBuilder().append(mYear)
-                        .append("-").append(mMonth + 1).append("-").append(mDay)
-                        .append("").toString());
-            }
-        });
-
 
     }
 

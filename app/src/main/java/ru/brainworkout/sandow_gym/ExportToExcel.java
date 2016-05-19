@@ -2,9 +2,11 @@ package ru.brainworkout.sandow_gym;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -17,7 +19,7 @@ public class ExportToExcel {
 //
 //    {
 //
-//        private final ProgressDialog dialog = new ProgressDialog(TrainingActivity.this);
+//        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
 //
 //        @Override
 //
@@ -148,7 +150,7 @@ public class ExportToExcel {
 //
 //            }
 //        }}
-
+//
 //    public class CSVToExcelConverter extends AsyncTask<String, Void, Boolean> {
 //
 //
@@ -267,10 +269,7 @@ public class ExportToExcel {
 //
 //
 //    }
-
-
-    //второй вариант
-
+//
 //    public class ExportDatabaseToCSV{
 //
 //        Context context;

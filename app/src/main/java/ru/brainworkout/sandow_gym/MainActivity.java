@@ -1,9 +1,19 @@
 package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,7 +59,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void bt_NewTraining_onClick(View view) {
         Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
-        intent.putExtra("IsNew",true);
+        intent.putExtra("IsNew", true);
         startActivity(intent);
+    }
+
+    public void btSaveToCSV_onClick(View view) {
+
+        Intent intent = new Intent(MainActivity.this, ExportToFileActivity.class);
+        startActivity(intent);
+
+
+
+
+
     }
 }
