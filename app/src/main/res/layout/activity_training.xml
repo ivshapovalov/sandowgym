@@ -105,17 +105,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tvExerciseID"
-                            android:layout_span="10" />
+                            android:id="@+id/tvExerciseName"
+                            android:layout_span="30" />
 
-                        <TextView
-                            style="@android:style/TextAppearance.Small"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="Количество"
-                            android:id="@+id/textView6"
-                            android:layout_span="10"
-                            android:gravity="center_vertical" />
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                                     android:layout_span="5"
+                            android:background="@android:drawable/ic_media_rew"
+                            android:onClick="btVolumeLeft_onClick" />
 
                         <EditText
                             android:layout_width="wrap_content"
@@ -123,27 +122,40 @@
                             android:inputType="numberDecimal"
                             android:ems="10"
                             android:id="@+id/etVolume"
-                            android:layout_span="10" />
+                            android:layout_span="10"
+                            android:textColorHint="@color/dim_foreground_material_dark"
+                            android:gravity="center" />
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="5"
+                            android:background="@android:drawable/ic_media_ff"
+                            android:onClick="btVolumeRight_onClick" />
 
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="100">
+                        android:layout_weight="100"
+                        android:minHeight="400dp">
 
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/ivPicture"
-                            android:layout_span="15" />
+                            android:layout_span="25"
+                            android:scaleType="fitStart" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:id="@+id/tvExplanation"
-                            android:layout_span="15" />
+                            android:layout_span="25"
+                            android:layout_gravity="bottom" />
                     </TableRow>
 
                 </TableLayout>

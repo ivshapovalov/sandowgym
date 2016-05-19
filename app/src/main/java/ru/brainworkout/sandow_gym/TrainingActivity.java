@@ -99,6 +99,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     }
 
+
+
     class ExerciseComp implements Comparator {
         public int compare(Object ex1, Object ex2) {
             return ((Exercise) (ex1)).getID()-((Exercise) (ex2)).getID();
@@ -117,24 +119,23 @@ public class TrainingActivity extends AppCompatActivity {
             if (mCurrentExerciseNumberInList != mActiveExercises.size() - 1) {
 
                 mCurrentExerciseNumberInList++;
-                Exercise ex = mActiveExercises.get(mCurrentExerciseNumberInList);
+                mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
 
-                //покажем первое упражнение
                 ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
                 if (ivPicture != null) {
-                    ivPicture.setImageResource(getResources().getIdentifier(ex.getPicture(), "drawable", getPackageName()));
+                    ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
                 }
                 TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
                 if (tvExplanation != null) {
 
-                    tvExplanation.setText(ex.getExplanation());
+                    tvExplanation.setText(mCurrentExercise.getExplanation());
                 }
 
                 //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
 
                 boolean isFound = false;
                 for (TrainingContent mTr : mTrainingContentList) {
-                    if (mTr.getIdExercise() == ex.getID()) {
+                    if (mTr.getIdExercise() == mCurrentExercise.getID()) {
                         isFound = true;
                         mCurrentTrainingContent = mTr;
                         mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
@@ -144,7 +145,7 @@ public class TrainingActivity extends AppCompatActivity {
                 if (!isFound) {
                     mCurrentTrainingContent = new TrainingContent();
                     mCurrentTrainingContent.setID(db.getTrainingContentMaxNumber() + 1);
-                    mCurrentTrainingContent.setIdExercise(ex.getID());
+                    mCurrentTrainingContent.setIdExercise(mCurrentExercise.getID());
                     mCurrentTrainingContent.setIdTraining(mCurrentTraining.getID());
                     mCurrentTrainingContent.setVolume("");
                     db.addTrainingContent(mCurrentTrainingContent);
@@ -168,23 +169,22 @@ public class TrainingActivity extends AppCompatActivity {
             if (mCurrentExerciseNumberInList != 0) {
 
                 mCurrentExerciseNumberInList--;
-                Exercise ex = mActiveExercises.get(mCurrentExerciseNumberInList);
+                mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
 
-                //покажем первое упражнение
                 ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
                 if (ivPicture != null) {
-                    ivPicture.setImageResource(getResources().getIdentifier(ex.getPicture(), "drawable", getPackageName()));
+                    ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
                 }
                 TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
                 if (tvExplanation != null) {
 
-                    tvExplanation.setText(ex.getExplanation());
+                    tvExplanation.setText(mCurrentExercise.getExplanation());
                 }
 
                 //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
                 boolean isFound = false;
                 for (TrainingContent mTr : mTrainingContentList) {
-                    if (mTr.getIdExercise() == ex.getID()) {
+                    if (mTr.getIdExercise() == mCurrentExercise.getID()) {
                         isFound = true;
                         mCurrentTrainingContent = mTr;
                         mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
@@ -195,7 +195,7 @@ public class TrainingActivity extends AppCompatActivity {
                 if (!isFound) {
                     mCurrentTrainingContent = new TrainingContent();
                     mCurrentTrainingContent.setID(db.getTrainingContentMaxNumber() + 1);
-                    mCurrentTrainingContent.setIdExercise(ex.getID());
+                    mCurrentTrainingContent.setIdExercise(mCurrentExercise.getID());
                     mCurrentTrainingContent.setIdTraining(mCurrentTraining.getID());
                     db.addTrainingContent(mCurrentTrainingContent);
                 }
@@ -233,21 +233,21 @@ public class TrainingActivity extends AppCompatActivity {
         };
         //отсортируем по ID список упражнений
         Collections.sort(mActiveExercises,new ExerciseComp());
-        Exercise ex1;
+
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
-            ex1 = mActiveExercises.get(mCurrentExerciseNumberInList);
+            mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
             //покажем первое упражнение
 
 
-            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise()==ex1.getID()) {
+            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise()==mCurrentExercise.getID()) {
                     mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 int maxNum = db.getTrainingContentMaxNumber() + 1;
-                mCurrentTrainingContent = new TrainingContent(maxNum, "", ex1.getID(), mCurrentTraining.getID());
+                mCurrentTrainingContent = new TrainingContent(maxNum, "", mCurrentExercise.getID(), mCurrentTraining.getID());
                 db.addTrainingContent(mCurrentTrainingContent);
             }
-            showTrainingContentOnScreen(ex1);
+            showTrainingContentOnScreen(mCurrentExercise);
 
         }
     }
@@ -283,10 +283,10 @@ public class TrainingActivity extends AppCompatActivity {
 
             tvExplanation.setText(ex.getExplanation());
         }
-        TextView tvExerciseID = (TextView) findViewById(R.id.tvExerciseID);
-        if (tvExerciseID != null) {
+        TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
+        if (tvExerciseName != null) {
 
-            tvExerciseID.setText(ex.getName());
+            tvExerciseName.setText(ex.getName());
         }
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
@@ -299,6 +299,7 @@ public class TrainingActivity extends AppCompatActivity {
                     etVolume.setText("");
                 }
             }
+            etVolume.setHint(mCurrentExercise._volume_default);
         }
     }
 
@@ -423,6 +424,7 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
             try {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+
             } catch (Exception e) {
 
             }
@@ -580,6 +582,39 @@ public class TrainingActivity extends AppCompatActivity {
                 }
             }
             return false;
+        }
+    }
+    public void btVolumeLeft_onClick(View view) {
+
+        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        if (etVolume != null) {
+            int a=0;
+            try {
+                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+
+                a=a==0?0:a-1;
+
+                etVolume.setText(String.valueOf(a));
+            } catch (Exception e) {
+
+            }
+
+
+        }
+    }
+    public void btVolumeRight_onClick(View view) {
+
+        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        if (etVolume != null) {
+            int a=0;
+            try {
+                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+
+            } catch (Exception e) {
+
+            }
+            a++;
+            etVolume.setText(String.valueOf(a));
         }
     }
 }
