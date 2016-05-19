@@ -113,8 +113,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                                      android:layout_span="5"
-                            android:background="@android:drawable/ic_media_rew"
-                            android:onClick="btVolumeLeft_onClick" />
+                            android:onClick="btVolumeLeft_onClick"
+                            android:text="-" />
 
                         <EditText
                             android:layout_width="wrap_content"
@@ -131,8 +131,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_span="5"
-                            android:background="@android:drawable/ic_media_ff"
-                            android:onClick="btVolumeRight_onClick" />
+                            android:onClick="btVolumeRight_onClick"
+                            android:text="+" />
 
                     </TableRow>
 
