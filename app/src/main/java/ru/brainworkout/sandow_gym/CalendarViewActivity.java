@@ -23,19 +23,15 @@ import java.util.List;
  */
 public class CalendarViewActivity extends AppCompatActivity {
 
-    //private String mCurrentDate;
     private boolean mTrainingIsNew;
     private Boolean mIsBeginDate;
-    private Date mCurrentDate;
+
+    private String mOldDateFrom;
+    private String mNewDate;
+    private String mOldDateTo;
+
     private int mCurrentTraningID;
-    // private int mCurrentID;
-    private Training mTrainingCurrent;
-    private Training mTrainingNew;
     private String mCurrentActivity;
-
-
-    private boolean isChecked;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,72 +41,52 @@ public class CalendarViewActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         Intent intent = getIntent();
 
-        mIsBeginDate = intent.getBooleanExtra("BEGIN", true);
+        mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
         mCurrentActivity = intent.getStringExtra("CurrentActivity");
-        mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
-
-        if (mCurrentActivity == "TrainingActicity") {
-
-            if (mTrainingCurrent != null & mTrainingCurrent.getDay() != null) {
-
-                Date d = mTrainingCurrent.getDay();
-
-                if (d != null) {
-                    calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
-                }
-            }
-
-            try {
-                mTrainingCurrent.setDay(new Date());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            mTrainingNew = new Training(mTrainingCurrent.getID(), mTrainingCurrent.getDay());
-
-            CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-            calendarView.setDate(calendar.getTimeInMillis(), true, false);
-            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-
-                @Override
-                public void onSelectedDayChange(CalendarView view, int year,
-                                                int month, int dayOfMonth) {
-                    int mYear = year;
-                    int mMonth = month;
-                    int mDay = dayOfMonth;
-                    mTrainingNew.setDayString(new StringBuilder().append(mYear)
-                            .append("-").append(mMonth + 1).append("-").append(mDay)
-                            .append("").toString());
-                }
-            });
-        } else {
-
-            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
-
-            if (d != null) {
-                try {
-                    mCurrentTraining.setDay(d);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-            CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-            calendarView.setDate(calendar.getTimeInMillis(), true, false);
-            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-
-                @Override
-                public void onSelectedDayChange(CalendarView view, int year,
-                                                int month, int dayOfMonth) {
-                    int mYear = year;
-                    int mMonth = month;
-                    int mDay = dayOfMonth;
-                    mTrainingNew.setDayString(new StringBuilder().append(mYear)
-                            .append("-").append(mMonth + 1).append("-").append(mDay)
-                            .append("").toString());
-                }
-            });
+        mCurrentTraningID = intent.getIntExtra("CurrentTrainingID", 0);
+        try {
+            mOldDateFrom = intent.getStringExtra("CurrentDate");
+        } catch (Exception e) {
+            mOldDateFrom = "";
         }
+        try {
+            mOldDateTo = intent.getStringExtra("CurrentDateTo");
+        } catch (Exception e) {
+            mOldDateTo = "";
+        }
+
+        if (mIsBeginDate || mCurrentActivity == "TrainingActivity") {
+            if (mOldDateFrom != null && !"".equals(mOldDateFrom)) {
+                Date d = Common.ConvertStringToDate(mOldDateFrom);
+                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                mNewDate = mOldDateFrom;
+            }
+
+        } else {
+            if (mOldDateTo != null && !"".equals(mOldDateTo)) {
+                Date d = Common.ConvertStringToDate(mOldDateTo);
+                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                mNewDate = mOldDateTo;
+            }
+        }
+
+
+        CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
+        calendarView.setDate(calendar.getTimeInMillis(), true, false);
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year,
+                                            int month, int dayOfMonth) {
+                int mYear = year;
+                int mMonth = month;
+                int mDay = dayOfMonth;
+                mNewDate = new StringBuilder().append(mYear)
+                        .append("-").append(mMonth + 1).append("-").append(mDay)
+                        .append("").toString();
+            }
+        });
 
     }
 
@@ -124,9 +100,16 @@ public class CalendarViewActivity extends AppCompatActivity {
         }
         Intent intent = new Intent(CalendarViewActivity.this, myClass);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentTraining", mTrainingNew);
-//        intent.putExtra("CurrentID", mCurrentID);
-//        intent.putExtra("CurrentDate", mCurrentDate);
+        intent.putExtra("IsBeginDate", mIsBeginDate);
+        intent.putExtra("CurrentID", mCurrentTraningID);
+        if (mIsBeginDate) {
+            intent.putExtra("CurrentDate", mNewDate);
+            intent.putExtra("CurrentDateTo", mOldDateTo);
+        } else {
+            intent.putExtra("CurrentDate", mOldDateFrom);
+            intent.putExtra("CurrentDateTo", mNewDate);
+        }
+        intent.putExtra("", mIsBeginDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -141,8 +124,11 @@ public class CalendarViewActivity extends AppCompatActivity {
         Intent intent = new Intent(CalendarViewActivity.this, myClass);
         //Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentTraining", mTrainingCurrent);
-//        intent.putExtra("CurrentID", mCurrentID);
+        intent.putExtra("IsBeginDate", mIsBeginDate);
+        intent.putExtra("CurrentID", mCurrentTraningID);
+        intent.putExtra("CurrentDate", mOldDateFrom);
+        intent.putExtra("CurrentDateTo", mOldDateTo);
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

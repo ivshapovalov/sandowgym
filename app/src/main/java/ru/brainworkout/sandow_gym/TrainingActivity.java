@@ -59,28 +59,40 @@ public class TrainingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
 
-        mCurrentTraining = intent.getParcelableExtra("CurrentTraining");
+        String mCurrentDate = intent.getStringExtra("CurrentDate");
 
-        if (mCurrentTraining == null) {
-            if (mTrainingIsNew) {
-                mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
-                //Calendar calendar = Calendar.getInstance();
+        if (mTrainingIsNew) {
+
+            mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
+            //Calendar calendar = Calendar.getInstance();
+            if ((mCurrentDate == null)) {
                 String cal = ((Date) Calendar.getInstance().getTime()).toLocaleString();
                 try {
                     mCurrentTraining.setDay((Date) Calendar.getInstance().getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
             } else {
-                int id = intent.getIntExtra("CurrentID", 0);
-                if (id == 0) {
-                    mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
-                } else {
-                    mCurrentTraining = db.getTraining(id);
+                try {
+                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
+
+        } else {
+            int id = intent.getIntExtra("CurrentID", 0);
+            if (id == 0) {
+                mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
+            } else {
+                mCurrentTraining = db.getTraining(id);
+            }
+            try {
+                mCurrentTraining.setDayString(mCurrentDate);
+            } catch (Exception e) {
+            }
         }
+
 
         showTrainingOnScreen();
 
@@ -90,20 +102,18 @@ public class TrainingActivity extends AppCompatActivity {
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
-        }else {
+        } else {
             getAllExercisesOfTraining();
         }
         saveTraining();
 
 
-
     }
-
 
 
     class ExerciseComp implements Comparator {
         public int compare(Object ex1, Object ex2) {
-            return ((Exercise) (ex1)).getID()-((Exercise) (ex2)).getID();
+            return ((Exercise) (ex1)).getID() - ((Exercise) (ex2)).getID();
         }
     }
 
@@ -212,14 +222,14 @@ public class TrainingActivity extends AppCompatActivity {
         Log.d("Reading: ", "Reading all exercises of training ..");
         mTrainingContentList = db.getAllTrainingContentOfTraining(mCurrentTraining.getID());
 
-        for (TrainingContent tr:mTrainingContentList
-             ) {
-            boolean isFound= false;
-            int id_ex=tr.getIdExercise();
-            for (Exercise ex:mActiveExercises
-                 ) {
-                if (ex.getID()==id_ex) {
-                    isFound=true;
+        for (TrainingContent tr : mTrainingContentList
+                ) {
+            boolean isFound = false;
+            int id_ex = tr.getIdExercise();
+            for (Exercise ex : mActiveExercises
+                    ) {
+                if (ex.getID() == id_ex) {
+                    isFound = true;
                     break;
                 }
 
@@ -227,12 +237,13 @@ public class TrainingActivity extends AppCompatActivity {
             //если в текущих активных не нашли - добавляем новое
             if (!isFound) {
                 //добавим в список упражнений упражнение старое
-                Exercise ex=db.getExercise(id_ex);
+                Exercise ex = db.getExercise(id_ex);
                 mActiveExercises.add(ex);
             }
-        };
+        }
+        ;
         //отсортируем по ID список упражнений
-        Collections.sort(mActiveExercises,new ExerciseComp());
+        Collections.sort(mActiveExercises, new ExerciseComp());
 
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
@@ -240,8 +251,8 @@ public class TrainingActivity extends AppCompatActivity {
             //покажем первое упражнение
 
 
-            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise()==mCurrentExercise.getID()) {
-                    mCurrentTrainingContent = mTrainingContentList.get(0);
+            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise() == mCurrentExercise.getID()) {
+                mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 int maxNum = db.getTrainingContentMaxNumber() + 1;
                 mCurrentTrainingContent = new TrainingContent(maxNum, "", mCurrentExercise.getID(), mCurrentTraining.getID());
@@ -293,7 +304,7 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
             if (mCurrentTrainingContent != null) {
                 String vol = mCurrentTrainingContent.getVolume();
-                if (vol != null && vol!="") {
+                if (vol != null && vol != "") {
                     etVolume.setText(vol);
                 } else {
                     etVolume.setText("");
@@ -362,30 +373,12 @@ public class TrainingActivity extends AppCompatActivity {
             if (mCurrentTraining.getDay() == null) {
                 etDay.setText("");
             } else {
-                etDay.setText(ConvertDateToString(mCurrentTraining.getDay()));
+                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay()));
             }
         }
 
     }
 
-    private String ConvertDateToString(Date date) {
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate = dateformat.format(date);
-
-        return sDate;
-    }
-
-    private Date ConvertStringToDate(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date d = null;
-        try {
-            d = dateFormat.parse(String.valueOf(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-
-        }
-        return d;
-    }
 
     public void btClose_onClick(View view) {
         Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
@@ -409,7 +402,7 @@ public class TrainingActivity extends AppCompatActivity {
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
 
-            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
+            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()));
 
             if (d != null) {
                 try {
@@ -490,16 +483,17 @@ public class TrainingActivity extends AppCompatActivity {
 
         Intent intent = new Intent(TrainingActivity.this, CalendarViewActivity.class);
 
-        intent.putExtra("CurrentTraining", mCurrentTraining);
+        //intent.putExtra("CurrentTraining", mCurrentTraining);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("CurrentActivity", "TrainingActivity");
-//        if (!mTrainingIsNew) {
-//        intent.putExtra("CurrentID",CurrentTraining.getID());
-//        }
-//        if (CurrentTraining.getDay()==null) {
-//            intent.putExtra("CurrentDate","");
-//        }else {
-//        intent.putExtra("CurrentDate",ConvertDateToString(CurrentTraining.getDay()));}
+        if (!mTrainingIsNew) {
+            intent.putExtra("CurrentTrainingID", mCurrentTraining.getID());
+        }
+        if (mCurrentTraining.getDay() == null) {
+            intent.putExtra("CurrentDate", "");
+        } else {
+            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay()));
+        }
 
         startActivity(intent);
     }
@@ -584,15 +578,16 @@ public class TrainingActivity extends AppCompatActivity {
             return false;
         }
     }
+
     public void btVolumeLeft_onClick(View view) {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a=0;
+            int a = 0;
             try {
                 a = Integer.parseInt(String.valueOf(etVolume.getText()));
 
-                a=a==0?0:a-1;
+                a = a == 0 ? 0 : a - 1;
 
                 etVolume.setText(String.valueOf(a));
             } catch (Exception e) {
@@ -602,11 +597,12 @@ public class TrainingActivity extends AppCompatActivity {
 
         }
     }
+
     public void btVolumeRight_onClick(View view) {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a=0;
+            int a = 0;
             try {
                 a = Integer.parseInt(String.valueOf(etVolume.getText()));
 

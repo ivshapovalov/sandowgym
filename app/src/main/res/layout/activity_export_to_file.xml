@@ -47,27 +47,33 @@
                 android:layout_height="wrap_content"
                 android:text="Период с"
                 android:id="@+id/textView6"
-                android:layout_span="10" />
+                android:layout_span="15" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvDayFrom"
-                android:layout_span="14"
+                android:layout_span="25"
                 android:onClick="tvDayFrom_onClick" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="по"
                 android:id="@+id/textView7"
-                android:layout_span="2" />
+                android:layout_span="15" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvDayTo"
-                android:layout_span="14"
+                android:layout_span="25"
                 android:onClick="tvDayTo_onClick" />
         </TableRow>
 

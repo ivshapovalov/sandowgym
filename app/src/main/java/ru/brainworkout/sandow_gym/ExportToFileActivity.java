@@ -2,6 +2,7 @@ package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
 import android.os.Environment;
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,16 +23,48 @@ public class ExportToFileActivity extends AppCompatActivity {
     public static final boolean isDebug = true;
     private final String TAG = this.getClass().getSimpleName();
 
-    Training mCurrentTraining;
-    TrainingContent mCurrentTrainingContent;
-    Exercise mCurrentExercise;
-
+    private String mDateFrom;
+    private String mDateTo;
     DatabaseManager db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_to_file);
+
+
+        Intent intent = getIntent();
+        String mCurrentDate = intent.getStringExtra("CurrentDate");
+        String mCurrentDateTo = intent.getStringExtra("CurrentDateTo");
+        Boolean isBeginDate = intent.getBooleanExtra("IsBeginDate", true);
+        mDateFrom = mCurrentDate;
+        mDateTo=mCurrentDateTo;
+
+        updateScreen();
+
+    }
+
+    private void updateScreen() {
+        //Имя
+        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
+        TextView etDayFrom = (TextView) findViewById(mDayFromID);
+        if (etDayFrom != null) {
+            if (mDateFrom == null || mDateFrom == "") {
+                etDayFrom.setText("");
+            } else {
+                etDayFrom.setText(mDateFrom);
+            }
+        }
+
+        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
+        TextView etDayTo = (TextView) findViewById(mDayToID);
+        if (etDayTo != null) {
+            if (mDateTo == null || mDateTo == "") {
+                etDayTo.setText("");
+            } else {
+                etDayTo.setText(mDateTo);
+            }
+        }
     }
 
     private void saveToFile() {
@@ -96,36 +129,36 @@ public class ExportToFileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private Date ConvertStringToDate(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date d = null;
-        try {
-            d = dateFormat.parse(String.valueOf(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-
-        }
-        return d;
-    }
-
     public void tvDayFrom_onClick(View view) {
-
-        Intent intent = new Intent(ExportToFileActivity.this, CalendarViewActivity.class);
-        intent.putExtra("BEGIN", true);
-        intent.putExtra("CurrentActivity", "ExportToFileActivity");
-
-        int mDayID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
-        TextView tvDay = (TextView) findViewById(mDayID);
-        if (tvDay != null) {
-            intent.putExtra("Date",String.valueOf(tvDay.getText()));
-        }
-        startActivity(intent);
+        day_onClick(true);
     }
+
     public void tvDayTo_onClick(View view) {
 
+        day_onClick(false);
+    }
+
+    private void day_onClick(boolean isBeginDate) {
+
         Intent intent = new Intent(ExportToFileActivity.this, CalendarViewActivity.class);
-        intent.putExtra("BEGIN", false);
+        intent.putExtra("IsBeginDate", isBeginDate);
         intent.putExtra("CurrentActivity", "ExportToFileActivity");
+
+        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
+        TextView tvDayFrom = (TextView) findViewById(mDayFromID);
+        if (tvDayFrom != null) {
+            intent.putExtra("CurrentDate", String.valueOf(tvDayFrom.getText()));
+        } else {
+            intent.putExtra("CurrentDate", "");
+        }
+        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
+        TextView tvDayTo = (TextView) findViewById(mDayToID);
+        if (tvDayTo != null) {
+            intent.putExtra("CurrentDateTo", String.valueOf(tvDayTo.getText()));
+        } else {
+            intent.putExtra("CurrentDateTo", "");
+        }
+
         startActivity(intent);
     }
 }
