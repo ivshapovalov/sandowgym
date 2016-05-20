@@ -25,11 +25,14 @@ public class CalendarViewActivity extends AppCompatActivity {
 
     //private String mCurrentDate;
     private boolean mTrainingIsNew;
+    private Boolean mIsBeginDate;
+    private Date mCurrentDate;
+    private int mCurrentTraningID;
     // private int mCurrentID;
     private Training mTrainingCurrent;
     private Training mTrainingNew;
     private String mCurrentActivity;
-    private Boolean mBeginDate;
+
 
     private boolean isChecked;
 
@@ -42,7 +45,7 @@ public class CalendarViewActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         Intent intent = getIntent();
 
-        mBeginDate = intent.getBooleanExtra("BEGIN", true);
+        mIsBeginDate = intent.getBooleanExtra("BEGIN", true);
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
         mCurrentActivity = intent.getStringExtra("CurrentActivity");
         mTrainingCurrent = intent.getParcelableExtra("CurrentTraining");
