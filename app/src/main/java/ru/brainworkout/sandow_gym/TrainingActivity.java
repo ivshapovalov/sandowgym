@@ -88,7 +88,9 @@ public class TrainingActivity extends AppCompatActivity {
                 mCurrentTraining = db.getTraining(id);
             }
             try {
-                mCurrentTraining.setDayString(mCurrentDate);
+                if ((mCurrentDate != null)) {
+                    mCurrentTraining.setDayString(mCurrentDate);
+                }
             } catch (Exception e) {
             }
         }
@@ -273,11 +275,11 @@ public class TrainingActivity extends AppCompatActivity {
         Exercise ex1;
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
-            ex1 = mActiveExercises.get(mCurrentExerciseNumberInList);
+            mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
             //покажем первое упражнение
-            showTrainingContentOnScreen(ex1);
+            showTrainingContentOnScreen(mCurrentExercise);
             int maxNum = db.getTrainingContentMaxNumber() + 1;
-            mCurrentTrainingContent = new TrainingContent(maxNum, "", ex1.getID(), mCurrentTraining.getID());
+            mCurrentTrainingContent = new TrainingContent(maxNum, "", mCurrentExercise.getID(), mCurrentTraining.getID());
             db.addTrainingContent(mCurrentTrainingContent);
         }
     }
