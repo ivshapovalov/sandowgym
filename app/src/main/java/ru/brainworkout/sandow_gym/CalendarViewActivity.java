@@ -82,9 +82,9 @@ public class CalendarViewActivity extends AppCompatActivity {
                 int mYear = year;
                 int mMonth = month;
                 int mDay = dayOfMonth;
-                mNewDate = new StringBuilder().append(mYear)
+                mNewDate = Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(mYear)
                         .append("-").append(mMonth + 1).append("-").append(mDay)
-                        .append("").toString();
+                        .append("").toString()));
             }
         });
 

@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Выгрузить"
-                android:id="@+id/btSave"
+                android:id="@+id/btExport"
 
                 android:onClick="btExport_onClick"
                 android:layout_span="20" />

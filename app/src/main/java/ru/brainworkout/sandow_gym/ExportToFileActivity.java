@@ -10,7 +10,20 @@ import android.widget.TextView;
 
 import com.opencsv.CSVWriter;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,19 +40,24 @@ public class ExportToFileActivity extends AppCompatActivity {
     private String mDateTo;
     DatabaseManager db;
 
+    List<Training> mTrainingsList;
+    List<Exercise> mExercisesList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_to_file);
 
+        db = new DatabaseManager(this);
 
         Intent intent = getIntent();
         String mCurrentDate = intent.getStringExtra("CurrentDate");
         String mCurrentDateTo = intent.getStringExtra("CurrentDateTo");
         Boolean isBeginDate = intent.getBooleanExtra("IsBeginDate", true);
         mDateFrom = mCurrentDate;
-        mDateTo=mCurrentDateTo;
-
+        mDateTo = mCurrentDateTo;
+        mDateFrom = "2016-05-16";
+        mDateTo = "2016-05-19";
         updateScreen();
 
     }
@@ -78,6 +96,68 @@ public class ExportToFileActivity extends AppCompatActivity {
 
 
         File file = new File(exportDir, "trainings.csv");
+        List<String[]> data = new ArrayList<String[]>();
+
+        try
+
+        {
+
+            if (file.createNewFile()) {
+                System.out.println("File is created!");
+
+            } else {
+                System.out.println("File already exists.");
+            }
+
+
+            CSVWriter writer = new CSVWriter(new FileWriter(file));
+
+
+
+
+            StringBuilder mNewString = new StringBuilder();
+            mNewString.append("Упражнение/Дата;");
+            for (Training mCurrentTraining : mTrainingsList
+                    ) {
+                mNewString.append(mCurrentTraining.getDayString()).append(";");
+            }
+            String[] entries = mNewString.toString().split(";");
+            data.add(entries);
+
+            for (Exercise mCurrentExercise : mExercisesList
+                    ) {
+                mNewString = new StringBuilder();
+                mNewString.append(mCurrentExercise.getName()).append(";");
+                for (Training mCurrentTraining : mTrainingsList
+                        ) {
+                    TrainingContent mCurrentTrainingContent = mCurrentTraining.getTrainingContentList().get(mExercisesList.indexOf(mCurrentExercise));
+                    if (mCurrentTrainingContent.getVolume() == null) {
+                        mNewString.append(";");
+                    } else {
+                        mNewString.append(mCurrentTrainingContent.getVolume()).append(";");
+                    }
+
+
+                }
+                entries = mNewString.toString().split(";");
+                data.add(entries);
+            }
+
+            writer.writeAll(data);
+
+            //System.out.println("GOOD");
+            writer.close();
+            System.out.println("trainings.csv " + file.getAbsolutePath());
+
+
+
+
+        } catch (
+                Exception e) {
+        }
+            //в эксель
+
+        file = new File(exportDir, "trainings.xls");
 
 
         try
@@ -86,40 +166,140 @@ public class ExportToFileActivity extends AppCompatActivity {
 
             if (file.createNewFile()) {
                 System.out.println("File is created!");
-                System.out.println("trainings.csv " + file.getAbsolutePath());
+
             } else {
                 System.out.println("File already exists.");
             }
 
-
-            CSVWriter writer = new CSVWriter(new FileWriter(file));
-
-            List<String[]> data = new ArrayList<String[]>();
-            data.add(new String[]{"India", "New Delhi"});
-            data.add(new String[]{"United States", "Washington D.C"});
-            data.add(new String[]{"Germany", "Berlin"});
-
-            writer.writeAll(data);
-
-            writer.close();
-        /*String data="";
-        data=readSavedData();
-        data= data.replace(",", ";");
-        writeData(data);*/
+            Workbook book = new HSSFWorkbook();
+            Sheet sheet = book.createSheet("trainings");
+           // sheet.autoSizeColumn(0);
 
 
-        } catch (
-                Exception e) {
-        }
+            // Нумерация начинается с нуля
+            Row row = sheet.createRow(0);
+            Cell cName;
+            Font font = book.getFontAt((short)0);
+            font.setFontName("Arial");
+
+            CellStyle boldStyle = book.createCellStyle();
+            boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+            boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            boldStyle.setFont(font);
+            boldStyle.setWrapText(true);
+            boldStyle.setIndention((short)2);
+
+            cName = row.createCell(0);
+            cName.setCellStyle(boldStyle);
+            cName.setCellValue(data.get(0)[0]);
+
+
+            CellStyle usualStyle = book.createCellStyle();
+            usualStyle.setFont(font);
+            usualStyle.setWrapText(true);
+            usualStyle.setIndention((short)2);
+
+            CellStyle dateStyle = book.createCellStyle();
+
+            dateStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+            dateStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            DataFormat format = book.createDataFormat();
+            dateStyle.setDataFormat(format.getFormat("yyyy-mm-dd"));
+            dateStyle.setFont(font);
+            dateStyle.setWrapText(true);
+            dateStyle.setIndention((short)2);
+            for (int j= 1; j < data.get(0).length; j++) {
+                cName = row.createCell(j);
+                cName.setCellStyle(dateStyle);
+                cName.setCellValue(Common.ConvertStringToDate(data.get(0)[j]));
+            }
+
+
+            for (int i = 1; i < data.size(); i++) {
+                row = sheet.createRow(i);
+                //sheet.autoSizeColumn(i);
+                for (int j = 0; j < data.get(i).length; j++) {
+                    cName = row.createCell(j);
+                    if (j==0) {
+                        cName.setCellStyle(boldStyle);
+                    } else {
+                        cName.setCellStyle(usualStyle);
+                    }
+                    try {
+                        cName.setCellValue(Integer.valueOf(data.get(i)[j]));
+                    } catch (Exception e) {
+                        cName.setCellValue((data.get(i)[j]));
+                    }
+                    System.out.println("Строка -" +String.valueOf(i)+": Колонка -"+String.valueOf(j)+ " : Текст - "+(String)(data.get(i)[j]));
+                }
+                //System.out.println("Строка +" +String.valueOf(i));
+
+            }
+            book.getSheetAt(0).setPrintGridlines(true);
+            // Нумерация лет начинается с 1900-го
+            //birthdate.setCellValue(new Date(110, 10, 10));
+
+            // Меняем размер столбца
+            //sheet.autoSizeColumn(1);
+            for (int j= 0; j < data.get(0).length; j++) {
+
+                sheet.autoSizeColumn(j);
+
+            }
+
+
+            // Записываем всё в файл
+            book.write(new FileOutputStream(file));
+            book.close();
+
+            System.out.println("trainings.xls " + file.getAbsolutePath());
+        } catch (Exception e) {}
+
     }
 
 
     public void btExport_onClick(View view) {
 
-        saveToFile();
-        Intent intent = new Intent(ExportToFileActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        boolean fault = false;
+        //Проверим даты
+        if (mDateFrom == null || "".equals(mDateFrom) || mDateTo == null || "".equals(mDateFrom)) {
+            fault = true;
+        }
+        if (!fault) {
+            getDataFromDB();
+            saveToFile();
+        }
+
+    }
+
+    private void getDataFromDB() {
+
+        mTrainingsList = db.getTrainingsByDates(mDateFrom, mDateTo);
+
+        mExercisesList = db.getExercisesByDates(mDateFrom, mDateTo);
+
+        for (Training mCurrentTraining : mTrainingsList
+                ) {
+            List<TrainingContent> mTrainingContentList = new ArrayList<>();
+
+            for (Exercise mCurrentExercise : mExercisesList
+                    ) {
+                TrainingContent mCurrentTrainingContent = db.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
+
+                if (mCurrentTrainingContent == null) {
+                    mTrainingContentList.add(new TrainingContent());
+                } else {
+                    mTrainingContentList.add(mCurrentTrainingContent);
+                }
+
+
+            }
+            mCurrentTraining.setTrainingContentList(mTrainingContentList);
+        }
+
+        //System.out.println("GOOD");
+
+
     }
 
     public void btClose_onClick(View view) {

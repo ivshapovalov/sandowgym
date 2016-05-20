@@ -41,7 +41,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView"
                     android:background="@drawable/ic_sandow_big"
-                    android:scaleType="matrix" />
+                    android:scaleType="matrix"
+                    android:visibility="gone" />
             </TableRow>
 
             <TableRow

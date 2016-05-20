@@ -137,9 +137,8 @@ public class TrainingsListActivity extends AppCompatActivity {
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
             String data = "";
-            if (trainings.get(numEx).getDay() != null) {
-                data = String.valueOf(trainings.get(numEx).getDay().getYear() + 1900) + "-" + String.valueOf(trainings.get(numEx).getDay().getMonth() + 1) + "-" + String.valueOf(trainings.get(numEx).getDay().getDate());
-            }
+
+            data=Common.ConvertDateToString(trainings.get(numEx).getDay());
 
             txt.setText(data);
             txt.setGravity(Gravity.CENTER);

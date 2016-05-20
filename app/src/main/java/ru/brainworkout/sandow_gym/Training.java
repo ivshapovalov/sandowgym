@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Ivan on 14.05.2016.
@@ -14,6 +15,7 @@ import java.util.Date;
 public class Training  implements Parcelable{
     private int _id;
     private Date _day;
+    private List<TrainingContent> trainingContentList;
 
     @Override
     public int describeContents() {
@@ -71,6 +73,14 @@ public class Training  implements Parcelable{
     public Training(int _id) {
 
         this._id = _id;
+    }
+
+    public List<TrainingContent> getTrainingContentList() {
+        return trainingContentList;
+    }
+
+    public void setTrainingContentList(List<TrainingContent> trainingContentList) {
+        this.trainingContentList = trainingContentList;
     }
 
     public int getID() {

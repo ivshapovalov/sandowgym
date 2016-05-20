@@ -23,7 +23,10 @@ public class Common {
 
     public static String ConvertDateToString(Date date) {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate = dateformat.format(date);
+        String sDate="";
+        try {
+            sDate = dateformat.format(date);
+        } catch (Exception e) {}
 
         return sDate;
     }
