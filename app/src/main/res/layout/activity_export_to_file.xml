@@ -36,6 +36,13 @@
                 android:onClick="btClose_onClick"
                 android:layout_span="20" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Загрузить"
+                android:id="@+id/button10"
+                android:onClick="btImportFromFile_onClick" />
+
         </TableRow>
 
         <TableRow
@@ -75,6 +82,18 @@
                 android:id="@+id/tvDayTo"
                 android:layout_span="25"
                 android:onClick="tvDayTo_onClick" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/tvPathToFiles"
+                android:layout_span="40"
+                android:gravity="center" />
         </TableRow>
 
     </TableLayout>

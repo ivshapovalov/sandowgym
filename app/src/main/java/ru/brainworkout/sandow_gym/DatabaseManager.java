@@ -316,14 +316,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public List<Exercise> getExercisesByDates(String mDateFrom, String mDateTo) {
+
+        mDateFrom="".equals(mDateFrom)?"0000-00-00":mDateFrom;
+        mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
         List<Exercise> exerciseList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
                 + TABLE_TRAININGS + "," + TABLE_EXERCISES + "," + TABLE_TRAINING_CONTENT
                 + " WHERE " + TABLE_EXERCISES + "." + KEY_EXERCISE_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE
                 + " AND " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING + "=" + TABLE_TRAININGS + "." + KEY_TRAINING_ID
-                + " AND " + KEY_TRAINING_DAY + ">= '" + mDateFrom + "' AND " + KEY_TRAINING_DAY + "<='" + mDateTo
-                + "' GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")" + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
+                + " AND " + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + KEY_TRAINING_DAY + "<=\"" + mDateTo
+                + "\" GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")" + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -370,10 +373,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public List<Training> getTrainingsByDates(String mDateFrom, String mDateTo) {
         List<Training> trainingsList = new ArrayList<>();
         // Select All Query
+        mDateFrom="".equals(mDateFrom)?"0000-00-00":mDateFrom;
+        mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
 
         String selectQuery = "SELECT * FROM " + TABLE_TRAININGS +
-                " WHERE " + KEY_TRAINING_DAY + ">=' " + mDateFrom + "' AND " + KEY_TRAINING_DAY + "<='" + mDateTo +
-                "' ORDER BY " + KEY_TRAINING_DAY;
+                " WHERE " + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + KEY_TRAINING_DAY + "<=\"" + mDateTo +
+                "\" ORDER BY " + KEY_TRAINING_DAY;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

@@ -40,6 +40,7 @@ public class ExportToFileActivity extends AppCompatActivity {
     private String mDateTo;
     DatabaseManager db;
 
+    StringBuilder message=new StringBuilder();
     List<Training> mTrainingsList;
     List<Exercise> mExercisesList;
 
@@ -56,8 +57,9 @@ public class ExportToFileActivity extends AppCompatActivity {
         Boolean isBeginDate = intent.getBooleanExtra("IsBeginDate", true);
         mDateFrom = mCurrentDate;
         mDateTo = mCurrentDateTo;
-        mDateFrom = "2016-05-16";
-        mDateTo = "2016-05-19";
+//        mDateFrom = "2016-05-16";
+//        mDateTo = "2016-05-19";
+
         updateScreen();
 
     }
@@ -94,14 +96,12 @@ public class ExportToFileActivity extends AppCompatActivity {
             exportDir.mkdirs();
         }
 
-
         File file = new File(exportDir, "trainings.csv");
         List<String[]> data = new ArrayList<String[]>();
 
         try
 
         {
-
             if (file.createNewFile()) {
                 System.out.println("File is created!");
 
@@ -109,17 +109,13 @@ public class ExportToFileActivity extends AppCompatActivity {
                 System.out.println("File already exists.");
             }
 
-
-            CSVWriter writer = new CSVWriter(new FileWriter(file));
-
-
-
-
+            CSVWriter writer = new CSVWriter(new FileWriter(file),";".charAt(0));
             StringBuilder mNewString = new StringBuilder();
             mNewString.append("Упражнение/Дата;");
             for (Training mCurrentTraining : mTrainingsList
                     ) {
                 mNewString.append(mCurrentTraining.getDayString()).append(";");
+                message.append(mCurrentTraining.getDayString()).append('\n');
             }
             String[] entries = mNewString.toString().split(";");
             data.add(entries);
@@ -127,7 +123,9 @@ public class ExportToFileActivity extends AppCompatActivity {
             for (Exercise mCurrentExercise : mExercisesList
                     ) {
                 mNewString = new StringBuilder();
-                mNewString.append(mCurrentExercise.getName()).append(";");
+                mNewString.append(mCurrentExercise.getName()).append("(id#").
+                        append(String.valueOf(mCurrentExercise.getID()))
+                        .append(")").append(";");
                 for (Training mCurrentTraining : mTrainingsList
                         ) {
                     TrainingContent mCurrentTrainingContent = mCurrentTraining.getTrainingContentList().get(mExercisesList.indexOf(mCurrentExercise));
@@ -147,15 +145,13 @@ public class ExportToFileActivity extends AppCompatActivity {
 
             //System.out.println("GOOD");
             writer.close();
-            System.out.println("trainings.csv " + file.getAbsolutePath());
-
-
+            //System.out.println("trainings.csv " + file.getAbsolutePath());
 
 
         } catch (
                 Exception e) {
         }
-            //в эксель
+        //в эксель
 
         file = new File(exportDir, "trainings.xls");
 
@@ -173,31 +169,33 @@ public class ExportToFileActivity extends AppCompatActivity {
 
             Workbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("trainings");
-           // sheet.autoSizeColumn(0);
+            // sheet.autoSizeColumn(0);
 
 
             // Нумерация начинается с нуля
             Row row = sheet.createRow(0);
             Cell cName;
-            Font font = book.getFontAt((short)0);
-            font.setFontName("Arial");
+            Font font = book.getFontAt((short) 0);
+            //font.setFontName("Arial");
 
             CellStyle boldStyle = book.createCellStyle();
             boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
             boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             boldStyle.setFont(font);
-            boldStyle.setWrapText(true);
-            boldStyle.setIndention((short)2);
+            //boldStyle.setWrapText(true);
+            //boldStyle.setIndention((short)2);
 
             cName = row.createCell(0);
+
             cName.setCellStyle(boldStyle);
             cName.setCellValue(data.get(0)[0]);
+            cName.setCellStyle(boldStyle);
 
 
             CellStyle usualStyle = book.createCellStyle();
             usualStyle.setFont(font);
-            usualStyle.setWrapText(true);
-            usualStyle.setIndention((short)2);
+            //usualStyle.setWrapText(true);
+            //usualStyle.setIndention((short)2);
 
             CellStyle dateStyle = book.createCellStyle();
 
@@ -206,12 +204,13 @@ public class ExportToFileActivity extends AppCompatActivity {
             DataFormat format = book.createDataFormat();
             dateStyle.setDataFormat(format.getFormat("yyyy-mm-dd"));
             dateStyle.setFont(font);
-            dateStyle.setWrapText(true);
-            dateStyle.setIndention((short)2);
-            for (int j= 1; j < data.get(0).length; j++) {
+            //dateStyle.setWrapText(true);
+            //dateStyle.setIndention((short)2);
+            for (int j = 1; j < data.get(0).length; j++) {
                 cName = row.createCell(j);
                 cName.setCellStyle(dateStyle);
                 cName.setCellValue(Common.ConvertStringToDate(data.get(0)[j]));
+                cName.setCellStyle(dateStyle);
             }
 
 
@@ -220,7 +219,8 @@ public class ExportToFileActivity extends AppCompatActivity {
                 //sheet.autoSizeColumn(i);
                 for (int j = 0; j < data.get(i).length; j++) {
                     cName = row.createCell(j);
-                    if (j==0) {
+
+                    if (j == 0) {
                         cName.setCellStyle(boldStyle);
                     } else {
                         cName.setCellStyle(usualStyle);
@@ -230,7 +230,12 @@ public class ExportToFileActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         cName.setCellValue((data.get(i)[j]));
                     }
-                    System.out.println("Строка -" +String.valueOf(i)+": Колонка -"+String.valueOf(j)+ " : Текст - "+(String)(data.get(i)[j]));
+                    if (j == 0) {
+                        cName.setCellStyle(boldStyle);
+                    } else {
+                        cName.setCellStyle(usualStyle);
+                    }
+                    //System.out.println("Строка -" +String.valueOf(i)+": Колонка -"+String.valueOf(j)+ " : Текст - "+(String)(data.get(i)[j]));
                 }
                 //System.out.println("Строка +" +String.valueOf(i));
 
@@ -240,35 +245,50 @@ public class ExportToFileActivity extends AppCompatActivity {
             //birthdate.setCellValue(new Date(110, 10, 10));
 
             // Меняем размер столбца
-            //sheet.autoSizeColumn(1);
-            for (int j= 0; j < data.get(0).length; j++) {
 
-                sheet.autoSizeColumn(j);
-
-            }
+//            for (int j= 0; j < data.get(0).length; j++) {
+//
+            //sheet.autoSizeColumn(j);
+//
+//            }
 
 
             // Записываем всё в файл
             book.write(new FileOutputStream(file));
+            //sheet.autoSizeColumn((short) 0);
             book.close();
 
-            System.out.println("trainings.xls " + file.getAbsolutePath());
-        } catch (Exception e) {}
+            //System.out.println("trainings.xls " + file.getAbsolutePath());
+            int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
+            TextView tvPath = (TextView) findViewById(mPath);
+            if (tvPath != null) {
+                tvPath.setText("В файлы (CSV и XLS) по пути \n" +Environment.getExternalStorageDirectory().toString()+'\n'
+                        + " успешно выгружены тренировки\n"+ message.toString());
+            }
+        } catch (Exception e) {
+            int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
+            TextView tvPath = (TextView) findViewById(mPath);
+            if (tvPath != null) {
+                tvPath.setText("Файлы не выгружены в " +Environment.getExternalStorageDirectory().toString());
+            }
+        }
 
     }
 
 
     public void btExport_onClick(View view) {
 
-        boolean fault = false;
+       // boolean fault = false;
         //Проверим даты
-        if (mDateFrom == null || "".equals(mDateFrom) || mDateTo == null || "".equals(mDateFrom)) {
-            fault = true;
+        if (mDateFrom == null || "".equals(mDateFrom)) {
+            mDateFrom="0000-00-00";}
+        if( mDateTo == null || "".equals(mDateFrom)) {
+            mDateTo = "9999-99-99";
         }
-        if (!fault) {
+
             getDataFromDB();
             saveToFile();
-        }
+
 
     }
 
@@ -341,4 +361,22 @@ public class ExportToFileActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+
+    public void btImportFromFile_onClick(View view) {
+
+        loadFromFile();
+    }
+    private void loadFromFile() {
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+        if (exportDir.exists()) {
+            File file = new File(exportDir, "trainings.csv");
+            if (file.exists()) {
+                //грузим из файла
+            }
+
+        }
+
+
+    }
 }
+
