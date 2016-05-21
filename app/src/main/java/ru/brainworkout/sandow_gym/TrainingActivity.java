@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -47,6 +49,9 @@ public class TrainingActivity extends AppCompatActivity {
     private int mCurrentExerciseNumberInList;
 
     private List<TrainingContent> mTrainingContentList;
+
+    private int mWidthRow ;
+    private int mHeightRow ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +113,7 @@ public class TrainingActivity extends AppCompatActivity {
             getAllExercisesOfTraining();
         }
         saveTraining();
+        updateTrainingList();
 
 
     }
@@ -513,11 +519,13 @@ public class TrainingActivity extends AppCompatActivity {
         public final void onRightToLeftSwipe() {
             System.out.println("Right to Left swipe [Previous]");
             setNextExercise();
+            updateTrainingList();
         }
 
         public void onLeftToRightSwipe() {
             System.out.println("Left to Right swipe [Next]");
             setPreviousExercise();
+            updateTrainingList();
 
         }
 
@@ -600,6 +608,25 @@ public class TrainingActivity extends AppCompatActivity {
         }
     }
 
+    public void btVolumeLeft10_onClick(View view) {
+
+        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        if (etVolume != null) {
+            int a = 0;
+            try {
+                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+
+                a = a <= 10 ? 0 : a - 10;
+
+                etVolume.setText(String.valueOf(a));
+            } catch (Exception e) {
+
+            }
+
+
+        }
+    }
+
     public void btVolumeRight_onClick(View view) {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
@@ -614,5 +641,87 @@ public class TrainingActivity extends AppCompatActivity {
             a++;
             etVolume.setText(String.valueOf(a));
         }
+    }
+
+    public void btVolumeRight10_onClick(View view) {
+
+        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        if (etVolume != null) {
+            int a = 0;
+            try {
+                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+
+            } catch (Exception e) {
+
+            }
+            a += 10;
+            etVolume.setText(String.valueOf(a));
+        }
+    }
+
+    private void updateTrainingList() {
+        TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
+        if (trow != null) {
+            trow.removeAllViews();
+            mWidthRow = trow.getWidth();
+            mHeightRow = trow.getHeight();
+
+            int mNumBegin = 0;
+            int mNumEnd = 0;
+            if (mCurrentExerciseNumberInList <= 3) {
+                mNumBegin = 0;
+                mNumEnd = 5;
+            } else if (mCurrentExerciseNumberInList >= mActiveExercises.size() - 3) {
+                mNumBegin = mActiveExercises.size() - 5;
+                mNumEnd = mActiveExercises.size() - 1;
+            } else {
+                mNumBegin = mCurrentExerciseNumberInList - 2;
+                mNumEnd = mCurrentExerciseNumberInList + 2;
+            }
+            for (int mCount =mNumBegin; mCount < mNumEnd; mCount++) {
+                TextView txt = new TextView(this);
+                txt.setId(10000 + mCount);
+                txt.setText(mCount);
+                txt.setBackgroundResource(R.drawable.textview_border);
+                txt.setGravity(Gravity.CENTER);
+                txt.setHeight(mHeightRow);
+                //txt.setTextSize(mTextSize);
+
+                //params.span = 3;
+                //txt.setLayoutParams(params);
+
+                trow.addView(txt);
+                txt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        txtTrainingList_onClick((TextView) v);
+                    }
+                });
+
+
+            }
+
+
+        }
+
+    }
+    private void txtTrainingList_onClick(TextView v) {
+
+        int id = v.getId() % 10000;
+        //System.out.println(String.valueOf(a));
+
+        int a=mCurrentExerciseNumberInList-id;
+        if (a>0) {
+            for (int i = 1; i <= a; i++) {
+                setPreviousExercise();
+            }
+
+        } else if (a<0) {
+            for (int i = 1; i <= Math.abs(a); i++) {
+                setNextExercise();
+            }
+        }
+
+
     }
 }

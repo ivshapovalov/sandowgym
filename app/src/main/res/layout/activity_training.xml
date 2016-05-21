@@ -47,21 +47,24 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="30dp">
 
             <TextView
                 style="@android:style/TextAppearance.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:text="ID"
-                android:layout_span="2" />
+                android:layout_span="2"
+                android:background="@drawable/textview_border" />
 
             <TextView
                 style="@android:style/TextAppearance.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/tvID"
-                android:layout_span="8" />
+                android:layout_span="8"
+                android:background="@drawable/textview_border" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -69,14 +72,16 @@
                 android:text="Дата"
                 android:id="@+id/textView2"
                 style="@android:style/TextAppearance.Small"
-                android:layout_span="5" />
+                android:layout_span="10"
+                android:background="@drawable/textview_border" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/tvDay"
                 android:layout_span="10"
-                android:onClick="tvDay_onClick" />
+                android:onClick="tvDay_onClick"
+                android:background="@drawable/textview_border" />
 
         </TableRow>
 
@@ -103,37 +108,65 @@
                         android:layout_height="match_parent" >
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/tvExerciseName"
-                            android:layout_span="30" />
+                            android:layout_span="50"
+                            android:background="@drawable/textview_border" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
                         <Button
                             style="?android:attr/buttonStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                                     android:layout_span="5"
-                            android:onClick="btVolumeLeft_onClick"
-                            android:text="-" />
+                            android:layout_span="8"
+                            android:onClick="btVolumeLeft10_onClick"
+                            android:text="-10"
+                            android:id="@+id/button11"
+                            android:textSize="20sp" />
 
-                        <EditText
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                                     android:layout_span="8"
+                            android:onClick="btVolumeLeft_onClick"
+                            android:text="-"
+                            android:textSize="20sp" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:inputType="numberDecimal"
                             android:ems="10"
                             android:id="@+id/etVolume"
-                            android:layout_span="10"
+                            android:layout_span="18"
                             android:textColorHint="@color/dim_foreground_material_dark"
-                            android:gravity="center" />
+                            android:background="@drawable/rounded_corners2" />
 
                         <Button
                             style="?android:attr/buttonStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_span="5"
+                            android:layout_span="8"
                             android:onClick="btVolumeRight_onClick"
-                            android:text="+" />
+                            android:text="+"
+                            android:textSize="20sp" />
 
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="8"
+                            android:onClick="btVolumeRight10_onClick"
+                            android:text="+10"
+                            android:id="@+id/button12"
+                            android:textSize="20sp" />
                     </TableRow>
 
                     <TableRow
@@ -162,6 +195,11 @@
             </ScrollView>
 
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/trowTrainingList"></TableRow>
 
 
     </TableLayout>

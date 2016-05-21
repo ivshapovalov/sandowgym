@@ -26,7 +26,7 @@
                 android:id="@+id/btExport"
 
                 android:onClick="btExport_onClick"
-                android:layout_span="20" />
+                android:layout_span="14" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -34,14 +34,15 @@
                 android:text="Закрыть"
                 android:id="@+id/btClose"
                 android:onClick="btClose_onClick"
-                android:layout_span="20" />
+                android:layout_span="12" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Загрузить"
                 android:id="@+id/button10"
-                android:onClick="btImportFromFile_onClick" />
+                android:onClick="btImportFromFile_onClick"
+                android:layout_span="14" />
 
         </TableRow>
 
