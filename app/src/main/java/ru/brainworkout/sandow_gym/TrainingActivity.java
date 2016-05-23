@@ -2,6 +2,8 @@ package ru.brainworkout.sandow_gym;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -138,19 +141,7 @@ public class TrainingActivity extends AppCompatActivity {
 
                 mCurrentExerciseNumberInList++;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-
-                ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
-                if (ivPicture != null) {
-                    ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
-                }
-                TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
-                if (tvExplanation != null) {
-
-                    tvExplanation.setText(mCurrentExercise.getExplanation());
-                }
-
                 //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
-
                 boolean isFound = false;
                 for (TrainingContent mTr : mTrainingContentList) {
                     if (mTr.getIdExercise() == mCurrentExercise.getID()) {
@@ -168,11 +159,22 @@ public class TrainingActivity extends AppCompatActivity {
                     mCurrentTrainingContent.setVolume("");
                     db.addTrainingContent(mCurrentTrainingContent);
                 }
-                showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
-
             }
-
         }
+    }
+    private void showPreviousExercise() {
+        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        if (ivPicture != null) {
+            ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
+        }
+        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+        if (tvExplanation != null) {
+
+            tvExplanation.setText(mCurrentExercise.getExplanation());
+        }
+        showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
+        updateTrainingList();
+
     }
 
     private void setPreviousExercise() {
@@ -188,16 +190,6 @@ public class TrainingActivity extends AppCompatActivity {
 
                 mCurrentExerciseNumberInList--;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-
-                ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
-                if (ivPicture != null) {
-                    ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
-                }
-                TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
-                if (tvExplanation != null) {
-
-                    tvExplanation.setText(mCurrentExercise.getExplanation());
-                }
 
                 //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
                 boolean isFound = false;
@@ -217,9 +209,24 @@ public class TrainingActivity extends AppCompatActivity {
                     mCurrentTrainingContent.setIdTraining(mCurrentTraining.getID());
                     db.addTrainingContent(mCurrentTrainingContent);
                 }
-                showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
             }
         }
+
+    }
+
+    private void showNextExercise() {
+        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        if (ivPicture != null) {
+            ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
+        }
+        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+        if (tvExplanation != null) {
+
+            tvExplanation.setText(mCurrentExercise.getExplanation());
+        }
+        showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
+        updateTrainingList();
+
     }
 
     private void getAllExercisesOfTraining() {
@@ -519,13 +526,15 @@ public class TrainingActivity extends AppCompatActivity {
         public final void onRightToLeftSwipe() {
             System.out.println("Right to Left swipe [Previous]");
             setNextExercise();
-            updateTrainingList();
+            showNextExercise();
+
         }
 
         public void onLeftToRightSwipe() {
             System.out.println("Left to Right swipe [Next]");
             setPreviousExercise();
-            updateTrainingList();
+            showPreviousExercise();
+
 
         }
 
@@ -634,12 +643,12 @@ public class TrainingActivity extends AppCompatActivity {
             int a = 0;
             try {
                 a = Integer.parseInt(String.valueOf(etVolume.getText()));
-
+                a++;
+                etVolume.setText(String.valueOf(a));
             } catch (Exception e) {
 
             }
-            a++;
-            etVolume.setText(String.valueOf(a));
+
         }
     }
 
@@ -650,45 +659,53 @@ public class TrainingActivity extends AppCompatActivity {
             int a = 0;
             try {
                 a = Integer.parseInt(String.valueOf(etVolume.getText()));
+                a += 10;
+                etVolume.setText(String.valueOf(a));
 
             } catch (Exception e) {
 
             }
-            a += 10;
-            etVolume.setText(String.valueOf(a));
+
         }
     }
 
     private void updateTrainingList() {
+        //TableLayout mTableMain=(TableLayout)findViewById(R.id.mTableMain);
         TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
+
+        TableRow.LayoutParams params=new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT);
+        params.span=6;
         if (trow != null) {
             trow.removeAllViews();
-            mWidthRow = trow.getWidth();
-            mHeightRow = trow.getHeight();
+            //trow.setMinimumHeight(25);
+            //mWidthRow = mTableMain.getWidth();
+            //mHeightRow = mTableMain.getHeight();
 
             int mNumBegin = 0;
             int mNumEnd = 0;
-            if (mCurrentExerciseNumberInList <= 3) {
-                mNumBegin = 0;
+            if (mCurrentExerciseNumberInList+1 <= 3) {
+                mNumBegin = 1;
                 mNumEnd = 5;
             } else if (mCurrentExerciseNumberInList >= mActiveExercises.size() - 3) {
-                mNumBegin = mActiveExercises.size() - 5;
-                mNumEnd = mActiveExercises.size() - 1;
+                mNumBegin = mActiveExercises.size() - 4;
+                mNumEnd = mActiveExercises.size();
             } else {
-                mNumBegin = mCurrentExerciseNumberInList - 2;
-                mNumEnd = mCurrentExerciseNumberInList + 2;
+                mNumBegin = (mCurrentExerciseNumberInList+1) - 2;
+                mNumEnd = (mCurrentExerciseNumberInList+1) + 2;
             }
-            for (int mCount =mNumBegin; mCount < mNumEnd; mCount++) {
+            for (int mCount =mNumBegin; mCount <= mNumEnd; mCount++) {
                 TextView txt = new TextView(this);
+                txt.setLayoutParams(params);
                 txt.setId(10000 + mCount);
-                txt.setText(mCount);
+                txt.setText(String.valueOf(mCount));
+                //txt.setMinimumHeight(25);
                 txt.setBackgroundResource(R.drawable.textview_border);
                 txt.setGravity(Gravity.CENTER);
-                txt.setHeight(mHeightRow);
-                //txt.setTextSize(mTextSize);
+                if (mCount-1==mCurrentExerciseNumberInList) {
+                    txt.setTextColor(Color.BLUE);
+                    txt.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                }
 
-                //params.span = 3;
-                //txt.setLayoutParams(params);
 
                 trow.addView(txt);
                 txt.setOnClickListener(new View.OnClickListener() {
@@ -697,29 +714,26 @@ public class TrainingActivity extends AppCompatActivity {
                         txtTrainingList_onClick((TextView) v);
                     }
                 });
-
-
             }
-
-
         }
-
     }
     private void txtTrainingList_onClick(TextView v) {
 
         int id = v.getId() % 10000;
         //System.out.println(String.valueOf(a));
 
-        int a=mCurrentExerciseNumberInList-id;
+        int a=(mCurrentExerciseNumberInList+1)-id;
         if (a>0) {
             for (int i = 1; i <= a; i++) {
                 setPreviousExercise();
             }
+            showPreviousExercise();
 
         } else if (a<0) {
             for (int i = 1; i <= Math.abs(a); i++) {
                 setNextExercise();
             }
+            showNextExercise();
         }
 
 

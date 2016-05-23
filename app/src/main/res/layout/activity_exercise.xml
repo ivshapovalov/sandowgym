@@ -79,7 +79,8 @@
                             android:text="Активное"
                             android:id="@+id/cb_IsActive"
                             android:layout_span="10"
-                            style="@android:style/TextAppearance.Small"/>
+                            style="@android:style/TextAppearance.Small"
+                            android:enabled="true" />
                     </TableRow>
 
                     <TableRow
