@@ -1,7 +1,9 @@
 package ru.brainworkout.sandow_gym;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,15 +13,16 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -28,39 +31,45 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import android.view.MotionEvent;
-import android.widget.Toast;
 
 /**
  * Created by Ivan on 16.05.2016.
  */
 public class TrainingActivity extends AppCompatActivity {
+
+    private SharedPreferences mSettings;
+    private boolean mShowPicture;
+    private boolean mShowExplanation;
+    private boolean mShowVolumeDefaultButton;
+    private boolean mShowVolumeLastDayButton;
+
+
     public static final boolean isDebug = true;
     private final String TAG = this.getClass().getSimpleName();
 
-    Training mCurrentTraining;
-    TrainingContent mCurrentTrainingContent;
-    Exercise mCurrentExercise;
+    private Training mCurrentTraining;
+    private TrainingContent mCurrentTrainingContent;
+    private Exercise mCurrentExercise;
+
+    String mVolumeLastDay = "";
 
     DatabaseManager db;
 
     private boolean mTrainingIsNew;
-
     public static int mDirection = 0;
-
     List<Exercise> mActiveExercises;
     private int mCurrentExerciseNumberInList;
 
     private List<TrainingContent> mTrainingContentList;
-
-    private int mWidthRow ;
-    private int mHeightRow ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
+
+        getPreferencesFromFile();
+        setPreferencesOnScreen();
 
         db = new DatabaseManager(this);
 
@@ -119,7 +128,43 @@ public class TrainingActivity extends AppCompatActivity {
         updateTrainingList();
 
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getPreferencesFromFile();
+        setPreferencesOnScreen();
+    }
+
+    public void btVolumeDefault_onClick(View view) {
+
+        int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
+        TextView etVolume = (TextView) findViewById(mVolumeID);
+        if (etVolume != null) {
+            etVolume.setText(mCurrentExercise.getVolumeDefault());
+        }
+
+    }
+
+    public void btVolumeLastDay_onClick(View view) {
+
+        int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
+        TextView etVolume = (TextView) findViewById(mVolumeID);
+        if (etVolume != null) {
+            etVolume.setText(mVolumeLastDay);
+        }
+    }
+
+    public void btOptions_onClick(View view){
+
+    Intent intent = new Intent(TrainingActivity.this, TrainingActivityOptions.class);
+
+    startActivity(intent);
+}
 
 
     class ExerciseComp implements Comparator {
@@ -162,7 +207,8 @@ public class TrainingActivity extends AppCompatActivity {
             }
         }
     }
-    private void showPreviousExercise() {
+
+    private void showExercise() {
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
             ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
@@ -211,21 +257,6 @@ public class TrainingActivity extends AppCompatActivity {
                 }
             }
         }
-
-    }
-
-    private void showNextExercise() {
-        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
-        if (ivPicture != null) {
-            ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
-        }
-        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
-        if (tvExplanation != null) {
-
-            tvExplanation.setText(mCurrentExercise.getExplanation());
-        }
-        showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
-        updateTrainingList();
 
     }
 
@@ -312,7 +343,14 @@ public class TrainingActivity extends AppCompatActivity {
         TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
         if (tvExerciseName != null) {
 
-            tvExerciseName.setText(ex.getName());
+            tvExerciseName.setText("Упражнение: "+ex.getName());
+        }
+
+        EditText etComment = (EditText) findViewById(R.id.etComment);
+        if (etComment != null) {
+            if (mCurrentTrainingContent != null) {
+                etComment.setText(mCurrentTrainingContent.getComment());
+            }
         }
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
@@ -325,15 +363,34 @@ public class TrainingActivity extends AppCompatActivity {
                     etVolume.setText("");
                 }
             }
-            etVolume.setHint(mCurrentExercise._volume_default);
+
         }
+
+        Button btDefaultVolume = (Button) findViewById(R.id.btVolumeDefault);
+        if (btDefaultVolume != null) {
+
+            String mVolumeDefault=mCurrentExercise.getVolumeDefault();
+            btDefaultVolume.setText("По умолчанию: " + String.valueOf("".equals(mVolumeDefault)?"--":mVolumeDefault) );
+        }
+        Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
+        if (btYesterdayVolume != null) {
+
+            List<Training> mTrainingList = db.getLastTrainingsByDates(Common.ConvertDateToString(mCurrentTraining.getDay()));
+            if (mTrainingList.size() == 1) {
+                mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
+            }
+            btYesterdayVolume.setText("Вчера: " + String.valueOf("".equals(mVolumeLastDay)?"--":mVolumeLastDay));
+
+        }
+
+
     }
 
     private void showTrainingContentOnScreen(int ex_id) {
 
-        Exercise ex = db.getExercise(ex_id);
+        mCurrentExercise = db.getExercise(ex_id);
 
-        showTrainingContentOnScreen(ex);
+        showTrainingContentOnScreen(mCurrentExercise);
     }
 
 //    public boolean onTouchEvent(MotionEvent event)
@@ -392,6 +449,7 @@ public class TrainingActivity extends AppCompatActivity {
             }
         }
 
+
     }
 
 
@@ -432,6 +490,16 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
             try {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+
+            } catch (Exception e) {
+
+            }
+        }
+
+        EditText etComment = (EditText) findViewById(R.id.etComment);
+        if (etComment != null) {
+            try {
+                mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
 
             } catch (Exception e) {
 
@@ -526,14 +594,14 @@ public class TrainingActivity extends AppCompatActivity {
         public final void onRightToLeftSwipe() {
             System.out.println("Right to Left swipe [Previous]");
             setNextExercise();
-            showNextExercise();
+            showExercise();
 
         }
 
         public void onLeftToRightSwipe() {
             System.out.println("Left to Right swipe [Next]");
             setPreviousExercise();
-            showPreviousExercise();
+            showExercise();
 
 
         }
@@ -673,8 +741,8 @@ public class TrainingActivity extends AppCompatActivity {
         //TableLayout mTableMain=(TableLayout)findViewById(R.id.mTableMain);
         TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
 
-        TableRow.LayoutParams params=new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT);
-        params.span=6;
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        params.span = 6;
         if (trow != null) {
             trow.removeAllViews();
             //trow.setMinimumHeight(25);
@@ -683,17 +751,17 @@ public class TrainingActivity extends AppCompatActivity {
 
             int mNumBegin = 0;
             int mNumEnd = 0;
-            if (mCurrentExerciseNumberInList+1 <= 3) {
+            if (mCurrentExerciseNumberInList + 1 <= 3) {
                 mNumBegin = 1;
                 mNumEnd = 5;
             } else if (mCurrentExerciseNumberInList >= mActiveExercises.size() - 3) {
                 mNumBegin = mActiveExercises.size() - 4;
                 mNumEnd = mActiveExercises.size();
             } else {
-                mNumBegin = (mCurrentExerciseNumberInList+1) - 2;
-                mNumEnd = (mCurrentExerciseNumberInList+1) + 2;
+                mNumBegin = (mCurrentExerciseNumberInList + 1) - 2;
+                mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
             }
-            for (int mCount =mNumBegin; mCount <= mNumEnd; mCount++) {
+            for (int mCount = mNumBegin; mCount <= mNumEnd; mCount++) {
                 TextView txt = new TextView(this);
                 txt.setLayoutParams(params);
                 txt.setId(10000 + mCount);
@@ -701,9 +769,10 @@ public class TrainingActivity extends AppCompatActivity {
                 //txt.setMinimumHeight(25);
                 txt.setBackgroundResource(R.drawable.textview_border);
                 txt.setGravity(Gravity.CENTER);
-                if (mCount-1==mCurrentExerciseNumberInList) {
-                    txt.setTextColor(Color.BLUE);
+                if (mCount - 1 == mCurrentExerciseNumberInList) {
+                    txt.setTextColor(Color.RED);
                     txt.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                    txt.setTextSize(txt.getTextSize()+2);
                 }
 
 
@@ -716,25 +785,105 @@ public class TrainingActivity extends AppCompatActivity {
                 });
             }
         }
+
     }
+
     private void txtTrainingList_onClick(TextView v) {
 
         int id = v.getId() % 10000;
         //System.out.println(String.valueOf(a));
 
-        int a=(mCurrentExerciseNumberInList+1)-id;
-        if (a>0) {
+        int a = (mCurrentExerciseNumberInList + 1) - id;
+        if (a > 0) {
             for (int i = 1; i <= a; i++) {
                 setPreviousExercise();
             }
-            showPreviousExercise();
+            showExercise();
 
-        } else if (a<0) {
+        } else if (a < 0) {
             for (int i = 1; i <= Math.abs(a); i++) {
                 setNextExercise();
             }
-            showNextExercise();
+            showExercise();
         }
+
+
+    }
+
+    private void getPreferencesFromFile() {
+        mSettings = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
+            // Получаем язык из настроек
+            mShowExplanation = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
+        } else {
+            mShowExplanation = false;
+        }
+
+        if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_PICTURE)) {
+            // Получаем язык из настроек
+            mShowPicture = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
+        } else {
+            mShowPicture = false;
+        }
+
+        if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON)) {
+            // Получаем язык из настроек
+            mShowVolumeDefaultButton = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
+        } else {
+            mShowVolumeDefaultButton = false;
+        }
+
+        if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON)) {
+            // Получаем язык из настроек
+            mShowVolumeLastDayButton = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
+        } else {
+            mShowVolumeLastDayButton = false;
+        }
+    }
+
+    private void setPreferencesOnScreen() {
+
+        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+
+        if (ivPicture != null) {
+            if (mShowPicture) {
+                ivPicture.setVisibility(View.VISIBLE);
+            } else {
+                ivPicture.setVisibility(View.GONE);
+            }
+        }
+
+        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+
+        if (tvExplanation != null) {
+            if (mShowExplanation) {
+                tvExplanation.setVisibility(View.VISIBLE);
+            } else {
+                tvExplanation.setVisibility(View.GONE);
+            }
+        }
+
+        Button btVolumeDefault = (Button) findViewById(R.id.btVolumeDefault);
+
+        if (btVolumeDefault != null) {
+            if (mShowVolumeDefaultButton) {
+                btVolumeDefault.setVisibility(View.VISIBLE);
+            } else {
+                btVolumeDefault.setVisibility(View.GONE);
+            }
+        }
+
+        Button btVolumeLastDay = (Button) findViewById(R.id.btVolumeLastDay);
+
+        if (btVolumeLastDay != null) {
+            if (mShowVolumeLastDayButton) {
+                btVolumeLastDay.setVisibility(View.VISIBLE);
+            } else {
+                btVolumeLastDay.setVisibility(View.GONE);
+            }
+        }
+
 
 
     }

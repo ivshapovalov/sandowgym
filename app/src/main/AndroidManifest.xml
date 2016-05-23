@@ -35,15 +35,20 @@
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".TrainingActivityOptions"
+            android:label="@string/training_name"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".CalendarViewActivity"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait" />
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name=".ExportToFileActivity"
+        <activity
+            android:name=".ExportToFileActivity"
             android:label="@string/calendar_view_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

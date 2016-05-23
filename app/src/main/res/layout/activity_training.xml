@@ -21,29 +21,42 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Сохранить"
+                android:text="Save"
                 android:id="@+id/button3"
                 android:onClick="btSave_onClick"
-                android:layout_span="10"
-                style="@android:style/TextAppearance.Small"/>
+                android:layout_span="7"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Удалить"
+                android:text="Delete"
                 android:id="@+id/button5"
                 android:onClick="btDelete_onClick"
-                android:layout_span="10"
-                style="@android:style/TextAppearance.Small"/>
+                android:layout_span="8"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Закрыть"
+                android:text="Close"
                 android:id="@+id/button4"
                 android:onClick="btClose_onClick"
-                android:layout_span="10"
-                style="@android:style/TextAppearance.Small"/>
+                android:layout_span="7"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Options"
+                android:id="@+id/button13"
+                android:onClick="btOptions_onClick"
+                android:layout_span="8"
+                android:gravity="center" />
         </TableRow>
 
         <TableRow
@@ -57,7 +70,10 @@
                 android:layout_height="match_parent"
                 android:text="ID"
                 android:layout_span="2"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:typeface="normal"
+                android:textStyle="bold" />
 
             <TextView
                 style="@android:style/TextAppearance.Small"
@@ -65,7 +81,10 @@
                 android:layout_height="match_parent"
                 android:id="@+id/tvID"
                 android:layout_span="8"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:typeface="normal"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -73,16 +92,192 @@
                 android:text="Дата"
                 android:id="@+id/textView2"
                 style="@android:style/TextAppearance.Small"
-                android:layout_span="10"
-                android:background="@drawable/textview_border" />
+                android:layout_span="7"
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:typeface="normal"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/tvDay"
-                android:layout_span="10"
+                android:layout_span="13"
                 android:onClick="tvDay_onClick"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:typeface="normal"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="100">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/svMain"
+                android:layout_span="30">
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="100"
+                    android:nestedScrollingEnabled="false"
+                    android:stretchColumns="*"
+                    android:shrinkColumns="*">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="100">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/tvExerciseName"
+                            android:background="@drawable/textview_border"
+                            android:layout_weight="100"
+                            android:layout_span="50"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:textSize="20dp" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:text="По умолчанию"
+                            android:id="@+id/btVolumeDefault"
+                            android:onClick="btVolumeDefault_onClick"
+                            android:layout_weight="1"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:text="Вчера"
+                            android:id="@+id/btVolumeLastDay"
+
+                            android:onClick="btVolumeLastDay_onClick"
+                            android:layout_weight="1" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:onClick="btVolumeLeft10_onClick"
+                            android:text="-10"
+                            android:id="@+id/button11"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_span="11"
+                            android:layout_weight="11" />
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:onClick="btVolumeLeft_onClick"
+                            android:text="-"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_span="5"
+                            android:layout_weight="5" />
+
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:ems="10"
+                            android:id="@+id/etVolume"
+                            android:textColorHint="@color/dim_foreground_material_dark"
+                            android:background="@drawable/rounded_corners2"
+                            android:gravity="center"
+                            android:layout_span="18"
+                            android:layout_weight="18"
+                            />
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:onClick="btVolumeRight_onClick"
+                            android:text="+"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_span="5"
+                            android:layout_weight="5" />
+
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:onClick="btVolumeRight10_onClick"
+                            android:text="+10"
+                            android:id="@+id/button12"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_span="11"
+                            android:layout_weight="11" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/etComment"
+                            android:layout_span="50"
+                            android:hint="Комментарий" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="100">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/ivPicture"
+                            android:layout_span="50"
+                            android:layout_weight="100"
+                            android:minHeight="300dp"
+                            android:visibility="visible" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="100">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/tvExplanation"
+                            android:layout_span="50"
+                            android:gravity="top|center" />
+                    </TableRow>
+
+                </TableLayout>
+            </ScrollView>
 
         </TableRow>
 
@@ -135,120 +330,6 @@
                 android:layout_span="6"
                 android:gravity="center"
                 android:background="@drawable/textview_border" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="100">
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/svMain"
-                android:background="@android:drawable/title_bar"
-                android:layout_span="30">
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="100"
-                    android:nestedScrollingEnabled="false"
-                    android:stretchColumns="*">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/tvExerciseName"
-                            android:background="@drawable/textview_border"
-                            android:layout_span="50" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <Button
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="btVolumeLeft10_onClick"
-                            android:text="-10"
-                            android:id="@+id/button11"
-                            android:textSize="15dp"
-                            android:gravity="center"
-                            android:layout_span="11" />
-
-                        <Button
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="btVolumeLeft_onClick"
-                            android:text="-"
-                            android:textSize="15dp"
-                            android:gravity="center"
-                            android:layout_span="5" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:ems="10"
-                            android:id="@+id/etVolume"
-                            android:textColorHint="@color/dim_foreground_material_dark"
-                            android:background="@drawable/rounded_corners2"
-                            android:textSize="15dp"
-                            android:gravity="center"
-                            android:layout_span="18" />
-
-                        <Button
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="btVolumeRight_onClick"
-                            android:text="+"
-                            android:textSize="15dp"
-                            android:gravity="center"
-                            android:layout_span="5" />
-
-                        <Button
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="btVolumeRight10_onClick"
-                            android:text="+10"
-                            android:id="@+id/button12"
-                            android:textSize="15dp"
-                            android:gravity="center"
-                            android:layout_span="11" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:minHeight="400dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/ivPicture"
-                            android:layout_span="25"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:id="@+id/tvExplanation"
-                            android:layout_span="25" />
-                    </TableRow>
-
-                </TableLayout>
-            </ScrollView>
-
         </TableRow>
 
 

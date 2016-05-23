@@ -85,6 +85,19 @@
                     android:layout_span="30" />
             </TableRow>
 
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Очистить БД"
+                    android:id="@+id/button8"
+                    android:onClick="btClearBD_onClick"
+                    android:layout_span="30" />
+            </TableRow>
+
         </TableLayout>
     </ScrollView>
 

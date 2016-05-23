@@ -44,6 +44,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
     private static final String KEY_TRAINING_CONTENT_ID_EXERCISE = "training_content_id_exercise";
     private static final String KEY_TRAINING_CONTENT_ID_TRAINING = "training_content_id_training";
+    private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
 
     public DatabaseManager(Context context) {
@@ -76,6 +77,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL," + KEY_TRAINING_CONTENT_VOLUME + " TEXT," +
                 KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
                 + KEY_TRAINING_CONTENT_ID_TRAINING + " INTEGER,"
+                +KEY_TRAINING_CONTENT_COMMENT+" TEXT,"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS + "(" + KEY_TRAINING_ID + "),"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_EXERCISE + ") REFERENCES " + TABLE_EXERCISES + "(" + KEY_EXERCISE_ID + ")"
                 + ")";
@@ -107,6 +109,16 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // Create tables again
         onCreate(db);
     }
+
+    public void DeleteDB(SQLiteDatabase db) {
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
+    }
+
 
     public void addExercise(Exercise exercise) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -151,6 +163,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_VOLUME, trainingContent.getVolume());
         values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getIdExercise());
         values.put(KEY_TRAINING_CONTENT_ID_TRAINING, trainingContent.getIdTraining());
+        values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
         // Inserting Row
         db.insert(TABLE_TRAINING_CONTENT, null, values);
         db.close(); // Closing database connection
@@ -193,11 +206,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public TrainingContent getTrainingContent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING}, KEY_TRAINING_CONTENT_ID + "=?",
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING,KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)));
+        TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),cursor.getString(4));
 
         // return contact
         return trainingContent;
@@ -206,11 +219,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public TrainingContent getTrainingContent(int id, int exercise_id, int training_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING}, KEY_TRAINING_CONTENT_ID + "=? AND " + KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING,KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=? AND " + KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
                 new String[]{String.valueOf(id), String.valueOf(exercise_id), String.valueOf(training_id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)));
+        TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),cursor.getString(4));
 
         // return contact
         return trainingContent;
@@ -219,7 +232,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public TrainingContent getTrainingContent(int exercise_id, int training_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING}, KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING,KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
                 new String[]{String.valueOf(exercise_id), String.valueOf(training_id)}, null, null, null, null);
         if (cursor == null || cursor.getCount() == 0) {
             return null;
@@ -227,7 +240,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         } else
         {
             cursor.moveToFirst();
-            TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)));
+            TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),cursor.getString(4));
             // return contact
             return trainingContent;
         }
@@ -371,18 +384,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public List<Training> getTrainingsByDates(String mDateFrom, String mDateTo) {
-        List<Training> trainingsList = new ArrayList<>();
-        // Select All Query
+
         mDateFrom="".equals(mDateFrom)?"0000-00-00":mDateFrom;
         mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
 
-        String selectQuery = "SELECT * FROM " + TABLE_TRAININGS +
-                " WHERE " + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + KEY_TRAINING_DAY + "<=\"" + mDateTo +
-                "\" ORDER BY " + KEY_TRAINING_DAY;
+        List<Training> trainingsList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  "+TABLE_TRAININGS+"."+KEY_TRAINING_ID+","+TABLE_TRAININGS+"."+KEY_TRAINING_DAY+ " FROM " + TABLE_TRAININGS + " WHERE "
+                +TABLE_TRAININGS+"."+KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + TABLE_TRAININGS+"."+KEY_TRAINING_DAY + "<=\"" + mDateTo
+                +"\" ORDER BY " + KEY_TRAINING_ID;
+
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training();
@@ -396,6 +412,61 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // return contact list
         return trainingsList;
     }
+
+    public List<Training> getLastTrainingsByDates(String mDateTo) {
+
+        mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
+
+        List<Training> trainingsList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  "+TABLE_TRAININGS+"."+KEY_TRAINING_ID+","+TABLE_TRAININGS+"."+KEY_TRAINING_DAY+ " FROM " + TABLE_TRAININGS + " WHERE "
+                +TABLE_TRAININGS+"."+KEY_TRAINING_DAY + " IN (SELECT MAX("+TABLE_TRAININGS+"."+KEY_TRAINING_DAY+") FROM " + TABLE_TRAININGS
+                + " WHERE "+TABLE_TRAININGS+"."+KEY_TRAINING_DAY  +"<\"" + mDateTo+"\" ) ORDER BY " + KEY_TRAINING_ID;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Training training = new Training();
+                training.setID(cursor.getInt(0));
+                training.setDayString(cursor.getString(1));
+                // Adding contact to list
+                trainingsList.add(training);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return trainingsList;
+    }
+
+//    public List<Training> getTrainingsByDates(String mDateFrom, String mDateTo) {
+//        List<Training> trainingsList = new ArrayList<>();
+//        // Select All Query
+//        mDateFrom="".equals(mDateFrom)?"0000-00-00":mDateFrom;
+//        mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
+//
+//        String selectQuery = "SELECT * FROM " + TABLE_TRAININGS +
+//                " WHERE " + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + KEY_TRAINING_DAY + "<=\"" + mDateTo +
+//                "\" ORDER BY " + KEY_TRAINING_DAY;
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, null);
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                Training training = new Training();
+//                training.setID(cursor.getInt(0));
+//                training.setDayString(cursor.getString(1));
+//                // Adding contact to list
+//                trainingsList.add(training);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        // return contact list
+//        return trainingsList;
+//    }
 
     public List<TrainingContent> getAllTrainingContentOfTraining(int training_id) {
         List<TrainingContent> trainingContentList = new ArrayList<>();
@@ -413,14 +484,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 trainingContent.setVolume(cursor.getString(1));
                 trainingContent.setIdExercise(cursor.getInt(2));
                 trainingContent.setIdTraining(cursor.getInt(3));
+                trainingContent.setComment(cursor.getString(4));
 
-
-                // Adding contact to list
                 trainingContentList.add(trainingContent);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
         return trainingContentList;
     }
 

@@ -9,6 +9,7 @@ public class TrainingContent {
     private String _volume;
     private int _id_exercise;
     private int _id_training;
+    private String _comment;
 
     public TrainingContent() {
     }
@@ -21,10 +22,21 @@ public class TrainingContent {
         this._volume = _volume;
     }
 
+    public TrainingContent(String _volume, String _comment) {
+        this._volume = _volume;
+        this._comment = _comment;
+    }
+
     public TrainingContent(int _id, String _volume) {
 
         this._id = _id;
         this._volume = _volume;
+    }
+
+    public TrainingContent(int _id, String _volume, String _comment) {
+        this._id = _id;
+        this._volume = _volume;
+        this._comment = _comment;
     }
 
     public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training) {
@@ -32,6 +44,14 @@ public class TrainingContent {
         this._volume = _volume;
         this._id_exercise = _id_exercise;
         this._id_training = _id_training;
+    }
+
+    public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training, String _comment) {
+        this._id = _id;
+        this._volume = _volume;
+        this._id_exercise = _id_exercise;
+        this._id_training = _id_training;
+        this._comment = _comment;
     }
 
     public int getID() {
@@ -44,6 +64,14 @@ public class TrainingContent {
 
     public String getVolume() {
         return _volume;
+    }
+
+    public String getComment() {
+        return _comment;
+    }
+
+    public void setComment(String _comment) {
+        this._comment = _comment;
     }
 
     public void setVolume(String _volume) {
