@@ -57,11 +57,6 @@ public class TrainingActivity extends AppCompatActivity {
 
     DatabaseManager db;
 
-    float mStartY;
-    float mStartX;
-    float mLastX;
-    float mLastY;
-    float mTouchSlop=200;
 
     private boolean mTrainingIsNew;
     public static int mDirection = 0;
@@ -657,13 +652,13 @@ public class TrainingActivity extends AppCompatActivity {
 
         public void onTopToBottomSwipe() {
 
-            Toast.makeText(TrainingActivity.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(TrainingActivity.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
 
         }
 
         public void onBottomToTopSwipe() {
 
-            Toast.makeText(TrainingActivity.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
+            //Toast.makeText(TrainingActivity.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
 
         }
 
@@ -686,7 +681,7 @@ public class TrainingActivity extends AppCompatActivity {
                     // swipe horizontal?
                     if (Math.abs(deltaX) > MIN_DISTANCE) {
                         // left or right
-                        Toast.makeText(TrainingActivity.this, "DeltaX="+String.valueOf(deltaX), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(TrainingActivity.this, "DeltaX="+String.valueOf(deltaX), Toast.LENGTH_SHORT).show();
                         if (deltaX < 0) {
                             this.onLeftToRightSwipe();
                             return true;
@@ -702,17 +697,17 @@ public class TrainingActivity extends AppCompatActivity {
                     // swipe vertical?
                     if (Math.abs(deltaY) > MIN_DISTANCE) {
                         // top or down
-                        Toast.makeText(TrainingActivity.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(TrainingActivity.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
                         if (deltaY < 0) {
                             this.onTopToBottomSwipe();
-                            break;
-                            //return false;
+                            //break;
+                            return true;
                         }
                         if (deltaY > 0) {
                             this.onBottomToTopSwipe();
-                            break;
+                            //break;
 
-                            //return false;
+                            return true;
 
                         }
                     } else {
