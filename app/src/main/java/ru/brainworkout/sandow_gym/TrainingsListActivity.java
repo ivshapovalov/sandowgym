@@ -52,13 +52,15 @@ public class TrainingsListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
 
-        TableRow mRow = (TableRow) findViewById(mNumOfView + id);
-        if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
-            if (mScrollView != null) {
+        if (id != 0) {
+            TableRow mRow = (TableRow) findViewById(mNumOfView + id);
+            if (mRow != null) {
+                int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
+                ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+                if (mScrollView != null) {
 
-                mScrollView.requestChildFocus(mRow, mRow);
+                    mScrollView.requestChildFocus(mRow, mRow);
+                }
             }
         }
     }
@@ -138,7 +140,7 @@ public class TrainingsListActivity extends AppCompatActivity {
             //txt.setId(20000 + numEx);
             String data = "";
 
-            data=Common.ConvertDateToString(trainings.get(numEx).getDay());
+            data = Common.ConvertDateToString(trainings.get(numEx).getDay());
 
             txt.setText(data);
             txt.setGravity(Gravity.CENTER);

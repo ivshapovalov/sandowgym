@@ -44,7 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineMain">
+        android:layout_below="@+id/lineMain"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/textView13"
@@ -59,26 +61,24 @@
         <RadioGroup
             android:id="@+id/rgShowPicture"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
             <RadioButton
                 android:id="@+id/rbShowPictureYes"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
-                android:textSize="12sp" />
+                android:text="Да" />
 
             <RadioButton
                 android:id="@+id/rbShowPictureNo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет"
-                android:textSize="12sp" />
+                android:text="Нет" />
         </RadioGroup>
     </LinearLayout>
 
@@ -88,7 +88,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineShowPicture" >
+        android:layout_below="@+id/lineShowPicture"
+        android:layout_marginBottom="15dp">
 
         <TextView
             android:id="@+id/textView14"
@@ -103,26 +104,24 @@
         <RadioGroup
             android:id="@+id/rgShowExplanation"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
             <RadioButton
                 android:id="@+id/rbShowExplanationYes"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
-                android:textSize="12sp" />
+                android:text="Да" />
 
             <RadioButton
                 android:id="@+id/rbShowExplanationNo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет"
-                android:textSize="12sp" />
+                android:text="Нет" />
         </RadioGroup>
     </LinearLayout>
 
@@ -132,7 +131,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineShowExplanation" >
+        android:layout_below="@+id/lineShowExplanation"
+        android:layout_marginBottom="15dp">
 
         <TextView
             android:id="@+id/textView15"
@@ -147,7 +147,7 @@
         <RadioGroup
             android:id="@+id/rgShowVolumeDefaultButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
@@ -157,16 +157,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
-                android:textSize="12sp" />
+                android:text="Да" />
 
             <RadioButton
                 android:id="@+id/rbShowVolumeDefaultButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет"
-                android:textSize="12sp" />
+                android:text="Нет" />
         </RadioGroup>
     </LinearLayout>
 
@@ -191,7 +189,7 @@
         <RadioGroup
             android:id="@+id/rgShowVolumeLastDayButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
@@ -201,16 +199,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
-                android:textSize="12sp" />
+                android:text="Да" />
 
             <RadioButton
                 android:id="@+id/rbShowVolumeLastDayButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет"
-                android:textSize="12sp" />
+                android:text="Нет" />
         </RadioGroup>
     </LinearLayout>
 

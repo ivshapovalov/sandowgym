@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DatabaseManager(this);
+
     }
 
     public void bt_Exercises_onClick(View view) {
@@ -42,16 +44,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
         startActivity(intent);
 
-        db = new DatabaseManager(this);
-
-
     }
 
     public void btTrainings_onClick(View view) {
 
         List<Exercise> list = db.getAllActiveExercises();
         if (list.size() == 0) {
-            Toast toast = Toast.makeText(getApplicationContext(),
+            Toast toast = Toast.makeText(MainActivity.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
             toast.show();
         } else {
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Exercise> list = db.getAllActiveExercises();
         if (list.size() == 0) {
-            Toast toast = Toast.makeText(getApplicationContext(),
+            Toast toast = Toast.makeText(MainActivity.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
             toast.show();
         } else {
@@ -86,9 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void btClearBD_onClick(View view) {
 
-        SQLiteDatabase dbSQL = db.getWritableDatabase();
+        try {
+            SQLiteDatabase dbSQL = db.getWritableDatabase();
+            db.onUpgrade(dbSQL, 1, 2);
+        } catch (Exception e) {
+            Toast toast = Toast.makeText(MainActivity.this,
+                    "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
 
-        db.onUpgrade(dbSQL, 1, 2);
+
 
     }
 }

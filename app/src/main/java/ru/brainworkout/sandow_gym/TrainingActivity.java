@@ -18,8 +18,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 
@@ -115,9 +117,12 @@ public class TrainingActivity extends AppCompatActivity {
 
         showTrainingOnScreen();
 
-        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(this);
+        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(TrainingActivity.this);
+        //TableLayout m=(TableLayout) this.findViewById(R.id.mTableMain);
+        //m.setOnTouchListener(swipeDetectorActivity);
         ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
         sv.setOnTouchListener(swipeDetectorActivity);
+
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
@@ -535,7 +540,7 @@ public class TrainingActivity extends AppCompatActivity {
         }
 
         mTrainingIsNew = false;
-        MyLogger(TAG, "Добавили " + String.valueOf(mCurrentTraining.getID()));
+        //MyLogger(TAG, "Добавили " + String.valueOf(mCurrentTraining.getID()));
     }
 
     public static void MyLogger(String TAG, String statement) {
@@ -592,14 +597,16 @@ public class TrainingActivity extends AppCompatActivity {
         }
 
         public final void onRightToLeftSwipe() {
-            System.out.println("Right to Left swipe [Previous]");
+           // System.out.println("Right to Left swipe [Previous]");
+            Toast.makeText(TrainingActivity.this, "Right to Left swipe [Next]", Toast.LENGTH_SHORT).show ();
             setNextExercise();
             showExercise();
 
         }
 
         public void onLeftToRightSwipe() {
-            System.out.println("Left to Right swipe [Next]");
+           // System.out.println("Left to Right swipe [Next]");
+            Toast.makeText(TrainingActivity.this, "Left to Right swipe [Previous]", Toast.LENGTH_SHORT).show ();
             setPreviousExercise();
             showExercise();
 
@@ -608,10 +615,22 @@ public class TrainingActivity extends AppCompatActivity {
 
         public void onTopToBottomSwipe() {
             //System.out.println("Top to Bottom swipe [Down]");
+            //Toast.makeText(this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show ();
+            Toast.makeText(TrainingActivity.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
+//            toast.setText("Top to Bottom swipe [Down]");
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            //other setters
+//            toast.show();
         }
 
         public void onBottomToTopSwipe() {
             //System.out.println("Bottom to Top swipe [Up]");
+            Toast.makeText(TrainingActivity.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
+//            Toast toast = Toast.makeText(TrainingActivity.this, "message", Toast.LENGTH_SHORT);
+//            toast.setText("Bottom to Top swipe [Up]");
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            //other setters
+//            toast.show();
         }
 
         public boolean onTouch(View v, MotionEvent event) {
@@ -632,6 +651,7 @@ public class TrainingActivity extends AppCompatActivity {
                     // swipe horizontal?
                     if (Math.abs(deltaX) > MIN_DISTANCE) {
                         // left or right
+                        Toast.makeText(TrainingActivity.this, "DeltaX="+String.valueOf(deltaX), Toast.LENGTH_SHORT).show();
                         if (deltaX < 0) {
                             this.onLeftToRightSwipe();
                             return true;
@@ -647,6 +667,7 @@ public class TrainingActivity extends AppCompatActivity {
                     // swipe vertical?
                     if (Math.abs(deltaY) > MIN_DISTANCE) {
                         // top or down
+                        Toast.makeText(TrainingActivity.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
                         if (deltaY < 0) {
                             this.onTopToBottomSwipe();
                             return true;
@@ -662,6 +683,7 @@ public class TrainingActivity extends AppCompatActivity {
                     return true;
                 }
             }
+            //Toast.makeText(TrainingActivity.this, "ЖОПА", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
