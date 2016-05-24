@@ -232,18 +232,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public TrainingContent getTrainingContent(int exercise_id, int training_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        TrainingContent trainingContent;
         Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING,KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
                 new String[]{String.valueOf(exercise_id), String.valueOf(training_id)}, null, null, null, null);
         if (cursor == null || cursor.getCount() == 0) {
-            return null;
+            trainingContent=null;
 
         } else
         {
             cursor.moveToFirst();
-            TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),cursor.getString(4));
+            trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),cursor.getString(4));
             // return contact
-            return trainingContent;
+
         }
+        return trainingContent;
     }
 
 

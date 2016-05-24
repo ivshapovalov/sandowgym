@@ -44,7 +44,7 @@ public class TrainingActivity extends AppCompatActivity {
     private boolean mShowExplanation;
     private boolean mShowVolumeDefaultButton;
     private boolean mShowVolumeLastDayButton;
-
+    boolean mIsBeingDragged;
 
     public static final boolean isDebug = true;
     private final String TAG = this.getClass().getSimpleName();
@@ -56,6 +56,12 @@ public class TrainingActivity extends AppCompatActivity {
     String mVolumeLastDay = "";
 
     DatabaseManager db;
+
+    float mStartY;
+    float mStartX;
+    float mLastX;
+    float mLastY;
+    float mTouchSlop=200;
 
     private boolean mTrainingIsNew;
     public static int mDirection = 0;
@@ -119,10 +125,9 @@ public class TrainingActivity extends AppCompatActivity {
 
         SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(TrainingActivity.this);
         //TableLayout m=(TableLayout) this.findViewById(R.id.mTableMain);
-        //m.setOnTouchListener(swipeDetectorActivity);
+
         ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
         sv.setOnTouchListener(swipeDetectorActivity);
-
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
@@ -131,6 +136,7 @@ public class TrainingActivity extends AppCompatActivity {
         }
         saveTraining();
         updateTrainingList();
+
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -183,6 +189,11 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
 
             mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+        }
+        EditText etComment = (EditText) findViewById(R.id.etComment);
+        if (etComment != null) {
+
+            mCurrentTrainingContent.setComment(String.valueOf(etVolume.getText()));
         }
         mTrainingContentList.add(mCurrentTrainingContent);
         db.updateTrainingContent(mCurrentTrainingContent);
@@ -382,13 +393,44 @@ public class TrainingActivity extends AppCompatActivity {
 
             List<Training> mTrainingList = db.getLastTrainingsByDates(Common.ConvertDateToString(mCurrentTraining.getDay()));
             if (mTrainingList.size() == 1) {
-                mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
+                try {
+                    mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
+                } catch (Exception e) {
+                    mVolumeLastDay="";
+                }
             }
             btYesterdayVolume.setText("Вчера: " + String.valueOf("".equals(mVolumeLastDay)?"--":mVolumeLastDay));
 
         }
 
 
+    }
+
+    private class Container extends ScrollView {
+
+        public Container(Context context) {
+            super(context);
+            setBackgroundColor(0xFF0000FF);
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(MotionEvent ev) {
+            Log.i(TAG, "onInterceptTouchEvent");
+            int action = ev.getActionMasked();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i(TAG, "onInterceptTouchEvent.ACTION_DOWN");
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i(TAG, "onInterceptTouchEvent.ACTION_MOVE");
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    Log.i(TAG, "onInterceptTouchEvent.ACTION_UP");
+                    break;
+            }
+            return super.onInterceptTouchEvent(ev);
+        }
     }
 
     private void showTrainingContentOnScreen(int ex_id) {
@@ -589,7 +631,7 @@ public class TrainingActivity extends AppCompatActivity {
     private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {
 
         private Activity activity;
-        static final int MIN_DISTANCE = 100;
+        static final int MIN_DISTANCE = 50;
         private float downX, downY, upX, upY;
 
         public SwipeDetectorActivity(final Activity activity) {
@@ -614,24 +656,17 @@ public class TrainingActivity extends AppCompatActivity {
         }
 
         public void onTopToBottomSwipe() {
-            //System.out.println("Top to Bottom swipe [Down]");
-            //Toast.makeText(this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show ();
+
             Toast.makeText(TrainingActivity.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
-//            toast.setText("Top to Bottom swipe [Down]");
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            //other setters
-//            toast.show();
+
         }
 
         public void onBottomToTopSwipe() {
-            //System.out.println("Bottom to Top swipe [Up]");
+
             Toast.makeText(TrainingActivity.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
-//            Toast toast = Toast.makeText(TrainingActivity.this, "message", Toast.LENGTH_SHORT);
-//            toast.setText("Bottom to Top swipe [Up]");
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            //other setters
-//            toast.show();
+
         }
+
 
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -670,11 +705,15 @@ public class TrainingActivity extends AppCompatActivity {
                         Toast.makeText(TrainingActivity.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
                         if (deltaY < 0) {
                             this.onTopToBottomSwipe();
-                            return true;
+                            break;
+                            //return false;
                         }
                         if (deltaY > 0) {
                             this.onBottomToTopSwipe();
-                            return true;
+                            break;
+
+                            //return false;
+
                         }
                     } else {
 
