@@ -118,11 +118,11 @@ public class TrainingActivity extends AppCompatActivity {
 
         showTrainingOnScreen();
 
-        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(TrainingActivity.this);
-        //TableLayout m=(TableLayout) this.findViewById(R.id.mTableMain);
-
-        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
-        sv.setOnTouchListener(swipeDetectorActivity);
+//        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(TrainingActivity.this);
+//        //TableLayout m=(TableLayout) this.findViewById(R.id.mTableMain);
+//
+//        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
+//        sv.setOnTouchListener(swipeDetectorActivity);
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
