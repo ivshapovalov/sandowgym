@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -88,8 +90,8 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        //допустим 15 строк тренировок
-        mHeight = displaymetrics.heightPixels / 17;
+        //допустим 10 строк тренировок
+        mHeight = displaymetrics.heightPixels / 15;
         mWidth = displaymetrics.widthPixels / 2;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
@@ -157,6 +159,15 @@ public class TrainingsListActivity extends AppCompatActivity {
     }
 
     private void rowTraining_onClick(TableRow v) {
+
+
+        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(100); //You can manage the blinking time with this parameter
+        anim.setStartOffset(0);
+        anim.setRepeatMode(Animation.REVERSE);
+        //anim.setRepeatCount(Animation.INFINITE);
+        anim.setRepeatCount(3);
+        v.startAnimation(anim);
 
         int id = v.getId() % mNumOfView;
         //System.out.println(String.valueOf(a));

@@ -614,6 +614,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_VOLUME, trainingContent.getVolume());
         values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getIdExercise());
         values.put(KEY_TRAINING_CONTENT_ID_TRAINING, trainingContent.getIdTraining());
+        values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
 
         // updating row
         return db.update(TABLE_TRAINING_CONTENT, values, KEY_TRAINING_CONTENT_ID + " = ?",

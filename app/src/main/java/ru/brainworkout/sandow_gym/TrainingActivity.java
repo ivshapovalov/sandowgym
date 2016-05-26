@@ -8,12 +8,15 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +60,9 @@ public class TrainingActivity extends AppCompatActivity {
 
     DatabaseManager db;
 
+    private int mHeight;
+    private int mWidth;
+
 
     private boolean mTrainingIsNew;
     public static int mDirection = 0;
@@ -75,6 +81,12 @@ public class TrainingActivity extends AppCompatActivity {
         setPreferencesOnScreen();
 
         db = new DatabaseManager(this);
+
+
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
+        //допустим 15 строк тренировок
+        mHeight = displaymetrics.heightPixels / 2;
+        mWidth = displaymetrics.widthPixels/1;
 
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
@@ -118,17 +130,21 @@ public class TrainingActivity extends AppCompatActivity {
 
         showTrainingOnScreen();
 
+        //не используем. Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
+        //убираю скрол вправо, влево. перемещение кнопками внизу
+
 //        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(TrainingActivity.this);
-//        //TableLayout m=(TableLayout) this.findViewById(R.id.mTableMain);
-//
 //        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
 //        sv.setOnTouchListener(swipeDetectorActivity);
+
+
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
         } else {
             getAllExercisesOfTraining();
         }
+
         saveTraining();
         updateTrainingList();
 
@@ -188,7 +204,7 @@ public class TrainingActivity extends AppCompatActivity {
         EditText etComment = (EditText) findViewById(R.id.etComment);
         if (etComment != null) {
 
-            mCurrentTrainingContent.setComment(String.valueOf(etVolume.getText()));
+            mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
         }
         mTrainingContentList.add(mCurrentTrainingContent);
         db.updateTrainingContent(mCurrentTrainingContent);
@@ -223,6 +239,7 @@ public class TrainingActivity extends AppCompatActivity {
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
             ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
+            ivPicture.setMinimumHeight(mHeight);
         }
         TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
@@ -239,6 +256,11 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
 
             mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+        }
+        EditText etComment = (EditText) findViewById(R.id.etComment);
+        if (etComment != null) {
+
+            mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
         }
         mTrainingContentList.add(mCurrentTrainingContent);
         db.updateTrainingContent(mCurrentTrainingContent);
@@ -401,32 +423,32 @@ public class TrainingActivity extends AppCompatActivity {
 
     }
 
-    private class Container extends ScrollView {
-
-        public Container(Context context) {
-            super(context);
-            setBackgroundColor(0xFF0000FF);
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(MotionEvent ev) {
-            Log.i(TAG, "onInterceptTouchEvent");
-            int action = ev.getActionMasked();
-            switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    Log.i(TAG, "onInterceptTouchEvent.ACTION_DOWN");
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    Log.i(TAG, "onInterceptTouchEvent.ACTION_MOVE");
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_UP:
-                    Log.i(TAG, "onInterceptTouchEvent.ACTION_UP");
-                    break;
-            }
-            return super.onInterceptTouchEvent(ev);
-        }
-    }
+//    private class Container extends ScrollView {
+//
+//        public Container(Context context) {
+//            super(context);
+//            setBackgroundColor(0xFF0000FF);
+//        }
+//
+//        @Override
+//        public boolean onInterceptTouchEvent(MotionEvent ev) {
+//            Log.i(TAG, "onInterceptTouchEvent");
+//            int action = ev.getActionMasked();
+//            switch (action) {
+//                case MotionEvent.ACTION_DOWN:
+//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_DOWN");
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_MOVE");
+//                    break;
+//                case MotionEvent.ACTION_CANCEL:
+//                case MotionEvent.ACTION_UP:
+//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_UP");
+//                    break;
+//            }
+//            return super.onInterceptTouchEvent(ev);
+//        }
+//    }
 
     private void showTrainingContentOnScreen(int ex_id) {
 
@@ -626,8 +648,10 @@ public class TrainingActivity extends AppCompatActivity {
     private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {
 
         private Activity activity;
-        static final int MIN_DISTANCE = 50;
+        static final int MIN_DISTANCE = 200;
         private float downX, downY, upX, upY;
+
+
 
         public SwipeDetectorActivity(final Activity activity) {
             this.activity = activity;
@@ -635,7 +659,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         public final void onRightToLeftSwipe() {
            // System.out.println("Right to Left swipe [Previous]");
-            Toast.makeText(TrainingActivity.this, "Right to Left swipe [Next]", Toast.LENGTH_SHORT).show ();
+            Toast.makeText(TrainingActivity.this, "[Следующее упражнение]", Toast.LENGTH_SHORT).show ();
             setNextExercise();
             showExercise();
 
@@ -643,7 +667,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         public void onLeftToRightSwipe() {
            // System.out.println("Left to Right swipe [Next]");
-            Toast.makeText(TrainingActivity.this, "Left to Right swipe [Previous]", Toast.LENGTH_SHORT).show ();
+            Toast.makeText(TrainingActivity.this, "[Предыдущее упражнение]", Toast.LENGTH_SHORT).show ();
             setPreviousExercise();
             showExercise();
 
@@ -720,6 +744,8 @@ public class TrainingActivity extends AppCompatActivity {
             //Toast.makeText(TrainingActivity.this, "ЖОПА", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+
     }
 
     public void btVolumeLeft_onClick(View view) {
@@ -818,25 +844,25 @@ public class TrainingActivity extends AppCompatActivity {
                 mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
             }
             for (int mCount = mNumBegin; mCount <= mNumEnd; mCount++) {
-                TextView txt = new TextView(this);
-                txt.setLayoutParams(params);
-                txt.setId(10000 + mCount);
-                txt.setText(String.valueOf(mCount));
+                Button but = new Button(this);
+                but.setLayoutParams(params);
+                but.setId(10000 + mCount);
+                but.setText(String.valueOf(mCount));
                 //txt.setMinimumHeight(25);
-                txt.setBackgroundResource(R.drawable.textview_border);
-                txt.setGravity(Gravity.CENTER);
+                but.setBackgroundResource(R.drawable.textview_border);
+                but.setGravity(Gravity.CENTER);
                 if (mCount - 1 == mCurrentExerciseNumberInList) {
-                    txt.setTextColor(Color.RED);
-                    txt.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    txt.setTextSize(txt.getTextSize()+2);
+                    but.setTextColor(Color.RED);
+                    but.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                    but.setTextSize(but.getTextSize()+2);
                 }
 
 
-                trow.addView(txt);
-                txt.setOnClickListener(new View.OnClickListener() {
+                trow.addView(but);
+                but.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        txtTrainingList_onClick((TextView) v);
+                        btTrainingList_onClick((TextView) v);
                     }
                 });
             }
@@ -844,7 +870,15 @@ public class TrainingActivity extends AppCompatActivity {
 
     }
 
-    private void txtTrainingList_onClick(TextView v) {
+    private void btTrainingList_onClick(TextView v) {
+
+//        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+//        anim.setDuration(50); //You can manage the blinking time with this parameter
+//        anim.setStartOffset(0);
+//        anim.setRepeatMode(Animation.REVERSE);
+//        //anim.setRepeatCount(Animation.INFINITE);
+//        anim.setRepeatCount(3);
+//        v.startAnimation(anim);
 
         int id = v.getId() % 10000;
         //System.out.println(String.valueOf(a));
@@ -862,6 +896,8 @@ public class TrainingActivity extends AppCompatActivity {
             }
             showExercise();
         }
+
+
 
 
     }

@@ -6,8 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.opencsv.CSVWriter;
@@ -30,12 +33,30 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseManager db;
 
+    int mHeight;
+    int mWidth;
+    int mTextSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         db = new DatabaseManager(this);
+
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
+        //допустим 15 строк тренировок
+        mHeight = displaymetrics.heightPixels / 8;
+        mWidth = displaymetrics.widthPixels/1;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 4 / getApplicationContext().getResources().getDisplayMetrics().density);
+        for (int i = 0; i <=5 ; i++) {
+            int btID = getResources().getIdentifier("btMain"+String.valueOf(i), "id", getPackageName());
+            Button btName = (Button) findViewById(btID);
+            if (btName != null) {
+                btName.setHeight(mHeight);
+                btName.setTextSize(mTextSize);
+            }
+        }
 
     }
 
