@@ -106,7 +106,8 @@
                 android:background="@drawable/textview_border"
                 android:gravity="center"
                 android:typeface="normal"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary" />
 
         </TableRow>
 
@@ -290,57 +291,9 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/trowTrainingList">
+            android:id="@+id/trowTrainingList"
+            android:paddingLeft="10dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="New Text"
-                android:id="@+id/textView8"
-                android:layout_span="6"
-                android:gravity="center"
-                android:background="@drawable/textview_border"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="New Text"
-                android:id="@+id/textView9"
-                android:layout_span="6"
-                android:gravity="center"
-                android:background="@drawable/textview_border"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="New Text"
-                android:id="@+id/textView10"
-                android:layout_span="6"
-                android:gravity="center"
-                android:background="@drawable/textview_border"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="New Text"
-                android:id="@+id/textView11"
-                android:layout_span="6"
-                android:gravity="center"
-                android:background="@drawable/textview_border"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="New Text"
-                android:id="@+id/textView12"
-                android:layout_span="6"
-                android:gravity="center"
-                android:background="@drawable/textview_border"
-                android:visibility="gone" />
         </TableRow>
 
 

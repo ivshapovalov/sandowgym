@@ -62,6 +62,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private int mHeight;
     private int mWidth;
+    private int mTextSize;
 
 
     private boolean mTrainingIsNew;
@@ -86,7 +87,8 @@ public class TrainingActivity extends AppCompatActivity {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         //допустим 15 строк тренировок
         mHeight = displaymetrics.heightPixels / 2;
-        mWidth = displaymetrics.widthPixels/1;
+        mWidth = displaymetrics.widthPixels / 1;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
@@ -138,7 +140,6 @@ public class TrainingActivity extends AppCompatActivity {
 //        sv.setOnTouchListener(swipeDetectorActivity);
 
 
-
         if (mTrainingIsNew) {
             getAllActiveExercises();
         } else {
@@ -147,7 +148,6 @@ public class TrainingActivity extends AppCompatActivity {
 
         saveTraining();
         updateTrainingList();
-
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -163,30 +163,35 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void btVolumeDefault_onClick(View view) {
-
-        int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-        TextView etVolume = (TextView) findViewById(mVolumeID);
-        if (etVolume != null) {
-            etVolume.setText(mCurrentExercise.getVolumeDefault());
+        if (mCurrentExercise != null) {
+            if (!"".equals(mCurrentExercise.getVolumeDefault())) {
+                int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
+                TextView etVolume = (TextView) findViewById(mVolumeID);
+                if (etVolume != null) {
+                    etVolume.setText(mCurrentExercise.getVolumeDefault());
+                }
+            }
         }
 
     }
 
     public void btVolumeLastDay_onClick(View view) {
 
-        int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-        TextView etVolume = (TextView) findViewById(mVolumeID);
-        if (etVolume != null) {
-            etVolume.setText(mVolumeLastDay);
+        if (!"".equals(mVolumeLastDay)) {
+            int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
+            TextView etVolume = (TextView) findViewById(mVolumeID);
+            if (etVolume != null) {
+                etVolume.setText(mVolumeLastDay);
+            }
         }
     }
 
-    public void btOptions_onClick(View view){
+    public void btOptions_onClick(View view) {
 
-    Intent intent = new Intent(TrainingActivity.this, TrainingActivityOptions.class);
+        Intent intent = new Intent(TrainingActivity.this, TrainingActivityOptions.class);
 
-    startActivity(intent);
-}
+        startActivity(intent);
+    }
 
 
     class ExerciseComp implements Comparator {
@@ -376,7 +381,7 @@ public class TrainingActivity extends AppCompatActivity {
         TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
         if (tvExerciseName != null) {
 
-            tvExerciseName.setText("Упражнение: "+ex.getName());
+            tvExerciseName.setText("Упражнение: " + ex.getName());
         }
 
         EditText etComment = (EditText) findViewById(R.id.etComment);
@@ -402,8 +407,8 @@ public class TrainingActivity extends AppCompatActivity {
         Button btDefaultVolume = (Button) findViewById(R.id.btVolumeDefault);
         if (btDefaultVolume != null) {
 
-            String mVolumeDefault=mCurrentExercise.getVolumeDefault();
-            btDefaultVolume.setText("По умолчанию: " + String.valueOf("".equals(mVolumeDefault)?"--":mVolumeDefault) );
+            String mVolumeDefault = mCurrentExercise.getVolumeDefault();
+            btDefaultVolume.setText("По умолчанию: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
         }
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
@@ -413,10 +418,10 @@ public class TrainingActivity extends AppCompatActivity {
                 try {
                     mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
                 } catch (Exception e) {
-                    mVolumeLastDay="";
+                    mVolumeLastDay = "";
                 }
             }
-            btYesterdayVolume.setText("Вчера: " + String.valueOf("".equals(mVolumeLastDay)?"--":mVolumeLastDay));
+            btYesterdayVolume.setText("Вчера: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
 
         }
 
@@ -652,22 +657,21 @@ public class TrainingActivity extends AppCompatActivity {
         private float downX, downY, upX, upY;
 
 
-
         public SwipeDetectorActivity(final Activity activity) {
             this.activity = activity;
         }
 
         public final void onRightToLeftSwipe() {
-           // System.out.println("Right to Left swipe [Previous]");
-            Toast.makeText(TrainingActivity.this, "[Следующее упражнение]", Toast.LENGTH_SHORT).show ();
+            // System.out.println("Right to Left swipe [Previous]");
+            Toast.makeText(TrainingActivity.this, "[Следующее упражнение]", Toast.LENGTH_SHORT).show();
             setNextExercise();
             showExercise();
 
         }
 
         public void onLeftToRightSwipe() {
-           // System.out.println("Left to Right swipe [Next]");
-            Toast.makeText(TrainingActivity.this, "[Предыдущее упражнение]", Toast.LENGTH_SHORT).show ();
+            // System.out.println("Left to Right swipe [Next]");
+            Toast.makeText(TrainingActivity.this, "[Предыдущее упражнение]", Toast.LENGTH_SHORT).show();
             setPreviousExercise();
             showExercise();
 
@@ -821,15 +825,19 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void updateTrainingList() {
         //TableLayout mTableMain=(TableLayout)findViewById(R.id.mTableMain);
+
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
+        //допустим 15 строк тренировок
+        int btWidth = displaymetrics.widthPixels / 7;
+        mTextSize = (int) (btWidth / 3.5 / getApplicationContext().getResources().getDisplayMetrics().density);
+
         TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        params.span = 6;
+        params.span = 4;
         if (trow != null) {
             trow.removeAllViews();
-            //trow.setMinimumHeight(25);
-            //mWidthRow = mTableMain.getWidth();
-            //mHeightRow = mTableMain.getHeight();
+            trow.setMinimumHeight(btWidth);
 
             int mNumBegin = 0;
             int mNumEnd = 0;
@@ -843,21 +851,41 @@ public class TrainingActivity extends AppCompatActivity {
                 mNumBegin = (mCurrentExerciseNumberInList + 1) - 2;
                 mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
             }
+
+            //кнопка назад
+            Button but = new Button(this);
+            but.setLayoutParams(params);
+            but.setText("<-");
+            but.setTextSize(mTextSize);
+            but.setWidth(btWidth);
+            but.setBackgroundResource(R.drawable.textview_border);
+            but.setGravity(Gravity.CENTER);
+            but.setWidth(btWidth);
+            but.setHeight(btWidth);
+            trow.addView(but);
+            but.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btTrainingListPrevious_onClick((TextView) v);
+                }
+            });
+
             for (int mCount = mNumBegin; mCount <= mNumEnd; mCount++) {
-                Button but = new Button(this);
+                but = new Button(this);
                 but.setLayoutParams(params);
                 but.setId(10000 + mCount);
                 but.setText(String.valueOf(mCount));
                 //txt.setMinimumHeight(25);
+                but.setTextSize(mTextSize);
+                but.setWidth(btWidth);
+                but.setHeight(btWidth);
                 but.setBackgroundResource(R.drawable.textview_border);
                 but.setGravity(Gravity.CENTER);
                 if (mCount - 1 == mCurrentExerciseNumberInList) {
                     but.setTextColor(Color.RED);
                     but.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    but.setTextSize(but.getTextSize()+2);
+                    //but.setTextSize(but.getTextSize());
                 }
-
-
                 trow.addView(but);
                 but.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -866,6 +894,21 @@ public class TrainingActivity extends AppCompatActivity {
                     }
                 });
             }
+            but = new Button(this);
+            but.setLayoutParams(params);
+            but.setText("->");
+            but.setWidth(btWidth);
+            but.setHeight(btWidth);
+            but.setTextSize(mTextSize);
+            but.setBackgroundResource(R.drawable.textview_border);
+            but.setGravity(Gravity.CENTER);
+            trow.addView(but);
+            but.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btTrainingListNext_onClick((TextView) v);
+                }
+            });
         }
 
     }
@@ -897,7 +940,26 @@ public class TrainingActivity extends AppCompatActivity {
             showExercise();
         }
 
+    }
 
+    private void btTrainingListPrevious_onClick(TextView v) {
+
+
+        for (int i = 1; i <= 5; i++) {
+            setPreviousExercise();
+        }
+        showExercise();
+
+
+    }
+
+    private void btTrainingListNext_onClick(TextView v) {
+
+
+        for (int i = 1; i <= 5; i++) {
+            setNextExercise();
+        }
+        showExercise();
 
 
     }
@@ -975,7 +1037,6 @@ public class TrainingActivity extends AppCompatActivity {
                 btVolumeLastDay.setVisibility(View.GONE);
             }
         }
-
 
 
     }
