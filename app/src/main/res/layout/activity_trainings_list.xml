@@ -60,6 +60,46 @@
 
         </TableRow>
 
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/textView8"
+                android:layout_span="7"
+                android:onClick="tvDay_onClick"
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:typeface="normal"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:text="Дата" />
+
+            <TextView
+                style="@android:style/TextAppearance.Small"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tvDay"
+                android:layout_span="12"
+                android:background="@drawable/textview_border"
+                android:typeface="normal"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:onClick="tvDay_onClick" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Очистить фильтр"
+                android:id="@+id/button"
+                android:layout_span="17"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:onClick="btTrainingsFilterDelete_onClick" />
+        </TableRow>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

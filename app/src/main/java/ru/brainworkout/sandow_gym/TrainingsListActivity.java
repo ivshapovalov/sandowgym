@@ -1,6 +1,7 @@
 package ru.brainworkout.sandow_gym;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class TrainingsListActivity extends AppCompatActivity {
     private int mWidth = 0;
     private int mTextSize = 0;
 
+    private String mCurrentDate="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,6 +42,22 @@ public class TrainingsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trainings_list);
 
         db = new DatabaseManager(this);
+
+        Intent intent = getIntent();
+
+        mCurrentDate = intent.getStringExtra("CurrentDate");
+        if (mCurrentDate==null) {mCurrentDate="";}
+
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView etDay = (TextView) findViewById(mDayID);
+        if (etDay != null) {
+            if (mCurrentDate == null || mCurrentDate.equals("")) {
+                etDay.setText("");
+            } else {
+                etDay.setText(mCurrentDate);
+            }
+        }
+
 
         showTrainings();
 
@@ -54,9 +73,19 @@ public class TrainingsListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
 
-        if (id != 0) {
+        if (id == 0) {
+            if (!( mCurrentDate == null || mCurrentDate.equals(""))) {
+                List <Training> trainings = db.getTrainingsByDates(mCurrentDate, mCurrentDate);
+                if (trainings.size()==1) {
+                     id=trainings.get(0).getID();
+                }
+            }
+
+        }
+        if (id!=0) {
             TableRow mRow = (TableRow) findViewById(mNumOfView + id);
             if (mRow != null) {
+
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
                 ScrollView mScrollView = (ScrollView) findViewById(mScrID);
                 if (mScrollView != null) {
@@ -79,7 +108,12 @@ public class TrainingsListActivity extends AppCompatActivity {
     private void showTrainings() {
 
         Log.d("Reading: ", "Reading all trainings..");
-        List<Training> trainings = db.getAllTrainings();
+        List<Training> trainings;
+        //if (mCurrentDate == null || mCurrentDate.equals("")) {
+            trainings = db.getAllTrainings();
+//        } else {
+//            trainings = db.getTrainingsByDates(mCurrentDate, mCurrentDate);
+//        }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
         //TableLayout layout = (TableLayout) findViewById(R.id.tableExercises);
@@ -110,6 +144,8 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         for (int numEx = 0; numEx < trainings.size(); numEx++) {
             TableRow mRow = new TableRow(this);
+            String data = "";
+            data =trainings.get(numEx).getDayString();
 //            TableLayout.LayoutParams params=new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 //            params.setMargins(0,20,0,20);
 //            mRow.setGravity(Gravity.CENTER_VERTICAL);
@@ -132,6 +168,11 @@ public class TrainingsListActivity extends AppCompatActivity {
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
+            if (mCurrentDate!=null && mCurrentDate.equals(data)) {
+                txt.setTextColor(Color.RED);
+            } else {
+                txt.setTextColor(Color.BLUE);
+            }
 
             //params.span = 3;
             //txt.setLayoutParams(params);
@@ -140,15 +181,16 @@ public class TrainingsListActivity extends AppCompatActivity {
 
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
-            String data = "";
-
-            data = Common.ConvertDateToString(trainings.get(numEx).getDay());
-
-            txt.setText(data);
+          txt.setText(data);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.textview_border);
+            if (mCurrentDate!=null && mCurrentDate.equals(data)) {
+                txt.setTextColor(Color.RED);
+            } else {
+                txt.setTextColor(Color.BLUE);
+            }
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.textview_border);
@@ -206,6 +248,31 @@ public class TrainingsListActivity extends AppCompatActivity {
         db.deleteAllTrainings();
         db.deleteAllTrainingContent();
         showTrainings();
+
+    }
+
+
+    public void tvDay_onClick(View view) {
+
+        Intent intent = new Intent(TrainingsListActivity.this, CalendarViewActivity.class);
+        intent.putExtra("CurrentDate", mCurrentDate);
+        intent.putExtra("CurrentActivity", "TrainingsListActivity");
+
+
+        startActivity(intent);
+    }
+
+    public void btTrainingsFilterDelete_onClick(View view) {
+
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView etDay = (TextView) findViewById(mDayID);
+        if (etDay != null) {
+
+            etDay.setText("");
+            mCurrentDate = "";
+            showTrainings();
+
+        }
 
     }
 }

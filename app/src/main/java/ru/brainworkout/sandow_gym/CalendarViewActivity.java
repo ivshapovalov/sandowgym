@@ -72,6 +72,12 @@ public class CalendarViewActivity extends AppCompatActivity {
         }
 
 
+        if (mNewDate==null || mNewDate.equals("")) {
+            mNewDate=Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(calendar.getTime().getYear()+1900)
+                    .append("-").append(calendar.getTime().getMonth() + 1).append("-").append(calendar.getTime().getDate())
+                    .append("").toString()));
+
+        }
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
         calendarView.setDate(calendar.getTimeInMillis(), true, false);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
