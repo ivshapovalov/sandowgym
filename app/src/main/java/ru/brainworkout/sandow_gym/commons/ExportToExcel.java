@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.commons;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;

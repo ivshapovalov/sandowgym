@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ru.brainworkout.sandow_gym.ExportToFileActivity">
+    tools:context=".Activities.ExportToFileActivity">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -20,29 +20,32 @@
             android:layout_height="match_parent">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:text="Выгрузить"
                 android:id="@+id/btExport"
 
                 android:onClick="btExport_onClick"
-                android:layout_span="14" />
+                android:layout_span="14"
+                android:textSize="12dp" />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:text="Закрыть"
                 android:id="@+id/btClose"
                 android:onClick="btClose_onClick"
-                android:layout_span="12" />
+                android:layout_span="12"
+                android:textSize="12dp" />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:text="Загрузить"
                 android:id="@+id/button10"
                 android:onClick="btImportFromFile_onClick"
-                android:layout_span="14" />
+                android:layout_span="14"
+                android:textSize="12dp" />
 
         </TableRow>
 

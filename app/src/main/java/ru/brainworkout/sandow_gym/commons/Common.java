@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.commons;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

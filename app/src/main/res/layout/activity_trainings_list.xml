@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="ru.brainworkout.sandow_gym.TrainingsListActivity"
+    tools:context=".Activities.TrainingsListActivity"
     android:id="@+id/idTrainingListsLayout">
 
     <TableLayout
@@ -64,40 +64,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/textView8"
-                android:layout_span="7"
-                android:onClick="tvDay_onClick"
-                android:background="@drawable/textview_border"
-                android:gravity="center"
-                android:typeface="normal"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                android:text="Дата" />
-
-            <TextView
-                style="@android:style/TextAppearance.Small"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/tvDay"
-                android:layout_span="12"
-                android:background="@drawable/textview_border"
-                android:typeface="normal"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:onClick="tvDay_onClick" />
+                android:text="Дата"
+                android:id="@+id/button6"
+                android:layout_span="8"
+                android:clickable="false"
+                android:enabled="true"
+                android:background="@drawable/textview_border" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/btDay"
+                android:layout_span="11"
+                android:background="@drawable/textview_border"
+                android:onClick="btDay_onClick" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Очистить фильтр"
                 android:id="@+id/button"
                 android:layout_span="17"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:onClick="btTrainingsFilterDelete_onClick" />
+                android:onClick="btTrainingsFilterDelete_onClick"
+                android:background="@drawable/textview_border" />
+
         </TableRow>
 
         <ScrollView

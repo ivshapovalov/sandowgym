@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.R;
 
 
 public class TrainingActivityOptions extends AppCompatActivity {

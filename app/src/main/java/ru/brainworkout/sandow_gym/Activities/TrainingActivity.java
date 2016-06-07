@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,18 +10,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +28,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+
+import ru.brainworkout.sandow_gym.commons.Common;
+import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
+import ru.brainworkout.sandow_gym.commons.Exercise;
+import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.commons.Training;
+import ru.brainworkout.sandow_gym.commons.TrainingContent;
 
 
 /**
@@ -42,34 +44,25 @@ import java.util.List;
  */
 public class TrainingActivity extends AppCompatActivity {
 
+    public static final boolean isDebug = true;
+    private final String TAG = this.getClass().getSimpleName();
+
     private SharedPreferences mSettings;
     private boolean mShowPicture;
     private boolean mShowExplanation;
     private boolean mShowVolumeDefaultButton;
     private boolean mShowVolumeLastDayButton;
-    boolean mIsBeingDragged;
-
-    public static final boolean isDebug = true;
-    private final String TAG = this.getClass().getSimpleName();
-
     private Training mCurrentTraining;
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
-
-    String mVolumeLastDay = "";
-
-    DatabaseManager db;
-
+    private String mVolumeLastDay = "";
+    private DatabaseManager db;
     private int mHeight;
     private int mWidth;
     private int mTextSize;
-
-
     private boolean mTrainingIsNew;
-    public static int mDirection = 0;
-    List<Exercise> mActiveExercises;
+    private List<Exercise> mActiveExercises;
     private int mCurrentExerciseNumberInList;
-
     private List<TrainingContent> mTrainingContentList;
 
     @Override
@@ -518,6 +511,13 @@ public class TrainingActivity extends AppCompatActivity {
             }
         }
 
+        int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
+        TextView etWeight = (TextView) findViewById(mWeight);
+        if (etWeight != null) {
+
+            etWeight.setText(String.valueOf(mCurrentTraining.getWeight()));
+        }
+
 
     }
 
@@ -559,6 +559,16 @@ public class TrainingActivity extends AppCompatActivity {
         if (etVolume != null) {
             try {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+
+            } catch (Exception e) {
+
+            }
+        }
+
+        EditText etWeight = (EditText) findViewById(R.id.etWeight);
+        if (etWeight != null) {
+            try {
+                mCurrentTraining.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
 
             } catch (Exception e) {
 

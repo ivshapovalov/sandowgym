@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.brainworkout.sandow_gym.TrainingActivity">
+    tools:context=".Activities.TrainingActivity">
 
 
     <TableLayout
@@ -243,10 +243,21 @@
                         android:visibility="visible">
 
                         <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:ems="10"
+                            android:id="@+id/etWeight"
+                            android:layout_weight="1"
+                            android:hint="Вес"
+                            android:gravity="center"
+                            android:layout_span="10" />
+
+                        <EditText
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/etComment"
-                            android:layout_span="50"
+                            android:layout_span="40"
                             android:hint="Комментарий"
                             android:layout_weight="1" />
                     </TableRow>

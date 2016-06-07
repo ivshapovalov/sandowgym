@@ -3,27 +3,23 @@ package ru.brainworkout.sandow_gym;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.opencsv.CSVWriter;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import ru.brainworkout.sandow_gym.activities.ExercisesListActivity;
+import ru.brainworkout.sandow_gym.activities.ExportToFileActivity;
+import ru.brainworkout.sandow_gym.activities.TrainingActivity;
+import ru.brainworkout.sandow_gym.activities.TrainingsListActivity;
+import ru.brainworkout.sandow_gym.commons.Exercise;
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
 
-    private SharedPreferences mSettings;
+public class MainActivity extends AppCompatActivity {
 
     public static final String APP_PREFERENCES = "mysettings";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
@@ -31,11 +27,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
 
-    DatabaseManager db;
-
-    int mHeight;
-    int mWidth;
-    int mTextSize;
+    private SharedPreferences mSettings;
+    private DatabaseManager db;
+    private int mHeight;
+    private int mWidth;
+    private int mTextSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

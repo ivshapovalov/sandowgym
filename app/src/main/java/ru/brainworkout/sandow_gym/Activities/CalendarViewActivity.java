@@ -1,22 +1,17 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
+import ru.brainworkout.sandow_gym.commons.Common;
+import ru.brainworkout.sandow_gym.R;
 
 /**
  * Created by Ivan on 17.05.2016.
@@ -100,7 +95,7 @@ public class CalendarViewActivity extends AppCompatActivity {
     public void btSave_onClick(View view) {
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + "." + mCurrentActivity);
+            myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -123,7 +118,7 @@ public class CalendarViewActivity extends AppCompatActivity {
     public void btClose_onClick(View view) {
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + "." + mCurrentActivity);
+            myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

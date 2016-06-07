@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.database;
 
 //all required import files
 import java.util.ArrayList;

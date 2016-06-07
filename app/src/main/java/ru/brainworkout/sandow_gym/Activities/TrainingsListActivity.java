@@ -1,25 +1,28 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.RelativeLayout;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
+import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.commons.Training;
 
 public class TrainingsListActivity extends AppCompatActivity {
 
@@ -48,13 +51,13 @@ public class TrainingsListActivity extends AppCompatActivity {
         mCurrentDate = intent.getStringExtra("CurrentDate");
         if (mCurrentDate==null) {mCurrentDate="";}
 
-        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView etDay = (TextView) findViewById(mDayID);
-        if (etDay != null) {
+        int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
+        Button btDay = (Button) findViewById(mDayID);
+        if (btDay != null) {
             if (mCurrentDate == null || mCurrentDate.equals("")) {
-                etDay.setText("");
+                btDay.setText("");
             } else {
-                etDay.setText(mCurrentDate);
+                btDay.setText(mCurrentDate);
             }
         }
 
@@ -252,7 +255,7 @@ public class TrainingsListActivity extends AppCompatActivity {
     }
 
 
-    public void tvDay_onClick(View view) {
+    public void btDay_onClick(View view) {
 
         Intent intent = new Intent(TrainingsListActivity.this, CalendarViewActivity.class);
         intent.putExtra("CurrentDate", mCurrentDate);
@@ -264,11 +267,11 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void btTrainingsFilterDelete_onClick(View view) {
 
-        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView etDay = (TextView) findViewById(mDayID);
-        if (etDay != null) {
+        int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
+        Button btDay= (Button) findViewById(mDayID);
+        if (btDay != null) {
 
-            etDay.setText("");
+            btDay.setText("");
             mCurrentDate = "";
             showTrainings();
 

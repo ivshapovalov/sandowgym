@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.commons;
 
 /**
  * Created by Ivan on 16.05.2016.

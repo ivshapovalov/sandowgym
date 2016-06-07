@@ -19,34 +19,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ExercisesListActivity"
+            android:name=".activities.ExercisesListActivity"
             android:label="@string/exercises_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ExerciseActivity"
+            android:name=".activities.ExerciseActivity"
             android:label="@string/exercise_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TrainingsListActivity"
+            android:name=".activities.TrainingsListActivity"
             android:label="@string/trainings_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TrainingActivity"
+            android:name=".activities.TrainingActivity"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TrainingActivityOptions"
+            android:name=".activities.TrainingActivityOptions"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CalendarViewActivity"
+            android:name=".activities.CalendarViewActivity"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AndroidDatabaseManager"
+            android:name=".database.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".ExportToFileActivity"
+            android:name=".activities.ExportToFileActivity"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait" />
     </application>

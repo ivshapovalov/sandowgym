@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +15,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
+import ru.brainworkout.sandow_gym.commons.Exercise;
+import ru.brainworkout.sandow_gym.R;
 
 public class ExercisesListActivity extends AppCompatActivity {
 
