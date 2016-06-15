@@ -766,16 +766,15 @@ public class TrainingActivity extends AppCompatActivity {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a = 0;
+            int da = 0;
             try {
-                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+                da = Integer.parseInt(String.valueOf(etVolume.getText()));
 
-                a = a == 0 ? 0 : a - 1;
-
-                etVolume.setText(String.valueOf(a));
             } catch (Exception e) {
 
             }
+                etVolume.setText(String.valueOf(da <= 0 ? 0 : da - 1));
+
 
 
         }
@@ -785,16 +784,15 @@ public class TrainingActivity extends AppCompatActivity {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a = 0;
+            int da = 0;
+
             try {
-                a = Integer.parseInt(String.valueOf(etVolume.getText()));
+                da = Integer.parseInt(String.valueOf(etVolume.getText()));
 
-                a = a <= 10 ? 0 : a - 10;
-
-                etVolume.setText(String.valueOf(a));
             } catch (Exception e) {
 
             }
+            etVolume.setText(String.valueOf(da <= 10 ? 0 : da - 10));
 
 
         }
@@ -804,15 +802,13 @@ public class TrainingActivity extends AppCompatActivity {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a = 0;
+            int da = 0;
             try {
-                a = Integer.parseInt(String.valueOf(etVolume.getText()));
-                a++;
-                etVolume.setText(String.valueOf(a));
+                da = Integer.parseInt(String.valueOf(etVolume.getText()));
             } catch (Exception e) {
 
             }
-
+            etVolume.setText(String.valueOf(++da));
         }
     }
 
@@ -820,15 +816,15 @@ public class TrainingActivity extends AppCompatActivity {
 
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int a = 0;
+            int da = 0;
             try {
-                a = Integer.parseInt(String.valueOf(etVolume.getText()));
-                a += 10;
-                etVolume.setText(String.valueOf(a));
+                da = Integer.parseInt(String.valueOf(etVolume.getText()));
 
             } catch (Exception e) {
 
             }
+            da += 10;
+            etVolume.setText(String.valueOf(da));
 
         }
     }
