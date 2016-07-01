@@ -170,10 +170,12 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btVolumeLastDay_onClick(View view) {
 
-        if (!"".equals(mVolumeLastDay)) {
-            int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-            TextView etVolume = (TextView) findViewById(mVolumeID);
-            if (etVolume != null) {
+        int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
+        TextView etVolume = (TextView) findViewById(mVolumeID);
+        if (etVolume != null) {
+            if ("".equals(mVolumeLastDay)) {
+                etVolume.setText("0");
+            } else {
                 etVolume.setText(mVolumeLastDay);
             }
         }
@@ -194,18 +196,6 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     private void setNextExercise() {
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
-        if (etVolume != null) {
-
-            mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
-        }
-        EditText etComment = (EditText) findViewById(R.id.etComment);
-        if (etComment != null) {
-
-            mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
-        }
-        mTrainingContentList.add(mCurrentTrainingContent);
-        db.updateTrainingContent(mCurrentTrainingContent);
         if (mActiveExercises.size() != 0) {
             if (mCurrentExerciseNumberInList != mActiveExercises.size() - 1) {
 
@@ -250,18 +240,7 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     private void setPreviousExercise() {
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
-        if (etVolume != null) {
 
-            mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
-        }
-        EditText etComment = (EditText) findViewById(R.id.etComment);
-        if (etComment != null) {
-
-            mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
-        }
-        mTrainingContentList.add(mCurrentTrainingContent);
-        db.updateTrainingContent(mCurrentTrainingContent);
         if (mActiveExercises.size() != 0) {
             if (mCurrentExerciseNumberInList != 0) {
 
@@ -406,15 +385,18 @@ public class TrainingActivity extends AppCompatActivity {
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
 
-            List<Training> mTrainingList = db.getLastTrainingsByDates(Common.ConvertDateToString(mCurrentTraining.getDay()));
-            if (mTrainingList.size() == 1) {
+//            List<Training> mTrainingList = db.getLastTrainingsByDates(Common.ConvertDateToString(mCurrentTraining.getDay()));
+
+            List<TrainingContent> mTrainingsContentList = db.getLastExerciseNotNullVolume(Common.ConvertDateToString(mCurrentTraining.getDay()),mCurrentExercise.getID());
+            if (mTrainingsContentList.size() == 1) {
                 try {
-                    mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
+                    //mVolumeLastDay = db.getTrainingContent(mCurrentExercise.getID(), mTrainingList.get(0).getID()).getVolume();
+                    mVolumeLastDay =mTrainingsContentList.get(0).getVolume();
                 } catch (Exception e) {
                     mVolumeLastDay = "";
                 }
             }
-            btYesterdayVolume.setText("Вчера: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
+            btYesterdayVolume.setText("Последнее: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
 
         }
 
@@ -531,6 +513,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void getPropertiesFromScreen() {
 
+
         //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
@@ -615,6 +598,23 @@ public class TrainingActivity extends AppCompatActivity {
 
         mTrainingIsNew = false;
         //MyLogger(TAG, "Добавили " + String.valueOf(mCurrentTraining.getID()));
+    }
+
+    public void saveTrainingContent(boolean readFromScreen) {
+        if (readFromScreen) {
+            EditText etVolume = (EditText) findViewById(R.id.etVolume);
+            if (etVolume != null) {
+
+                mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
+            }
+            EditText etComment = (EditText) findViewById(R.id.etComment);
+            if (etComment != null) {
+
+                mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
+            }
+        }
+        mTrainingContentList.add(mCurrentTrainingContent);
+        db.updateTrainingContent(mCurrentTrainingContent);
     }
 
     public static void MyLogger(String TAG, String statement) {
@@ -764,67 +764,35 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btVolumeLeft_onClick(View view) {
 
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
-        if (etVolume != null) {
-            int da = 0;
-            try {
-                da = Integer.parseInt(String.valueOf(etVolume.getText()));
-
-            } catch (Exception e) {
-
-            }
-                etVolume.setText(String.valueOf(da <= 0 ? 0 : da - 1));
-
-
-
-        }
+        VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(View view) {
-
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
-        if (etVolume != null) {
-            int da = 0;
-
-            try {
-                da = Integer.parseInt(String.valueOf(etVolume.getText()));
-
-            } catch (Exception e) {
-
-            }
-            etVolume.setText(String.valueOf(da <= 10 ? 0 : da - 10));
-
-
-        }
+        VolumeChange(-10);
     }
 
     public void btVolumeRight_onClick(View view) {
 
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
-        if (etVolume != null) {
-            int da = 0;
-            try {
-                da = Integer.parseInt(String.valueOf(etVolume.getText()));
-            } catch (Exception e) {
-
-            }
-            etVolume.setText(String.valueOf(++da));
-        }
+        VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(View view) {
 
+        VolumeChange(10);
+    }
+
+    private void VolumeChange(int dx) {
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
-            int da = 0;
+            int mVolume = 0;
             try {
-                da = Integer.parseInt(String.valueOf(etVolume.getText()));
-
+                mVolume = Integer.parseInt(String.valueOf(etVolume.getText()));
             } catch (Exception e) {
-
+                System.out.println("Хрен");
             }
-            da += 10;
-            etVolume.setText(String.valueOf(da));
+            mVolume = mVolume + dx;
+            mVolume = mVolume < 0 ? 0 : mVolume;
+            etVolume.setText(String.valueOf(mVolume));
 
         }
     }
@@ -921,52 +889,37 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void btTrainingList_onClick(TextView v) {
 
-//        Animation anim = new AlphaAnimation(0.0f, 1.0f);
-//        anim.setDuration(50); //You can manage the blinking time with this parameter
-//        anim.setStartOffset(0);
-//        anim.setRepeatMode(Animation.REVERSE);
-//        //anim.setRepeatCount(Animation.INFINITE);
-//        anim.setRepeatCount(3);
-//        v.startAnimation(anim);
+        int newId = v.getId() % 10000;
+        int step = newId - (mCurrentExerciseNumberInList + 1);
+        saveAndGoToNewExercise(step);
 
-        int id = v.getId() % 10000;
-        //System.out.println(String.valueOf(a));
+    }
 
-        int a = (mCurrentExerciseNumberInList + 1) - id;
-        if (a > 0) {
-            for (int i = 1; i <= a; i++) {
+    private void saveAndGoToNewExercise(int steps) {
+
+        saveTrainingContent(true);
+        int mStepsABS = Math.abs(steps);
+        for (int i = 1; i <= mStepsABS; i++) {
+            saveTrainingContent(false);
+
+            if (steps < 0) {
                 setPreviousExercise();
-            }
-            showExercise();
-
-        } else if (a < 0) {
-            for (int i = 1; i <= Math.abs(a); i++) {
+            } else {
                 setNextExercise();
             }
-            showExercise();
         }
-
+        showExercise();
     }
 
     private void btTrainingListPrevious_onClick(TextView v) {
 
-
-        for (int i = 1; i <= 5; i++) {
-            setPreviousExercise();
-        }
-        showExercise();
-
+        saveAndGoToNewExercise(-5);
 
     }
 
     private void btTrainingListNext_onClick(TextView v) {
 
-
-        for (int i = 1; i <= 5; i++) {
-            setNextExercise();
-        }
-        showExercise();
-
+        saveAndGoToNewExercise(5);
 
     }
 

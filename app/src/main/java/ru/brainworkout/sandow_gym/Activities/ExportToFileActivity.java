@@ -276,7 +276,7 @@ public class ExportToFileActivity extends AppCompatActivity {
     }
 
 
-    public void btExport_onClick(View view) {
+    public void btExportToFile_onClick(View view) {
 
        // boolean fault = false;
         //Проверим даты

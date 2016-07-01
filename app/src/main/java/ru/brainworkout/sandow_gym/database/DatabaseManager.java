@@ -233,7 +233,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingContent;
     }
 
-    public TrainingContent getTrainingContent(int exercise_id, int training_id) {
+    public TrainingContent getTrainingContent(int exercise_id, int training_id)  {
         SQLiteDatabase db = this.getReadableDatabase();
 
         TrainingContent trainingContent;
@@ -447,6 +447,36 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         // return contact list
         return trainingsList;
+    }
+
+    public List<TrainingContent> getLastExerciseNotNullVolume(String mDateTo,int exercise_id) {
+
+        mDateTo="".equals(mDateTo)?"9999-99-99":mDateTo;
+
+        List<TrainingContent> trainingsContentList = new ArrayList<>();
+        String selectQuery = "SELECT MAX("+TABLE_TRAININGS+"."+KEY_TRAINING_DAY+"),"+TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_ID+","
+                +TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_VOLUME
+                +" FROM " + TABLE_TRAININGS + ","+ TABLE_TRAINING_CONTENT+" WHERE "+ TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_VOLUME+" <>\"\" AND "
+                + TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_VOLUME+" <>\"0\" AND "
+                +TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_ID_EXERCISE+" = "+ exercise_id+ " AND "
+                +TABLE_TRAININGS+"."+KEY_TRAINING_ID+" = "+ TABLE_TRAINING_CONTENT+"."+KEY_TRAINING_CONTENT_ID_TRAINING + " AND "
+                + TABLE_TRAININGS+"."+KEY_TRAINING_DAY  +"<\"" + mDateTo+"\" ORDER BY " + KEY_TRAINING_DAY;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(1)!=0 & cursor.getString(2)!=null) {
+                    TrainingContent trainingContent = new TrainingContent(cursor.getInt(1), cursor.getString(2));
+                    // Adding contact to list
+                    trainingsContentList.add(trainingContent);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return trainingsContentList;
     }
 
 

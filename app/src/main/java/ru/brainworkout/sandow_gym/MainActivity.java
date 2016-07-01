@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void btSaveToCSV_onClick(View view) {
+    public void btExportToFile_onClick(View view) {
 
         Intent intent = new Intent(MainActivity.this, ExportToFileActivity.class);
         startActivity(intent);
