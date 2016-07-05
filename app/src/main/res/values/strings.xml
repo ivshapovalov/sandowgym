@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Гимнастика Сандова</string>
-    <string name="exercises_list_name">Упражнения</string>
-    <string name="exercise_name">Упражнение"</string>
-    <string name="trainings_list_name">Тренировки</string>
-    <string name="training_name">Тренировка"</string>
-    <string name="calendar_view_name">Выбор даты"</string>
+    <string name="app_name">SANDOW GYM</string>
+    <string name="exercises_list_name">Exercises</string>
+    <string name="exercise_name">Exercise"</string>
+    <string name="trainings_list_name">Trainings</string>
+    <string name="training_name">Training"</string>
+    <string name="calendar_view_name">Date choice</string>
 </resources>

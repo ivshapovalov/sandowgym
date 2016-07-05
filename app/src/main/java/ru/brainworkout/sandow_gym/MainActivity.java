@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.activities.ExercisesListActivity;
-import ru.brainworkout.sandow_gym.activities.ExportToFileActivity;
+import ru.brainworkout.sandow_gym.activities.FileExportImportActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingsListActivity;
 import ru.brainworkout.sandow_gym.commons.Exercise;
@@ -92,9 +92,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void btExportToFile_onClick(View view) {
+    public void btExportImport_onClick(View view) {
 
-        Intent intent = new Intent(MainActivity.this, ExportToFileActivity.class);
+        Intent intent = new Intent(MainActivity.this, FileExportImportActivity.class);
         startActivity(intent);
 
 

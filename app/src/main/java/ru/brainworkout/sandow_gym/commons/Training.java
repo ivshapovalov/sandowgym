@@ -14,7 +14,6 @@ import java.util.List;
 public class Training  implements Parcelable{
     private int _id;
     private Date _day;
-    private List<TrainingContent> trainingContentList;
     private int _weight; //кг
 
     @Override
@@ -89,14 +88,6 @@ public class Training  implements Parcelable{
     public Training(int _id) {
 
         this._id = _id;
-    }
-
-    public List<TrainingContent> getTrainingContentList() {
-        return trainingContentList;
-    }
-
-    public void setTrainingContentList(List<TrainingContent> trainingContentList) {
-        this.trainingContentList = trainingContentList;
     }
 
     public int getID() {

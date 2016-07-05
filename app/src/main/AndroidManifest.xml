@@ -46,7 +46,7 @@
             android:name=".database.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".activities.ExportToFileActivity"
+            android:name=".activities.FileExportImportActivity"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait" />
     </application>

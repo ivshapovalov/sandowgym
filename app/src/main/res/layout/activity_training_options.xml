@@ -23,8 +23,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:onClick="buttonSave_onClick"
-            android:text="Сохранить"
-            android:textSize="12sp" />
+            android:text="SAVE"
+            android:textSize="12sp"
+            android:background="@drawable/textview_border" />
 
         <Button
 
@@ -34,8 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:onClick="buttonCancel_onClick"
-            android:text="Отмена"
-            android:textSize="12sp" />
+            android:text="CANCEL"
+            android:textSize="12sp"
+            android:background="@drawable/textview_border" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="Показывать картинку"
+            android:text="SHOW PICTURE"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -97,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="Показывать описание"
+            android:text="SHOW EXPLANATION"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -140,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="Показывать количество по умолчанию"
+            android:text="SHOW DEF VOLUME"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -182,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="Показывать количество прошлой тренировки"
+            android:text="SHOW LAST VOLUME"
             android:textSize="12sp"
             android:textStyle="bold" />
 

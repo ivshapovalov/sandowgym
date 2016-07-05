@@ -19,16 +19,18 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Выбрать"
+                android:text="OK"
                 android:id="@+id/btSave"
-                android:onClick="btSave_onClick" />
+                android:onClick="btSave_onClick"
+                android:background="@drawable/textview_border" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Закрыть"
+                android:text="CANCEL"
                 android:id="@+id/btClose"
-                android:onClick="btClose_onClick" />
+                android:onClick="btClose_onClick"
+                android:background="@drawable/textview_border" />
 
         </TableRow>
     </TableLayout>

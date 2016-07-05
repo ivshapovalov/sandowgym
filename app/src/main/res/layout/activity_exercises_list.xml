@@ -23,9 +23,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
-                android:layout_span="7"
-                android:foreground="@drawable/ic_house"
-                android:background="@drawable/ic_house" />
+                android:layout_span="10"
+                android:background="@drawable/textview_border"
+                android:text="HOME" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -34,7 +34,7 @@
                 android:text="ADD"
                 android:id="@+id/btExercisesAdd"
                 android:onClick="bt_ExercisesAdd_onClick"
-                android:layout_span="15"
+                android:layout_span="10"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/textview_border" />
 
@@ -45,7 +45,7 @@
                 android:text="FILL"
                 android:id="@+id/btExercisesFillDefault"
                 android:onClick="bt_ExercisesFillDefault_onClick"
-                android:layout_span="15"
+                android:layout_span="10"
                 android:background="@drawable/textview_border" />
 
             <Button
@@ -53,9 +53,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/button2"
                 android:onClick="bt_Edit_onClick"
+                android:layout_span="10"
+                android:text="EDIT"
                 style="?android:attr/buttonStyleSmall"
-                android:layout_span="7"
-                android:background="@android:drawable/ic_menu_edit" />
+                android:background="@drawable/textview_border" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -63,8 +64,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/button8"
                 android:onClick="btDeleteAllExercises_onClick"
-                android:layout_span="7"
-                android:background="@android:drawable/ic_menu_delete" />
+                android:layout_span="11"
+                android:background="@drawable/textview_border"
+                android:text="DELETE" />
 
 
         </TableRow>

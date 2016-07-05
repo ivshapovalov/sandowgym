@@ -20,12 +20,24 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Close"
+                android:id="@+id/button4"
+                android:onClick="btClose_onClick"
+                android:layout_span="7"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center"
+                android:background="@drawable/textview_border" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Save"
                 android:id="@+id/button3"
                 android:onClick="btSave_onClick"
                 android:layout_span="7"
                 style="?android:attr/buttonStyleSmall"
-                android:gravity="center" />
+                android:gravity="center"
+                android:background="@drawable/textview_border" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -35,17 +47,8 @@
                 android:onClick="btDelete_onClick"
                 android:layout_span="8"
                 style="?android:attr/buttonStyleSmall"
-                android:gravity="center" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Close"
-                android:id="@+id/button4"
-                android:onClick="btClose_onClick"
-                android:layout_span="7"
-                style="?android:attr/buttonStyleSmall"
-                android:gravity="center" />
+                android:gravity="center"
+                android:background="@drawable/textview_border" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -55,7 +58,8 @@
                 android:id="@+id/button13"
                 android:onClick="btOptions_onClick"
                 android:layout_span="8"
-                android:gravity="center" />
+                android:gravity="center"
+                android:background="@drawable/textview_border" />
         </TableRow>
 
         <TableRow
@@ -88,7 +92,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Дата"
+                android:text="DATE"
                 android:id="@+id/textView2"
                 style="@android:style/TextAppearance.Small"
                 android:layout_span="7"
@@ -157,20 +161,22 @@
                         <Button
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:text="По умолчанию"
+                            android:text="DEFAULT"
                             android:id="@+id/btVolumeDefault"
                             android:onClick="btVolumeDefault_onClick"
                             android:visibility="visible"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            android:background="@drawable/textview_border" />
 
                         <Button
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:text="Вчера"
+                            android:text="LAST"
                             android:id="@+id/btVolumeLastDay"
 
                             android:onClick="btVolumeLastDay_onClick"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            android:background="@drawable/textview_border" />
                     </TableRow>
 
                     <TableRow
@@ -187,7 +193,8 @@
                             android:textSize="15dp"
                             android:gravity="center"
                             android:layout_span="11"
-                            android:layout_weight="11" />
+                            android:layout_weight="11"
+                            android:background="@drawable/textview_border" />
 
                         <Button
                             style="?android:attr/buttonStyleSmall"
@@ -198,7 +205,8 @@
                             android:textSize="15dp"
                             android:gravity="center"
                             android:layout_span="5"
-                            android:layout_weight="5" />
+                            android:layout_weight="5"
+                            android:background="@drawable/textview_border" />
 
                         <EditText
                             android:layout_width="0dp"
@@ -221,7 +229,8 @@
                             android:textSize="15dp"
                             android:gravity="center"
                             android:layout_span="5"
-                            android:layout_weight="5" />
+                            android:layout_weight="5"
+                            android:background="@drawable/textview_border" />
 
 
                         <Button
@@ -234,7 +243,8 @@
                             android:textSize="15dp"
                             android:gravity="center"
                             android:layout_span="11"
-                            android:layout_weight="11" />
+                            android:layout_weight="11"
+                            android:background="@drawable/textview_border" />
                     </TableRow>
 
                     <TableRow
@@ -249,7 +259,7 @@
                             android:ems="10"
                             android:id="@+id/etWeight"
                             android:layout_weight="1"
-                            android:hint="Вес"
+                            android:hint="WEIGHT"
                             android:gravity="center"
                             android:layout_span="10" />
 
@@ -258,7 +268,7 @@
                             android:layout_height="match_parent"
                             android:id="@+id/etComment"
                             android:layout_span="40"
-                            android:hint="Комментарий"
+                            android:hint="COMMENT"
                             android:layout_weight="1" />
                     </TableRow>
 

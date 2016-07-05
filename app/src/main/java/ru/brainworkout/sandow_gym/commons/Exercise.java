@@ -15,10 +15,20 @@ public class Exercise {
 
     // Empty constructor
     public Exercise() {
+        this._explanation="";
+        this._is_active=1;
+        this._name="";
+        this._picture="--";
+        this._volume_default="";
 
     }
     public Exercise(int _id) {
         this._id=_id;
+        this._explanation="";
+        this._is_active=1;
+        this._name="";
+        this._picture="--";
+        this._volume_default="";
 
     }
     public String getPicture() {

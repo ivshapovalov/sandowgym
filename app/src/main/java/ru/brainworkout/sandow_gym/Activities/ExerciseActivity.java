@@ -15,6 +15,7 @@ import android.widget.TextView;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 
 /**
  * Created by Ivan on 14.05.2016.
@@ -45,7 +46,11 @@ public class ExerciseActivity extends AppCompatActivity {
             CurrentExercise = new Exercise(db.getExerciseMaxNumber() + 1);
         } else {
             int id = intent.getIntExtra("id", 0);
-            CurrentExercise = db.getExercise(id);
+            try {
+                CurrentExercise = db.getExercise(id);
+            } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                tableDoesNotContainElementException.printStackTrace();
+            }
         }
 
         showExerciseOnScreen();
@@ -117,7 +122,9 @@ public class ExerciseActivity extends AppCompatActivity {
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
-            ivPicture.setImageResource(getResources().getIdentifier(CurrentExercise.getPicture(), "drawable", getPackageName()));
+            if (CurrentExercise.getPicture()!=null&&!"".equals(CurrentExercise.getPicture())) {
+                ivPicture.setImageResource(getResources().getIdentifier(CurrentExercise.getPicture(), "drawable", getPackageName()));
+            }
         }
     }
 

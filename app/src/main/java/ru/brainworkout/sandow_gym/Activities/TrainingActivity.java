@@ -37,6 +37,7 @@ import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.R;
 import ru.brainworkout.sandow_gym.commons.Training;
 import ru.brainworkout.sandow_gym.commons.TrainingContent;
+import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 
 
 /**
@@ -112,7 +113,13 @@ public class TrainingActivity extends AppCompatActivity {
             if (id == 0) {
                 mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
             } else {
-                mCurrentTraining = db.getTraining(id);
+
+                try {
+                    mCurrentTraining = db.getTraining(id);
+                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                    //возможно удалили элемент
+                    tableDoesNotContainElementException.printStackTrace();
+                }
             }
             try {
                 if ((mCurrentDate != null)) {
@@ -226,8 +233,12 @@ public class TrainingActivity extends AppCompatActivity {
     private void showExercise() {
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
-            ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
-            ivPicture.setMinimumHeight(mHeight);
+            if (mCurrentExercise.getPicture()!=null&&!"".equals(mCurrentExercise.getPicture())) {
+                ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
+                ivPicture.setMinimumHeight(mHeight);
+            } else {
+                ivPicture.setBackgroundColor(Color.WHITE);
+            }
         }
         TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
@@ -270,7 +281,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     }
 
-    private void getAllExercisesOfTraining() {
+    private void getAllExercisesOfTraining()  {
 
 
         Log.d("Reading: ", "Reading all active exercises..");
@@ -293,7 +304,12 @@ public class TrainingActivity extends AppCompatActivity {
             //если в текущих активных не нашли - добавляем новое
             if (!isFound) {
                 //добавим в список упражнений упражнение старое
-                Exercise ex = db.getExercise(id_ex);
+                Exercise ex = null;
+                try {
+                    ex = db.getExercise(id_ex);
+                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                    tableDoesNotContainElementException.printStackTrace();
+                }
                 mActiveExercises.add(ex);
             }
         }
@@ -343,7 +359,12 @@ public class TrainingActivity extends AppCompatActivity {
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
 
-            ivPicture.setImageResource(getResources().getIdentifier(ex.getPicture(), "drawable", getPackageName()));
+            if (ex.getPicture()!=null&&!"".equals(ex.getPicture())) {
+                ivPicture.setImageResource(getResources().getIdentifier(ex.getPicture(), "drawable", getPackageName()));
+            } else {
+                ivPicture.setBackgroundColor(Color.WHITE);
+            }
+
         }
         TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
@@ -380,7 +401,7 @@ public class TrainingActivity extends AppCompatActivity {
         if (btDefaultVolume != null) {
 
             String mVolumeDefault = mCurrentExercise.getVolumeDefault();
-            btDefaultVolume.setText("По умолчанию: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
+            btDefaultVolume.setText("DEFAULT VOL: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
         }
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
@@ -396,7 +417,7 @@ public class TrainingActivity extends AppCompatActivity {
                     mVolumeLastDay = "";
                 }
             }
-            btYesterdayVolume.setText("Последнее: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
+            btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
 
         }
 
@@ -432,7 +453,11 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void showTrainingContentOnScreen(int ex_id) {
 
-        mCurrentExercise = db.getExercise(ex_id);
+        try {
+            mCurrentExercise = db.getExercise(ex_id);
+        } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+            tableDoesNotContainElementException.printStackTrace();
+        }
 
         showTrainingContentOnScreen(mCurrentExercise);
     }

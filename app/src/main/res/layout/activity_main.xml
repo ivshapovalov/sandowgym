@@ -26,10 +26,12 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Экспорт в файл"
+                    android:text="EXPORT/IMPORT"
                     android:id="@+id/btMain1"
                     android:layout_span="30"
-                    android:onClick="btExportToFile_onClick" />
+                    android:onClick="btExportImport_onClick"
+                    android:nestedScrollingEnabled="false"
+                    android:background="@drawable/textview_border" />
             </TableRow>
 
             <TableRow
@@ -52,10 +54,11 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Упражнения"
+                    android:text="@string/exercises_list_name"
                     android:id="@+id/btMain2"
                     android:onClick="bt_Exercises_onClick"
-                    android:layout_span="30" />
+                    android:layout_span="30"
+                    android:background="@drawable/textview_border" />
 
             </TableRow>
 
@@ -66,10 +69,11 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Тренировки"
+                    android:text="@string/trainings_list_name"
                     android:id="@+id/btMain3"
                     android:onClick="btTrainings_onClick"
-                    android:layout_span="30" />
+                    android:layout_span="30"
+                    android:background="@drawable/textview_border" />
             </TableRow>
 
             <TableRow
@@ -79,10 +83,11 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Новая тренировка"
+                    android:text="NEW TRAINING"
                     android:id="@+id/btMain4"
                     android:onClick="bt_NewTraining_onClick"
-                    android:layout_span="30" />
+                    android:layout_span="30"
+                    android:background="@drawable/textview_border" />
             </TableRow>
 
             <TableRow
@@ -92,10 +97,11 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Очистить БД"
+                    android:text="CLEAR DATABASE"
                     android:id="@+id/btMain5"
                     android:onClick="btClearBD_onClick"
-                    android:layout_span="30" />
+                    android:layout_span="30"
+                    android:background="@drawable/textview_border" />
             </TableRow>
 
         </TableLayout>
