@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym.commons;
 
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
+
 public class Exercise {
 
     int _id;
@@ -108,6 +110,17 @@ public class Exercise {
 
     public void setVolumeDefault(String _volume_default) {
         this._volume_default = _volume_default;
+    }
+
+    public void dbUpdate(DatabaseManager DB) {
+        DB.updateExercise(this);
+    }
+    public void dbAdd(DatabaseManager DB) {
+        DB.addExercise(this);
+    }
+
+    public void dbDelete(DatabaseManager DB) {
+        DB.addExercise(this);
     }
 
 

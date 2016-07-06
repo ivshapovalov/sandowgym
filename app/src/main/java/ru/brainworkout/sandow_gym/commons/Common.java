@@ -8,12 +8,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by Ivan on 20.05.2016.
- */
 public class Common {
 
-    public static Date ConvertStringToDate(String date) {
+    public static Date ConvertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date d = null;
         try {
@@ -25,7 +22,8 @@ public class Common {
         return d;
     }
 
-    public static String ConvertDateToString(Date date) {
+    public static String ConvertDateToString(final Date date) {
+
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String sDate="";
         try {
@@ -33,15 +31,16 @@ public class Common {
         } catch (Exception e) {}
 
         return sDate;
+
     }
 
-    public static void blink(View v) {
+    public static void blink(final View v) {
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
         anim.setDuration(100);
         anim.setStartOffset(0);
         anim.setRepeatMode(Animation.REVERSE);
-        //anim.setRepeatCount(Animation.INFINITE);
         anim.setRepeatCount(1);
         v.startAnimation(anim);
     }
+
 }

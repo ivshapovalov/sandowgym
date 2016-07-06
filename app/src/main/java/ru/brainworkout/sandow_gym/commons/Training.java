@@ -42,15 +42,6 @@ public class Training  implements Parcelable{
         String[] data = new String[2];
         in.readStringArray(data);
         _id = Integer.parseInt(data[0]);
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        Date d = null;
-//        try {
-//            d = dateFormat.parse(String.valueOf(data[1]));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        _day = d;
-
         setDayString(data[1]);
 
     }
