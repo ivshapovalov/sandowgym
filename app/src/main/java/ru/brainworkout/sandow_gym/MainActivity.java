@@ -31,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mSettings;
     private DatabaseManager db;
-    private int mHeight;
-    private int mWidth;
-    private int mTextSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         //допустим 15 строк тренировок
-        mHeight = displaymetrics.heightPixels / 8;
-        mWidth = displaymetrics.widthPixels/1;
-        mTextSize = (int) (Math.min(mWidth, mHeight) / 4 / getApplicationContext().getResources().getDisplayMetrics().density);
+        int mHeight = displaymetrics.heightPixels / 8;
+        int mWidth = displaymetrics.widthPixels/1;
+        int mTextSize = (int) (Math.min(mWidth, mHeight) / 4 / getApplicationContext().getResources().getDisplayMetrics().density);
         for (int i = 0; i <=5 ; i++) {
             int btID = getResources().getIdentifier("btMain"+String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);

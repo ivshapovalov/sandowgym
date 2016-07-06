@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".Activities.MainActivity">
+    tools:context=".MainActivity">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:stretchColumns="*">
 
             <TableRow
@@ -30,8 +30,8 @@
                     android:id="@+id/btMain1"
                     android:layout_span="30"
                     android:onClick="btExportImport_onClick"
-                    android:nestedScrollingEnabled="false"
-                    android:background="@drawable/textview_border" />
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color" />
             </TableRow>
 
             <TableRow
@@ -58,7 +58,8 @@
                     android:id="@+id/btMain2"
                     android:onClick="bt_Exercises_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/textview_border" />
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color" />
 
             </TableRow>
 
@@ -73,7 +74,8 @@
                     android:id="@+id/btMain3"
                     android:onClick="btTrainings_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/textview_border" />
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color" />
             </TableRow>
 
             <TableRow
@@ -87,7 +89,8 @@
                     android:id="@+id/btMain4"
                     android:onClick="bt_NewTraining_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/textview_border" />
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color" />
             </TableRow>
 
             <TableRow
@@ -101,7 +104,8 @@
                     android:id="@+id/btMain5"
                     android:onClick="btClearBD_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/textview_border" />
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color" />
             </TableRow>
 
         </TableLayout>

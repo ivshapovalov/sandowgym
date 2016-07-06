@@ -193,7 +193,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 exercise = new Exercise(Integer.parseInt(cursor.getString(1)), cursor.getString(2),
                         cursor.getString(3), cursor.getString(4), cursor.getString(5));
             }
-            // return contact
+            cursor.close();
             return exercise;
         }
     }
@@ -210,6 +210,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             throw new TableDoesNotContainElementException("There is no Training with id - " + id);
         } else {
             Training training = new Training(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)));
+            cursor.close();
             return training;
         }
 
@@ -227,6 +228,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             throw new TableDoesNotContainElementException("There is no TrainingContent with id - " + id);
         } else {
             TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4));
+            cursor.close();
             return trainingContent;
         }
     }
@@ -243,6 +245,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         } else {
             TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4));
 
+            cursor.close();
             return trainingContent;
         }
     }
@@ -260,6 +263,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             } else {
                 trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)), cursor.getString(4));
 
+                cursor.close();
                 return trainingContent;
             }
     }
@@ -276,7 +280,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public void deleteAllTrainings() {
 
-        // Select All Query
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAININGS, null, null);
 
@@ -284,7 +287,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public void deleteAllTrainingContent() {
 
-        // Select All Query
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAINING_CONTENT, null, null);
 
@@ -298,7 +300,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise();
@@ -309,12 +310,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 exercise.setVolumeDefault(cursor.getString(4));
                 exercise.setPicture(cursor.getString(5));
 
-                // Adding contact to list
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return exerciseList;
     }
 
@@ -326,7 +326,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
+
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise();
@@ -337,12 +337,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 exercise.setVolumeDefault(cursor.getString(4));
                 exercise.setPicture(cursor.getString(5));
 
-                // Adding contact to list
+
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return exerciseList;
     }
 
@@ -362,19 +362,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
+
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise();
                 exercise.setID(cursor.getInt(0));
                 exercise.setName(cursor.getString(1));
                 exercise.setVolumeDefault(cursor.getString(2));
-                // Adding contact to list
+
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return exerciseList;
     }
 
@@ -386,7 +386,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
+
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training();
@@ -397,7 +397,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return trainingsList;
     }
 
@@ -416,7 +416,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
+
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training();
@@ -428,7 +428,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return trainingsList;
     }
 
@@ -445,19 +445,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training();
                 training.setID(cursor.getInt(0));
                 training.setDayString(cursor.getString(1));
                 training.setWeight(cursor.getInt(2));
-                // Adding contact to list
+
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return trainingsList;
     }
 
@@ -484,13 +483,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
             do {
                 if (cursor.getInt(1) != 0 & cursor.getString(2) != null) {
                     TrainingContent trainingContent = new TrainingContent(cursor.getInt(1), cursor.getString(2));
-                    // Adding contact to list
+
                     trainingsContentList.add(trainingContent);
                 }
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        cursor.close();
         return trainingsContentList;
     }
 
@@ -517,6 +516,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         return trainingContentList;
     }
 

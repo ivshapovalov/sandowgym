@@ -1,10 +1,7 @@
 package ru.brainworkout.sandow_gym.commons;
 
-import java.util.Comparator;
-
 public class Exercise {
 
-    //private variables
     int _id;
     int _is_active;
     String _name;
@@ -12,8 +9,6 @@ public class Exercise {
     String _volume_default;
     String _picture;
 
-
-    // Empty constructor
     public Exercise() {
         this._explanation="";
         this._is_active=1;
@@ -39,7 +34,6 @@ public class Exercise {
         this._picture = _picture;
     }
 
-    // constructor
     public Exercise(int _id, String _name,    String _explanation, String _volume_default, String _picture) {
         this._id=_id;
         this._name = _name;

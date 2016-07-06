@@ -1,14 +1,11 @@
 package ru.brainworkout.sandow_gym.activities;
 
 import android.content.Intent;
-import android.database.CursorIndexOutOfBoundsException;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
-import com.opencsv.CSVWriter;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -27,7 +24,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 

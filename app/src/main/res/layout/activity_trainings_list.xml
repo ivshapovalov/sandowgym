@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".Activities.TrainingsListActivity"
+    tools:context=".activities.TrainingsListActivity"
     android:id="@+id/idTrainingListsLayout">
 
     <TableLayout
@@ -24,8 +24,9 @@
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
                 android:layout_span="6"
-                android:background="@drawable/textview_border"
-                android:text="HOME" />
+                android:background="@drawable/bt_border"
+                android:text="HOME"
+                android:textColor="@color/text_color" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -37,29 +38,32 @@
                 android:onClick="bt_TrainingsAdd_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="10"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/button2"
+                android:id="@+id/btTrainingsDBEditor"
                 android:onClick="bt_Edit_onClick"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/textview_border"
+                android:background="@drawable/bt_border"
                 android:layout_span="10"
-                android:text="EDIT" />
+                android:text="EDITOR"
+                android:textColor="@color/text_color" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/button8"
-                android:background="@drawable/textview_border"
+                android:id="@+id/btTrainingsClear"
+                android:background="@drawable/bt_border"
                 android:onClick="btDeleteAllTrainings_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="10"
-                android:text="DELETE" />
+                android:text="CLEAR"
+                android:textColor="@color/text_color" />
 
 
         </TableRow>
@@ -77,15 +81,17 @@
                 android:layout_span="8"
                 android:clickable="false"
                 android:enabled="true"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/btDay"
                 android:layout_span="11"
-                android:background="@drawable/textview_border"
-                android:onClick="btDay_onClick" />
+                android:background="@drawable/bt_border"
+                android:onClick="btDay_onClick"
+                android:textColor="@color/text_color" />
 
             <Button
                 android:layout_width="match_parent"
@@ -96,7 +102,8 @@
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:onClick="btTrainingsFilterDelete_onClick"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
         </TableRow>
 

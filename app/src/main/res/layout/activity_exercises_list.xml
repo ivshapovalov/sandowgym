@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".Activities.ExercisesListActivity">
+    tools:context=".activities.ExercisesListActivity">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/trowButtons"
-            android:background="@drawable/textview_border">
+            android:background="@drawable/bt_border">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -23,9 +23,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
-                android:layout_span="10"
-                android:background="@drawable/textview_border"
-                android:text="HOME" />
+                android:layout_span="8"
+                android:background="@drawable/bt_border"
+                android:text="HOME"
+                android:textColor="@color/text_color" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -34,39 +35,32 @@
                 android:text="ADD"
                 android:id="@+id/btExercisesAdd"
                 android:onClick="bt_ExercisesAdd_onClick"
-                android:layout_span="10"
+                android:layout_span="8"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/textview_border" />
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FILL"
+                android:text="DEFAULT FILL"
                 android:id="@+id/btExercisesFillDefault"
                 android:onClick="bt_ExercisesFillDefault_onClick"
-                android:layout_span="10"
-                android:background="@drawable/textview_border" />
+                android:layout_span="14"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/button2"
+                android:id="@+id/btExercisesDBEditor"
                 android:onClick="bt_Edit_onClick"
                 android:layout_span="10"
-                android:text="EDIT"
+                android:text="EDITOR"
                 style="?android:attr/buttonStyleSmall"
-                android:background="@drawable/textview_border" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/button8"
-                android:onClick="btDeleteAllExercises_onClick"
-                android:layout_span="11"
-                android:background="@drawable/textview_border"
-                android:text="DELETE" />
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
 
 
         </TableRow>

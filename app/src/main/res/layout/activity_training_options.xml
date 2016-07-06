@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".Activities.TrainingActivityOptions">
+    tools:context=".activities.TrainingActivityOptions">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -25,7 +25,8 @@
             android:onClick="buttonSave_onClick"
             android:text="SAVE"
             android:textSize="12sp"
-            android:background="@drawable/textview_border" />
+            android:background="@drawable/bt_border"
+            android:textColor="@color/text_color" />
 
         <Button
 
@@ -37,7 +38,8 @@
             android:onClick="buttonCancel_onClick"
             android:text="CANCEL"
             android:textSize="12sp"
-            android:background="@drawable/textview_border" />
+            android:background="@drawable/bt_border"
+            android:textColor="@color/text_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -58,7 +60,8 @@
             android:layout_weight="40"
             android:text="SHOW PICTURE"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_color" />
 
         <RadioGroup
             android:id="@+id/rgShowPicture"
@@ -73,14 +76,16 @@
                 android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да" />
+                android:text="Да"
+                android:textColor="@color/text_color" />
 
             <RadioButton
                 android:id="@+id/rbShowPictureNo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет" />
+                android:text="Нет"
+                android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
 
@@ -101,7 +106,8 @@
             android:layout_weight="40"
             android:text="SHOW EXPLANATION"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_color" />
 
         <RadioGroup
             android:id="@+id/rgShowExplanation"
@@ -116,14 +122,16 @@
                 android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да" />
+                android:text="Да"
+                android:textColor="@color/text_color" />
 
             <RadioButton
                 android:id="@+id/rbShowExplanationNo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет" />
+                android:text="Нет"
+                android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
 
@@ -144,7 +152,8 @@
             android:layout_weight="40"
             android:text="SHOW DEF VOLUME"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_color" />
 
         <RadioGroup
             android:id="@+id/rgShowVolumeDefaultButton"
@@ -159,14 +168,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да" />
+                android:text="Да"
+                android:textColor="@color/text_color" />
 
             <RadioButton
                 android:id="@+id/rbShowVolumeDefaultButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет" />
+                android:text="Нет"
+                android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
 
@@ -186,7 +197,8 @@
             android:layout_weight="40"
             android:text="SHOW LAST VOLUME"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_color" />
 
         <RadioGroup
             android:id="@+id/rgShowVolumeLastDayButton"
@@ -201,14 +213,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да" />
+                android:text="Да"
+                android:textColor="@color/text_color" />
 
             <RadioButton
                 android:id="@+id/rbShowVolumeLastDayButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет" />
+                android:text="Нет"
+                android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
 

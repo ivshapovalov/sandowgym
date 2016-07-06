@@ -6,11 +6,7 @@ import android.os.Parcelable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-/**
- * Created by Ivan on 14.05.2016.
- */
 public class Training  implements Parcelable{
     private int _id;
     private Date _day;
