@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.commons.Common;
 import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.commons.Exercise;
@@ -72,6 +73,7 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     public void bt_ExercisesAdd_onClick(View view) {
 
+        Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -80,6 +82,7 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     public void bt_ExercisesFillDefault_onClick(View view) {
 
+        Common.blink(view);
         MyLogger(TAG, "До обращения в базу");
 
         DatabaseManager db = new DatabaseManager(this);
@@ -93,9 +96,7 @@ public class ExercisesListActivity extends AppCompatActivity {
             MyLogger(TAG, "Добавили " + String.valueOf(ex.getID()));
         }
 
-
         showExercises();
-
 
     }
 
@@ -177,6 +178,8 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     private void rowExercise_onClick(TableRow v) {
 
+        Common.blink(v);
+
         int id = v.getId() % mNumOfView;
         //System.out.println(String.valueOf(a));
 
@@ -196,6 +199,7 @@ public class ExercisesListActivity extends AppCompatActivity {
 
 
     public void bt_Edit_onClick(View view) {
+        Common.blink(view);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -290,6 +294,7 @@ public class ExercisesListActivity extends AppCompatActivity {
     }
 
     public void buttonHome_onClick(View view) {
+        Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -298,6 +303,7 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     public void btDeleteAllExercises_onClick(View view) {
 
+        Common.blink(view);
         db.deleteAllExercises();
         showExercises();
 

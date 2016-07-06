@@ -150,6 +150,13 @@ public class TrainingActivity extends AppCompatActivity {
         updateTrainingList();
 
 
+        int exID = intent.getIntExtra("CurrentExerciseID", 0);
+
+        if (exID!=0) {
+            saveAndGoToNewExercise(exID);
+        }
+
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
@@ -163,6 +170,8 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void btVolumeDefault_onClick(View view) {
+
+        Common.blink(view);
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {
                 int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
@@ -177,6 +186,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btVolumeLastDay_onClick(View view) {
 
+        Common.blink(view);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
         if (etVolume != null) {
@@ -189,6 +199,8 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void btOptions_onClick(View view) {
+
+        Common.blink(view);
 
         Intent intent = new Intent(TrainingActivity.this, TrainingActivityOptions.class);
 
@@ -420,8 +432,6 @@ public class TrainingActivity extends AppCompatActivity {
             btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
 
         }
-
-
     }
 
 //    private class Container extends ScrollView {
@@ -530,6 +540,9 @@ public class TrainingActivity extends AppCompatActivity {
 
 
     public void btClose_onClick(View view) {
+
+        Common.blink(view);
+
         Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
         intent.putExtra("id", mCurrentTraining.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -597,6 +610,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btSave_onClick(View view) {
 
+        Common.blink(view);
+
         saveTraining();
 
     }
@@ -649,6 +664,8 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void btDelete_onClick(View view) {
+
+        Common.blink(view);
 //
         if (!mTrainingIsNew) {
 
@@ -668,6 +685,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void tvDay_onClick(View view) {
 
+        Common.blink(view);
+
         Intent intent = new Intent(TrainingActivity.this, CalendarViewActivity.class);
 
         //intent.putExtra("CurrentTraining", mCurrentTraining);
@@ -681,6 +700,7 @@ public class TrainingActivity extends AppCompatActivity {
         } else {
             intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay()));
         }
+        intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
 
         startActivity(intent);
     }
@@ -789,19 +809,28 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void btVolumeLeft_onClick(View view) {
 
+        Common.blink(view);
+
         VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(View view) {
+
+        Common.blink(view);
+
         VolumeChange(-10);
     }
 
     public void btVolumeRight_onClick(View view) {
 
+        Common.blink(view);
+
         VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(View view) {
+
+        Common.blink(view);
 
         VolumeChange(10);
     }
@@ -813,7 +842,7 @@ public class TrainingActivity extends AppCompatActivity {
             try {
                 mVolume = Integer.parseInt(String.valueOf(etVolume.getText()));
             } catch (Exception e) {
-                System.out.println("Хрен");
+                //System.out.println("не вышло");
             }
             mVolume = mVolume + dx;
             mVolume = mVolume < 0 ? 0 : mVolume;
@@ -912,9 +941,10 @@ public class TrainingActivity extends AppCompatActivity {
 
     }
 
-    private void btTrainingList_onClick(TextView v) {
+    private void btTrainingList_onClick(TextView view) {
 
-        int newId = v.getId() % 10000;
+
+        int newId = view.getId() % 10000;
         int step = newId - (mCurrentExerciseNumberInList + 1);
         saveAndGoToNewExercise(step);
 
@@ -936,15 +966,15 @@ public class TrainingActivity extends AppCompatActivity {
         showExercise();
     }
 
-    private void btTrainingListPrevious_onClick(TextView v) {
+    private void btTrainingListPrevious_onClick(TextView view) {
 
         saveAndGoToNewExercise(-5);
 
     }
 
-    private void btTrainingListNext_onClick(TextView v) {
+    private void btTrainingListNext_onClick(TextView view) {
 
-        saveAndGoToNewExercise(5);
+          saveAndGoToNewExercise(5);
 
     }
 

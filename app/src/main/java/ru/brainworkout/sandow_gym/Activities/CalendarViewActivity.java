@@ -26,6 +26,7 @@ public class CalendarViewActivity extends AppCompatActivity {
     private String mOldDateTo;
 
     private int mCurrentTraningID;
+    private int mCurrentExerciseID;
     private String mCurrentActivity;
 
     @Override
@@ -40,6 +41,7 @@ public class CalendarViewActivity extends AppCompatActivity {
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
         mCurrentActivity = intent.getStringExtra("CurrentActivity");
         mCurrentTraningID = intent.getIntExtra("CurrentTrainingID", 0);
+        mCurrentExerciseID = intent.getIntExtra("CurrentExerciseID",0);
         try {
             mOldDateFrom = intent.getStringExtra("CurrentDate");
         } catch (Exception e) {
@@ -93,6 +95,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
 
     public void btSave_onClick(View view) {
+        Common.blink(view);
         Class<?> myClass = null;
         try {
             myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
@@ -103,6 +106,7 @@ public class CalendarViewActivity extends AppCompatActivity {
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
         intent.putExtra("CurrentID", mCurrentTraningID);
+        intent.putExtra("CurrentExerciseID", mCurrentExerciseID);
         if (mIsBeginDate) {
             intent.putExtra("CurrentDate", mNewDate);
             intent.putExtra("CurrentDateTo", mOldDateTo);
@@ -116,6 +120,7 @@ public class CalendarViewActivity extends AppCompatActivity {
     }
 
     public void btClose_onClick(View view) {
+        Common.blink(view);
         Class<?> myClass = null;
         try {
             myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
@@ -127,6 +132,7 @@ public class CalendarViewActivity extends AppCompatActivity {
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
         intent.putExtra("CurrentID", mCurrentTraningID);
+        intent.putExtra("CurrentExerciseID", mCurrentExerciseID);
         intent.putExtra("CurrentDate", mOldDateFrom);
         intent.putExtra("CurrentDateTo", mOldDateTo);
 

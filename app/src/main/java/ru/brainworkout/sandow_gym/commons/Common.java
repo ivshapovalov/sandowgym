@@ -1,5 +1,9 @@
 package ru.brainworkout.sandow_gym.commons;
 
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,5 +33,15 @@ public class Common {
         } catch (Exception e) {}
 
         return sDate;
+    }
+
+    public static void blink(View v) {
+        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(100);
+        anim.setStartOffset(0);
+        anim.setRepeatMode(Animation.REVERSE);
+        //anim.setRepeatCount(Animation.INFINITE);
+        anim.setRepeatCount(1);
+        v.startAnimation(anim);
     }
 }

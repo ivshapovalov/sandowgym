@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.MainActivity;
+import ru.brainworkout.sandow_gym.commons.Common;
 import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.R;
@@ -102,6 +103,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void bt_TrainingsAdd_onClick(View view) {
 
+        Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), TrainingActivity.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -205,14 +207,14 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     private void rowTraining_onClick(TableRow v) {
 
-
-        Animation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(100); //You can manage the blinking time with this parameter
-        anim.setStartOffset(0);
-        anim.setRepeatMode(Animation.REVERSE);
-        //anim.setRepeatCount(Animation.INFINITE);
-        anim.setRepeatCount(3);
-        v.startAnimation(anim);
+        Common.blink(v);
+//        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+//        anim.setDuration(100); //You can manage the blinking time with this parameter
+//        anim.setStartOffset(0);
+//        anim.setRepeatMode(Animation.REVERSE);
+//        //anim.setRepeatCount(Animation.INFINITE);
+//        anim.setRepeatCount(3);
+//        v.startAnimation(anim);
 
         int id = v.getId() % mNumOfView;
         //System.out.println(String.valueOf(a));
@@ -234,12 +236,14 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void bt_Edit_onClick(View view) {
 
+        Common.blink(view);
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
     }
 
 
     public void buttonHome_onClick(View view) {
+        Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -248,6 +252,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void btDeleteAllTrainings_onClick(View view) {
 
+        Common.blink(view);
         db.deleteAllTrainings();
         db.deleteAllTrainingContent();
         showTrainings();
@@ -257,6 +262,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void btDay_onClick(View view) {
 
+        Common.blink(view);
         Intent intent = new Intent(TrainingsListActivity.this, CalendarViewActivity.class);
         intent.putExtra("CurrentDate", mCurrentDate);
         intent.putExtra("CurrentActivity", "TrainingsListActivity");
@@ -267,6 +273,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     public void btTrainingsFilterDelete_onClick(View view) {
 
+        Common.blink(view);
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
         Button btDay= (Button) findViewById(mDayID);
         if (btDay != null) {

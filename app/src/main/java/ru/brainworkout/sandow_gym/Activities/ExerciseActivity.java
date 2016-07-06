@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import ru.brainworkout.sandow_gym.commons.Common;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.R;
@@ -129,6 +130,7 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     public void btClose_onClick(View view) {
+        Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ExercisesListActivity.class);
         intent.putExtra("id", CurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -173,6 +175,7 @@ public class ExerciseActivity extends AppCompatActivity {
 
     public void btSave_onClick(View view) {
 
+        Common.blink(view);
         //сначала сохраняем
         getPropertiesFromScreen();
 
@@ -199,6 +202,7 @@ public class ExerciseActivity extends AppCompatActivity {
 
     public void btDelete_onClick(View view) {
 
+        Common.blink(view);
         if (!mExerciseIsNew) {
 
 

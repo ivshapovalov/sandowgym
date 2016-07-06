@@ -20,7 +20,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Close"
+                android:text="CLOSE"
                 android:id="@+id/button4"
                 android:onClick="btClose_onClick"
                 android:layout_span="7"
@@ -31,7 +31,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
+                android:text="SAVE"
                 android:id="@+id/button3"
                 android:onClick="btSave_onClick"
                 android:layout_span="7"
@@ -42,7 +42,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
+                android:text="DELETE"
                 android:id="@+id/button5"
                 android:onClick="btDelete_onClick"
                 android:layout_span="8"
@@ -54,7 +54,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Options"
+                android:text="OPTIONS"
                 android:id="@+id/button13"
                 android:onClick="btOptions_onClick"
                 android:layout_span="8"

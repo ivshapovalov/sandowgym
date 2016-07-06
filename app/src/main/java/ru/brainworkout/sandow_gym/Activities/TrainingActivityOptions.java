@@ -10,6 +10,7 @@ import android.widget.RadioGroup;
 
 import ru.brainworkout.sandow_gym.MainActivity;
 import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.commons.Common;
 
 
 public class TrainingActivityOptions extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class TrainingActivityOptions extends AppCompatActivity {
 
     public void buttonSave_onClick(View view) {
 
-
+        Common.blink(view);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
         editor.putBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_PICTURE, mShowPicture);
@@ -45,6 +46,7 @@ public class TrainingActivityOptions extends AppCompatActivity {
 
     public void buttonCancel_onClick(View view) {
 
+        Common.blink(view);
         this.finish();
 
     }
