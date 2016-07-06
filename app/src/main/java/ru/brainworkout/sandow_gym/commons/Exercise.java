@@ -1,15 +1,13 @@
 package ru.brainworkout.sandow_gym.commons;
 
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
+public class Exercise extends AbstractDatabaseEntity {
 
-public class Exercise {
-
-    int _id;
-    int _is_active;
-    String _name;
-    String _explanation;
-    String _volume_default;
-    String _picture;
+    //private int _id;
+    private int _is_active;
+    private String _name;
+    private String _explanation;
+    private String _volume_default;
+    private String _picture;
 
     public Exercise() {
         this._explanation="";
@@ -85,15 +83,6 @@ public class Exercise {
         this._name = _name;
     }
 
-    public int getID() {
-        return this._id;
-    }
-
-    // setting id
-    public void setID(int id) {
-        this._id = id;
-    }
-
     // getting name
     public String getExplanation() {
         return this._explanation;
@@ -112,16 +101,16 @@ public class Exercise {
         this._volume_default = _volume_default;
     }
 
-    public void dbUpdate(DatabaseManager DB) {
-        DB.updateExercise(this);
-    }
-    public void dbAdd(DatabaseManager DB) {
-        DB.addExercise(this);
-    }
+//    public void dbUpdate(DatabaseManager DB) {
+//        DB.updateExercise(this);
+//    }
+//    public void dbAdd(DatabaseManager DB) {
+//        DB.addExercise(this);
+//    }
 
-    public void dbDelete(DatabaseManager DB) {
-        DB.addExercise(this);
-    }
+//    public void dbDelete(DatabaseManager DB) {
+//        DB.deleteExercise(this);
+//    }
 
 
 }

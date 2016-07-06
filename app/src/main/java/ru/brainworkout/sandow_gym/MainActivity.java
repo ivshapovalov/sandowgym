@@ -3,7 +3,6 @@ package ru.brainworkout.sandow_gym;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
             Button btName = (Button) findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
-
             }
         }
     }
@@ -57,28 +55,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void btTrainings_onClick(final View view) {
 
-        checkDBEmptiness();
+        if (!dbIsEmpty()) {
+            Intent intent = new Intent(MainActivity.this, TrainingsListActivity.class);
+            startActivity(intent);
+        }
 
     }
 
     public void bt_NewTraining_onClick(final View view) {
 
-        checkDBEmptiness();
+        if (!dbIsEmpty()) {
+            Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
+            intent.putExtra("IsNew", true);
+            startActivity(intent);
+        }
 
     }
 
-    private void checkDBEmptiness() {
+    private boolean dbIsEmpty() {
 
         List<Exercise> list = DB.getAllActiveExercises();
         if (list.size() == 0) {
             Toast toast = Toast.makeText(MainActivity.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
             toast.show();
+            return true;
         } else {
+            return false;
 
-            Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
-            intent.putExtra("IsNew", true);
-            startActivity(intent);
         }
     }
 

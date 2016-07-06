@@ -1,15 +1,11 @@
 package ru.brainworkout.sandow_gym.commons;
 
-import android.content.Context;
-
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
-
 /**
  * Created by Ivan on 16.05.2016.
  */
-public class TrainingContent {
+public class TrainingContent extends AbstractDatabaseEntity {
 
-    private int _id;
+    //private int _id;
     private String _volume;
     private int _id_exercise;
     private int _id_training;
@@ -58,13 +54,6 @@ public class TrainingContent {
         this._comment = _comment;
     }
 
-    public int getID() {
-        return _id;
-    }
-
-    public void setID(int _id) {
-        this._id = _id;
-    }
 
     public String getVolume() {
         return _volume;
@@ -98,10 +87,10 @@ public class TrainingContent {
         this._id_training = _id_training;
     }
 
-    public void dbUpdate(DatabaseManager DB) {
-        DB.updateTrainingContent(this);
-    }
-    public void dbAdd(DatabaseManager DB) {
-        DB.addTrainingContent(this);
-    }
+//    public void dbUpdate(DatabaseManager DB) {
+//        DB.updateTrainingContent(this);
+//    }
+//    public void dbAdd(DatabaseManager DB) {
+//        DB.addTrainingContent(this);
+//    }
 }

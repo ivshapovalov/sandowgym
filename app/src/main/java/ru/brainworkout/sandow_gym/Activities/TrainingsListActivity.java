@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -26,14 +25,13 @@ import ru.brainworkout.sandow_gym.R;
 import ru.brainworkout.sandow_gym.commons.Training;
 
 public class TrainingsListActivity extends AppCompatActivity {
+    private static final int MAX_VERTICAL_BUTTONS_COUNT = 15;
+    private static final int MAX_HORIZONTAL_BUTTONS_COUNT = 2;
+    private final int NUMBER_OF_VIEWS = 20000;
 
-    public static final boolean isDebug = true;
-    private final String TAG = this.getClass().getSimpleName();
-    private final int mNumOfView = 20000;
+    private final DatabaseManager DB = new DatabaseManager(this);
 
-    DatabaseManager db;
-
-    private String mCurrentDate="";
+    private String mCurrentDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +39,12 @@ public class TrainingsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainings_list);
 
-        db = new DatabaseManager(this);
-
         Intent intent = getIntent();
 
         mCurrentDate = intent.getStringExtra("CurrentDate");
-        if (mCurrentDate==null) {mCurrentDate="";}
+        if (mCurrentDate == null) {
+            mCurrentDate = "";
+        }
 
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
         Button btDay = (Button) findViewById(mDayID);
@@ -58,12 +56,10 @@ public class TrainingsListActivity extends AppCompatActivity {
             }
         }
 
-
         showTrainings();
 
     }
 
-    // Вызывается в начале "активного" состояния.
     @Override
     public void onResume() {
         super.onResume();
@@ -74,16 +70,16 @@ public class TrainingsListActivity extends AppCompatActivity {
         int id = intent.getIntExtra("id", 0);
 
         if (id == 0) {
-            if (!( mCurrentDate == null || mCurrentDate.equals(""))) {
-                List <Training> trainings = db.getTrainingsByDates(mCurrentDate, mCurrentDate);
-                if (trainings.size()==1) {
-                     id=trainings.get(0).getID();
+            if (!(mCurrentDate == null || mCurrentDate.equals(""))) {
+                List<Training> trainings = DB.getTrainingsByDates(mCurrentDate, mCurrentDate);
+                if (trainings.size() == 1) {
+                    id = trainings.get(0).getID();
                 }
             }
 
         }
-        if (id!=0) {
-            TableRow mRow = (TableRow) findViewById(mNumOfView + id);
+        if (id != 0) {
+            TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
             if (mRow != null) {
 
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
@@ -97,7 +93,7 @@ public class TrainingsListActivity extends AppCompatActivity {
     }
 
 
-    public void bt_TrainingsAdd_onClick(View view) {
+    public void bt_TrainingsAdd_onClick(final View view) {
 
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), TrainingActivity.class);
@@ -108,16 +104,9 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     private void showTrainings() {
 
-        Log.d("Reading: ", "Reading all trainings..");
-        List<Training> trainings;
-        //if (mCurrentDate == null || mCurrentDate.equals("")) {
-            trainings = db.getAllTrainings();
-//        } else {
-//            trainings = db.getTrainingsByDates(mCurrentDate, mCurrentDate);
-//        }
+        List<Training> trainings = DB.getAllTrainings();
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
-        //TableLayout layout = (TableLayout) findViewById(R.id.tableExercises);
         try {
             sv.removeAllViews();
         } catch (Exception e) {
@@ -125,9 +114,8 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        //допустим 10 строк тренировок
-        int mHeight = displaymetrics.heightPixels / 15;
-        int mWidth = displaymetrics.widthPixels / 2;
+        int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTONS_COUNT;
+        int mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTONS_COUNT;
         int mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
@@ -137,62 +125,45 @@ public class TrainingsListActivity extends AppCompatActivity {
         }
 
         TableLayout layout = new TableLayout(this);
-        //layout.removeAllViews();
+
         layout.setStretchAllColumns(true);
-        //layout.setShrinkAllColumns(true);
-
-        //TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0f);
-
         for (int numEx = 0; numEx < trainings.size(); numEx++) {
             TableRow mRow = new TableRow(this);
             String data = "";
-            data =trainings.get(numEx).getDayString();
-//            TableLayout.LayoutParams params=new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            params.setMargins(0,20,0,20);
-//            mRow.setGravity(Gravity.CENTER_VERTICAL);
-//            mRow.setLayoutParams(params);
-            //mRow.setPadding(0,30,0,30);
+            data = trainings.get(numEx).getDayString();
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            mRow.setId(mNumOfView + trainings.get(numEx).getID());
+            mRow.setId(NUMBER_OF_VIEWS + trainings.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     rowTraining_onClick((TableRow) v);
                 }
             });
-            //mRow.setGravity(Gravity.LEFT);
+
             TextView txt = new TextView(this);
-            //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(trainings.get(numEx).getID()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
-            if (mCurrentDate!=null && mCurrentDate.equals(data)) {
+            if (mCurrentDate != null && mCurrentDate.equals(data)) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
-                //txt.setTextColor(Color.GRAY);
             }
-
-            //params.span = 3;
-            //txt.setLayoutParams(params);
-
             mRow.addView(txt);
 
             txt = new TextView(this);
-            //txt.setId(20000 + numEx);
-          txt.setText(data);
+            txt.setText(data);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.bt_border);
-            if (mCurrentDate!=null && mCurrentDate.equals(data)) {
+            if (mCurrentDate != null && mCurrentDate.equals(data)) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
-                //txt.setTextColor(Color.GRAY);
             }
             mRow.addView(txt);
 
@@ -203,52 +174,35 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     }
 
-    private void rowTraining_onClick(TableRow v) {
+    private void rowTraining_onClick(final TableRow v) {
 
         Common.blink(v);
-//        Animation anim = new AlphaAnimation(0.0f, 1.0f);
-//        anim.setDuration(100); //You can manage the blinking time with this parameter
-//        anim.setStartOffset(0);
-//        anim.setRepeatMode(Animation.REVERSE);
-//        //anim.setRepeatCount(Animation.INFINITE);
-//        anim.setRepeatCount(3);
-//        v.startAnimation(anim);
-
-        int id = v.getId() % mNumOfView;
-        //System.out.println(String.valueOf(a));
-
+        int id = v.getId() % NUMBER_OF_VIEWS;
         Intent intent = new Intent(getApplicationContext(), TrainingActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("CurrentID", id);
         intent.putExtra("IsNew", false);
         startActivity(intent);
 
     }
 
-    public static void MyLogger(String TAG, String statement) {
-        if (isDebug) {
-            Log.e(TAG, statement);
-        }
-    }
-
-
-    public void bt_Edit_onClick(View view) {
+    public void bt_Edit_onClick(final View view) {
 
         Common.blink(view);
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
+
     }
 
+    public void buttonHome_onClick(final View view) {
 
-    public void buttonHome_onClick(View view) {
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
-
-    public void btDeleteAllTrainings_onClick(View view) {
+    public void btDeleteAllTrainings_onClick(final View view) {
 
         Common.blink(view);
 
@@ -257,8 +211,8 @@ public class TrainingsListActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        db.deleteAllTrainings();
-                        db.deleteAllTrainingContent();
+                        DB.deleteAllTrainings();
+                        DB.deleteAllTrainingContent();
                         showTrainings();
                     }
                 }).setNegativeButton("Нет", null).show();
@@ -266,7 +220,7 @@ public class TrainingsListActivity extends AppCompatActivity {
     }
 
 
-    public void btDay_onClick(View view) {
+    public void btDay_onClick(final View view) {
 
         Common.blink(view);
         Intent intent = new Intent(TrainingsListActivity.this, CalendarViewActivity.class);
@@ -276,11 +230,11 @@ public class TrainingsListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void btTrainingsFilterDelete_onClick(View view) {
+    public void btTrainingsFilterDelete_onClick(final View view) {
 
         Common.blink(view);
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
-        Button btDay= (Button) findViewById(mDayID);
+        Button btDay = (Button) findViewById(mDayID);
         if (btDay != null) {
 
             btDay.setText("");

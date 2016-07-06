@@ -3,7 +3,6 @@ package ru.brainworkout.sandow_gym.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
@@ -13,24 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ru.brainworkout.sandow_gym.commons.Common;
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 
-/**
- * Created by Ivan on 14.05.2016.
- */
 public class ExerciseActivity extends AppCompatActivity {
 
-    public static final boolean isDebug = true;
-    private final String TAG = this.getClass().getSimpleName();
-
-    Exercise CurrentExercise;
-
-    DatabaseManager db;
-
-    private boolean mExerciseIsNew;
+    private Exercise mCurrentExercise;
+    private final DatabaseManager DB = new DatabaseManager(this);
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,34 +29,30 @@ public class ExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
 
-        db = new DatabaseManager(this);
-
         Intent intent = getIntent();
-        mExerciseIsNew = intent.getBooleanExtra("IsNew", false);
+        boolean mExerciseIsNew = intent.getBooleanExtra("IsNew", false);
 
         if (mExerciseIsNew) {
-            CurrentExercise = new Exercise(db.getExerciseMaxNumber() + 1);
+            mCurrentExercise = new Exercise(DB.getExerciseMaxNumber() + 1);
         } else {
             int id = intent.getIntExtra("id", 0);
             try {
-                CurrentExercise = db.getExercise(id);
+                mCurrentExercise = DB.getExercise(id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
         }
 
         showExerciseOnScreen();
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void showExerciseOnScreen() {
 
-        //активность
         int mIsActiveID = getResources().getIdentifier("cb_IsActive", "id", getPackageName());
         CheckBox cbIsActive = (CheckBox) findViewById(mIsActiveID);
         if (cbIsActive != null) {
-            if (CurrentExercise.getIsActive() != 0) {
+            if (mCurrentExercise.getIsActive() != 0) {
                 cbIsActive.setChecked(true);
             } else {
                 cbIsActive.setChecked(false);
@@ -76,11 +63,11 @@ public class ExerciseActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (CurrentExercise != null) {
+                if (mCurrentExercise != null) {
                     if (isChecked) {
-                        CurrentExercise.setIsActive(1);
+                        mCurrentExercise.setIsActive(1);
                     } else {
-                        CurrentExercise.setIsActive(0);
+                        mCurrentExercise.setIsActive(0);
                     }
 
                 }
@@ -93,48 +80,54 @@ public class ExerciseActivity extends AppCompatActivity {
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
-            tvID.setText(String.valueOf(CurrentExercise.getID()));
+            tvID.setText(String.valueOf(mCurrentExercise.getID()));
         }
+
         //Имя
         int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
-            etName.setText(CurrentExercise.getName());
-
+            etName.setText(mCurrentExercise.getName());
         }
+
         //Описание
         int mExplanationID = getResources().getIdentifier("et_Explanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
-            etExplanation.setText(CurrentExercise.getExplanation());
+            etExplanation.setText(mCurrentExercise.getExplanation());
         }
+
         //Картинка
         int mPictureID = getResources().getIdentifier("et_Picture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
-            etPicture.setText(CurrentExercise.getPicture());
+            etPicture.setText(mCurrentExercise.getPicture());
         }
+
         //Количество по умолчанию
         int mVolumeID = getResources().getIdentifier("et_VolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
-            etVolume.setText(CurrentExercise.getVolumeDefault());
+            etVolume.setText(mCurrentExercise.getVolumeDefault());
         }
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
-            if (CurrentExercise.getPicture()!=null&&!"".equals(CurrentExercise.getPicture())) {
-                ivPicture.setImageResource(getResources().getIdentifier(CurrentExercise.getPicture(), "drawable", getPackageName()));
+            if (mCurrentExercise.getPicture() != null && !"".equals(mCurrentExercise.getPicture())) {
+
+                ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
             }
         }
     }
 
-    public void btClose_onClick(View view) {
+    public void btClose_onClick(final View view) {
+
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ExercisesListActivity.class);
-        intent.putExtra("id", CurrentExercise.getID());
+        intent.putExtra("id", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
     private void getPropertiesFromScreen() {
@@ -144,77 +137,80 @@ public class ExerciseActivity extends AppCompatActivity {
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
-            CurrentExercise.setID(Integer.parseInt(String.valueOf(tvID.getText())));
+            mCurrentExercise.setID(Integer.parseInt(String.valueOf(tvID.getText())));
 
         }
+
         //Имя
         int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
-            CurrentExercise.setName(String.valueOf(etName.getText()));
+
+            mCurrentExercise.setName(String.valueOf(etName.getText()));
+
         }
+
         //Описание
         int mExplanationID = getResources().getIdentifier("et_Explanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
-            CurrentExercise.setExplanation(String.valueOf(etExplanation.getText()));
+
+            mCurrentExercise.setExplanation(String.valueOf(etExplanation.getText()));
+
         }
+
         //Картинка
         int mPictureID = getResources().getIdentifier("et_Picture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
-            CurrentExercise.setPicture(String.valueOf(etPicture.getText()));
+
+            mCurrentExercise.setPicture(String.valueOf(etPicture.getText()));
+
         }
         //Количество по умолчанию
         int mVolumeID = getResources().getIdentifier("et_VolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
-            CurrentExercise.setVolumeDefault(String.valueOf(etVolume.getText()));
+
+            mCurrentExercise.setVolumeDefault(String.valueOf(etVolume.getText()));
+
         }
     }
 
-    public void btSave_onClick(View view) {
+    public void btSave_onClick(final View view) {
 
         Common.blink(view);
-        //сначала сохраняем
         getPropertiesFromScreen();
 
-        if (mExerciseIsNew) {
-            db.addExercise(CurrentExercise);
-        } else {
-            db.updateExercise(CurrentExercise);
-        }
+//        if (mExerciseIsNew) {
+//
+//            //DB.addExercise(mCurrentExercise);
+//            mCurrentExercise.dbAdd(DB);
+//
+//        } else {
+//
+//           // DB.updateExercise(mCurrentExercise);
+//            mCurrentExercise.dbUpdate(DB);
+//        }
 
-        MyLogger(TAG, "Добавили " + String.valueOf(CurrentExercise.getID()));
-        //потом закрываем
+        mCurrentExercise.dbSave(DB);
 
         Intent intent = new Intent(getApplicationContext(), ExercisesListActivity.class);
-        intent.putExtra("id", CurrentExercise.getID());
+        intent.putExtra("id", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
-    public static void MyLogger(String TAG, String statement) {
-        if (isDebug) {
-            Log.e(TAG, statement);
-        }
-    }
-
-    public void btDelete_onClick(View view) {
+    public void btDelete_onClick(final View view) {
 
         Common.blink(view);
-        if (!mExerciseIsNew) {
+        //DB.deleteExercise(mCurrentExercise);
+        mCurrentExercise.dbDelete(DB);
 
-
-            MyLogger(TAG, "Удалили " + String.valueOf(CurrentExercise.getID()));
-            //потом закрываем
-            db.deleteExercise(CurrentExercise);
-
-            Intent intent = new Intent(getApplicationContext(), ExercisesListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-
-        }
+        Intent intent = new Intent(getApplicationContext(), ExercisesListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
 
     }
 }

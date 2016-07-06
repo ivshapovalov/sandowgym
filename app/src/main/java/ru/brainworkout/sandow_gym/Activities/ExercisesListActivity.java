@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ScrollView;
@@ -26,11 +25,11 @@ import ru.brainworkout.sandow_gym.R;
 
 public class ExercisesListActivity extends AppCompatActivity {
 
-    public static final boolean isDebug = true;
-    private final String TAG = this.getClass().getSimpleName();
-    private final int mNumOfView = 10000;
+    private final int MAX_VERTICAL_BUTTON_COUNT = 17;
+    private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
+    private final int NUMBER_OF_VIEWS = 10000;
 
-    DatabaseManager db;
+    private final DatabaseManager DB = new DatabaseManager(this);
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -43,14 +42,10 @@ public class ExercisesListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercises_list);
 
-
-        db = new DatabaseManager(this);
-
         showExercises();
 
     }
 
-    // Вызывается в начале "активного" состояния.
     @Override
     public void onResume() {
         super.onResume();
@@ -60,7 +55,7 @@ public class ExercisesListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
 
-        TableRow mRow = (TableRow) findViewById(mNumOfView + id);
+        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -72,7 +67,7 @@ public class ExercisesListActivity extends AppCompatActivity {
     }
 
 
-    public void bt_ExercisesAdd_onClick(View view) {
+    public void bt_ExercisesAdd_onClick(final View view) {
 
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
@@ -81,43 +76,36 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     }
 
-    public void bt_ExercisesFillDefault_onClick(View view) {
+    public void bt_ExercisesFillDefault_onClick(final View view) {
 
         Common.blink(view);
-        MyLogger(TAG, "До обращения в базу");
-
-        DatabaseManager db = new DatabaseManager(this);
-
-        MyLogger(TAG, "До добавления");
 
         ArrayList<Exercise> exercises = CreateDefaultExercises();
         for (Exercise ex : exercises) {
-            db.addExercise(ex);
 
-            MyLogger(TAG, "Добавили " + String.valueOf(ex.getID()));
+            ex.dbSave(DB);
+
         }
-
         showExercises();
 
     }
 
     private void showExercises() {
 
-        Log.d("Reading: ", "Reading all exercises..");
-        List<Exercise> exercises = db.getAllExercises();
+        List<Exercise> exercises = DB.getAllExercises();
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
-        //TableLayout layout = (TableLayout) findViewById(R.id.tableExercises);
         try {
+
             sv.removeAllViews();
-        } catch (Exception e) {
+
+        } catch (NullPointerException e) {
         }
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        //допустим 15 строк тренировок
-        mHeight = displaymetrics.heightPixels / 17;
-        mWidth = displaymetrics.widthPixels/2;
+        mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
+        mWidth = displaymetrics.widthPixels/ MAX_HORIZONTAL_BUTTON_COUNT;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
@@ -127,15 +115,11 @@ public class ExercisesListActivity extends AppCompatActivity {
         }
 
         TableLayout layout = new TableLayout(this);
-        //layout.removeAllViews();
         layout.setStretchAllColumns(true);
-        //layout.setShrinkAllColumns(true);
-
-        //TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0f);
 
         for (int numEx = 0; numEx < exercises.size(); numEx++) {
             TableRow mRow = new TableRow(this);
-            mRow.setId(mNumOfView + exercises.get(numEx).getID());
+            mRow.setId(NUMBER_OF_VIEWS + exercises.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -144,26 +128,17 @@ public class ExercisesListActivity extends AppCompatActivity {
             });
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            //mRow.setBackgroundResource(R.drawable.bt_border);
 
-            //mRow.setPadding(0,40,0,40);
-            //mRow.setGravity(Gravity.LEFT);
             TextView txt = new TextView(this);
-            //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getID()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
-            //txt.setBackgroundResource(R.drawable.bt_border);
-            //params.span = 3;
-            //txt.setLayoutParams(params);
-
             mRow.addView(txt);
 
             txt = new TextView(this);
-            //txt.setId(20000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getName()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
@@ -174,44 +149,39 @@ public class ExercisesListActivity extends AppCompatActivity {
 
             mRow.setBackgroundResource(R.drawable.bt_border);
             layout.addView(mRow);
+
         }
         sv.addView(layout);
 
     }
 
-    private void rowExercise_onClick(TableRow v) {
+    private void rowExercise_onClick(final TableRow v) {
 
         Common.blink(v);
 
-        int id = v.getId() % mNumOfView;
-        //System.out.println(String.valueOf(a));
+        int id = v.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("id", id);
         intent.putExtra("IsNew", false);
         startActivity(intent);
 
     }
 
-    public static void MyLogger(String TAG, String statement) {
-        if (isDebug) {
-            Log.e(TAG, statement);
-        }
-    }
+    public void bt_Edit_onClick(final View view) {
 
-
-    public void bt_Edit_onClick(View view) {
         Common.blink(view);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
+
     }
 
     private ArrayList<Exercise> CreateDefaultExercises() {
+
         ArrayList<Exercise> exercises = new ArrayList<>();
         int i = 0;
-        int maxNum = db.getExerciseMaxNumber() + 1;
+        int maxNum = DB.getExerciseMaxNumber() + 1;
         //1
         exercises.add(new Exercise(maxNum + (i++), 1, "Сандов №" + String.valueOf(i), "Стоя, руки с гантелями вдоль туловища, ладони обращены вперед (хват снизу), смотреть прямо перед собой.\n" +
                 "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
@@ -294,12 +264,15 @@ public class ExercisesListActivity extends AppCompatActivity {
 
 
         return exercises;
+
     }
 
-    public void buttonHome_onClick(View view) {
+    public void buttonHome_onClick(final View view) {
+
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 }

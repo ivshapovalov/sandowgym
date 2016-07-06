@@ -13,21 +13,18 @@ import java.util.Date;
 import ru.brainworkout.sandow_gym.commons.Common;
 import ru.brainworkout.sandow_gym.R;
 
-/**
- * Created by Ivan on 17.05.2016.
- */
 public class CalendarViewActivity extends AppCompatActivity {
 
     private boolean mTrainingIsNew;
-    private Boolean mIsBeginDate;
+    private boolean mIsBeginDate;
 
     private String mOldDateFrom;
     private String mNewDate;
     private String mOldDateTo;
 
-    private int mCurrentTraningID;
-    private int mCurrentExerciseID;
-    private String mCurrentActivity;
+    private int mCallerTrainingID;
+    private int mCallerExerciseID;
+    private String mCallerActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,9 +36,9 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
-        mCurrentActivity = intent.getStringExtra("CurrentActivity");
-        mCurrentTraningID = intent.getIntExtra("CurrentTrainingID", 0);
-        mCurrentExerciseID = intent.getIntExtra("CurrentExerciseID",0);
+        mCallerActivity = intent.getStringExtra("CurrentActivity");
+        mCallerTrainingID = intent.getIntExtra("CurrentTrainingID", 0);
+        mCallerExerciseID = intent.getIntExtra("CurrentExerciseID",0);
         try {
             mOldDateFrom = intent.getStringExtra("CurrentDate");
         } catch (Exception e) {
@@ -53,7 +50,7 @@ public class CalendarViewActivity extends AppCompatActivity {
             mOldDateTo = "";
         }
 
-        if (mIsBeginDate || mCurrentActivity == "TrainingActivity") {
+        if (mIsBeginDate || mCallerActivity == "TrainingActivity") {
             if (mOldDateFrom != null && !"".equals(mOldDateFrom)) {
                 Date d = Common.ConvertStringToDate(mOldDateFrom);
                 calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
@@ -91,20 +88,20 @@ public class CalendarViewActivity extends AppCompatActivity {
 
     }
 
+    public void btSave_onClick(final View view) {
 
-    public void btSave_onClick(View view) {
         Common.blink(view);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
+            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         Intent intent = new Intent(CalendarViewActivity.this, myClass);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentID", mCurrentTraningID);
-        intent.putExtra("CurrentExerciseID", mCurrentExerciseID);
+        intent.putExtra("CurrentID", mCallerTrainingID);
+        intent.putExtra("CurrentExerciseID", mCallerExerciseID);
         if (mIsBeginDate) {
             intent.putExtra("CurrentDate", mNewDate);
             intent.putExtra("CurrentDateTo", mOldDateTo);
@@ -115,26 +112,28 @@ public class CalendarViewActivity extends AppCompatActivity {
         intent.putExtra("", mIsBeginDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
-    public void btClose_onClick(View view) {
+    public void btClose_onClick(final View view) {
+
         Common.blink(view);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCurrentActivity);
+            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         Intent intent = new Intent(CalendarViewActivity.this, myClass);
-        //Intent intent = new Intent(CalendarViewActivity.this, TrainingActivity.class);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentID", mCurrentTraningID);
-        intent.putExtra("CurrentExerciseID", mCurrentExerciseID);
+        intent.putExtra("CurrentID", mCallerTrainingID);
+        intent.putExtra("CurrentExerciseID", mCallerExerciseID);
         intent.putExtra("CurrentDate", mOldDateFrom);
         intent.putExtra("CurrentDateTo", mOldDateTo);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 }

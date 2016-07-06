@@ -44,7 +44,7 @@ public class TrainingActivityOptions extends AppCompatActivity {
 
     }
 
-    public void buttonCancel_onClick(View view) {
+    public void buttonCancel_onClick(final View view) {
 
         Common.blink(view);
         this.finish();
@@ -55,28 +55,24 @@ public class TrainingActivityOptions extends AppCompatActivity {
         mSettings = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
 
         if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
-            // Получаем язык из настроек
             mShowExplanation = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
         } else {
             mShowExplanation = false;
         }
 
         if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_PICTURE)) {
-            // Получаем язык из настроек
             mShowPicture = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
         } else {
             mShowPicture = false;
         }
 
         if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON)) {
-            // Получаем язык из настроек
             mShowVolumeDefaultButton = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
         } else {
             mShowVolumeDefaultButton = false;
         }
 
         if (mSettings.contains(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON)) {
-            // Получаем язык из настроек
             mShowVolumeLastDayButton = mSettings.getBoolean(MainActivity.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
         } else {
             mShowVolumeLastDayButton = false;

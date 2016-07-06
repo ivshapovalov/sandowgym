@@ -29,7 +29,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String TABLE_TRAININGS = "trainings";
     private static final String TABLE_TRAINING_CONTENT = "training_content";
 
-    // Exercise Table Columns names
+    // Exercise AbstractDatabaseEntity Columns names
     private static final String KEY_EXERCISE_ID = "exercise_id";
     private static final String KEY_EXERCISE_IS_ACTIVE = "exercise_is_active";
     private static final String KEY_EXERCISE_NAME = "exercise_name";
@@ -37,12 +37,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_EXERCISE_VOLUME_DEFAULT = "exercise_volume_default";
     private static final String KEY_EXERCISE_PICTURE_NAME = "exercise_picture_name";
 
-    //  Training Table Columns names
+    //  Training AbstractDatabaseEntity Columns names
     private static final String KEY_TRAINING_ID = "training_id";
     private static final String KEY_TRAINING_DAY = "training_day";
     private static final String KEY_TRAINING_WEIGHT = "training_weight";
 
-    //  Training content Table Columns names
+    //  Training content AbstractDatabaseEntity Columns names
     private static final String KEY_TRAINING_CONTENT_ID = "training_content_id";
     private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
     private static final String KEY_TRAINING_CONTENT_ID_EXERCISE = "training_content_id_exercise";
