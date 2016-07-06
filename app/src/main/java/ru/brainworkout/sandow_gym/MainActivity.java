@@ -28,57 +28,48 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
+    public static final int MAX_VERTICAL_BUTTON_COUNT = 8;
 
-    private SharedPreferences mSettings;
-    private DatabaseManager db;
+    private final DatabaseManager DB=new DatabaseManager(this);;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        db = new DatabaseManager(this);
-
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
-        //допустим 15 строк тренировок
-        int mHeight = displaymetrics.heightPixels / 8;
-        int mWidth = displaymetrics.widthPixels/1;
-        int mTextSize = (int) (Math.min(mWidth, mHeight) / 4 / getApplicationContext().getResources().getDisplayMetrics().density);
+        int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
         for (int i = 0; i <=5 ; i++) {
             int btID = getResources().getIdentifier("btMain"+String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
-                btName.setTextSize(mTextSize);
+
             }
         }
-
     }
 
-    public void bt_Exercises_onClick(View view) {
+    public void bt_Exercises_onClick(final View view) {
 
         Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
         startActivity(intent);
 
     }
 
-    public void btTrainings_onClick(View view) {
+    public void btTrainings_onClick(final View view) {
 
-        List<Exercise> list = db.getAllActiveExercises();
-        if (list.size() == 0) {
-            Toast toast = Toast.makeText(MainActivity.this,
-                    "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
+        checkDBEmptiness();
 
-            Intent intent = new Intent(MainActivity.this, TrainingsListActivity.class);
-            startActivity(intent);
-        }
     }
 
-    public void bt_NewTraining_onClick(View view) {
+    public void bt_NewTraining_onClick(final View view) {
 
-        List<Exercise> list = db.getAllActiveExercises();
+        checkDBEmptiness();
+
+    }
+
+    private void checkDBEmptiness() {
+
+        List<Exercise> list = DB.getAllActiveExercises();
         if (list.size() == 0) {
             Toast toast = Toast.makeText(MainActivity.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
@@ -91,15 +82,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void btExportImport_onClick(View view) {
+    public void btExportImport_onClick(final View view) {
 
         Intent intent = new Intent(MainActivity.this, FileExportImportActivity.class);
         startActivity(intent);
 
-
     }
 
-    public void btClearBD_onClick(View view) {
+    public void btClearBD_onClick(final View view) {
 
             new AlertDialog.Builder(this)
                     .setMessage("Вы действительно хотите очистить базу данных?")
@@ -107,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             try {
-                                SQLiteDatabase dbSQL = db.getWritableDatabase();
-                                db.onUpgrade(dbSQL, 1, 2);
+                                SQLiteDatabase dbSQL = DB.getWritableDatabase();
+                                DB.onUpgrade(dbSQL, 1, 2);
                             } catch (Exception e) {
                                 Toast toast = Toast.makeText(MainActivity.this,
                                         "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
@@ -120,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
+
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите покинуть программу?")
                 .setCancelable(false)
@@ -128,5 +119,6 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 }).setNegativeButton("Нет", null).show();
+
     }
 }

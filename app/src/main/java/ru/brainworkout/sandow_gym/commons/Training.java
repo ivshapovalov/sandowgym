@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import ru.brainworkout.sandow_gym.database.DatabaseManager;
+
 public class Training  implements Parcelable{
     private int _id;
     private Date _day;
@@ -139,6 +141,13 @@ public class Training  implements Parcelable{
 
         this._day = d;
 
+    }
+
+    public void dbUpdate(DatabaseManager DB) {
+        DB.updateTraining(this);
+    }
+    public void dbAdd(DatabaseManager DB) {
+        DB.addTraining(this);
     }
 
 }

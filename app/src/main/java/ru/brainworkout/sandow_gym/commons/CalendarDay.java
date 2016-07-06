@@ -1,10 +1,11 @@
 package ru.brainworkout.sandow_gym.commons;
 
-/**
- * Created by Ivan on 13.05.2016.
- */
+
 public class CalendarDay {
     int _id;
+    int _id_ex;
+    int _count;
+    String _day;
 
     public CalendarDay(String _day) {
         this._day = _day;
@@ -45,10 +46,6 @@ public class CalendarDay {
     public void set_id(int _id) {
         this._id = _id;
     }
-
-    int _id_ex;
-    int _count;
-    String _day;
 
 
 

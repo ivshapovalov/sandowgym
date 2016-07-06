@@ -34,23 +34,16 @@ import ru.brainworkout.sandow_gym.database.*;
 
 public class FileExportImportActivity extends AppCompatActivity {
 
-    public static final boolean isDebug = true;
-    private final String TAG = this.getClass().getSimpleName();
-
     private String mDateFrom;
     private String mDateTo;
-    DatabaseManager db;
+    private final DatabaseManager DB = new DatabaseManager(this);
 
-    StringBuilder message = new StringBuilder();
-    List<Training> mTrainingsList;
-    List<Exercise> mExercisesList;
+    private StringBuilder message = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_export_import);
-
-        db = new DatabaseManager(this);
 
         Intent intent = getIntent();
         String mCurrentDate = intent.getStringExtra("CurrentDate");
@@ -58,38 +51,12 @@ public class FileExportImportActivity extends AppCompatActivity {
         Boolean isBeginDate = intent.getBooleanExtra("IsBeginDate", true);
         mDateFrom = mCurrentDate;
         mDateTo = mCurrentDateTo;
-//        mDateFrom = "2016-05-16";
-//        mDateTo = "2016-07-19";
-
         updateScreen();
 
     }
 
-    private void updateScreen() {
-        //Имя
-        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
-        TextView etDayFrom = (TextView) findViewById(mDayFromID);
-        if (etDayFrom != null) {
-            if (mDateFrom == null || mDateFrom == "") {
-                etDayFrom.setText("");
-            } else {
-                etDayFrom.setText(mDateFrom);
-            }
-        }
-
-        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
-        TextView etDayTo = (TextView) findViewById(mDayToID);
-        if (etDayTo != null) {
-            if (mDateTo == null || mDateTo == "") {
-                etDayTo.setText("");
-            } else {
-                etDayTo.setText(mDateTo);
-            }
-        }
-    }
-
-    private List<String[]> createDataArray() {
-
+    private List<String[]> createDataArray(List<Training> mTrainingsList,
+                                           List<Exercise> mExercisesList) {
 
         message = new StringBuilder();
         List<String[]> data = new ArrayList<String[]>();
@@ -113,7 +80,7 @@ public class FileExportImportActivity extends AppCompatActivity {
             for (Training mCurrentTraining : mTrainingsList
                     ) {
                 try {
-                    TrainingContent mCurrentTrainingContent = db.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
+                    TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
                     if (mCurrentTrainingContent.getVolume() == null) {
                         mNewString.append(";");
                     } else {
@@ -154,20 +121,14 @@ public class FileExportImportActivity extends AppCompatActivity {
 
             Workbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("trainings");
-            // sheet.autoSizeColumn(0);
 
-            // Нумерация начинается с нуля
             Row row = sheet.createRow(0);
             Cell cName;
             Font font = book.getFontAt((short) 0);
-            //font.setFontName("Arial");
-
             CellStyle boldStyle = book.createCellStyle();
             boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
             boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             boldStyle.setFont(font);
-            //boldStyle.setWrapText(true);
-            //boldStyle.setIndention((short)2);
 
             cName = row.createCell(0);
 
@@ -177,29 +138,22 @@ public class FileExportImportActivity extends AppCompatActivity {
 
             CellStyle usualStyle = book.createCellStyle();
             usualStyle.setFont(font);
-            //usualStyle.setWrapText(true);
-            //usualStyle.setIndention((short)2);
-
             CellStyle dateStyle = book.createCellStyle();
 
             dateStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
             dateStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             DataFormat format = book.createDataFormat();
-            //dateStyle.setDataFormat(format.getFormat("yyyy-mm-dd"));
             dateStyle.setFont(font);
-            //dateStyle.setWrapText(true);
-            //dateStyle.setIndention((short)2);
+
             for (int j = 1; j < data.get(0).length; j++) {
                 cName = row.createCell(j);
                 cName.setCellStyle(dateStyle);
                 cName.setCellValue(data.get(0)[j]);
-                //data.get(0)[j].substring(0,data.get(0)[j].indexOf("#")-1)+data.get(0)[j].substring(data.get(0)[j].indexOf("#")+1,data.get(0)[j].indexOf("#")+2)
                 cName.setCellStyle(dateStyle);
             }
 
             for (int i = 1; i < data.size(); i++) {
                 row = sheet.createRow(i);
-                //sheet.autoSizeColumn(i);
                 for (int j = 0; j < data.get(i).length; j++) {
                     cName = row.createCell(j);
 
@@ -218,13 +172,10 @@ public class FileExportImportActivity extends AppCompatActivity {
                     } else {
                         cName.setCellStyle(usualStyle);
                     }
-                    //System.out.println("Строка -" +String.valueOf(i)+": Колонка -"+String.valueOf(j)+ " : Текст - "+(String)(data.get(i)[j]));
                 }
-                //System.out.println("Строка +" +String.valueOf(i));
 
             }
             book.getSheetAt(0).setPrintGridlines(true);
-            // Записываем всё в файл
             book.write(new FileOutputStream(file));
             book.close();
 
@@ -232,21 +183,20 @@ public class FileExportImportActivity extends AppCompatActivity {
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
                 tvPath.setText("");
-                tvPath.setText("В файлы (CSV и XLS) по пути \n" + Environment.getExternalStorageDirectory().toString() + '\n'
+                tvPath.setText("В файл XLS по пути \n" + Environment.getExternalStorageDirectory().toString() + '\n'
                         + " успешно выгружены тренировки\n" + message.toString());
             }
         } catch (Exception e) {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
-                tvPath.setText("Файлы не выгружены в " + Environment.getExternalStorageDirectory().toString());
+                tvPath.setText("Файл не выгружен в " + Environment.getExternalStorageDirectory().toString());
             }
         }
 
     }
 
     private void readFromFile(File file) {
-
 
         List<String[]> data = new ArrayList<String[]>();
 
@@ -310,17 +260,11 @@ public class FileExportImportActivity extends AppCompatActivity {
                     try {
                         if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
                             mNewString.append("").append(";");
-                        }
-                        else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                        } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
                             int num = (int) currentRow.getCell(mColumn).getNumericCellValue();
                             mNewString.append(num).append(";");
                         } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_STRING) {
                             String name = currentRow.getCell(mColumn).getStringCellValue();
-//                            if ("".equals(name)) {
-//
-//                                mColumn = 0;
-//                                break;
-//                            }
                             mNewString.append(name).append(";");
                         }
                     } catch (Exception e) {
@@ -331,11 +275,10 @@ public class FileExportImportActivity extends AppCompatActivity {
             String[] entries = mNewString.toString().split(";");
             data.add(entries);
 
-
             myExcelBook.close();
-            //create
-            mTrainingsList = new ArrayList<Training>();
-            mExercisesList = new ArrayList<Exercise>();
+
+            List<Training> mTrainingsList = new ArrayList<Training>();
+            List<Exercise> mExercisesList = new ArrayList<Exercise>();
 
             for (int i = 1; i < data.get(0).length; i++) {
                 String s = data.get(0)[i];
@@ -362,109 +305,84 @@ public class FileExportImportActivity extends AppCompatActivity {
 
             }
 
-            message = new StringBuilder();
-            int maxNum = db.getTrainingContentCount();
-            for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
-                    ) {
-                Training curTraining = mTrainingsList.get(curTrainingIndex);
-                message.append(curTraining.getDayString()).append('\n');
-                Training dbTraining;
-                try {
-                    dbTraining = db.getTraining(curTraining.getID());
-                    System.out.println("add tr:"+dbTraining.getID());
-                    db.updateTraining(curTraining);
-                } catch (TableDoesNotContainElementException e) {
-                    System.out.println("add tr:"+curTraining.getID());
-                    db.addTraining(curTraining);
-                }
-                TrainingContent trainingContent = new TrainingContent();
+            writeDataToDB(mTrainingsList, mExercisesList, data);
 
-                for (int curExerciseIndex = 0; curExerciseIndex < mExercisesList.size(); curExerciseIndex++
-                        ) {
-                    Exercise curExercise = mExercisesList.get(curExerciseIndex);
-                    Exercise dbExercise;
-                    try {
-                        dbExercise = db.getExercise(curExercise.getID());
-                        dbExercise.setName(curExercise.getName());
-                        curExercise = dbExercise;
-                        System.out.println("update ex:"+dbExercise.getID());
-                        db.updateExercise(dbExercise);
-
-                    } catch (TableDoesNotContainElementException e) {
-                        curExercise.setIsActive(1);
-                        System.out.println("add ex:"+curExercise.getID());
-                        db.addExercise(curExercise);
-
-                    }
-
-                    trainingContent.setID(++maxNum);
-                    trainingContent.setIdExercise(curExercise.getID());
-                    trainingContent.setIdTraining(curTraining.getID());
-                    trainingContent.setVolume(data.get(curExerciseIndex + 1)[curTrainingIndex + 1]);
-
-                    TrainingContent dbTrainingContent;
-                    try {
-                        dbTrainingContent = db.getTrainingContent(curExercise.getID(), curTraining.getID());
-                        dbTrainingContent.setVolume(trainingContent.getVolume());
-                        System.out.println("max num:"+maxNum);
-                        System.out.println("update tc:"+dbTrainingContent.getID());
-                        db.updateTrainingContent(dbTrainingContent);
-                    } catch (TableDoesNotContainElementException e) {
-                        System.out.println("max num:"+maxNum);
-                        System.out.println("update tc:"+trainingContent.getID());
-                        db.addTrainingContent(trainingContent);
-                    }
-
-
-                }
-
-
-                int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
-                TextView tvPath = (TextView) findViewById(mPath);
-                if (tvPath != null) {
-                    tvPath.setText("");
-                    tvPath.setText("Из файла  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
-                            + " успешно загружены тренировки\n" + message.toString());
-
-                }
-
-            }
         } catch (Exception e) {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
                 tvPath.setText("Тренировки не загружены из " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
             }
-           e.printStackTrace();
+            e.printStackTrace();
         }
-
 
     }
 
+    private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws  Exception {
+        message = new StringBuilder();
+        int maxNum = DB.getTrainingContentCount();
+        for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
+                ) {
+            Training curTraining = mTrainingsList.get(curTrainingIndex);
+            message.append(curTraining.getDayString()).append('\n');
+            Training dbTraining;
+            try {
+                dbTraining = DB.getTraining(curTraining.getID());
+                System.out.println("add tr:" + dbTraining.getID());
+                DB.updateTraining(curTraining);
+            } catch (TableDoesNotContainElementException e) {
+                System.out.println("add tr:" + curTraining.getID());
+                DB.addTraining(curTraining);
+            }
+            TrainingContent trainingContent = new TrainingContent();
 
-    public void btExportToFile_onClick(View view) {
+            for (int curExerciseIndex = 0; curExerciseIndex < mExercisesList.size(); curExerciseIndex++
+                    ) {
+                Exercise curExercise = mExercisesList.get(curExerciseIndex);
+                Exercise dbExercise;
+                try {
+                    dbExercise = DB.getExercise(curExercise.getID());
+                    dbExercise.setName(curExercise.getName());
+                    curExercise = dbExercise;
+                    System.out.println("update ex:" + dbExercise.getID());
+                    DB.updateExercise(dbExercise);
 
-        Common.blink(view);
-        // boolean fault = false;
-        //Проверим даты
-        if (mDateFrom == null || "".equals(mDateFrom)) {
-            mDateFrom = "0000-00-00";
+                } catch (TableDoesNotContainElementException e) {
+                    curExercise.setIsActive(1);
+                    System.out.println("add ex:" + curExercise.getID());
+                    DB.addExercise(curExercise);
+
+                }
+
+                trainingContent.setID(++maxNum);
+                trainingContent.setIdExercise(curExercise.getID());
+                trainingContent.setIdTraining(curTraining.getID());
+                trainingContent.setVolume(data.get(curExerciseIndex + 1)[curTrainingIndex + 1]);
+
+                TrainingContent dbTrainingContent;
+                try {
+                    dbTrainingContent = DB.getTrainingContent(curExercise.getID(), curTraining.getID());
+                    dbTrainingContent.setVolume(trainingContent.getVolume());
+                    System.out.println("max num:" + maxNum);
+                    System.out.println("update tc:" + dbTrainingContent.getID());
+                    DB.updateTrainingContent(dbTrainingContent);
+                } catch (TableDoesNotContainElementException e) {
+                    System.out.println("max num:" + maxNum);
+                    System.out.println("update tc:" + trainingContent.getID());
+                    DB.addTrainingContent(trainingContent);
+                }
+
+            }
+
+            int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
+            TextView tvPath = (TextView) findViewById(mPath);
+            if (tvPath != null) {
+                tvPath.setText("");
+                tvPath.setText("Из файла  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
+                        + " успешно загружены тренировки\n" + message.toString());
+
+            }
         }
-        if (mDateTo == null || "".equals(mDateFrom)) {
-            mDateTo = "9999-99-99";
-        }
-
-        readDataFromDB();
-        List<String[]> data = createDataArray();
-        writeToFile(data);
-
-    }
-
-    private void readDataFromDB() {
-
-        mTrainingsList = db.getTrainingsByDates(mDateFrom, mDateTo);
-        mExercisesList = db.getExercisesByDates(mDateFrom, mDateTo);
-
     }
 
     public void btClose_onClick(View view) {
@@ -483,6 +401,40 @@ public class FileExportImportActivity extends AppCompatActivity {
 
         Common.blink(view);
         day_onClick(false);
+    }
+
+
+    private void loadFromFile() {
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+        if (exportDir.exists()) {
+            File file = new File(exportDir, "trainings.xls");
+            if (file.exists()) {
+
+                readFromFile(file);
+
+            }
+
+        }
+
+    }
+
+    public void btImportFromFile_onClick(View view) {
+
+        Common.blink(view);
+        loadFromFile();
+    }
+
+    public void btExportToFile_onClick(View view) {
+
+        Common.blink(view);
+        if (mDateFrom == null || "".equals(mDateFrom)) {
+            mDateFrom = "0000-00-00";
+        }
+        if (mDateTo == null || "".equals(mDateFrom)) {
+            mDateTo = "9999-99-99";
+        }
+
+        writeToFile(createDataArray(DB.getTrainingsByDates(mDateFrom, mDateTo), DB.getExercisesByDates(mDateFrom, mDateTo)));
     }
 
     private void day_onClick(boolean isBeginDate) {
@@ -510,28 +462,7 @@ public class FileExportImportActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void btImportFromFile_onClick(View view) {
-
-        Common.blink(view);
-        loadFromFile();
-    }
-
-    private void loadFromFile() {
-        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (exportDir.exists()) {
-            File file = new File(exportDir, "trainings.xls");
-            if (file.exists()) {
-
-                readFromFile(file);
-                //writeDataToDB();
-            }
-
-        }
-
-
-    }
-
-    public void btDayFromClear_onClick(View view) {
+    public void btDayFromClear_onClick(final View view) {
 
         Common.blink(view);
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
@@ -542,13 +473,37 @@ public class FileExportImportActivity extends AppCompatActivity {
 
     }
 
-    public void btDayToClear_onClick(View view) {
+    public void btDayToClear_onClick(final View view) {
 
         Common.blink(view);
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {
             tvDayTo.setText("");
+        }
+
+    }
+
+    private void updateScreen() {
+        //Имя
+        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
+        TextView etDayFrom = (TextView) findViewById(mDayFromID);
+        if (etDayFrom != null) {
+            if (mDateFrom == null || mDateFrom == "") {
+                etDayFrom.setText("");
+            } else {
+                etDayFrom.setText(mDateFrom);
+            }
+        }
+
+        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
+        TextView etDayTo = (TextView) findViewById(mDayToID);
+        if (etDayTo != null) {
+            if (mDateTo == null || mDateTo == "") {
+                etDayTo.setText("");
+            } else {
+                etDayTo.setText(mDateTo);
+            }
         }
     }
 }
