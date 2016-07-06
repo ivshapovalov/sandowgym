@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -102,16 +104,32 @@ public class MainActivity extends AppCompatActivity {
 
     public void btClearBD_onClick(View view) {
 
-        try {
-            SQLiteDatabase dbSQL = db.getWritableDatabase();
-            db.onUpgrade(dbSQL, 1, 2);
-        } catch (Exception e) {
-            Toast toast = Toast.makeText(MainActivity.this,
-                    "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
-            toast.show();
-        }
+            new AlertDialog.Builder(this)
+                    .setMessage("Вы действительно хотите очистить базу данных?")
+                    .setCancelable(false)
+                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                SQLiteDatabase dbSQL = db.getWritableDatabase();
+                                db.onUpgrade(dbSQL, 1, 2);
+                            } catch (Exception e) {
+                                Toast toast = Toast.makeText(MainActivity.this,
+                                        "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        }
+                    }).setNegativeButton("Нет", null).show();
 
+    }
 
-
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите покинуть программу?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                }).setNegativeButton("Нет", null).show();
     }
 }
