@@ -1,7 +1,9 @@
 package ru.brainworkout.sandow_gym.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -94,9 +96,9 @@ public class TrainingActivity extends AppCompatActivity {
             mCurrentTraining = new Training(db.getTrainingMaxNumber() + 1);
             //Calendar calendar = Calendar.getInstance();
             if ((mCurrentDate == null)) {
-                String cal = ((Date) Calendar.getInstance().getTime()).toLocaleString();
+                String cal = (Calendar.getInstance().getTime()).toLocaleString();
                 try {
-                    mCurrentTraining.setDay((Date) Calendar.getInstance().getTime());
+                    mCurrentTraining.setDay(Calendar.getInstance().getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -325,7 +327,7 @@ public class TrainingActivity extends AppCompatActivity {
                 mActiveExercises.add(ex);
             }
         }
-        ;
+
         //отсортируем по ID список упражнений
         Collections.sort(mActiveExercises, new ExerciseComp());
 
@@ -666,21 +668,25 @@ public class TrainingActivity extends AppCompatActivity {
     public void btDelete_onClick(View view) {
 
         Common.blink(view);
-//
+
         if (!mTrainingIsNew) {
 
-            MyLogger(TAG, "Удалили " + String.valueOf(mCurrentTraining.getID()));
-            //потом закрываем
-            db.deleteTrainingContentOfTraining(mCurrentTraining.getID());
+            new AlertDialog.Builder(this)
+                    .setMessage("Вы действительно хотите удалить текущую тренировку?")
+                    .setCancelable(false)
+                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MyLogger(TAG, "Удалили " + String.valueOf(mCurrentTraining.getID()));
+                            //потом закрываем
+                            db.deleteTrainingContentOfTraining(mCurrentTraining.getID());
+                            db.deleteTraining(mCurrentTraining);
 
-            db.deleteTraining(mCurrentTraining);
-
-            Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-
+                            Intent intent = new Intent(getApplicationContext(), TrainingsListActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    }).setNegativeButton("Нет", null).show();
         }
-
     }
 
     public void tvDay_onClick(View view) {
@@ -729,7 +735,6 @@ public class TrainingActivity extends AppCompatActivity {
             Toast.makeText(TrainingActivity.this, "[Предыдущее упражнение]", Toast.LENGTH_SHORT).show();
             setPreviousExercise();
             showExercise();
-
 
         }
 
@@ -803,7 +808,6 @@ public class TrainingActivity extends AppCompatActivity {
             //Toast.makeText(TrainingActivity.this, "ЖОПА", Toast.LENGTH_SHORT).show();
             return false;
         }
-
 
     }
 
@@ -886,10 +890,11 @@ public class TrainingActivity extends AppCompatActivity {
             but.setText("<-");
             but.setTextSize(mTextSize);
             but.setWidth(btWidth);
-            but.setBackgroundResource(R.drawable.textview_border);
+            but.setBackgroundResource(R.drawable.bt_border);
             but.setGravity(Gravity.CENTER);
             but.setWidth(btWidth);
             but.setHeight(btWidth);
+            but.setTextColor(getResources().getColor(R.color.text_color));
             trow.addView(but);
             but.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -907,8 +912,9 @@ public class TrainingActivity extends AppCompatActivity {
                 but.setTextSize(mTextSize);
                 but.setWidth(btWidth);
                 but.setHeight(btWidth);
-                but.setBackgroundResource(R.drawable.textview_border);
+                but.setBackgroundResource(R.drawable.bt_border);
                 but.setGravity(Gravity.CENTER);
+                but.setTextColor(getResources().getColor(R.color.text_color));
                 if (mCount - 1 == mCurrentExerciseNumberInList) {
                     but.setTextColor(Color.RED);
                     but.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -928,8 +934,9 @@ public class TrainingActivity extends AppCompatActivity {
             but.setWidth(btWidth);
             but.setHeight(btWidth);
             but.setTextSize(mTextSize);
-            but.setBackgroundResource(R.drawable.textview_border);
+            but.setBackgroundResource(R.drawable.bt_border);
             but.setGravity(Gravity.CENTER);
+            but.setTextColor(getResources().getColor(R.color.text_color));
             trow.addView(but);
             but.setOnClickListener(new View.OnClickListener() {
                 @Override

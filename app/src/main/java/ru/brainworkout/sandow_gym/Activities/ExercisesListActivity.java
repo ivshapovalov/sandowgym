@@ -1,6 +1,8 @@
 package ru.brainworkout.sandow_gym.activities;
 
+
 import android.content.Intent;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -11,7 +13,6 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,19 +143,20 @@ public class ExercisesListActivity extends AppCompatActivity {
                 }
             });
             mRow.setMinimumHeight(mHeight);
-            mRow.setBackgroundResource(R.drawable.textview_border);
-            //mRow.setBackgroundResource(R.drawable.textview_border);
+            mRow.setBackgroundResource(R.drawable.bt_border);
+            //mRow.setBackgroundResource(R.drawable.bt_border);
 
             //mRow.setPadding(0,40,0,40);
             //mRow.setGravity(Gravity.LEFT);
             TextView txt = new TextView(this);
             //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getID()));
-            txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
-            //txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
+            //txt.setBackgroundResource(R.drawable.bt_border);
             //params.span = 3;
             //txt.setLayoutParams(params);
 
@@ -163,13 +165,14 @@ public class ExercisesListActivity extends AppCompatActivity {
             txt = new TextView(this);
             //txt.setId(20000 + numEx);
             txt.setText(String.valueOf(exercises.get(numEx).getName()));
-            txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
             mRow.addView(txt);
 
-            mRow.setBackgroundResource(R.drawable.textview_border);
+            mRow.setBackgroundResource(R.drawable.bt_border);
             layout.addView(mRow);
         }
         sv.addView(layout);
@@ -298,14 +301,5 @@ public class ExercisesListActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-
-    public void btDeleteAllExercises_onClick(View view) {
-
-        Common.blink(view);
-        db.deleteAllExercises();
-        showExercises();
-
     }
 }

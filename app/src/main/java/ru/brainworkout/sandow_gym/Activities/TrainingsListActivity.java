@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,8 +10,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -32,10 +32,6 @@ public class TrainingsListActivity extends AppCompatActivity {
     private final int mNumOfView = 20000;
 
     DatabaseManager db;
-
-    private int mHeight = 0;
-    private int mWidth = 0;
-    private int mTextSize = 0;
 
     private String mCurrentDate="";
 
@@ -130,9 +126,9 @@ public class TrainingsListActivity extends AppCompatActivity {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
         //допустим 10 строк тренировок
-        mHeight = displaymetrics.heightPixels / 15;
-        mWidth = displaymetrics.widthPixels / 2;
-        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
+        int mHeight = displaymetrics.heightPixels / 15;
+        int mWidth = displaymetrics.widthPixels / 2;
+        int mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
 
@@ -157,7 +153,7 @@ public class TrainingsListActivity extends AppCompatActivity {
 //            mRow.setLayoutParams(params);
             //mRow.setPadding(0,30,0,30);
             mRow.setMinimumHeight(mHeight);
-            mRow.setBackgroundResource(R.drawable.textview_border);
+            mRow.setBackgroundResource(R.drawable.bt_border);
             mRow.setId(mNumOfView + trainings.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -169,14 +165,15 @@ public class TrainingsListActivity extends AppCompatActivity {
             TextView txt = new TextView(this);
             //txt.setId(10000 + numEx);
             txt.setText(String.valueOf(trainings.get(numEx).getID()));
-            txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             if (mCurrentDate!=null && mCurrentDate.equals(data)) {
                 txt.setTextColor(Color.RED);
             } else {
-                txt.setTextColor(Color.BLUE);
+                txt.setTextColor(getResources().getColor(R.color.text_color));
+                //txt.setTextColor(Color.GRAY);
             }
 
             //params.span = 3;
@@ -190,15 +187,16 @@ public class TrainingsListActivity extends AppCompatActivity {
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
-            txt.setBackgroundResource(R.drawable.textview_border);
+            txt.setBackgroundResource(R.drawable.bt_border);
             if (mCurrentDate!=null && mCurrentDate.equals(data)) {
                 txt.setTextColor(Color.RED);
             } else {
-                txt.setTextColor(Color.BLUE);
+                txt.setTextColor(getResources().getColor(R.color.text_color));
+                //txt.setTextColor(Color.GRAY);
             }
             mRow.addView(txt);
 
-            mRow.setBackgroundResource(R.drawable.textview_border);
+            mRow.setBackgroundResource(R.drawable.bt_border);
             layout.addView(mRow);
         }
         sv.addView(layout);
@@ -253,9 +251,17 @@ public class TrainingsListActivity extends AppCompatActivity {
     public void btDeleteAllTrainings_onClick(View view) {
 
         Common.blink(view);
-        db.deleteAllTrainings();
-        db.deleteAllTrainingContent();
-        showTrainings();
+
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите удалить все тренировки и их содержимое?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        db.deleteAllTrainings();
+                        db.deleteAllTrainingContent();
+                        showTrainings();
+                    }
+                }).setNegativeButton("Нет", null).show();
 
     }
 
@@ -266,7 +272,6 @@ public class TrainingsListActivity extends AppCompatActivity {
         Intent intent = new Intent(TrainingsListActivity.this, CalendarViewActivity.class);
         intent.putExtra("CurrentDate", mCurrentDate);
         intent.putExtra("CurrentActivity", "TrainingsListActivity");
-
 
         startActivity(intent);
     }

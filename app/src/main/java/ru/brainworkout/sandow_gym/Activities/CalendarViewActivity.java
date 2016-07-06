@@ -82,11 +82,9 @@ public class CalendarViewActivity extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year,
                                             int month, int dayOfMonth) {
-                int mYear = year;
-                int mMonth = month;
-                int mDay = dayOfMonth;
-                mNewDate = Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(mYear)
-                        .append("-").append(mMonth + 1).append("-").append(mDay)
+
+                mNewDate = Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(year)
+                        .append("-").append(month + 1).append("-").append(dayOfMonth)
                         .append("").toString()));
             }
         });

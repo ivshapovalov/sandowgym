@@ -17,6 +17,19 @@
 
         <Button
 
+            android:id="@+id/buttonCancel"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:onClick="buttonCancel_onClick"
+            android:text="CANCEL"
+            android:textSize="12sp"
+            android:background="@drawable/bt_border"
+            android:textColor="@color/text_color" />
+
+        <Button
+
             android:id="@+id/buttonSave"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
@@ -28,18 +41,6 @@
             android:background="@drawable/bt_border"
             android:textColor="@color/text_color" />
 
-        <Button
-
-            android:id="@+id/buttonCancel"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:onClick="buttonCancel_onClick"
-            android:text="CANCEL"
-            android:textSize="12sp"
-            android:background="@drawable/bt_border"
-            android:textColor="@color/text_color" />
     </LinearLayout>
 
     <LinearLayout
