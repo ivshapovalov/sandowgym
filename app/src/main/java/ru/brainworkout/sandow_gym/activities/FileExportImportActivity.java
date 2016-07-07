@@ -34,6 +34,9 @@ import ru.brainworkout.sandow_gym.database.*;
 
 public class FileExportImportActivity extends AppCompatActivity {
 
+    private static final String SYMBOL_ID = "#";
+    private static final String SYMBOL_WEIGHT = "$";
+    private static final String SYMBOL_SPLIT = ";";
     private String mDateFrom;
     private String mDateTo;
     private final DatabaseManager DB = new DatabaseManager(this);
@@ -61,22 +64,22 @@ public class FileExportImportActivity extends AppCompatActivity {
         message = new StringBuilder();
         List<String[]> data = new ArrayList<String[]>();
         StringBuilder mNewString = new StringBuilder();
-        mNewString.append("Упражнение(#id)/Дата(#id&Вес);");
+        mNewString.append("Упражнение(" + SYMBOL_ID + "id)/Дата(" + SYMBOL_ID + "id" + SYMBOL_WEIGHT + "Вес);");
         for (Training mCurrentTraining : mTrainingsList
                 ) {
-            mNewString.append(mCurrentTraining.getDayString()).append("(#").append(mCurrentTraining.getID()).append("&")
-                    .append(mCurrentTraining.getWeight()).append(")").append(";");
+            mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID()).append(SYMBOL_WEIGHT)
+                    .append(mCurrentTraining.getWeight()).append(")").append(SYMBOL_SPLIT);
             message.append(mCurrentTraining.getDayString()).append('\n');
         }
-        String[] entries = mNewString.toString().split(";");
+        String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
 
         for (Exercise mCurrentExercise : mExercisesList
                 ) {
             mNewString = new StringBuilder();
-            mNewString.append(mCurrentExercise.getName()).append("(#").
+            mNewString.append(mCurrentExercise.getName()).append("(" + SYMBOL_ID).
                     append(String.valueOf(mCurrentExercise.getID()))
-                    .append(")").append(";");
+                    .append(")").append(SYMBOL_SPLIT);
             for (Training mCurrentTraining : mTrainingsList
                     ) {
                 try {
@@ -84,15 +87,15 @@ public class FileExportImportActivity extends AppCompatActivity {
                     if (mCurrentTrainingContent.getVolume() == null) {
                         mNewString.append(";");
                     } else {
-                        mNewString.append(mCurrentTrainingContent.getVolume()).append(";");
+                        mNewString.append(mCurrentTrainingContent.getVolume()).append(SYMBOL_SPLIT);
                     }
                 } catch (Exception e) {
-                    mNewString.append(";");
+                    mNewString.append(SYMBOL_SPLIT);
                 }
 
 
             }
-            entries = mNewString.toString().split(";");
+            entries = mNewString.toString().split(SYMBOL_SPLIT);
             data.add(entries);
         }
         return data;
@@ -259,20 +262,20 @@ public class FileExportImportActivity extends AppCompatActivity {
                 for (mColumn = 0; mColumn < mColumnCount; mColumn++) {
                     try {
                         if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-                            mNewString.append("").append(";");
+                            mNewString.append("").append(SYMBOL_SPLIT);
                         } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
                             int num = (int) currentRow.getCell(mColumn).getNumericCellValue();
-                            mNewString.append(num).append(";");
+                            mNewString.append(num).append(SYMBOL_SPLIT);
                         } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_STRING) {
                             String name = currentRow.getCell(mColumn).getStringCellValue();
-                            mNewString.append(name).append(";");
+                            mNewString.append(name).append(SYMBOL_SPLIT);
                         }
                     } catch (Exception e) {
-                        mNewString.append(0).append(";");
+                        mNewString.append(0).append(SYMBOL_SPLIT);
                     }
                 }
             }
-            String[] entries = mNewString.toString().split(";");
+            String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
             data.add(entries);
 
             myExcelBook.close();
@@ -283,8 +286,8 @@ public class FileExportImportActivity extends AppCompatActivity {
             for (int i = 1; i < data.get(0).length; i++) {
                 String s = data.get(0)[i];
                 String day = s.substring(0, s.indexOf("("));
-                String id = s.substring(s.indexOf("#") + 1, s.indexOf("&"));
-                String weight = s.substring(s.indexOf("&") + 1, s.indexOf(")"));
+                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_WEIGHT));
+                String weight = s.substring(s.indexOf(SYMBOL_WEIGHT) + 1, s.indexOf(")"));
                 Training training = new Training();
                 training.setID(Integer.valueOf(id));
                 training.setWeight(Integer.valueOf(weight));
@@ -296,7 +299,7 @@ public class FileExportImportActivity extends AppCompatActivity {
             for (int i = 1; i < data.size(); i++) {
                 String s = data.get(i)[0];
                 String name = s.substring(0, s.indexOf("("));
-                String id = s.substring(s.indexOf("#") + 1, s.indexOf(")"));
+                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 Exercise exercise = new Exercise();
                 exercise.setID(Integer.valueOf(id));
                 exercise.setName(name);
