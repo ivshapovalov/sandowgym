@@ -67,7 +67,7 @@ public class ExercisesListActivity extends AppCompatActivity {
     }
 
 
-    public void bt_ExercisesAdd_onClick(final View view) {
+    public void btExercisesAdd_onClick(final View view) {
 
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ExerciseActivity.class);
@@ -92,32 +92,62 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     private void showExercises() {
 
-        List<Exercise> exercises = DB.getAllExercises();
+        List<Exercise> exercises;
+        if (Common.mCurrentUser == null) {
+            exercises = DB.getAllExercises();
+        } else {
+            exercises = DB.getAllExercisesOfUser(Common.mCurrentUser.getID());
+        }
+
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
-        try {
+        try
+
+        {
 
             sv.removeAllViews();
 
-        } catch (NullPointerException e) {
+        } catch (
+                NullPointerException e
+                )
+
+        {
         }
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
         mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        mWidth = displaymetrics.widthPixels/ MAX_HORIZONTAL_BUTTON_COUNT;
-        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
+        mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
+
+                getApplicationContext()
+
+                        .
+
+                                getResources()
+
+                        .
+
+                                getDisplayMetrics()
+
+                        .density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
 
-        if (trowButtons != null) {
+        if (trowButtons != null)
+
+        {
             trowButtons.setMinimumHeight(mHeight);
         }
 
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        for (int numEx = 0; numEx < exercises.size(); numEx++) {
+        for (
+                int numEx = 0;
+                numEx < exercises.size(); numEx++)
+
+        {
             TableRow mRow = new TableRow(this);
             mRow.setId(NUMBER_OF_VIEWS + exercises.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +181,7 @@ public class ExercisesListActivity extends AppCompatActivity {
             layout.addView(mRow);
 
         }
+
         sv.addView(layout);
 
     }

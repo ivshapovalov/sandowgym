@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="ADD"
                 android:id="@+id/btExercisesAdd"
-                android:onClick="bt_UsersAdd_onClick"
+                android:onClick="btExercisesAdd_onClick"
                 android:layout_span="8"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bt_border"

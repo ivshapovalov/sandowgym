@@ -10,6 +10,8 @@ import java.util.Date;
 
 public class Common {
 
+    public static User mCurrentUser;
+
     public static Date ConvertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date d = null;

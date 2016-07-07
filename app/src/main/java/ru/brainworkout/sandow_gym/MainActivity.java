@@ -19,7 +19,9 @@ import ru.brainworkout.sandow_gym.activities.FileExportImportActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingsListActivity;
 import ru.brainworkout.sandow_gym.activities.UsersListActivity;
+import ru.brainworkout.sandow_gym.commons.Common;
 import ru.brainworkout.sandow_gym.commons.Exercise;
+import ru.brainworkout.sandow_gym.commons.User;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,10 +34,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
 
-
     private static final int MAX_VERTICAL_BUTTON_COUNT = 8;
-    private final DatabaseManager DB=new DatabaseManager(this);
-    private boolean isFirstBoot=true;
+    private final DatabaseManager DB = new DatabaseManager(this);
+    private boolean isFirstBoot = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,30 +44,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        for (int i = 0; i <=5 ; i++) {
-            int btID = getResources().getIdentifier("btMain"+String.valueOf(i), "id", getPackageName());
+        for (int i = 0; i <= 5; i++) {
+            int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
         }
 
-//        getPreferencesFromFile();
-//
-//        if (isFirstBoot) {
-//        Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
-//        startActivity(intent);}
-    }
+        //read users count
+        if (Common.mCurrentUser == null) {
+            List<User> userList = DB.getAllUsers();
+            if (userList.size() == 1) {
+                Common.mCurrentUser = userList.get(0);
+            } else {
+                Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+                startActivity(intent);
+            }
+        }
 
-    private void getPreferencesFromFile() {
-//        mSettings = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
-//
-//
-//        if (mSettings.contains(MainActivity.APP_PREFERENCES_FIRST_BOOT)) {
-//            isFirstBoot = mSettings.getBoolean(MainActivity.APP_PREFERENCES_FIRST_BOOT, true);
-//        } else {
-//            isFirstBoot = true;
-//        }
     }
 
     public void btUsers_onClick(final View view) {
@@ -125,21 +121,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void btClearBD_onClick(final View view) {
 
-            new AlertDialog.Builder(this)
-                    .setMessage("Вы действительно хотите очистить базу данных?")
-                    .setCancelable(false)
-                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            try {
-                                SQLiteDatabase dbSQL = DB.getWritableDatabase();
-                                DB.onUpgrade(dbSQL, 1, 2);
-                            } catch (Exception e) {
-                                Toast toast = Toast.makeText(MainActivity.this,
-                                        "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
-                                toast.show();
-                            }
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите очистить базу данных?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            SQLiteDatabase dbSQL = DB.getWritableDatabase();
+                            DB.onUpgrade(dbSQL, 1, 2);
+                        } catch (Exception e) {
+                            Toast toast = Toast.makeText(MainActivity.this,
+                                    "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
-                    }).setNegativeButton("Нет", null).show();
+                    }
+                }).setNegativeButton("Нет", null).show();
 
     }
 

@@ -21,7 +21,6 @@ public class ExerciseActivity extends AppCompatActivity {
 
     private Exercise mCurrentExercise;
     private final DatabaseManager DB = new DatabaseManager(this);
-    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

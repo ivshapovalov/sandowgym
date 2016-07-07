@@ -1,9 +1,10 @@
 package ru.brainworkout.sandow_gym.commons;
 
 
-public class User {
+public class User extends AbstractDatabaseEntity {
     private int _id;
     private String _name;
+    private int _isCurrentUser;
 
     public User() {
     }
@@ -16,6 +17,12 @@ public class User {
 
         this._id = _id;
         this._name = _name;
+    }
+
+    public User(int _id, String _name, int _isCurrentUser) {
+        this._id = _id;
+        this._name = _name;
+        this._isCurrentUser = _isCurrentUser;
     }
 
     public int getID() {
@@ -32,5 +39,13 @@ public class User {
 
     public void setName(String _name) {
         this._name = _name;
+    }
+
+    public int getIsCurrentUser() {
+        return _isCurrentUser;
+    }
+
+    public void setIsCurrentUser(int _isCurrentUser) {
+        this._isCurrentUser = _isCurrentUser;
     }
 }

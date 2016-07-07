@@ -1,6 +1,6 @@
 package ru.brainworkout.sandow_gym.commons;
 
-public class Exercise extends AbstractDatabaseEntity {
+public class Exercise extends AbstractDatabaseEntityOfUser {
 
     //private int _id;
     private int _is_active;
@@ -10,7 +10,9 @@ public class Exercise extends AbstractDatabaseEntity {
     private String _picture;
 
 
+
     public Exercise() {
+
         this._explanation="";
         this._is_active=1;
         this._name="";
@@ -104,7 +106,9 @@ public class Exercise extends AbstractDatabaseEntity {
         this._volume_default = _volume_default;
     }
 
-//    public void dbUpdate(DatabaseManager DB) {
+
+
+    //    public void dbUpdate(DatabaseManager DB) {
 //        DB.updateExercise(this);
 //    }
 //    public void dbAdd(DatabaseManager DB) {

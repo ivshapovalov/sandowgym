@@ -27,7 +27,7 @@ public class UsersListActivity extends AppCompatActivity {
 
     private final int MAX_VERTICAL_BUTTON_COUNT = 17;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
-    private final int NUMBER_OF_VIEWS = 10000;
+    private final int NUMBER_OF_VIEWS = 40000;
 
     private final DatabaseManager DB = new DatabaseManager(this);
 
@@ -67,7 +67,7 @@ public class UsersListActivity extends AppCompatActivity {
     }
 
 
-    public void bt_UsersAdd_onClick(final View view) {
+    public void btUsersAdd_onClick(final View view) {
 
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), UserActivity.class);
@@ -125,7 +125,8 @@ public class UsersListActivity extends AppCompatActivity {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(String.valueOf(users.get(numUser).getName()));
+            String name=String.valueOf(users.get(numUser).getName())+((users.get(numUser).getIsCurrentUser()==1)?" (CURRENT)":"");
+            txt.setText(name);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);

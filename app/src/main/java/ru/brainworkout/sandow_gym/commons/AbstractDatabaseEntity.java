@@ -1,23 +1,37 @@
 package ru.brainworkout.sandow_gym.commons;
 
+import java.util.List;
+
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 
 public abstract class AbstractDatabaseEntity {
 
     protected int _id;
-    protected int user_id;
 
     public AbstractDatabaseEntity() {
-        //TODO получить юзера
-        this.user_id=1;
 
     }
 
 
     public void dbSave(DatabaseManager db) {
 
-        if (this instanceof Exercise) {
+        if (this instanceof User) {
+
+
+            User user=(User) this;
+            try {
+                db.getUser(this.getID());
+                db.updateUser(user);
+
+            } catch (TableDoesNotContainElementException e) {
+                //нет такого
+                db.addUser(user);
+
+            }
+
+        }
+        else if (this instanceof Exercise) {
 
             try {
                 db.getExercise(this.getID());
@@ -50,7 +64,16 @@ public abstract class AbstractDatabaseEntity {
 
     public void dbDelete(DatabaseManager db) {
 
-        if (this instanceof Exercise) {
+        if (this instanceof User) {
+
+            try {
+                db.getUser(this.getID());
+                db.deleteUser((User) this);
+            } catch (TableDoesNotContainElementException e) {
+                //нет такого
+            }
+        }
+        else if (this instanceof Exercise) {
 
             try {
                 db.getExercise(this.getID());
