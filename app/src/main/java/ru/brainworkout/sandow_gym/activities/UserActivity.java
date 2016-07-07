@@ -46,6 +46,10 @@ public class UserActivity extends AppCompatActivity {
 
         showUserOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     private void showUserOnScreen() {
@@ -134,6 +138,7 @@ public class UserActivity extends AppCompatActivity {
         mCurrentUser.dbSave(DB);
 
         if (mCurrentUser.getIsCurrentUser() == 1) {
+            Common.mCurrentUser=mCurrentUser;
             List<User> userList = DB.getAllUsers();
 
             for (User user : userList) {

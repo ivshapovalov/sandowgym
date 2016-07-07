@@ -86,6 +86,9 @@ public class CalendarViewActivity extends AppCompatActivity {
             }
         });
 
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     public void btSave_onClick(final View view) {

@@ -152,6 +152,9 @@ public class TrainingActivity extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     @Override
@@ -333,7 +336,7 @@ public class TrainingActivity extends AppCompatActivity {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 int maxNum = DB.getTrainingContentMaxNumber() + 1;
-                mCurrentTrainingContent = new TrainingContent(maxNum, "", mCurrentExercise.getID(), mCurrentTraining.getID());
+                mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(),"");
                 mCurrentTrainingContent.dbSave(DB);
             }
             showTrainingContentOnScreen(mCurrentExercise);
@@ -354,7 +357,7 @@ public class TrainingActivity extends AppCompatActivity {
             //покажем первое упражнение
             showTrainingContentOnScreen(mCurrentExercise);
             int maxNum = DB.getTrainingContentMaxNumber() + 1;
-            mCurrentTrainingContent = new TrainingContent(maxNum, "", mCurrentExercise.getID(), mCurrentTraining.getID());
+            mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(), "");
             mCurrentTrainingContent.dbSave(DB);
         }
     }
@@ -410,8 +413,11 @@ public class TrainingActivity extends AppCompatActivity {
         }
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
+            List<TrainingContent> mTrainingsContentList =new ArrayList<TrainingContent>();
 
-            List<TrainingContent> mTrainingsContentList = DB.getLastExerciseNotNullVolume(Common.ConvertDateToString(mCurrentTraining.getDay()), mCurrentExercise.getID());
+            if (Common.mCurrentUser!=null) {
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.mCurrentUser.getID(),Common.ConvertDateToString(mCurrentTraining.getDay()), mCurrentExercise.getID());
+            }
             if (mTrainingsContentList.size() == 1) {
                 try {
                     mVolumeLastDay = mTrainingsContentList.get(0).getVolume();
@@ -611,10 +617,12 @@ public class TrainingActivity extends AppCompatActivity {
         getPropertiesFromScreen();
 
         mCurrentTraining.dbSave(DB);
+
         if (mCurrentTrainingContent != null) {
 
             mCurrentTrainingContent.dbSave(DB);
         }
+        mTrainingIsNew=false;
 
     }
 

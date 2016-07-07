@@ -21,13 +21,13 @@ public class Exercise extends AbstractDatabaseEntityOfUser {
 
     }
     public Exercise(int _id) {
-        this();
+        super();
         this._id=_id;
     }
 
 
     public Exercise(int _id, String _name,    String _explanation, String _volume_default, String _picture) {
-        this();
+        super();
         this._id=_id;
         this._name = _name;
         this._volume_default=_volume_default;
@@ -36,7 +36,7 @@ public class Exercise extends AbstractDatabaseEntityOfUser {
     }
 
     public Exercise(int _id, int _is_active, String _name,    String _explanation, String _volume_default, String _picture) {
-        this();
+        super();
         this._id=_id;
         this._is_active=_is_active;
         this._name = _name;
@@ -46,14 +46,14 @@ public class Exercise extends AbstractDatabaseEntityOfUser {
     }
 
     public Exercise(int _id, String _name, String explanation, String _volume_default) {
-        this();
+        super();
         this._id=_id;
         this._name = _name;
         this._volume_default=_volume_default;
         this._explanation = explanation;
     }
     public Exercise(String _name,  String explanation,String _volume_default) {
-        this();
+        super();
         this._name = _name;
         this._volume_default=_volume_default;
         this._explanation = explanation;

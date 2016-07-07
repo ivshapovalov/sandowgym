@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Training  extends AbstractDatabaseEntityOfUser {
-    //private int _id;
     private Date _day;
     private int _weight; //кг
 

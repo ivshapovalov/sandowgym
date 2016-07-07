@@ -1,5 +1,6 @@
 package ru.brainworkout.sandow_gym;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.activities.ExercisesListActivity;
@@ -26,9 +28,7 @@ import ru.brainworkout.sandow_gym.database.DatabaseManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences mSettings;
     public static final String APP_PREFERENCES = "mysettings";
-    public static final String APP_PREFERENCES_FIRST_BOOT = "first_boot";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
@@ -52,15 +52,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //read users count
         if (Common.mCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
                 Common.mCurrentUser = userList.get(0);
             } else {
-                Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
-                startActivity(intent);
+                //ищем активного
+                for (User user:userList
+                     ) {
+                    if (user.getIsCurrentUser()==1) {
+                        Common.mCurrentUser=user;
+                        break;
+                    }
+                }
+                if (Common.mCurrentUser == null) {
+                    Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+                    startActivity(intent);
+                }
             }
+
+        }
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
 
     }
@@ -74,8 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void btExercises_onClick(final View view) {
 
-        Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
-        startActivity(intent);
+        if (Common.mCurrentUser==null) {
+            Toast toast = Toast.makeText(MainActivity.this,
+                    "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
+            startActivity(intent);
+        }
 
     }
 
@@ -99,8 +118,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean dbIsEmpty() {
-
-        List<Exercise> list = DB.getAllActiveExercises();
+        List<Exercise> list=new ArrayList<Exercise>();
+        if (Common.mCurrentUser == null) {
+            //list = DB.getAllActiveExercises();
+        } else {
+            list = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
+        }
         if (list.size() == 0) {
             Toast toast = Toast.makeText(MainActivity.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
@@ -129,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             SQLiteDatabase dbSQL = DB.getWritableDatabase();
                             DB.onUpgrade(dbSQL, 1, 2);
+
+                            if (Common.mCurrentUser!=null) {
+                                setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf("(")));
+                            }
+                            Common.mCurrentUser=null;
                         } catch (Exception e) {
                             Toast toast = Toast.makeText(MainActivity.this,
                                     "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);

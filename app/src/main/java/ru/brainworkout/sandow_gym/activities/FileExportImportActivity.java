@@ -35,7 +35,7 @@ import ru.brainworkout.sandow_gym.database.*;
 public class FileExportImportActivity extends AppCompatActivity {
 
     private static final String SYMBOL_ID = "#";
-    private static final String SYMBOL_WEIGHT = "$";
+    private static final String SYMBOL_WEIGHT = "&";
     private static final String SYMBOL_SPLIT = ";";
     private String mDateFrom;
     private String mDateTo;
@@ -56,6 +56,9 @@ public class FileExportImportActivity extends AppCompatActivity {
         mDateTo = mCurrentDateTo;
         updateScreen();
 
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     private List<String[]> createDataArray(List<Training> mTrainingsList,
@@ -323,7 +326,7 @@ public class FileExportImportActivity extends AppCompatActivity {
 
     private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws  Exception {
         message = new StringBuilder();
-        int maxNum = DB.getTrainingContentCount();
+        int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
                 ) {
             Training curTraining = mTrainingsList.get(curTrainingIndex);

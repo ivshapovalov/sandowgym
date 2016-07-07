@@ -8,8 +8,8 @@ public class AbstractDatabaseEntityOfUser extends AbstractDatabaseEntity {
     private int _id_user;
 
     public AbstractDatabaseEntityOfUser() {
-        this._id_user = 1;
-        //TODO получение юзера
+
+        this._id_user=Common.mCurrentUser.getID();
     }
 
     public int getIdUser() {

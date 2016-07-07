@@ -15,10 +15,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.MainActivity;
 import ru.brainworkout.sandow_gym.commons.Common;
+import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 import ru.brainworkout.sandow_gym.R;
@@ -58,6 +60,9 @@ public class TrainingsListActivity extends AppCompatActivity {
 
         showTrainings();
 
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     @Override
@@ -104,8 +109,12 @@ public class TrainingsListActivity extends AppCompatActivity {
 
     private void showTrainings() {
 
-        List<Training> trainings = DB.getAllTrainings();
-
+        List<Training> trainings=new ArrayList<Training>();
+        if (Common.mCurrentUser == null) {
+            //trainings = DB.getAllTrainings();
+        } else {
+            trainings = DB.getAllTrainingsOfUser(Common.mCurrentUser.getID());
+        }
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
         try {
             sv.removeAllViews();
@@ -211,9 +220,15 @@ public class TrainingsListActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        DB.deleteAllTrainings();
-                        DB.deleteAllTrainingContent();
-                        showTrainings();
+
+                            if (Common.mCurrentUser!=null) {
+                                DB.deleteAllTrainingsOfUser(Common.mCurrentUser.getID());
+                                DB.deleteAllTrainingContentOfUser(Common.mCurrentUser.getID());
+
+                                showTrainings();
+                            }
+
+
                     }
                 }).setNegativeButton("Нет", null).show();
 

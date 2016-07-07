@@ -3,13 +3,13 @@ package ru.brainworkout.sandow_gym.commons;
 /**
  * Created by Ivan on 16.05.2016.
  */
-public class TrainingContent extends AbstractDatabaseEntity {
+public class TrainingContent extends AbstractDatabaseEntityOfUser {
 
-    //private int _id;
-    private String _volume;
+
     private int _id_exercise;
     private int _id_training;
     private String _comment;
+    private String _volume;
 
     public TrainingContent() {
 
@@ -25,7 +25,7 @@ public class TrainingContent extends AbstractDatabaseEntity {
         this._volume = _volume;
     }
 
-    public TrainingContent(String _volume, String _comment) {
+    public TrainingContent(String _comment,String _volume) {
         this();
         this._volume = _volume;
         this._comment = _comment;
@@ -38,14 +38,14 @@ public class TrainingContent extends AbstractDatabaseEntity {
         this._volume = _volume;
     }
 
-    public TrainingContent(int _id, String _volume, String _comment) {
+    public TrainingContent(int _id, String _comment, String _volume) {
         this();
         this._id = _id;
         this._volume = _volume;
         this._comment = _comment;
     }
 
-    public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training) {
+    public TrainingContent(int _id,  int _id_exercise, int _id_training,String _volume) {
         this();
         this._id = _id;
         this._volume = _volume;
@@ -53,7 +53,7 @@ public class TrainingContent extends AbstractDatabaseEntity {
         this._id_training = _id_training;
     }
 
-    public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training, String _comment) {
+    public TrainingContent(int _id, int _id_exercise, int _id_training, String _comment,String _volume) {
         this();
         this._id = _id;
         this._volume = _volume;

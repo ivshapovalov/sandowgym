@@ -44,6 +44,10 @@ public class ExerciseActivity extends AppCompatActivity {
 
         showExerciseOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     private void showExerciseOnScreen() {

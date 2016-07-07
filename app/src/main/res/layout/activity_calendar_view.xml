@@ -49,4 +49,5 @@
             android:clickable="false"
             android:measureAllChildren="false" />
     </TableRow>
+
 </LinearLayout>

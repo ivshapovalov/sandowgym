@@ -28,6 +28,10 @@ public class TrainingActivityOptions extends AppCompatActivity {
 
         getPreferencesFromFile();
         setPreferencesOnScreen();
+
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
     }
 
     public void buttonSave_onClick(View view) {

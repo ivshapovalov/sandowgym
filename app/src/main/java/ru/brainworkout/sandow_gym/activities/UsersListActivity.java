@@ -44,6 +44,10 @@ public class UsersListActivity extends AppCompatActivity {
 
         showUsers();
 
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
+
     }
 
     @Override

@@ -1,6 +1,8 @@
 package ru.brainworkout.sandow_gym.activities;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +45,10 @@ public class ExercisesListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exercises_list);
 
         showExercises();
+
+        if (Common.mCurrentUser!=null) {
+            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
 
     }
 
@@ -92,9 +98,10 @@ public class ExercisesListActivity extends AppCompatActivity {
 
     private void showExercises() {
 
-        List<Exercise> exercises;
+        List<Exercise> exercises=new ArrayList<Exercise>();
+
         if (Common.mCurrentUser == null) {
-            exercises = DB.getAllExercises();
+            //exercises = DB.getAllExercises();
         } else {
             exercises = DB.getAllExercisesOfUser(Common.mCurrentUser.getID());
         }
@@ -305,5 +312,24 @@ public class ExercisesListActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
+    }
+
+    public void btDeleteAllExercises_onClick(final View view) {
+
+        Common.blink(view);
+
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите удалить все упражения пользователя?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                            if (Common.mCurrentUser!=null) {
+                                DB.deleteAllExercisesOfUser(Common.mCurrentUser.getID());
+                                showExercises();
+                            }
+
+                    }
+                }).setNegativeButton("Нет", null).show();
     }
 }
