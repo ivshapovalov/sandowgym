@@ -5,4 +5,7 @@
     <string name="trainings_list_name">Trainings</string>
     <string name="training_name">Training"</string>
     <string name="calendar_view_name">Date choice</string>
+    <string name="export_import_name">Export-Import</string>
+    <string name="users_list_name">Users</string>
+    <string name="user_name">User</string>
 </resources>

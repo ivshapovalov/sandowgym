@@ -6,9 +6,14 @@ import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 public abstract class AbstractDatabaseEntity {
 
     protected int _id;
+    protected int user_id;
 
     public AbstractDatabaseEntity() {
+        //TODO получить юзера
+        this.user_id=1;
+
     }
+
 
     public void dbSave(DatabaseManager db) {
 
@@ -73,6 +78,7 @@ public abstract class AbstractDatabaseEntity {
         }
 
     }
+
 
 
     public int getID() {

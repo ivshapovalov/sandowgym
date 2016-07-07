@@ -12,34 +12,41 @@ public class TrainingContent extends AbstractDatabaseEntity {
     private String _comment;
 
     public TrainingContent() {
+
     }
 
     public TrainingContent(int _id) {
+        this();
         this._id = _id;
     }
 
     public TrainingContent(String _volume) {
+        this();
         this._volume = _volume;
     }
 
     public TrainingContent(String _volume, String _comment) {
+        this();
         this._volume = _volume;
         this._comment = _comment;
     }
 
     public TrainingContent(int _id, String _volume) {
 
+        this();
         this._id = _id;
         this._volume = _volume;
     }
 
     public TrainingContent(int _id, String _volume, String _comment) {
+        this();
         this._id = _id;
         this._volume = _volume;
         this._comment = _comment;
     }
 
     public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training) {
+        this();
         this._id = _id;
         this._volume = _volume;
         this._id_exercise = _id_exercise;
@@ -47,6 +54,7 @@ public class TrainingContent extends AbstractDatabaseEntity {
     }
 
     public TrainingContent(int _id, String _volume, int _id_exercise, int _id_training, String _comment) {
+        this();
         this._id = _id;
         this._volume = _volume;
         this._id_exercise = _id_exercise;

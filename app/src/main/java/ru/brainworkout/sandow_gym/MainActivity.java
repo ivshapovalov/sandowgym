@@ -3,6 +3,7 @@ package ru.brainworkout.sandow_gym;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,19 +18,24 @@ import ru.brainworkout.sandow_gym.activities.ExercisesListActivity;
 import ru.brainworkout.sandow_gym.activities.FileExportImportActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingActivity;
 import ru.brainworkout.sandow_gym.activities.TrainingsListActivity;
+import ru.brainworkout.sandow_gym.activities.UsersListActivity;
 import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.database.DatabaseManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SharedPreferences mSettings;
     public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_FIRST_BOOT = "first_boot";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
-    public static final int MAX_VERTICAL_BUTTON_COUNT = 8;
 
-    private final DatabaseManager DB=new DatabaseManager(this);;
+
+    private static final int MAX_VERTICAL_BUTTON_COUNT = 8;
+    private final DatabaseManager DB=new DatabaseManager(this);
+    private boolean isFirstBoot=true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,9 +50,33 @@ public class MainActivity extends AppCompatActivity {
                 btName.setHeight(mHeight);
             }
         }
+
+//        getPreferencesFromFile();
+//
+//        if (isFirstBoot) {
+//        Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+//        startActivity(intent);}
     }
 
-    public void bt_Exercises_onClick(final View view) {
+    private void getPreferencesFromFile() {
+//        mSettings = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+//
+//
+//        if (mSettings.contains(MainActivity.APP_PREFERENCES_FIRST_BOOT)) {
+//            isFirstBoot = mSettings.getBoolean(MainActivity.APP_PREFERENCES_FIRST_BOOT, true);
+//        } else {
+//            isFirstBoot = true;
+//        }
+    }
+
+    public void btUsers_onClick(final View view) {
+
+        Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void btExercises_onClick(final View view) {
 
         Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
         startActivity(intent);

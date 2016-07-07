@@ -9,6 +9,7 @@ public class Exercise extends AbstractDatabaseEntity {
     private String _volume_default;
     private String _picture;
 
+
     public Exercise() {
         this._explanation="";
         this._is_active=1;
@@ -18,12 +19,42 @@ public class Exercise extends AbstractDatabaseEntity {
 
     }
     public Exercise(int _id) {
+        this();
         this._id=_id;
-        this._explanation="";
-        this._is_active=1;
-        this._name="";
-        this._picture="--";
-        this._volume_default="";
+    }
+
+
+    public Exercise(int _id, String _name,    String _explanation, String _volume_default, String _picture) {
+        this();
+        this._id=_id;
+        this._name = _name;
+        this._volume_default=_volume_default;
+        this._explanation = _explanation;
+        this._picture=_picture;
+    }
+
+    public Exercise(int _id, int _is_active, String _name,    String _explanation, String _volume_default, String _picture) {
+        this();
+        this._id=_id;
+        this._is_active=_is_active;
+        this._name = _name;
+        this._volume_default=_volume_default;
+        this._explanation = _explanation;
+        this._picture=_picture;
+    }
+
+    public Exercise(int _id, String _name, String explanation, String _volume_default) {
+        this();
+        this._id=_id;
+        this._name = _name;
+        this._volume_default=_volume_default;
+        this._explanation = explanation;
+    }
+    public Exercise(String _name,  String explanation,String _volume_default) {
+        this();
+        this._name = _name;
+        this._volume_default=_volume_default;
+        this._explanation = explanation;
 
     }
     public String getPicture() {
@@ -34,22 +65,6 @@ public class Exercise extends AbstractDatabaseEntity {
         this._picture = _picture;
     }
 
-    public Exercise(int _id, String _name,    String _explanation, String _volume_default, String _picture) {
-        this._id=_id;
-        this._name = _name;
-        this._volume_default=_volume_default;
-        this._explanation = _explanation;
-        this._picture=_picture;
-    }
-
-    public Exercise(int _id, int _is_active, String _name,    String _explanation, String _volume_default, String _picture) {
-        this._id=_id;
-        this._is_active=_is_active;
-        this._name = _name;
-        this._volume_default=_volume_default;
-        this._explanation = _explanation;
-        this._picture=_picture;
-    }
 
     public int getIsActive() {
         return _is_active;
@@ -59,19 +74,7 @@ public class Exercise extends AbstractDatabaseEntity {
         this._is_active = _is_active;
     }
 
-    public Exercise(int _id, String _name, String explanation, String _volume_default) {
-        this._id=_id;
-        this._name = _name;
-        this._volume_default=_volume_default;
-        this._explanation = explanation;
-    }
-    public Exercise(String _name,  String explanation,String _volume_default) {
 
-        this._name = _name;
-        this._volume_default=_volume_default;
-        this._explanation = explanation;
-
-    }
 
     // getting ID
 

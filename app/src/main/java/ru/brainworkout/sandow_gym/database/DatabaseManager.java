@@ -15,9 +15,11 @@ import java.util.List;
 import ru.brainworkout.sandow_gym.commons.Exercise;
 import ru.brainworkout.sandow_gym.commons.Training;
 import ru.brainworkout.sandow_gym.commons.TrainingContent;
+import ru.brainworkout.sandow_gym.commons.User;
 
 public class DatabaseManager extends SQLiteOpenHelper {
     // All Static variables
+
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -25,6 +27,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "trainingCalendar";
 
     // Tables names
+    private static final String TABLE_USERS = "users";
     private static final String TABLE_EXERCISES = "exercises";
     private static final String TABLE_TRAININGS = "trainings";
     private static final String TABLE_TRAINING_CONTENT = "training_content";
@@ -49,6 +52,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_ID_TRAINING = "training_content_id_training";
     private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
+    //  Users AbstractDatabaseEntity Columns names
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_USER_NAME = "user_name";
 
     public DatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,18 +63,41 @@ public class DatabaseManager extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        //пользователи
+        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
+                + KEY_USER_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+                + KEY_USER_NAME + " TEXT)";
+        db.execSQL(CREATE_USERS_TABLE);
+
         //упражнения
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
                 + KEY_EXERCISE_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL," + KEY_EXERCISE_IS_ACTIVE + " INTEGER, "
+                + KEY_USER_ID + " INTEGER, "
                 + KEY_EXERCISE_NAME + " TEXT," + KEY_EXERCISE_EXPLANATION + " TEXT,"
-                + KEY_EXERCISE_VOLUME_DEFAULT + " TEXT," + KEY_EXERCISE_PICTURE_NAME + " TEXT" + ")";
+                + KEY_EXERCISE_VOLUME_DEFAULT + " TEXT," + KEY_EXERCISE_PICTURE_NAME + " TEXT"
+                + "FOREIGN KEY(" + KEY_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                     + ")";
         db.execSQL(CREATE_EXERCISES_TABLE);
 
+        String CREATE_EXERCISES_INDEX_USER_ASC = "CREATE INDEX USER_IDX_ASC ON " + TABLE_EXERCISES + " (" + KEY_USER_ID + " ASC)";
+        db.execSQL(CREATE_EXERCISES_INDEX_USER_ASC);
+        String CREATE_EXERCISES_INDEX_USER_DESC = "CREATE INDEX USER_IDX_DESC ON " + TABLE_EXERCISES + " (" + KEY_USER_ID + " DESC)";
+        db.execSQL(CREATE_EXERCISES_INDEX_USER_DESC);
 
         //тренировки
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
-                + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL," + KEY_TRAINING_DAY + " STRING," + KEY_TRAINING_WEIGHT + " INTEGER" + ")";
+                + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+                + KEY_USER_ID + " INTEGER, "
+                + KEY_TRAINING_DAY + " STRING," + KEY_TRAINING_WEIGHT + " INTEGER"
+                + "FOREIGN KEY(" + KEY_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                + ")";
         db.execSQL(CREATE_TRAININGS_TABLE);
+
+        String CREATE_TRAININGS_INDEX_USER_ASC = "CREATE INDEX USER_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_USER_ID + " ASC)";
+        db.execSQL(CREATE_TRAININGS_INDEX_USER_ASC);
+        String CREATE_TRAININGS_INDEX_USER_DESC = "CREATE INDEX USER_IDX_DESC ON " + TABLE_TRAININGS + " (" + KEY_USER_ID + " DESC)";
+        db.execSQL(CREATE_TRAININGS_INDEX_USER_DESC);
 
         String CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC = "CREATE INDEX TRAINING_DAY_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_DAY + " ASC)";
         db.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC);
@@ -122,6 +151,16 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
     }
 
+    public void addUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_USER_ID, user.getID());
+        values.put(KEY_USER_NAME, user.getName());
+
+        db.insert(TABLE_USERS, null, values);
+        db.close();
+    }
 
     public void addExercise(Exercise exercise) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -172,6 +211,24 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_TRAINING_CONTENT, null, values);
         db.close(); // Closing database connection
+    }
+
+    public User getUser(int id) throws TableDoesNotContainElementException {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_USERS, new String[]{KEY_USER_ID, KEY_USER_NAME}, KEY_USER_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        User user= null;
+        if (cursor.getCount() == 0) {
+            throw new TableDoesNotContainElementException("There is no User with id - " + id);
+        } else {
+                user = new User(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
+
+            cursor.close();
+            return user;
+        }
     }
 
     public Exercise getExercise(int id) throws TableDoesNotContainElementException {
@@ -268,13 +325,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
             }
     }
 
+    public void deleteAllUsers() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_USERS, null, null);
+
+    }
 
     public void deleteAllExercises() {
 
-        // Select All Query
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EXERCISES, null, null);
-
 
     }
 
@@ -290,6 +351,26 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRAINING_CONTENT, null, null);
 
+    }
+
+    public List<User> getAllUsers() {
+        List<User> userList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_USERS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                User user= new User();
+                user.setID(cursor.getInt(0));
+                user.setName(cursor.getString(1));
+                userList.add(user);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return userList;
     }
 
     public List<Exercise> getAllExercises() {
@@ -520,6 +601,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingContentList;
     }
 
+    public int getUsersCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_USERS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int max = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return max;
+    }
+
     public int getExercisesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_EXERCISES;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -553,6 +646,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         // return count
         return max;
+    }
+
+    public int getUserMaxNumber() {
+        String countQuery = "SELECT  MAX(" + KEY_USER_ID + ") FROM " + TABLE_USERS + "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            return cursor.getInt(0);
+        } else {
+            cursor.close();
+            return 0;
+        }
+
     }
 
     public int getExerciseMaxNumber() {
@@ -598,6 +706,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
             return 0;
         }
 
+    }
+
+    public int updateUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_EXERCISE_NAME, user.getName());
+        return db.update(TABLE_USERS, values, KEY_USER_ID + " = ?",
+                new String[]{String.valueOf(user.getID())});
     }
 
     public int updateExercise(Exercise exercise) {
@@ -649,6 +766,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 new String[]{String.valueOf(trainingContent.getID())});
     }
 
+    public void deleteUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_USERS, KEY_USER_ID + " = ?",
+                new String[]{String.valueOf(user.getID())});
+        db.close();
+    }
 
     public void deleteExercise(Exercise exercise) {
         SQLiteDatabase db = this.getWritableDatabase();

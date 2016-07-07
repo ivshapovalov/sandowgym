@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.UserActivity">
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="*"
+        android:id="@+id/mTableMain">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CLOSE"
+                android:id="@+id/button4"
+                android:onClick="btClose_onClick"
+                android:layout_span="7"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAVE"
+                android:id="@+id/button3"
+                android:onClick="btSave_onClick"
+                android:layout_span="7"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DELETE"
+                android:id="@+id/button5"
+                android:onClick="btDelete_onClick"
+                android:layout_span="8"
+                style="?android:attr/buttonStyleSmall"
+                android:gravity="center"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OPTIONS"
+                android:id="@+id/button13"
+                android:onClick="btOptions_onClick"
+                android:layout_span="8"
+                android:gravity="center"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
+        </TableRow>
+
+
+    </TableLayout>
+
+</RelativeLayout>
+

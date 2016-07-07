@@ -7,73 +7,48 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Training  extends AbstractDatabaseEntity implements Parcelable{
+public class Training  extends AbstractDatabaseEntity {
     //private int _id;
     private Date _day;
     private int _weight; //кг
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-//        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-//        String sDate = dateformat.format(_day);
-        dest.writeStringArray(new String[] { String.valueOf(_id), getDayString() });
-    }
-
-    public static final Parcelable.Creator<Training> CREATOR = new Parcelable.Creator<Training>() {
-
-        @Override
-        public Training createFromParcel(Parcel source) {
-            return new Training(source);
-        }
-
-        @Override
-        public Training[] newArray(int size) {
-            return new Training[size];
-        }
-    };
-    public Training(Parcel in) {
-        String[] data = new String[2];
-        in.readStringArray(data);
-        _id = Integer.parseInt(data[0]);
-        setDayString(data[1]);
-
-    }
     public Training() {
+
     }
 
     public Training(int _id, Date _day, int weight) {
+        this();
         this._id = _id;
         this._day = _day;
         this._weight = weight;
     }
 
     public Training(int _id, int _weight) {
+        this();
         this._id = _id;
         this._weight = _weight;
     }
 
     public Training(int _id, Date _day) {
+        this();
         this._id = _id;
         this._day = _day;
     }
 
     public Training(int _id, String _day) {
+        this();
         this._id = _id;
         setDayString(_day);
     }
     public Training(int _id, String _day, int _weight) {
+        this();
         this._id = _id;
         setDayString(_day);
         this._weight = _weight;
     }
 
     public Training(int _id) {
-
+        this();
         this._id = _id;
     }
 
