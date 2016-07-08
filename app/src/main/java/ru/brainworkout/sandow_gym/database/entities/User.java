@@ -1,7 +1,7 @@
-package ru.brainworkout.sandow_gym.commons;
+package ru.brainworkout.sandow_gym.database.entities;
 
 
-public class User extends AbstractDatabaseEntity {
+public class User extends AbstractEntity {
     private int _id;
     private String _name;
     private int _isCurrentUser;

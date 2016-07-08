@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.database;
+package ru.brainworkout.sandow_gym.database.manager;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.commons.Exercise;
-import ru.brainworkout.sandow_gym.commons.Training;
-import ru.brainworkout.sandow_gym.commons.TrainingContent;
-import ru.brainworkout.sandow_gym.commons.User;
+import ru.brainworkout.sandow_gym.database.entities.Exercise;
+import ru.brainworkout.sandow_gym.database.entities.Training;
+import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
+import ru.brainworkout.sandow_gym.database.entities.User;
 
 public class DatabaseManager extends SQLiteOpenHelper {
     // All Static variables
@@ -32,7 +32,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String TABLE_TRAININGS = "trainings";
     private static final String TABLE_TRAINING_CONTENT = "training_content";
 
-    // Exercise AbstractDatabaseEntity Columns names
+    // Exercise AbstractEntity Columns names
     private static final String KEY_EXERCISE_ID = "exercise_id";
     private static final String KEY_EXERCISE_ID_USER = "exercise_id_user";
     private static final String KEY_EXERCISE_IS_ACTIVE = "exercise_is_active";
@@ -41,13 +41,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_EXERCISE_VOLUME_DEFAULT = "exercise_volume_default";
     private static final String KEY_EXERCISE_PICTURE_NAME = "exercise_picture_name";
 
-    //  Training AbstractDatabaseEntity Columns names
+    //  Training AbstractEntity Columns names
     private static final String KEY_TRAINING_ID = "training_id";
     private static final String KEY_TRAINING_ID_USER = "training_id_user";
     private static final String KEY_TRAINING_DAY = "training_day";
     private static final String KEY_TRAINING_WEIGHT = "training_weight";
 
-    //  Training content AbstractDatabaseEntity Columns names
+    //  Training content AbstractEntity Columns names
     private static final String KEY_TRAINING_CONTENT_ID = "training_content_id";
     private static final String KEY_TRAINING_CONTENT_ID_USER = "training_content_id_user";
     private static final String KEY_TRAINING_CONTENT_ID_EXERCISE = "training_content_id_exercise";
@@ -55,7 +55,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
     private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
-    //  Users AbstractDatabaseEntity Columns names
+    //  Users AbstractEntity Columns names
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_USER_IS_CURRENT = "user_is_current";
@@ -534,7 +534,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
                 + TABLE_TRAININGS + "," + TABLE_EXERCISES + "," + TABLE_TRAINING_CONTENT
-                + "WHERE " + TABLE_EXERCISES + "." + KEY_EXERCISE_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE
+                + " WHERE " + TABLE_EXERCISES + "." + KEY_EXERCISE_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE
                 + " AND " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING + "=" + TABLE_TRAININGS + "." + KEY_TRAINING_ID
                 + " AND " + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + KEY_TRAINING_DAY + "<=\"" + mDateTo
                 + "\" GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")" + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;

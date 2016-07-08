@@ -1,15 +1,12 @@
-package ru.brainworkout.sandow_gym.commons;
+package ru.brainworkout.sandow_gym.database.entities;
 
-public class Exercise extends AbstractDatabaseEntityOfUser {
+public class Exercise extends AbstractEntityMultiUser {
 
-    //private int _id;
     private int _is_active;
     private String _name;
     private String _explanation;
     private String _volume_default;
     private String _picture;
-
-
 
     public Exercise() {
 

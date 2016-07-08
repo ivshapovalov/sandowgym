@@ -8,18 +8,17 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.R;
-import ru.brainworkout.sandow_gym.commons.Common;
-import ru.brainworkout.sandow_gym.commons.User;
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
+import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandow_gym.database.entities.User;
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
+import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
-public class UserActivity extends AppCompatActivity {
+public class ActivityUser extends AppCompatActivity {
 
     private User mCurrentUser;
     private final DatabaseManager DB = new DatabaseManager(this);
@@ -101,7 +100,7 @@ public class UserActivity extends AppCompatActivity {
     public void btClose_onClick(final View view) {
 
         Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
         intent.putExtra("id", mCurrentUser.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -151,7 +150,7 @@ public class UserActivity extends AppCompatActivity {
             }
         }
 
-        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
         intent.putExtra("id", mCurrentUser.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -164,7 +163,7 @@ public class UserActivity extends AppCompatActivity {
         //DB.deleteExercise(mCurrentExercise);
         mCurrentUser.dbDelete(DB);
 
-        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 

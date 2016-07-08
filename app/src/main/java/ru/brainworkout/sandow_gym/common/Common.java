@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.commons;
+package ru.brainworkout.sandow_gym.common;
 
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -7,6 +7,8 @@ import android.view.animation.Animation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import ru.brainworkout.sandow_gym.database.entities.User;
 
 public class Common {
 

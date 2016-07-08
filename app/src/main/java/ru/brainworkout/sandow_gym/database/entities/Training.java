@@ -1,13 +1,10 @@
-package ru.brainworkout.sandow_gym.commons;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package ru.brainworkout.sandow_gym.database.entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Training  extends AbstractDatabaseEntityOfUser {
+public class Training  extends AbstractEntityMultiUser {
     private Date _day;
     private int _weight; //кг
 

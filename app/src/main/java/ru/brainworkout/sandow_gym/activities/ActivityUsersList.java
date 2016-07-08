@@ -11,18 +11,15 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.MainActivity;
 import ru.brainworkout.sandow_gym.R;
-import ru.brainworkout.sandow_gym.commons.Common;
-import ru.brainworkout.sandow_gym.commons.Exercise;
-import ru.brainworkout.sandow_gym.commons.User;
-import ru.brainworkout.sandow_gym.database.AndroidDatabaseManager;
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
+import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandow_gym.database.entities.User;
+import ru.brainworkout.sandow_gym.database.manager.AndroidDatabaseManager;
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 
-public class UsersListActivity extends AppCompatActivity {
+public class ActivityUsersList extends AppCompatActivity {
 
 
     private final int MAX_VERTICAL_BUTTON_COUNT = 17;
@@ -74,7 +71,7 @@ public class UsersListActivity extends AppCompatActivity {
     public void btUsersAdd_onClick(final View view) {
 
         Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
 
@@ -152,7 +149,7 @@ public class UsersListActivity extends AppCompatActivity {
 
         int id = v.getId() % NUMBER_OF_VIEWS;
 
-        Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
         intent.putExtra("id", id);
         intent.putExtra("IsNew", false);
         startActivity(intent);
@@ -171,7 +168,7 @@ public class UsersListActivity extends AppCompatActivity {
     public void buttonHome_onClick(final View view) {
 
         Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 

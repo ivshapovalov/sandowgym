@@ -1,10 +1,8 @@
-package ru.brainworkout.sandow_gym;
+package ru.brainworkout.sandow_gym.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,17 +14,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.activities.ExercisesListActivity;
-import ru.brainworkout.sandow_gym.activities.FileExportImportActivity;
-import ru.brainworkout.sandow_gym.activities.TrainingActivity;
-import ru.brainworkout.sandow_gym.activities.TrainingsListActivity;
-import ru.brainworkout.sandow_gym.activities.UsersListActivity;
-import ru.brainworkout.sandow_gym.commons.Common;
-import ru.brainworkout.sandow_gym.commons.Exercise;
-import ru.brainworkout.sandow_gym.commons.User;
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
+import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandow_gym.database.entities.Exercise;
+import ru.brainworkout.sandow_gym.database.entities.User;
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity {
 
     public static final String APP_PREFERENCES = "mysettings";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
@@ -36,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MAX_VERTICAL_BUTTON_COUNT = 8;
     private final DatabaseManager DB = new DatabaseManager(this);
-    private boolean isFirstBoot = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -49,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showButtons() {
+
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
         for (int i = 0; i <= MAX_VERTICAL_BUTTON_COUNT; i++) {
@@ -58,9 +53,11 @@ public class MainActivity extends AppCompatActivity {
                 btName.setHeight(mHeight);
             }
         }
+
     }
 
     private void defineCurrentUser() {
+
         if (Common.mCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
@@ -75,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (Common.mCurrentUser == null) {
-                    Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+                    Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
                     startActivity(intent);
                 }
             }
@@ -84,23 +81,20 @@ public class MainActivity extends AppCompatActivity {
         if (Common.mCurrentUser!=null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
+
     }
 
     public void btUsers_onClick(final View view) {
 
-        Intent intent = new Intent(MainActivity.this, UsersListActivity.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
         startActivity(intent);
 
     }
 
     public void btExercises_onClick(final View view) {
 
-        if (Common.mCurrentUser==null) {
-            Toast toast = Toast.makeText(MainActivity.this,
-                    "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
-            Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
+        if (isUserDefined()) {
+            Intent intent = new Intent(ActivityMain.this, ActivityExercisesList.class);
             startActivity(intent);
         }
 
@@ -108,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void btTrainings_onClick(final View view) {
 
-        if (!dbIsEmpty()) {
-            Intent intent = new Intent(MainActivity.this, TrainingsListActivity.class);
+        if (isUserDefined() & dbNotEmpty()) {
+            Intent intent = new Intent(ActivityMain.this, ActivityTrainingsList.class);
             startActivity(intent);
         }
 
@@ -117,15 +111,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void bt_NewTraining_onClick(final View view) {
 
-        if (!dbIsEmpty()) {
-            Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
+        if (dbNotEmpty()) {
+            Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
             startActivity(intent);
         }
 
     }
 
-    private boolean dbIsEmpty() {
+    private boolean isUserDefined() {
+        if (Common.mCurrentUser==null) {
+            Toast toast = Toast.makeText(ActivityMain.this,
+                    "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
+            toast.show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean dbNotEmpty() {
 
         List<Exercise> list=new ArrayList<Exercise>();
         if (Common.mCurrentUser == null) {
@@ -134,19 +138,19 @@ public class MainActivity extends AppCompatActivity {
             list = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
         }
         if (list.size() == 0) {
-            Toast toast = Toast.makeText(MainActivity.this,
+            Toast toast = Toast.makeText(ActivityMain.this,
                     "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
             toast.show();
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
 
         }
     }
 
     public void btExportImport_onClick(final View view) {
 
-        Intent intent = new Intent(MainActivity.this, FileExportImportActivity.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityFileExportImport.class);
         startActivity(intent);
 
     }
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             Common.mCurrentUser=null;
                         } catch (Exception e) {
-                            Toast toast = Toast.makeText(MainActivity.this,
+                            Toast toast = Toast.makeText(ActivityMain.this,
                                     "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
                             toast.show();
                         }

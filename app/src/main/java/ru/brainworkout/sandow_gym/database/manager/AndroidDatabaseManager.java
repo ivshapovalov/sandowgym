@@ -1,6 +1,6 @@
-package ru.brainworkout.sandow_gym.database;
+package ru.brainworkout.sandow_gym.database.manager;
 
-//all required import files
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import android.app.Activity;
@@ -92,7 +92,7 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 		firstrowlp.weight = 1;
 
 		TextView maintext = new TextView(AndroidDatabaseManager.this);
-		maintext.setText("Select AbstractDatabaseEntity");
+		maintext.setText("Select AbstractEntity");
 		maintext.setTextSize(22);
 		maintext.setLayoutParams(firstrowlp);
 		select_table=new Spinner(AndroidDatabaseManager.this);
@@ -714,7 +714,7 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 		                final TextView tableheadercolums = new TextView(getApplicationContext());
 
 		                tableheadercolums.setPadding(0, 0, 4, 3);
-		                tableheadercolums.setText("   AbstractDatabaseEntity   Is   Empty   ");
+		                tableheadercolums.setText("   AbstractEntity   Is   Empty   ");
 		                tableheadercolums.setTextSize(30);
 		                tableheadercolums.setTextColor(Color.RED);
 
@@ -1098,7 +1098,7 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
               	 
             final TextView tableheadercolums = new TextView(getApplicationContext());
             tableheadercolums.setPadding(0, 0, 4, 3);
-            tableheadercolums.setText("   AbstractDatabaseEntity   Is   Empty   ");
+            tableheadercolums.setText("   AbstractEntity   Is   Empty   ");
             tableheadercolums.setTextSize(30);
             tableheadercolums.setTextColor(Color.RED);
 

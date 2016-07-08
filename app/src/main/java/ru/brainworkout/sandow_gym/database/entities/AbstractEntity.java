@@ -1,15 +1,14 @@
-package ru.brainworkout.sandow_gym.commons;
+package ru.brainworkout.sandow_gym.database.entities;
 
-import java.util.List;
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
+import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
-import ru.brainworkout.sandow_gym.database.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.TableDoesNotContainElementException;
 
-public abstract class AbstractDatabaseEntity {
+public abstract class AbstractEntity {
 
     protected int _id;
 
-    public AbstractDatabaseEntity() {
+    public AbstractEntity() {
 
     }
 

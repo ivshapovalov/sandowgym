@@ -1,9 +1,6 @@
-package ru.brainworkout.sandow_gym.commons;
+package ru.brainworkout.sandow_gym.database.entities;
 
-/**
- * Created by Ivan on 16.05.2016.
- */
-public class TrainingContent extends AbstractDatabaseEntityOfUser {
+public class TrainingContent extends AbstractEntityMultiUser {
 
 
     private int _id_exercise;

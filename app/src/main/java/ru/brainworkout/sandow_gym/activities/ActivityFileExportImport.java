@@ -28,11 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandow_gym.*;
-import ru.brainworkout.sandow_gym.commons.*;
-import ru.brainworkout.sandow_gym.database.*;
+import ru.brainworkout.sandow_gym.common.*;
+import ru.brainworkout.sandow_gym.database.entities.Exercise;
+import ru.brainworkout.sandow_gym.database.entities.Training;
+import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
+import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
 
-public class FileExportImportActivity extends AppCompatActivity {
+public class ActivityFileExportImport extends AppCompatActivity {
 
     private static final String SYMBOL_ID = "#";
     private static final String SYMBOL_WEIGHT = "&";
@@ -392,13 +396,16 @@ public class FileExportImportActivity extends AppCompatActivity {
     }
 
     public void btClose_onClick(View view) {
+
         Common.blink(view);
-        Intent intent = new Intent(FileExportImportActivity.this, MainActivity.class);
+        Intent intent = new Intent(ActivityFileExportImport.this, ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
     public void tvDayFrom_onClick(View view) {
+
         Common.blink(view);
         day_onClick(true);
     }
@@ -411,23 +418,22 @@ public class FileExportImportActivity extends AppCompatActivity {
 
 
     private void loadFromFile() {
+
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
         if (exportDir.exists()) {
             File file = new File(exportDir, "trainings.xls");
             if (file.exists()) {
 
                 readFromFile(file);
-
             }
-
         }
-
     }
 
     public void btImportFromFile_onClick(View view) {
 
         Common.blink(view);
         loadFromFile();
+
     }
 
     public void btExportToFile_onClick(View view) {
@@ -439,16 +445,19 @@ public class FileExportImportActivity extends AppCompatActivity {
         if (mDateTo == null || "".equals(mDateFrom)) {
             mDateTo = "9999-99-99";
         }
+        List<Training> trainingList=DB.getTrainingsByDates(mDateFrom, mDateTo);
+        List<Exercise> exerciseList=DB.getExercisesByDates(mDateFrom, mDateTo);
+        List<String[]> data= createDataArray(trainingList,exerciseList );
+        writeToFile(data);
 
-        writeToFile(createDataArray(DB.getTrainingsByDates(mDateFrom, mDateTo), DB.getExercisesByDates(mDateFrom, mDateTo)));
     }
 
     private void day_onClick(boolean isBeginDate) {
 
 
-        Intent intent = new Intent(FileExportImportActivity.this, CalendarViewActivity.class);
+        Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
         intent.putExtra("IsBeginDate", isBeginDate);
-        intent.putExtra("CurrentActivity", "FileExportImportActivity");
+        intent.putExtra("CurrentActivity", "ActivityFileExportImport");
 
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
@@ -466,6 +475,7 @@ public class FileExportImportActivity extends AppCompatActivity {
         }
 
         startActivity(intent);
+
     }
 
     public void btDayFromClear_onClick(final View view) {
@@ -491,6 +501,7 @@ public class FileExportImportActivity extends AppCompatActivity {
     }
 
     private void updateScreen() {
+
         //Имя
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView etDayFrom = (TextView) findViewById(mDayFromID);
@@ -511,6 +522,7 @@ public class FileExportImportActivity extends AppCompatActivity {
                 etDayTo.setText(mDateTo);
             }
         }
+
     }
 }
 
