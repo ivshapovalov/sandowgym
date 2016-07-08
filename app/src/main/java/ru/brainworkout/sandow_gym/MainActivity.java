@@ -42,16 +42,25 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        showButtons();
+
+        defineCurrentUser();
+    }
+
+    private void showButtons() {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i <= MAX_VERTICAL_BUTTON_COUNT; i++) {
             int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
         }
+    }
 
+    private void defineCurrentUser() {
         if (Common.mCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
@@ -59,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //ищем активного
                 for (User user:userList
-                     ) {
+                        ) {
                     if (user.getIsCurrentUser()==1) {
                         Common.mCurrentUser=user;
                         break;
@@ -75,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         if (Common.mCurrentUser!=null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
-
     }
 
     public void btUsers_onClick(final View view) {
@@ -118,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean dbIsEmpty() {
+
         List<Exercise> list=new ArrayList<Exercise>();
         if (Common.mCurrentUser == null) {
             //list = DB.getAllActiveExercises();
