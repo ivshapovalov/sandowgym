@@ -120,7 +120,7 @@
                     android:id="@+id/imageView"
                     android:background="@drawable/ic_sandow_big"
                     android:scaleType="matrix"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </TableRow>
 
         </TableLayout>
