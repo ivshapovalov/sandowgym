@@ -33,7 +33,7 @@ public class ActivityUser extends AppCompatActivity {
         boolean mUserIsNew = intent.getBooleanExtra("IsNew", false);
 
         if (mUserIsNew) {
-            mCurrentUser = new User(DB.getUserMaxNumber() + 1);
+            mCurrentUser = new User.UserBuilder(DB.getUserMaxNumber() + 1).build();
         } else {
             int id = intent.getIntExtra("id", 0);
             try {

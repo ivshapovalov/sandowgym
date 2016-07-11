@@ -323,10 +323,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String day = s.substring(0, s.indexOf("("));
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
-                Training training = new Training();
-                training.setID(Integer.valueOf(id));
-                training.setDayString(day);
-                mTrainingsList.add(training);
+                Training training = new Training.TrainingBuilder(Integer.valueOf(id)).addDay(day).build();
 
             }
 
@@ -337,12 +334,11 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
                  String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
 
-                Exercise exercise = new Exercise();
-                exercise.setID(Integer.valueOf(id));
-                exercise.setVolumeDefault(def_volume);
-                exercise.setName(name);
-
-                mExercisesList.add(exercise);
+                Exercise exercise = new Exercise.ExerciseBuilder(Integer.valueOf(id))
+                        .addName(name)
+                        .addVolumeDefault(def_volume)
+                        .build();
+                  mExercisesList.add(exercise);
 
             }
 
@@ -375,7 +371,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 //System.out.println("add tr:" + curTraining.getID());
                 DB.addTraining(curTraining);
             }
-            TrainingContent trainingContent = new TrainingContent();
+
 
             for (int curExerciseIndex = 0; curExerciseIndex < mExercisesList.size(); curExerciseIndex++
                     ) {
@@ -395,9 +391,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
                 }
 
-                trainingContent.setID(++maxNum);
-                trainingContent.setIdExercise(curExercise.getID());
-                trainingContent.setIdTraining(curTraining.getID());
+                TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(++maxNum)
+                        .addExerciseId(curExercise.getID())
+                        .addTrainingId(curTraining.getID())
+                        .build();
 
                 //разбираем ячейку со значениями количества и веса
                 String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];

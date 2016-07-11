@@ -1,10 +1,11 @@
 package ru.brainworkout.sandow_gym.database.entities;
 
+import java.util.Date;
+
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
-public class TrainingContent extends AbstractEntityMultiUser {
-
+public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
 
     private int _id_exercise;
     private int _id_training;
@@ -12,77 +13,19 @@ public class TrainingContent extends AbstractEntityMultiUser {
     private String _volume="";
     private int _weight=0; //кг
 
-    public TrainingContent() {
+    private TrainingContent(TrainingContentBuilder builder) {
 
+        this._id = builder._id;
+        this._id_exercise=builder._id_exercise;
+        this._id_training=builder._id_training;
+        this._comment=builder._comment;
+        this._volume=builder._volume;
+        this._weight=builder._weight;
     }
-
-    public TrainingContent(int _id) {
+    private TrainingContent(int _id) {
 
         this._id = _id;
     }
-
-    public TrainingContent(String _volume) {
-
-        this._volume = _volume;
-    }
-
-    public TrainingContent(String _volume, String _comment) {
-
-        this(_volume);
-        this._comment = _comment;
-    }
-
-    public TrainingContent(String _volume, int _weight, String _comment) {
-
-        this(_volume, _comment);
-        this._weight = _weight;
-    }
-
-    public TrainingContent(int _id, String _volume) {
-
-        this(_id);
-        this._volume = _volume;
-    }
-
-    public TrainingContent(int _id, String _volume, int _weight) {
-
-        this(_id, _volume);
-        this._weight = _weight;
-    }
-
-    public TrainingContent(int _id, String _volume, String _comment) {
-
-        this(_id, _volume);
-        this._comment = _comment;
-    }
-
-    public TrainingContent(int _id, String _volume, int _weight, String _comment) {
-
-        this(_id, _volume, _weight);
-        this._comment = _comment;
-    }
-
-    public TrainingContent(int _id, int _id_exercise, int _id_training, String _volume) {
-        this(_id, _volume);
-        this._id_exercise = _id_exercise;
-        this._id_training = _id_training;
-    }
-
-    public TrainingContent(int _id, int _id_exercise, int _id_training, String _volume, int _weight) {
-        this(_id, _id_exercise, _id_training, _volume);
-        this._weight = _weight;
-    }
-
-    public TrainingContent(int _id, int _id_exercise, int _id_training, String _volume, String _comment) {
-        this(_id, _id_exercise, _id_training, _volume);
-        this._comment = _comment;
-    }
-
-    public TrainingContent(int _id, int _id_exercise, int _id_training, String _volume, int _weight, String _comment) {
-        this(_id, _id_exercise, _id_training, _volume, _weight);
-        this._comment = _comment;
-    }
-
 
     public String getVolume() {
         return _volume;
@@ -146,6 +89,48 @@ public class TrainingContent extends AbstractEntityMultiUser {
             } catch (TableDoesNotContainElementException e) {
                 //нет такого
             }
+
+    }
+
+    public static class TrainingContentBuilder extends AbstractEntity {
+
+        private int _id_exercise;
+        private int _id_training;
+        private String _comment="";
+        private String _volume="";
+        private int _weight=0; //кг
+
+        public TrainingContentBuilder(int id) {
+            this._id = id;
+        }
+
+        public TrainingContentBuilder addExerciseId(int idExercise) {
+            this._id_exercise = idExercise;
+            return this;
+        }
+        public TrainingContentBuilder addTrainingId(int idTraining) {
+            this._id_training = idTraining;
+            return this;
+        }
+        public TrainingContentBuilder addComment(String comment) {
+            this._comment = comment;
+            return this;
+        }
+        public TrainingContentBuilder addVolume(String volume) {
+            this._volume = volume;
+            return this;
+        }
+        public TrainingContentBuilder addWeight(int weight) {
+            this._weight = weight;
+            return this;
+        }
+
+        public TrainingContent build() {
+            TrainingContent trainingContent = new TrainingContent(this);
+            return trainingContent;
+        }
+
+
 
     }
 }

@@ -44,6 +44,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     private static final int NUMBER_OF_VIEWS = 30000;
     private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;
+    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     private SharedPreferences mSettings;
     private boolean mShowPicture;
     private boolean mShowExplanation;
@@ -83,7 +84,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         if (mTrainingIsNew) {
 
-            mCurrentTraining = new Training(DB.getTrainingMaxNumber() + 1);
+            mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
             //Calendar calendar = Calendar.getInstance();
             if ((mCurrentDate == null)) {
                 String cal = (Calendar.getInstance().getTime()).toLocaleString();
@@ -94,7 +95,7 @@ public class ActivityTraining extends AppCompatActivity {
                 }
             } else {
                 try {
-                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate));
+                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, DATE_FORMAT_STRING));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -103,7 +104,7 @@ public class ActivityTraining extends AppCompatActivity {
         } else {
             int id = intent.getIntExtra("CurrentID", 0);
             if (id == 0) {
-                mCurrentTraining = new Training(DB.getTrainingMaxNumber() + 1);
+                mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
             } else {
 
                 try {
@@ -151,7 +152,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.mCurrentUser!=null) {
+        if (Common.mCurrentUser != null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
     }
@@ -229,11 +230,11 @@ public class ActivityTraining extends AppCompatActivity {
                     }
                 }
                 if (!isFound) {
-                    mCurrentTrainingContent = new TrainingContent();
-                    mCurrentTrainingContent.setID(DB.getTrainingContentMaxNumber() + 1);
-                    mCurrentTrainingContent.setIdExercise(mCurrentExercise.getID());
-                    mCurrentTrainingContent.setIdTraining(mCurrentTraining.getID());
-                    mCurrentTrainingContent.setVolume("");
+                    mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+                            .addExerciseId(mCurrentExercise.getID())
+                            .addTrainingId(mCurrentTraining.getID())
+                            .addVolume("")
+                            .build();
                     mCurrentTrainingContent.dbSave(DB);
                 }
             }
@@ -280,10 +281,12 @@ public class ActivityTraining extends AppCompatActivity {
                 }
 
                 if (!isFound) {
-                    mCurrentTrainingContent = new TrainingContent();
-                    mCurrentTrainingContent.setID(DB.getTrainingContentMaxNumber() + 1);
-                    mCurrentTrainingContent.setIdExercise(mCurrentExercise.getID());
-                    mCurrentTrainingContent.setIdTraining(mCurrentTraining.getID());
+
+                    mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+                            .addExerciseId(mCurrentExercise.getID())
+                            .addTrainingId(mCurrentTraining.getID())
+                            .addVolume("")
+                            .build();
                     mCurrentTrainingContent.dbSave(DB);
                 }
             }
@@ -294,7 +297,7 @@ public class ActivityTraining extends AppCompatActivity {
     private void getAllExercisesOfTraining() {
 
         Log.d("Reading: ", "Reading all active exercises..");
-        mActiveExercises = DB.getAllActiveExercises();
+        mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
         Log.d("Reading: ", "Reading all exercises of training ..");
         mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
 
@@ -334,8 +337,11 @@ public class ActivityTraining extends AppCompatActivity {
             if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise() == mCurrentExercise.getID()) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
-                int maxNum = DB.getTrainingContentMaxNumber() + 1;
-                mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(),"");
+                mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+                        .addExerciseId(mCurrentExercise.getID())
+                        .addTrainingId(mCurrentTraining.getID())
+                        .addVolume("")
+                        .build();
                 mCurrentTrainingContent.dbSave(DB);
             }
             showTrainingContentOnScreen(mCurrentExercise);
@@ -345,7 +351,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllActiveExercises() {
 
-        if (Common.mCurrentUser!=null) {
+        if (Common.mCurrentUser != null) {
             mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
             mTrainingContentList = new ArrayList<>();
 
@@ -355,8 +361,11 @@ public class ActivityTraining extends AppCompatActivity {
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
                 //покажем первое упражнение
                 showTrainingContentOnScreen(mCurrentExercise);
-                int maxNum = DB.getTrainingContentMaxNumber() + 1;
-                mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(), "");
+                mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+                        .addExerciseId(mCurrentExercise.getID())
+                        .addTrainingId(mCurrentTraining.getID())
+                        .addVolume("")
+                        .build();
                 mCurrentTrainingContent.dbSave(DB);
             }
         }
@@ -413,10 +422,11 @@ public class ActivityTraining extends AppCompatActivity {
         }
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
-            List<TrainingContent> mTrainingsContentList =new ArrayList<TrainingContent>();
+            List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
 
-            if (Common.mCurrentUser!=null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.mCurrentUser.getID(),Common.ConvertDateToString(mCurrentTraining.getDay()), mCurrentExercise.getID());
+            if (Common.mCurrentUser != null) {
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.mCurrentUser.getID(),
+                        Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {
                 try {
@@ -436,7 +446,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
         TextView etWeight = (TextView) findViewById(mWeight);
-        if (etWeight != null && mCurrentTrainingContent != null)  {
+        if (etWeight != null && mCurrentTrainingContent != null) {
 
             etWeight.setText(String.valueOf(mCurrentTrainingContent.getWeight()));
         }
@@ -533,7 +543,7 @@ public class ActivityTraining extends AppCompatActivity {
             if (mCurrentTraining.getDay() == null) {
                 etDay.setText("");
             } else {
-                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay()));
+                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
             }
         }
 
@@ -567,7 +577,7 @@ public class ActivityTraining extends AppCompatActivity {
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
 
-            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()));
+            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()), DATE_FORMAT_STRING);
 
             if (d != null) {
                 try {
@@ -628,7 +638,7 @@ public class ActivityTraining extends AppCompatActivity {
 
             mCurrentTrainingContent.dbSave(DB);
         }
-        mTrainingIsNew=false;
+        mTrainingIsNew = false;
 
     }
 
@@ -687,7 +697,7 @@ public class ActivityTraining extends AppCompatActivity {
         if (mCurrentTraining.getDay() == null) {
             intent.putExtra("CurrentDate", "");
         } else {
-            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay()));
+            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
         intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
 

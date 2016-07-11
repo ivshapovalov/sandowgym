@@ -247,7 +247,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no User with id - " + id);
         } else {
-            user = new User(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)));
+            user = new User.UserBuilder(Integer.parseInt(cursor.getString(0))).addName(cursor.getString(1)).addIsCurrentUser(Integer.parseInt(cursor.getString(2))).build();
 
             cursor.close();
             return user;
@@ -266,13 +266,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no Exercise with id - " + id);
         } else {
-            try {
-                exercise = new Exercise(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(2)), cursor.getString(3),
-                        cursor.getString(4), cursor.getString(5), cursor.getString(6));
-            } catch (NullPointerException e) {
-                exercise = new Exercise(Integer.parseInt(cursor.getString(2)), cursor.getString(3),
-                        cursor.getString(4), cursor.getString(5), cursor.getString(6));
-            }
+            exercise = new Exercise.ExerciseBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addIsActive(Integer.parseInt(cursor.getString(2)))
+                    .addName(cursor.getString(3))
+                    .addExplanation(cursor.getString(4))
+                    .addVolumeDefault(cursor.getString(5))
+                    .addPicture(cursor.getString(6)).build();
+
             cursor.close();
             return exercise;
         }
@@ -289,7 +289,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no Training with id - " + id);
         } else {
-            Training training = new Training(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
+            Training training = new Training.TrainingBuilder(Integer.parseInt(cursor.getString(0))).addDay(cursor.getString(1)).build();
             cursor.close();
             return training;
         }
@@ -307,7 +307,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no TrainingContent with id - " + id);
         } else {
-            TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), Integer.parseInt(cursor.getString(2)), cursor.getString(3), Integer.parseInt(cursor.getString(4)), cursor.getString(5));
+            TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addExerciseId(Integer.parseInt(cursor.getString(1)))
+                    .addTrainingId(Integer.parseInt(cursor.getString(2)))
+                    .addVolume(cursor.getString(3))
+                    .addWeight(Integer.parseInt(cursor.getString(4)))
+                    .addComment(cursor.getString(5))
+                    .build();
+
             cursor.close();
             return trainingContent;
         }
@@ -323,8 +330,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no TrainingContent with id - " + id);
         } else {
-            TrainingContent trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), Integer.parseInt(cursor.getString(2)), cursor.getString(3), Integer.parseInt(cursor.getString(4)), cursor.getString(5));
-
+            TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addExerciseId(Integer.parseInt(cursor.getString(1)))
+                    .addTrainingId(Integer.parseInt(cursor.getString(2)))
+                    .addVolume(cursor.getString(3))
+                    .addWeight(Integer.parseInt(cursor.getString(4)))
+                    .addComment(cursor.getString(5))
+                    .build();
             cursor.close();
             return trainingContent;
         }
@@ -341,8 +353,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no TrainingContent with Exercise_id - " + exercise_id + " and Training_id " + training_id);
         } else {
-            trainingContent = new TrainingContent(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), Integer.parseInt(cursor.getString(2)), cursor.getString(3), Integer.parseInt(cursor.getString(4)), cursor.getString(5));
-
+            trainingContent = new TrainingContent.TrainingContentBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addExerciseId(Integer.parseInt(cursor.getString(1)))
+                    .addTrainingId(Integer.parseInt(cursor.getString(2)))
+                    .addVolume(cursor.getString(3))
+                    .addWeight(Integer.parseInt(cursor.getString(4)))
+                    .addComment(cursor.getString(5))
+                    .build();
             cursor.close();
             return trainingContent;
         }
@@ -408,10 +425,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                User user = new User();
-                user.setID(cursor.getInt(0));
-                user.setName(cursor.getString(1));
-                user.setIsCurrentUser(cursor.getInt(2));
+                User user = new User.UserBuilder(cursor.getInt(0))
+                        .addName(cursor.getString(1))
+                        .addIsCurrentUser(Integer.parseInt(cursor.getString(2)))
+                        .build();
                 userList.add(user);
             } while (cursor.moveToNext());
         }
@@ -430,14 +447,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                exercise.setIsActive(cursor.getInt(2));
-                exercise.setName(cursor.getString(3));
-                exercise.setExplanation(cursor.getString(4));
-                exercise.setVolumeDefault(cursor.getString(5));
-                exercise.setPicture(cursor.getString(6));
-
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addIsActive(Integer.parseInt(cursor.getString(2)))
+                        .addName(cursor.getString(3))
+                        .addExplanation(cursor.getString(4))
+                        .addVolumeDefault(cursor.getString(5))
+                        .addPicture(cursor.getString(6)).build();
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
@@ -448,22 +463,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public List<Exercise> getAllExercisesOfUser(int user_id) {
         List<Exercise> exerciseList = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "=" + user_id+" ORDER BY " + KEY_EXERCISE_ID;;
+        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
+        ;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                exercise.setIdUser(user_id);
-                exercise.setIsActive(cursor.getInt(2));
-                exercise.setName(cursor.getString(3));
-                exercise.setExplanation(cursor.getString(4));
-                exercise.setVolumeDefault(cursor.getString(5));
-                exercise.setPicture(cursor.getString(6));
 
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addIsActive(Integer.parseInt(cursor.getString(2)))
+                        .addName(cursor.getString(3))
+                        .addExplanation(cursor.getString(4))
+                        .addVolumeDefault(cursor.getString(5))
+                        .addPicture(cursor.getString(6)).build();
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
@@ -474,7 +488,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public List<Exercise> getAllActiveExercises() {
         List<Exercise> exerciseList = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1"+" ORDER BY " + KEY_EXERCISE_ID;
+        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1" + " ORDER BY " + KEY_EXERCISE_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -482,16 +496,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                exercise.setIsActive(cursor.getInt(2));
-                exercise.setName(cursor.getString(3));
-                exercise.setExplanation(cursor.getString(4));
-                exercise.setVolumeDefault(cursor.getString(5));
-                exercise.setPicture(cursor.getString(6));
-
-
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addIsActive(Integer.parseInt(cursor.getString(2)))
+                        .addName(cursor.getString(3))
+                        .addExplanation(cursor.getString(4))
+                        .addVolumeDefault(cursor.getString(5))
+                        .addPicture(cursor.getString(6)).build();
                 exerciseList.add(exercise);
+
             } while (cursor.moveToNext());
         }
 
@@ -503,7 +515,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         List<Exercise> exerciseList = new ArrayList<>();
 
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1 AND "
-                + KEY_EXERCISE_ID_USER + "=" + user_id+" ORDER BY " + KEY_EXERCISE_ID;
+                + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -511,16 +523,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                //user_id auto
-                exercise.setIsActive(cursor.getInt(2));
-                exercise.setName(cursor.getString(3));
-                exercise.setExplanation(cursor.getString(4));
-                exercise.setVolumeDefault(cursor.getString(5));
-                exercise.setPicture(cursor.getString(6));
-
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addIsActive(Integer.parseInt(cursor.getString(2)))
+                        .addName(cursor.getString(3))
+                        .addExplanation(cursor.getString(4))
+                        .addVolumeDefault(cursor.getString(5))
+                        .addPicture(cursor.getString(6)).build();
                 exerciseList.add(exercise);
+
             } while (cursor.moveToNext());
         }
 
@@ -547,12 +557,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                exercise.setName(cursor.getString(1));
-                exercise.setVolumeDefault(cursor.getString(2));
 
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addName(cursor.getString(1))
+                        .addVolumeDefault(cursor.getString(2))
+                        .build();
                 exerciseList.add(exercise);
+
             } while (cursor.moveToNext());
         }
 
@@ -580,12 +591,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise();
-                exercise.setID(cursor.getInt(0));
-                //user_id auto
-                exercise.setName(cursor.getString(1));
-                exercise.setVolumeDefault(cursor.getString(2));
-
+                Exercise exercise = new Exercise.ExerciseBuilder(cursor.getInt(0))
+                        .addName(cursor.getString(1))
+                        .addVolumeDefault(cursor.getString(2))
+                        .build();
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
         }
@@ -605,9 +614,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                training.setID(cursor.getInt(0));
-                training.setDayString(cursor.getString(2));
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(2))
+                        .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
@@ -627,11 +636,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                //training.setIdUser(user_id);
-                //user_id auto
-                training.setID(cursor.getInt(0));
-                training.setDayString(cursor.getString(2));
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(2))
+                        .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
@@ -658,9 +665,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                training.setID(cursor.getInt(0));
-                training.setDayString(cursor.getString(1));
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(1))
+                        .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
@@ -688,11 +695,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                training.setID(cursor.getInt(0));
-                //training.setIdUser(user_id);
-                //user_id auto
-                training.setDayString(cursor.getString(2));
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(1))
+                        .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
@@ -716,10 +721,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                training.setID(cursor.getInt(0));
-                training.setDayString(cursor.getString(1));
-
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(1))
+                        .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
         }
@@ -743,11 +747,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Training training = new Training();
-                training.setID(cursor.getInt(0));
-                //training.setIdUser(user_id);
-                //user_id auto
-                training.setDayString(cursor.getString(2));
+                Training training = new Training.TrainingBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(1))
+                        .build();
 
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -780,7 +782,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 if (cursor.getInt(1) != 0 & cursor.getString(2) != null) {
-                    TrainingContent trainingContent = new TrainingContent(cursor.getInt(1), cursor.getString(2), cursor.getInt(3));
+                    TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(cursor.getInt(1))
+                            .addVolume(cursor.getString(2))
+                            .addWeight(cursor.getInt(3))
+                            .build();
 
                     trainingsContentList.add(trainingContent);
                 }
@@ -814,7 +819,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 if (cursor.getInt(1) != 0 & cursor.getString(2) != null) {
-                    TrainingContent trainingContent = new TrainingContent(cursor.getInt(1), cursor.getString(2), cursor.getInt(3));
+                    TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(cursor.getInt(1))
+                            .addVolume(cursor.getString(2))
+                            .addWeight(cursor.getInt(3))
+                            .build();
 
                     trainingsContentList.add(trainingContent);
                 }
@@ -829,20 +837,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public List<TrainingContent> getAllTrainingContentOfTraining(int training_id) {
         List<TrainingContent> trainingContentList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT + " WHERE " + KEY_TRAINING_CONTENT_ID_TRAINING
-                + "=" + training_id +" ORDER BY "+KEY_TRAINING_CONTENT_ID;
+                + "=" + training_id + " ORDER BY " + KEY_TRAINING_CONTENT_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                TrainingContent trainingContent = new TrainingContent();
-                trainingContent.setID(cursor.getInt(0));
-                trainingContent.setIdExercise(cursor.getInt(2));
-                trainingContent.setIdTraining(cursor.getInt(3));
-                trainingContent.setVolume(cursor.getString(4));
-                trainingContent.setWeight(cursor.getInt(5));
-                trainingContent.setComment(cursor.getString(6));
+                TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(cursor.getInt(0))
+                        .addExerciseId(cursor.getInt(2))
+                        .addTrainingId(cursor.getInt(3))
+                        .addVolume(cursor.getString(4))
+                        .addWeight(cursor.getInt(5))
+                        .addComment(cursor.getString(6))
+                        .build();
 
                 trainingContentList.add(trainingContent);
             } while (cursor.moveToNext());

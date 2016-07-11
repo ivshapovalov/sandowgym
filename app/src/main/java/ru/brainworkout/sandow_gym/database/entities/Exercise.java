@@ -3,7 +3,7 @@ package ru.brainworkout.sandow_gym.database.entities;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
-public class Exercise extends AbstractEntityMultiUser {
+public class Exercise extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
 
     private int _is_active=1;
     private String _name="";
@@ -11,49 +11,19 @@ public class Exercise extends AbstractEntityMultiUser {
     private String _volume_default="";
     private String _picture="--";
 
-    public Exercise() {
+    private Exercise(ExerciseBuilder builder) {
+
+        this._id = builder._id;
+        this._name = builder._name;
+        this._explanation = builder._explanation;
+        this._volume_default=builder._volume_default;
+        this._picture=builder._picture;
 
     }
 
-    public Exercise(int _id) {
+    private Exercise(int _id) {
         super();
         this._id = _id;
-    }
-
-
-    public Exercise(int _id, String _name, String _explanation, String _volume_default, String _picture) {
-        super();
-        this._id = _id;
-        this._name = _name;
-        this._volume_default = _volume_default;
-        this._explanation = _explanation;
-        this._picture = _picture;
-    }
-
-    public Exercise(int _id, int _is_active, String _name, String _explanation, String _volume_default, String _picture) {
-        super();
-        this._id = _id;
-        this._is_active = _is_active;
-        this._name = _name;
-        this._volume_default = _volume_default;
-        this._explanation = _explanation;
-        this._picture = _picture;
-    }
-
-    public Exercise(int _id, String _name, String explanation, String _volume_default) {
-        super();
-        this._id = _id;
-        this._name = _name;
-        this._volume_default = _volume_default;
-        this._explanation = explanation;
-    }
-
-    public Exercise(String _name, String explanation, String _volume_default) {
-        super();
-        this._name = _name;
-        this._volume_default = _volume_default;
-        this._explanation = explanation;
-
     }
 
     public String getPicture() {
@@ -74,8 +44,6 @@ public class Exercise extends AbstractEntityMultiUser {
     }
 
 
-    // getting ID
-
     public String getName() {
         return _name;
     }
@@ -84,12 +52,10 @@ public class Exercise extends AbstractEntityMultiUser {
         this._name = _name;
     }
 
-    // getting name
     public String getExplanation() {
         return this._explanation;
     }
 
-    // setting name
     public void setExplanation(String explanation) {
         this._explanation = explanation;
     }
@@ -128,6 +94,52 @@ public class Exercise extends AbstractEntityMultiUser {
 
     }
 
+    public static class ExerciseBuilder extends AbstractEntity {
+
+        private int _is_active=1;
+        private String _name="";
+        private String _explanation="";
+        private String _volume_default="";
+        private String _picture="--";
+
+        public ExerciseBuilder(int id) {
+            this._id = id;
+        }
+
+
+        public ExerciseBuilder addIsActive(int is_active) {
+            this._is_active = is_active;
+            return this;
+        }
+
+        public ExerciseBuilder addName(String name) {
+            this._name = name;
+            return this;
+        }
+
+        public ExerciseBuilder addExplanation(String explanation) {
+            this._explanation = explanation;
+            return this;
+        }
+
+        public ExerciseBuilder addVolumeDefault(String volumeDefault) {
+            this._volume_default = volumeDefault;
+            return this;
+        }
+
+        public ExerciseBuilder addPicture(String picture) {
+            this._picture = picture;
+            return this;
+        }
+
+        public Exercise build() {
+            Exercise exercise = new Exercise(this);
+            return exercise;
+        }
+
+
+
+    }
 
 
 }

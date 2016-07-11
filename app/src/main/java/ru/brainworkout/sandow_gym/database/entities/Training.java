@@ -4,47 +4,22 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import ru.brainworkout.sandow_gym.common.Common;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
-public class Training extends AbstractEntityMultiUser {
+public class Training extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
+
+    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     private Date _day;
 
-    public Training() {
+    private Training(TrainingBuilder builder) {
 
+        this._id = builder._id;
+        this._day = builder._day;
     }
 
-    public Training(int _id, Date _day, int weight) {
-        this();
-        this._id = _id;
-        this._day = _day;
-    }
-
-    public Training(int _id, int _weight) {
-        this();
-        this._id = _id;
-    }
-
-    public Training(int _id, Date _day) {
-        this();
-        this._id = _id;
-        this._day = _day;
-    }
-
-    public Training(int _id, String _day) {
-        this();
-        this._id = _id;
-        setDayString(_day);
-    }
-
-    public Training(int _id, String _day, int _weight) {
-        this();
-        this._id = _id;
-        setDayString(_day);
-    }
-
-    public Training(int _id) {
-        this();
+    private Training(int _id) {
         this._id = _id;
     }
 
@@ -59,7 +34,7 @@ public class Training extends AbstractEntityMultiUser {
         if (_day == null) {
             sDate = "";
         } else {
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
             sDate = dateformat.format(_day);
         }
         return sDate;
@@ -72,18 +47,10 @@ public class Training extends AbstractEntityMultiUser {
 
     public void setDayString(String _day) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date d = null;
-        try {
-            d = dateFormat.parse(String.valueOf(_day));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            d = null;
-        }
-
-        this._day = d;
+        this._day = Common.ConvertStringToDate(_day,DATE_FORMAT_STRING);
 
     }
+
 
     @Override
     public void dbSave(DatabaseManager db) {
@@ -108,5 +75,32 @@ public class Training extends AbstractEntityMultiUser {
             }
 
     }
+
+
+    public static class TrainingBuilder extends AbstractEntity {
+
+        private Date _day;
+
+        public TrainingBuilder(int id) {
+            this._id = id;
+        }
+
+        public TrainingBuilder addDay(Date day) {
+            this._day = day;
+            return this;
+        }
+        public TrainingBuilder addDay(String day) {
+            this._day = Common.ConvertStringToDate(day,DATE_FORMAT_STRING);
+            return this;
+        }
+
+        public Training build() {
+            Training training = new Training(this);
+            return training;
+        }
+
+    }
+
+
 }
 

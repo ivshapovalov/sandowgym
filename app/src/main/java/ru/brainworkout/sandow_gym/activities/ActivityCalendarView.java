@@ -15,6 +15,7 @@ import ru.brainworkout.sandow_gym.R;
 
 public class ActivityCalendarView extends AppCompatActivity {
 
+    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     private boolean mTrainingIsNew;
     private boolean mIsBeginDate;
 
@@ -52,14 +53,14 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         if (mIsBeginDate || mCallerActivity == "ActivityTraining") {
             if (mOldDateFrom != null && !"".equals(mOldDateFrom)) {
-                Date d = Common.ConvertStringToDate(mOldDateFrom);
+                Date d = Common.ConvertStringToDate(mOldDateFrom,DATE_FORMAT_STRING);
                 calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
                 mNewDate = mOldDateFrom;
             }
 
         } else {
             if (mOldDateTo != null && !"".equals(mOldDateTo)) {
-                Date d = Common.ConvertStringToDate(mOldDateTo);
+                Date d = Common.ConvertStringToDate(mOldDateTo,DATE_FORMAT_STRING);
                 calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
                 mNewDate = mOldDateTo;
             }
@@ -69,7 +70,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         if (mNewDate==null || mNewDate.equals("")) {
             mNewDate=Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(calendar.getTime().getYear()+1900)
                     .append("-").append(calendar.getTime().getMonth() + 1).append("-").append(calendar.getTime().getDate())
-                    .append("").toString()));
+                    .append("").toString(), DATE_FORMAT_STRING), DATE_FORMAT_STRING);
 
         }
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
@@ -82,7 +83,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
                 mNewDate = Common.ConvertDateToString(Common.ConvertStringToDate(new StringBuilder().append(year)
                         .append("-").append(month + 1).append("-").append(dayOfMonth)
-                        .append("").toString()));
+                        .append("").toString(),DATE_FORMAT_STRING),DATE_FORMAT_STRING);
             }
         });
 

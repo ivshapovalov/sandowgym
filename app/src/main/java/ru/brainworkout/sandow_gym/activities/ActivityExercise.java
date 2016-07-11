@@ -32,7 +32,7 @@ public class ActivityExercise extends AppCompatActivity {
         boolean mExerciseIsNew = intent.getBooleanExtra("IsNew", false);
 
         if (mExerciseIsNew) {
-            mCurrentExercise = new Exercise(DB.getExerciseMaxNumber() + 1);
+            mCurrentExercise = new Exercise.ExerciseBuilder(DB.getExerciseMaxNumber() + 1).build();
         } else {
             int id = intent.getIntExtra("id", 0);
             try {

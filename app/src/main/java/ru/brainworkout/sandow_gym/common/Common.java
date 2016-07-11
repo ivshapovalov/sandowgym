@@ -14,8 +14,8 @@ public class Common {
 
     public static User mCurrentUser;
 
-    public static Date ConvertStringToDate(final String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static Date ConvertStringToDate(final String date,final String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         Date d = null;
         try {
             d = dateFormat.parse(String.valueOf(date));
@@ -26,9 +26,9 @@ public class Common {
         return d;
     }
 
-    public static String ConvertDateToString(final Date date) {
+    public static String ConvertDateToString(final Date date,final String format) {
 
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateformat = new SimpleDateFormat(format);
         String sDate="";
         try {
             sDate = dateformat.format(date);
