@@ -77,7 +77,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
+                android:text="YES"
                 android:textColor="@color/text_color" />
 
             <RadioButton
@@ -85,8 +85,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет"
-                android:textColor="@color/text_color" />
+                android:text="NO"
+                android:textColor="@color/text_color"
+                android:checked="false" />
         </RadioGroup>
     </LinearLayout>
 
@@ -123,7 +124,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
+                android:text="YES"
                 android:textColor="@color/text_color" />
 
             <RadioButton
@@ -131,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:text="Нет"
+                android:text="NO"
                 android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
@@ -169,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
+                android:text="YES"
                 android:textColor="@color/text_color" />
 
             <RadioButton
@@ -177,7 +178,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет"
+                android:text="NO"
                 android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>
@@ -214,7 +215,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
                 android:checked="true"
-                android:text="Да"
+                android:text="YES"
                 android:textColor="@color/text_color" />
 
             <RadioButton
@@ -222,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
-                android:text="Нет"
+                android:text="NO"
                 android:textColor="@color/text_color" />
         </RadioGroup>
     </LinearLayout>

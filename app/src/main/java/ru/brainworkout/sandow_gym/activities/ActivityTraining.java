@@ -206,7 +206,7 @@ public class ActivityTraining extends AppCompatActivity {
     }
 
 
-    private class ExerciseComp implements Comparator {
+    private class ExerciseComparator implements Comparator {
         public int compare(Object ex1, Object ex2) {
             return ((Exercise) (ex1)).getID() - ((Exercise) (ex2)).getID();
         }
@@ -324,7 +324,7 @@ public class ActivityTraining extends AppCompatActivity {
         }
 
         //отсортируем по ID список упражнений
-        Collections.sort(mActiveExercises, new ExerciseComp());
+        Collections.sort(mActiveExercises, new ExerciseComparator());
 
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
@@ -345,19 +345,20 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllActiveExercises() {
 
-        Log.d("Reading: ", "Reading all active exercises..");
-        mActiveExercises = DB.getAllActiveExercises();
-        mTrainingContentList = new ArrayList<>();
+        if (Common.mCurrentUser!=null) {
+            mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
+            mTrainingContentList = new ArrayList<>();
 
-        Exercise ex1;
-        if (mActiveExercises.size() != 0) {
-            mCurrentExerciseNumberInList = 0;
-            mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-            //покажем первое упражнение
-            showTrainingContentOnScreen(mCurrentExercise);
-            int maxNum = DB.getTrainingContentMaxNumber() + 1;
-            mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(), "");
-            mCurrentTrainingContent.dbSave(DB);
+            Exercise ex1;
+            if (mActiveExercises.size() != 0) {
+                mCurrentExerciseNumberInList = 0;
+                mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
+                //покажем первое упражнение
+                showTrainingContentOnScreen(mCurrentExercise);
+                int maxNum = DB.getTrainingContentMaxNumber() + 1;
+                mCurrentTrainingContent = new TrainingContent(maxNum, mCurrentExercise.getID(), mCurrentTraining.getID(), "");
+                mCurrentTrainingContent.dbSave(DB);
+            }
         }
     }
 
@@ -420,12 +421,24 @@ public class ActivityTraining extends AppCompatActivity {
             if (mTrainingsContentList.size() == 1) {
                 try {
                     mVolumeLastDay = mTrainingsContentList.get(0).getVolume();
+
                 } catch (Exception e) {
                     mVolumeLastDay = "";
                 }
+//                try {
+//                    mCurrentTrainingContent.setWeight(String.valueOf(mTrainingsContentList.get(0).getVolume()));
+//                } catch (Exception e) {}
+
             }
             btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
 
+        }
+
+        int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
+        TextView etWeight = (TextView) findViewById(mWeight);
+        if (etWeight != null && mCurrentTrainingContent != null)  {
+
+            etWeight.setText(String.valueOf(mCurrentTrainingContent.getWeight()));
         }
     }
 
@@ -524,12 +537,6 @@ public class ActivityTraining extends AppCompatActivity {
             }
         }
 
-        int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
-        TextView etWeight = (TextView) findViewById(mWeight);
-        if (etWeight != null) {
-
-            etWeight.setText(String.valueOf(mCurrentTraining.getWeight()));
-        }
 
     }
 
@@ -584,7 +591,7 @@ public class ActivityTraining extends AppCompatActivity {
         EditText etWeight = (EditText) findViewById(R.id.etWeight);
         if (etWeight != null) {
             try {
-                mCurrentTraining.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
+                mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
 
             } catch (Exception e) {
 

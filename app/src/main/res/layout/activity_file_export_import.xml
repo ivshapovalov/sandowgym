@@ -56,6 +56,48 @@
 
         <TableRow
             android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="EXPORT INCLUDE  #ID%WEIGHT"
+                android:id="@+id/textView8"
+                android:layout_span="30"
+                android:gravity="center_vertical|start|center_horizontal"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/text_color" />
+
+            <RadioGroup
+                android:id="@+id/rgShowSymbols"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_span="15">
+
+                <RadioButton
+                    android:id="@+id/rbShowSymbolsYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="30"
+                    android:checked="false"
+                    android:text="YES"
+                    android:textColor="@color/text_color" />
+
+                <RadioButton
+                    android:id="@+id/rbShowSymbolsNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="30"
+                    android:text="NO"
+                    android:textColor="@color/text_color"
+                    android:checked="true" />
+            </RadioGroup>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView

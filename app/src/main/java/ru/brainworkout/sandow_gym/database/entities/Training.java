@@ -4,9 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Training  extends AbstractEntityMultiUser {
+import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
+import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+
+public class Training extends AbstractEntityMultiUser {
     private Date _day;
-    private int _weight; //кг
 
     public Training() {
 
@@ -16,13 +18,11 @@ public class Training  extends AbstractEntityMultiUser {
         this();
         this._id = _id;
         this._day = _day;
-        this._weight = weight;
     }
 
     public Training(int _id, int _weight) {
         this();
         this._id = _id;
-        this._weight = _weight;
     }
 
     public Training(int _id, Date _day) {
@@ -36,11 +36,11 @@ public class Training  extends AbstractEntityMultiUser {
         this._id = _id;
         setDayString(_day);
     }
+
     public Training(int _id, String _day, int _weight) {
         this();
         this._id = _id;
         setDayString(_day);
-        this._weight = _weight;
     }
 
     public Training(int _id) {
@@ -53,22 +53,12 @@ public class Training  extends AbstractEntityMultiUser {
         return _day;
     }
 
-
-    public int getWeight() {
-        return _weight;
-    }
-
-    public void setWeight(int _weight) {
-        this._weight = _weight;
-    }
-
     public String getDayString() {
 
         String sDate;
-        if (_day==null) {
-            sDate="";
-        }
-        else {
+        if (_day == null) {
+            sDate = "";
+        } else {
             SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
             sDate = dateformat.format(_day);
         }
@@ -88,19 +78,35 @@ public class Training  extends AbstractEntityMultiUser {
             d = dateFormat.parse(String.valueOf(_day));
         } catch (ParseException e) {
             e.printStackTrace();
-            d=null;
+            d = null;
         }
 
         this._day = d;
 
     }
 
-//    public void dbUpdate(DatabaseManager DB) {
-//        DB.updateTraining(this);
-//    }
-//    public void dbAdd(DatabaseManager DB) {
-//        DB.addTraining(this);
-//    }
+    @Override
+    public void dbSave(DatabaseManager db) {
+        try {
+            db.getTraining(this.getID());
+            db.updateTraining((Training) this);
+        } catch (TableDoesNotContainElementException e) {
+            //нет такого
+            db.addTraining((Training) this);
+        }
+    }
 
+    @Override
+    public void dbDelete(DatabaseManager db) {
+
+            try {
+                db.getTraining(this.getID());
+                db.deleteTraining((Training) this);
+            } catch (TableDoesNotContainElementException e) {
+                //нет такого
+
+            }
+
+    }
 }
 

@@ -2,13 +2,18 @@ package ru.brainworkout.sandow_gym.database.entities;
 
 import ru.brainworkout.sandow_gym.common.Common;
 
-public class AbstractEntityMultiUser extends AbstractEntity {
+public abstract class AbstractEntityMultiUser extends AbstractEntity {
 
-    private int _id_user;
+    protected int _id_user;
 
     public AbstractEntityMultiUser() {
 
-        this._id_user= Common.mCurrentUser.getID();
+        User currentUser=Common.mCurrentUser;
+        if (currentUser!=null) {
+            this._id_user = currentUser.getID();
+        } else {
+            throw new NullPointerException("Current user is not defined!");
+        }
     }
 
     public int getIdUser() {

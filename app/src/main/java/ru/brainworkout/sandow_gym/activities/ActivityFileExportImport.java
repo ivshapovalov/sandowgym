@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -39,10 +40,12 @@ import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementExc
 public class ActivityFileExportImport extends AppCompatActivity {
 
     private static final String SYMBOL_ID = "#";
-    private static final String SYMBOL_WEIGHT = "&";
+    private static final String SYMBOL_WEIGHT = "$";
+    private static final String SYMBOL_DEF_VOLUME = "%";
     private static final String SYMBOL_SPLIT = ";";
     private String mDateFrom;
     private String mDateTo;
+    private boolean mShowSymbols = false;
     private final DatabaseManager DB = new DatabaseManager(this);
 
     private StringBuilder message = new StringBuilder();
@@ -60,7 +63,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
         mDateTo = mCurrentDateTo;
         updateScreen();
 
-        if (Common.mCurrentUser!=null) {
+        if (Common.mCurrentUser != null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
     }
@@ -71,11 +74,20 @@ public class ActivityFileExportImport extends AppCompatActivity {
         message = new StringBuilder();
         List<String[]> data = new ArrayList<String[]>();
         StringBuilder mNewString = new StringBuilder();
-        mNewString.append("Упражнение(" + SYMBOL_ID + "id)/Дата(" + SYMBOL_ID + "id" + SYMBOL_WEIGHT + "Вес);");
+        if (mShowSymbols) {
+            mNewString.append("EXERCISE(" + SYMBOL_ID + "ID" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE(" + SYMBOL_ID + "ID" + ");");
+        } else {
+            mNewString.append("EXERCISE(" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE;");
+
+        }
         for (Training mCurrentTraining : mTrainingsList
                 ) {
-            mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID()).append(SYMBOL_WEIGHT)
-                    .append(mCurrentTraining.getWeight()).append(")").append(SYMBOL_SPLIT);
+            if (mShowSymbols) {
+                mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID())
+                        .append(")").append(SYMBOL_SPLIT);
+            } else {
+                mNewString.append(mCurrentTraining.getDayString()).append(SYMBOL_SPLIT);
+            }
             message.append(mCurrentTraining.getDayString()).append('\n');
         }
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
@@ -84,19 +96,35 @@ public class ActivityFileExportImport extends AppCompatActivity {
         for (Exercise mCurrentExercise : mExercisesList
                 ) {
             mNewString = new StringBuilder();
-            mNewString.append(mCurrentExercise.getName()).append("(" + SYMBOL_ID).
-                    append(String.valueOf(mCurrentExercise.getID()))
-                    .append(")").append(SYMBOL_SPLIT);
+            if (mShowSymbols) {
+                mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_ID).
+                        append(String.valueOf(mCurrentExercise.getID())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
+                        .append(")").append(SYMBOL_SPLIT);
+            } else {
+                mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
+                        .append(")").append(SYMBOL_SPLIT);
+            }
             for (Training mCurrentTraining : mTrainingsList
                     ) {
                 try {
                     TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
-                    if (mCurrentTrainingContent.getVolume() == null) {
-                        mNewString.append(";");
+                    String curVolume = mCurrentTrainingContent.getVolume();
+                    if (curVolume == null || "".equals(curVolume.trim())) {
+                        mNewString.append("0");
                     } else {
-                        mNewString.append(mCurrentTrainingContent.getVolume()).append(SYMBOL_SPLIT);
+                        mNewString.append(curVolume);
                     }
-                } catch (Exception e) {
+                    if (mShowSymbols) {
+                        int curWeight = mCurrentTrainingContent.getWeight();
+                        mNewString.append("(").append(SYMBOL_WEIGHT).append(mCurrentTrainingContent.getWeight()).append(")");
+                    }
+                        mNewString.append(SYMBOL_SPLIT);
+
+
+                } catch (TableDoesNotContainElementException e) {
+                    if (mShowSymbols) {
+                        mNewString.append("(").append(SYMBOL_WEIGHT).append(")");
+                    }
                     mNewString.append(SYMBOL_SPLIT);
                 }
 
@@ -293,11 +321,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
             for (int i = 1; i < data.get(0).length; i++) {
                 String s = data.get(0)[i];
                 String day = s.substring(0, s.indexOf("("));
-                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_WEIGHT));
-                String weight = s.substring(s.indexOf(SYMBOL_WEIGHT) + 1, s.indexOf(")"));
+                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
+                //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
                 Training training = new Training();
                 training.setID(Integer.valueOf(id));
-                training.setWeight(Integer.valueOf(weight));
                 training.setDayString(day);
                 mTrainingsList.add(training);
 
@@ -305,10 +332,14 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             for (int i = 1; i < data.size(); i++) {
                 String s = data.get(i)[0];
-                String name = s.substring(0, s.indexOf("("));
-                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
+                String name =s.substring(0, s.indexOf("("));;
+                //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
+                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
+                 String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
+
                 Exercise exercise = new Exercise();
                 exercise.setID(Integer.valueOf(id));
+                exercise.setVolumeDefault(def_volume);
                 exercise.setName(name);
 
                 mExercisesList.add(exercise);
@@ -328,7 +359,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     }
 
-    private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws  Exception {
+    private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws Exception {
         message = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
@@ -338,10 +369,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
             Training dbTraining;
             try {
                 dbTraining = DB.getTraining(curTraining.getID());
-                System.out.println("add tr:" + dbTraining.getID());
+                //System.out.println("add tr:" + dbTraining.getID());
                 DB.updateTraining(curTraining);
             } catch (TableDoesNotContainElementException e) {
-                System.out.println("add tr:" + curTraining.getID());
+                //System.out.println("add tr:" + curTraining.getID());
                 DB.addTraining(curTraining);
             }
             TrainingContent trainingContent = new TrainingContent();
@@ -354,12 +385,12 @@ public class ActivityFileExportImport extends AppCompatActivity {
                     dbExercise = DB.getExercise(curExercise.getID());
                     dbExercise.setName(curExercise.getName());
                     curExercise = dbExercise;
-                    System.out.println("update ex:" + dbExercise.getID());
+                    //System.out.println("update ex:" + dbExercise.getID());
                     DB.updateExercise(dbExercise);
 
                 } catch (TableDoesNotContainElementException e) {
                     curExercise.setIsActive(1);
-                    System.out.println("add ex:" + curExercise.getID());
+                    // System.out.println("add ex:" + curExercise.getID());
                     DB.addExercise(curExercise);
 
                 }
@@ -367,18 +398,34 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 trainingContent.setID(++maxNum);
                 trainingContent.setIdExercise(curExercise.getID());
                 trainingContent.setIdTraining(curTraining.getID());
-                trainingContent.setVolume(data.get(curExerciseIndex + 1)[curTrainingIndex + 1]);
+
+                //разбираем ячейку со значениями количества и веса
+                String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];
+                //String volume = cellValue;
+                String volume = cellValue.substring(0, cellValue.indexOf("("));
+                String weight = cellValue.substring(cellValue.indexOf(SYMBOL_WEIGHT) + 1, cellValue.indexOf(")"));
+
+                int iWeight;
+                try {
+                    iWeight = Integer.parseInt(weight);
+                } catch (NumberFormatException e) {
+                    iWeight = 0;
+                }
+                trainingContent.setVolume(volume);
+//                trainingContent.setWeight(5);
+                trainingContent.setWeight(iWeight);
 
                 TrainingContent dbTrainingContent;
                 try {
                     dbTrainingContent = DB.getTrainingContent(curExercise.getID(), curTraining.getID());
                     dbTrainingContent.setVolume(trainingContent.getVolume());
-                    System.out.println("max num:" + maxNum);
-                    System.out.println("update tc:" + dbTrainingContent.getID());
+                    dbTrainingContent.setWeight(trainingContent.getWeight());
+//                    System.out.println("max num:" + maxNum);
+//                    System.out.println("update tc:" + dbTrainingContent.getID());
                     DB.updateTrainingContent(dbTrainingContent);
                 } catch (TableDoesNotContainElementException e) {
-                    System.out.println("max num:" + maxNum);
-                    System.out.println("update tc:" + trainingContent.getID());
+//                    System.out.println("max num:" + maxNum);
+//                    System.out.println("update tc:" + trainingContent.getID());
                     DB.addTrainingContent(trainingContent);
                 }
 
@@ -445,9 +492,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
         if (mDateTo == null || "".equals(mDateFrom)) {
             mDateTo = "9999-99-99";
         }
-        List<Training> trainingList=DB.getTrainingsByDates(mDateFrom, mDateTo);
-        List<Exercise> exerciseList=DB.getExercisesByDates(mDateFrom, mDateTo);
-        List<String[]> data= createDataArray(trainingList,exerciseList );
+        List<Training> trainingList = DB.getTrainingsByDates(mDateFrom, mDateTo);
+        List<Exercise> exerciseList = DB.getExercisesByDates(mDateFrom, mDateTo);
+        List<String[]> data = createDataArray(trainingList, exerciseList);
         writeToFile(data);
 
     }
@@ -522,6 +569,31 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 etDayTo.setText(mDateTo);
             }
         }
+
+        RadioGroup radiogroup = (RadioGroup) findViewById(R.id.rgShowSymbols);
+
+        if (radiogroup != null) {
+            radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                        case -1:
+                            break;
+                        case R.id.rbShowSymbolsYes:
+                            mShowSymbols = true;
+                            break;
+                        case R.id.rbShowSymbolsNo:
+                            mShowSymbols = false;
+                            break;
+                        default:
+                            mShowSymbols = false;
+                            break;
+                    }
+                }
+            });
+        }
+
 
     }
 }
