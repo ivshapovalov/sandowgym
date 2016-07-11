@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym.database.entities;
 
+import ru.brainworkout.sandow_gym.database.interfaces.DeleteFromDb;
+import ru.brainworkout.sandow_gym.database.interfaces.SaveToDB;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
@@ -19,11 +21,6 @@ public class Exercise extends AbstractEntityMultiUser implements SaveToDB,Delete
         this._volume_default=builder._volume_default;
         this._picture=builder._picture;
 
-    }
-
-    private Exercise(int _id) {
-        super();
-        this._id = _id;
     }
 
     public String getPicture() {

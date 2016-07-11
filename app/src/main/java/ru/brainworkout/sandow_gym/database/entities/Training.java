@@ -5,22 +5,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandow_gym.database.interfaces.DeleteFromDb;
+import ru.brainworkout.sandow_gym.database.interfaces.SaveToDB;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
 public class Training extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
 
-    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     private Date _day;
 
     private Training(TrainingBuilder builder) {
 
         this._id = builder._id;
         this._day = builder._day;
-    }
-
-    private Training(int _id) {
-        this._id = _id;
     }
 
     public Date getDay() {
@@ -34,7 +31,7 @@ public class Training extends AbstractEntityMultiUser implements SaveToDB,Delete
         if (_day == null) {
             sDate = "";
         } else {
-            SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
+            SimpleDateFormat dateformat = new SimpleDateFormat(Common.DATE_FORMAT_STRING);
             sDate = dateformat.format(_day);
         }
         return sDate;
@@ -47,7 +44,7 @@ public class Training extends AbstractEntityMultiUser implements SaveToDB,Delete
 
     public void setDayString(String _day) {
 
-        this._day = Common.ConvertStringToDate(_day,DATE_FORMAT_STRING);
+        this._day = Common.ConvertStringToDate(_day, Common.DATE_FORMAT_STRING);
 
     }
 
@@ -90,7 +87,7 @@ public class Training extends AbstractEntityMultiUser implements SaveToDB,Delete
             return this;
         }
         public TrainingBuilder addDay(String day) {
-            this._day = Common.ConvertStringToDate(day,DATE_FORMAT_STRING);
+            this._day = Common.ConvertStringToDate(day, Common.DATE_FORMAT_STRING);
             return this;
         }
 

@@ -1,7 +1,7 @@
 package ru.brainworkout.sandow_gym.database.entities;
 
-import java.util.Date;
-
+import ru.brainworkout.sandow_gym.database.interfaces.DeleteFromDb;
+import ru.brainworkout.sandow_gym.database.interfaces.SaveToDB;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
 
@@ -21,10 +21,6 @@ public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB
         this._comment=builder._comment;
         this._volume=builder._volume;
         this._weight=builder._weight;
-    }
-    private TrainingContent(int _id) {
-
-        this._id = _id;
     }
 
     public String getVolume() {
@@ -47,16 +43,8 @@ public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB
         return _id_exercise;
     }
 
-    public void setIdExercise(int _id_exercise) {
-        this._id_exercise = _id_exercise;
-    }
-
     public int getIdTraining() {
         return _id_training;
-    }
-
-    public void setIdTraining(int _id_training) {
-        this._id_training = _id_training;
     }
 
 

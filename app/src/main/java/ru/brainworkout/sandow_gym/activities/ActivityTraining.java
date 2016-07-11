@@ -44,7 +44,6 @@ public class ActivityTraining extends AppCompatActivity {
 
     private static final int NUMBER_OF_VIEWS = 30000;
     private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;
-    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     private SharedPreferences mSettings;
     private boolean mShowPicture;
     private boolean mShowExplanation;
@@ -95,7 +94,7 @@ public class ActivityTraining extends AppCompatActivity {
                 }
             } else {
                 try {
-                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, DATE_FORMAT_STRING));
+                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -426,7 +425,7 @@ public class ActivityTraining extends AppCompatActivity {
 
             if (Common.mCurrentUser != null) {
                 mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.mCurrentUser.getID(),
-                        Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
+                        Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {
                 try {
@@ -543,7 +542,7 @@ public class ActivityTraining extends AppCompatActivity {
             if (mCurrentTraining.getDay() == null) {
                 etDay.setText("");
             } else {
-                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
+                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
             }
         }
 
@@ -577,7 +576,7 @@ public class ActivityTraining extends AppCompatActivity {
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
 
-            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()), DATE_FORMAT_STRING);
+            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()), Common.DATE_FORMAT_STRING);
 
             if (d != null) {
                 try {
@@ -697,7 +696,7 @@ public class ActivityTraining extends AppCompatActivity {
         if (mCurrentTraining.getDay() == null) {
             intent.putExtra("CurrentDate", "");
         } else {
-            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
+            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
         }
         intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
 

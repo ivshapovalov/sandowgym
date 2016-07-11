@@ -12,6 +12,7 @@ import ru.brainworkout.sandow_gym.database.entities.User;
 
 public class Common {
 
+    public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User mCurrentUser;
 
     public static Date ConvertStringToDate(final String date,final String format) {
