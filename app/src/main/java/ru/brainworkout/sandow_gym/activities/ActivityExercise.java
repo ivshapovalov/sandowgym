@@ -133,7 +133,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     }
 
-    private void getPropertiesFromScreen() {
+    private void fillExerciseFromScreen() {
 
         //ID
         int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
@@ -183,18 +183,7 @@ public class ActivityExercise extends AppCompatActivity {
     public void btSave_onClick(final View view) {
 
         Common.blink(view);
-        getPropertiesFromScreen();
-
-//        if (mExerciseIsNew) {
-//
-//            //DB.addExercise(mCurrentExercise);
-//            mCurrentExercise.dbAdd(DB);
-//
-//        } else {
-//
-//           // DB.updateExercise(mCurrentExercise);
-//            mCurrentExercise.dbUpdate(DB);
-//        }
+        fillExerciseFromScreen();
 
         mCurrentExercise.dbSave(DB);
 
@@ -208,7 +197,6 @@ public class ActivityExercise extends AppCompatActivity {
     public void btDelete_onClick(final View view) {
 
         Common.blink(view);
-        //DB.deleteExercise(mCurrentExercise);
         mCurrentExercise.dbDelete(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);

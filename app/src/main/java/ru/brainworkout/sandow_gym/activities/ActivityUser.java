@@ -109,15 +109,6 @@ public class ActivityUser extends AppCompatActivity {
 
     private void getPropertiesFromScreen() {
 
-//        //ID
-//        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
-//        TextView tvID = (TextView) findViewById(mID);
-//        if (tvID != null) {
-//
-//            mCurrentUser.setID(Integer.parseInt(String.valueOf(tvID.getText())));
-//
-//        }
-
         //Имя
         int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);

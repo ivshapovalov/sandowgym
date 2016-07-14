@@ -81,46 +81,9 @@ public class ActivityTraining extends AppCompatActivity {
 
         String mCurrentDate = intent.getStringExtra("CurrentDate");
 
-        if (mTrainingIsNew) {
+        int id = intent.getIntExtra("CurrentID", 0);
 
-            mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
-            //Calendar calendar = Calendar.getInstance();
-            if ((mCurrentDate == null)) {
-                String cal = (Calendar.getInstance().getTime()).toLocaleString();
-                try {
-                    mCurrentTraining.setDay(Calendar.getInstance().getTime());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        } else {
-            int id = intent.getIntExtra("CurrentID", 0);
-            if (id == 0) {
-                mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
-            } else {
-
-                try {
-                    mCurrentTraining = DB.getTraining(id);
-                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
-                    //возможно удалили элемент
-                    tableDoesNotContainElementException.printStackTrace();
-                }
-            }
-            try {
-                if ((mCurrentDate != null)) {
-                    mCurrentTraining.setDayString(mCurrentDate);
-                }
-            } catch (Exception e) {
-            }
-        }
-
+        DefineCurrentTraining(id, mCurrentDate);
 
         showTrainingOnScreen();
 
@@ -153,6 +116,48 @@ public class ActivityTraining extends AppCompatActivity {
 
         if (Common.mCurrentUser != null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        }
+    }
+
+    private void DefineCurrentTraining(int mCurrentId, String mCurrentDate) {
+        if (mTrainingIsNew) {
+
+            mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
+            //Calendar calendar = Calendar.getInstance();
+            if ((mCurrentDate == null)) {
+                String cal = (Calendar.getInstance().getTime()).toLocaleString();
+                try {
+                    mCurrentTraining.setDay(Calendar.getInstance().getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+
+            if (mCurrentId == 0) {
+                mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
+            } else {
+
+                try {
+                    mCurrentTraining = DB.getTraining(mCurrentId);
+                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                    //возможно удалили элемент
+                    tableDoesNotContainElementException.printStackTrace();
+                }
+            }
+            try {
+                if ((mCurrentDate != null)) {
+                    mCurrentTraining.setDayString(mCurrentDate);
+                }
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -213,6 +218,7 @@ public class ActivityTraining extends AppCompatActivity {
     }
 
     private void setNextExercise() {
+
         if (mActiveExercises.size() != 0) {
             if (mCurrentExerciseNumberInList != mActiveExercises.size() - 1) {
 
@@ -295,9 +301,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllExercisesOfTraining() {
 
-        Log.d("Reading: ", "Reading all active exercises..");
         mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
-        Log.d("Reading: ", "Reading all exercises of training ..");
         mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
 
         for (TrainingContent tr : mTrainingContentList
@@ -451,33 +455,6 @@ public class ActivityTraining extends AppCompatActivity {
         }
     }
 
-//    private class Container extends ScrollView {
-//
-//        public Container(Context context) {
-//            super(context);
-//            setBackgroundColor(0xFF0000FF);
-//        }
-//
-//        @Override
-//        public boolean onInterceptTouchEvent(MotionEvent ev) {
-//            Log.i(TAG, "onInterceptTouchEvent");
-//            int action = ev.getActionMasked();
-//            switch (action) {
-//                case MotionEvent.ACTION_DOWN:
-//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_DOWN");
-//                    break;
-//                case MotionEvent.ACTION_MOVE:
-//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_MOVE");
-//                    break;
-//                case MotionEvent.ACTION_CANCEL:
-//                case MotionEvent.ACTION_UP:
-//                    Log.i(TAG, "onInterceptTouchEvent.ACTION_UP");
-//                    break;
-//            }
-//            return super.onInterceptTouchEvent(ev);
-//        }
-//    }
-
     private void showTrainingContentOnScreen(final int ex_id) {
 
         try {
@@ -545,7 +522,6 @@ public class ActivityTraining extends AppCompatActivity {
                 etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
             }
         }
-
 
     }
 

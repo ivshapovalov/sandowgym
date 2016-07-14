@@ -36,7 +36,6 @@ public class ActivityExercisesList extends AppCompatActivity {
     private int mWidth = 0;
     private int mTextSize = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,7 +44,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         showExercises();
 
-        if (Common.mCurrentUser!=null) {
+        if (Common.mCurrentUser != null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
 
@@ -97,7 +96,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     private void showExercises() {
 
-        List<Exercise> exercises=new ArrayList<Exercise>();
+        List<Exercise> exercises = new ArrayList<Exercise>();
 
         if (Common.mCurrentUser == null) {
             //exercises = DB.getAllExercises();
@@ -125,18 +124,7 @@ public class ActivityExercisesList extends AppCompatActivity {
         mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
         mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
-
-                getApplicationContext()
-
-                        .
-
-                                getResources()
-
-                        .
-
-                                getDisplayMetrics()
-
-                        .density);
+                getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
 
@@ -212,6 +200,35 @@ public class ActivityExercisesList extends AppCompatActivity {
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
 
+    }
+
+
+    public void buttonHome_onClick(final View view) {
+
+        Common.blink(view);
+        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    public void btDeleteAllExercises_onClick(final View view) {
+
+        Common.blink(view);
+
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите удалить все упражения пользователя?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        if (Common.mCurrentUser != null) {
+                            DB.deleteAllExercisesOfUser(Common.mCurrentUser.getID());
+                            showExercises();
+                        }
+
+                    }
+                }).setNegativeButton("Нет", null).show();
     }
 
     private ArrayList<Exercise> CreateDefaultExercises() {
@@ -466,31 +483,4 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     }
 
-    public void buttonHome_onClick(final View view) {
-
-        Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
-    }
-
-    public void btDeleteAllExercises_onClick(final View view) {
-
-        Common.blink(view);
-
-        new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить все упражения пользователя?")
-                .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                            if (Common.mCurrentUser!=null) {
-                                DB.deleteAllExercisesOfUser(Common.mCurrentUser.getID());
-                                showExercises();
-                            }
-
-                    }
-                }).setNegativeButton("Нет", null).show();
-    }
 }

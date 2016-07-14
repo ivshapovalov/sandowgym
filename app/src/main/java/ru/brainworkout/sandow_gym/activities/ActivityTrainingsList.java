@@ -253,8 +253,6 @@ public class ActivityTrainingsList extends AppCompatActivity {
             btDay.setText("");
             mCurrentDate = "";
             showTrainings();
-
         }
-
     }
 }

@@ -102,7 +102,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btTrainings_onClick(final View view) {
 
-        if (isUserDefined() & dbNotEmpty()) {
+        if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTrainingsList.class);
             startActivity(intent);
         }
@@ -111,7 +111,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void bt_NewTraining_onClick(final View view) {
 
-        if (dbNotEmpty()) {
+        if (isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
             startActivity(intent);
@@ -129,7 +129,7 @@ public class ActivityMain extends AppCompatActivity {
         return true;
     }
 
-    private boolean dbNotEmpty() {
+    private boolean isDBNotEmpty() {
 
         List<Exercise> list=new ArrayList<Exercise>();
         if (Common.mCurrentUser == null) {

@@ -52,20 +52,25 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_export_import);
 
-        Intent intent = getIntent();
-        String mCurrentDate = intent.getStringExtra("CurrentDate");
-        String mCurrentDateTo = intent.getStringExtra("CurrentDateTo");
-        Boolean isBeginDate = intent.getBooleanExtra("IsBeginDate", true);
-        mDateFrom = mCurrentDate;
-        mDateTo = mCurrentDateTo;
+        getIntentParams();
+
         updateScreen();
 
         if (Common.mCurrentUser != null) {
             this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
         }
+    }
+
+    private void getIntentParams() {
+        Intent intent = getIntent();
+        String mCurrentDate = intent.getStringExtra("CurrentDate");
+        String mCurrentDateTo = intent.getStringExtra("CurrentDateTo");
+        mDateFrom = mCurrentDate;
+        mDateTo = mCurrentDateTo;
     }
 
     private List<String[]> createDataArray(List<Training> mTrainingsList,
@@ -236,7 +241,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private void readFromFile(File file) {
 
-        List<String[]> data = new ArrayList<String[]>();
+        List<String[]> data = new ArrayList<>();
 
         try
 
@@ -246,7 +251,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings");
             HSSFRow currentRow = myExcelSheet.getRow(0);
 
-            StringBuilder mNewString = new StringBuilder();
+
 
             int mColumn = 0;
             int mColumnCount = 0;
@@ -286,7 +291,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 }
 
             }
-            mNewString = new StringBuilder();
+            StringBuilder mNewString  = new StringBuilder();
             for (mRow = 0; mRow < mRowCount; mRow++) {
                 currentRow = myExcelSheet.getRow(mRow);
                 if (mRow != 0) {
@@ -356,6 +361,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
     }
 
     private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws Exception {
+
         message = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
