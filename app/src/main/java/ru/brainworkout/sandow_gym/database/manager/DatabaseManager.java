@@ -236,7 +236,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public User getUser(int id) throws TableDoesNotContainElementException {
+    public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_USERS, new String[]{KEY_USER_ID, KEY_USER_NAME, KEY_USER_IS_CURRENT}, KEY_USER_ID + "=?",
@@ -254,7 +254,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
-    public Exercise getExercise(int id) throws TableDoesNotContainElementException {
+    public Exercise getExercise(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_EXERCISES, new String[]{KEY_EXERCISE_ID, KEY_EXERCISE_ID_USER, KEY_EXERCISE_IS_ACTIVE, KEY_EXERCISE_NAME,
@@ -278,7 +278,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
-    public Training getTraining(int id) throws TableDoesNotContainElementException {
+    public Training getTraining(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID, KEY_TRAINING_DAY}, KEY_TRAINING_ID + "=?",
@@ -297,7 +297,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     }
 
-    public TrainingContent getTrainingContent(int id) throws TableDoesNotContainElementException {
+    public TrainingContent getTrainingContent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
@@ -320,7 +320,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
-    public TrainingContent getTrainingContent(int id, int exercise_id, int training_id) throws TableDoesNotContainElementException {
+    public TrainingContent getTrainingContent(int id, int exercise_id, int training_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=? AND " + KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " + KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
@@ -342,7 +342,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
-    public TrainingContent getTrainingContent(int exercise_id, int training_id) throws TableDoesNotContainElementException {
+    public TrainingContent getTrainingContent(int exercise_id, int training_id)  {
         SQLiteDatabase db = this.getReadableDatabase();
 
         TrainingContent trainingContent;
