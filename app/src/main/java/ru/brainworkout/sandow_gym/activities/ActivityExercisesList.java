@@ -84,7 +84,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         Common.blink(view);
 
-        ArrayList<Exercise> exercises = CreateDefaultExercises();
+        List<Exercise> exercises = CreateDefaultExercises();
         for (Exercise ex : exercises) {
 
             ex.dbSave(DB);
@@ -231,9 +231,9 @@ public class ActivityExercisesList extends AppCompatActivity {
                 }).setNegativeButton("Нет", null).show();
     }
 
-    private ArrayList<Exercise> CreateDefaultExercises() {
+    private List<Exercise> CreateDefaultExercises() {
 
-        ArrayList<Exercise> exercises = new ArrayList<>();
+        List<Exercise> exercises = new ArrayList<>();
         int i = 0;
         int maxNum = DB.getExerciseMaxNumber() + 1;
         //1
