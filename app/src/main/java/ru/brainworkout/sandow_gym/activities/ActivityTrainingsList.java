@@ -58,8 +58,8 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
         showTrainings();
 
-        if (Common.mCurrentUser!=null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser !=null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
     }
 
@@ -108,10 +108,10 @@ public class ActivityTrainingsList extends AppCompatActivity {
     private void showTrainings() {
 
         List<Training> trainings=new ArrayList<Training>();
-        if (Common.mCurrentUser == null) {
+        if (Common.dbCurrentUser == null) {
             //trainings = DB.getAllTrainings();
         } else {
-            trainings = DB.getAllTrainingsOfUser(Common.mCurrentUser.getID());
+            trainings = DB.getAllTrainingsOfUser(Common.dbCurrentUser.getID());
         }
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
         try {
@@ -219,9 +219,9 @@ public class ActivityTrainingsList extends AppCompatActivity {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                            if (Common.mCurrentUser!=null) {
-                                DB.deleteAllTrainingsOfUser(Common.mCurrentUser.getID());
-                                DB.deleteAllTrainingContentOfUser(Common.mCurrentUser.getID());
+                            if (Common.dbCurrentUser !=null) {
+                                DB.deleteAllTrainingsOfUser(Common.dbCurrentUser.getID());
+                                DB.deleteAllTrainingContentOfUser(Common.dbCurrentUser.getID());
 
                                 showTrainings();
                             }

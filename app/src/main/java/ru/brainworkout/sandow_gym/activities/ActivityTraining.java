@@ -11,7 +11,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -114,8 +113,8 @@ public class ActivityTraining extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.mCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser != null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
     }
 
@@ -301,7 +300,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllExercisesOfTraining() {
 
-        mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
+        mActiveExercises = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
         mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
 
         for (TrainingContent tr : mTrainingContentList
@@ -354,8 +353,8 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllActiveExercises() {
 
-        if (Common.mCurrentUser != null) {
-            mActiveExercises = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
+        if (Common.dbCurrentUser != null) {
+            mActiveExercises = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
             mTrainingContentList = new ArrayList<>();
 
             Exercise ex1;
@@ -427,8 +426,8 @@ public class ActivityTraining extends AppCompatActivity {
         if (btYesterdayVolume != null) {
             List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
 
-            if (Common.mCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.mCurrentUser.getID(),
+            if (Common.dbCurrentUser != null) {
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.dbCurrentUser.getID(),
                         Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {

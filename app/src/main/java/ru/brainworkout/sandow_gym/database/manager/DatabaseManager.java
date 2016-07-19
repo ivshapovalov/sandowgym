@@ -177,7 +177,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_USER_ID, user.getID());
         values.put(KEY_USER_NAME, user.getName());
-        values.put(KEY_USER_IS_CURRENT, user.getIsCurrentUser());
+        values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
 
         db.insert(TABLE_USERS, null, values);
         db.close();
@@ -937,7 +937,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_USER_NAME, user.getName());
-        values.put(KEY_USER_IS_CURRENT, user.getIsCurrentUser());
+        values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
         return db.update(TABLE_USERS, values, KEY_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getID())});
     }

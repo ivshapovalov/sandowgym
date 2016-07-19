@@ -46,8 +46,8 @@ public class ActivityUser extends AppCompatActivity {
         showUserOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.mCurrentUser!=null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser !=null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
     }
 
@@ -56,7 +56,7 @@ public class ActivityUser extends AppCompatActivity {
         int isCurrentID = getResources().getIdentifier("cb_IsCurrent", "id", getPackageName());
         CheckBox cbIsCurrent = (CheckBox) findViewById(isCurrentID);
         if (cbIsCurrent != null) {
-            if (mCurrentUser.getIsCurrentUser() != 0) {
+            if (mCurrentUser.isCurrentUser() != 0) {
                 cbIsCurrent.setChecked(true);
             } else {
                 cbIsCurrent.setChecked(false);
@@ -127,8 +127,19 @@ public class ActivityUser extends AppCompatActivity {
 
         mCurrentUser.dbSave(DB);
 
-        if (mCurrentUser.getIsCurrentUser() == 1) {
-            Common.mCurrentUser=mCurrentUser;
+        setDBCurrentUser();
+
+        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
+        intent.putExtra("id", mCurrentUser.getID());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    private void setDBCurrentUser() {
+
+        if (mCurrentUser.isCurrentUser() == 1) {
+            Common.dbCurrentUser =mCurrentUser;
             List<User> userList = DB.getAllUsers();
 
             for (User user : userList) {
@@ -139,12 +150,12 @@ public class ActivityUser extends AppCompatActivity {
                 }
 
             }
-        }
+        } else {
+            if (Common.dbCurrentUser.equals(mCurrentUser)) {
+                Common.dbCurrentUser=null;
+            }
 
-        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getID());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        }
 
     }
 

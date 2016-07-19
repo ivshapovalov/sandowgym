@@ -35,7 +35,7 @@ public class User extends AbstractEntity implements SaveToDB,DeleteFromDb {
         this._name = _name;
     }
 
-    public int getIsCurrentUser() {
+    public int isCurrentUser() {
         return _isCurrentUser;
     }
 
@@ -67,6 +67,21 @@ public class User extends AbstractEntity implements SaveToDB,DeleteFromDb {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return _id == user._id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return _id;
+    }
 
     public static class UserBuilder extends AbstractEntity {
 

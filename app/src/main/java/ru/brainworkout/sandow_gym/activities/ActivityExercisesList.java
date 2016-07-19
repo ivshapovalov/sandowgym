@@ -44,8 +44,8 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         showExercises();
 
-        if (Common.mCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser != null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
 
     }
@@ -98,10 +98,10 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         List<Exercise> exercises = new ArrayList<Exercise>();
 
-        if (Common.mCurrentUser == null) {
+        if (Common.dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            exercises = DB.getAllExercisesOfUser(Common.mCurrentUser.getID());
+            exercises = DB.getAllExercisesOfUser(Common.dbCurrentUser.getID());
         }
 
 
@@ -222,8 +222,8 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        if (Common.mCurrentUser != null) {
-                            DB.deleteAllExercisesOfUser(Common.mCurrentUser.getID());
+                        if (Common.dbCurrentUser != null) {
+                            DB.deleteAllExercisesOfUser(Common.dbCurrentUser.getID());
                             showExercises();
                         }
 

@@ -28,8 +28,8 @@ public class ActivityTrainingOptions extends AppCompatActivity {
         getPreferencesFromFile();
         setPreferencesOnScreen();
 
-        if (Common.mCurrentUser!=null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser !=null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
     }
 

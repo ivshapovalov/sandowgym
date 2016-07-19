@@ -60,8 +60,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         updateScreen();
 
-        if (Common.mCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser != null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
     }
 

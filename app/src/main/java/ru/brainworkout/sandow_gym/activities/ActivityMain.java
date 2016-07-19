@@ -58,28 +58,28 @@ public class ActivityMain extends AppCompatActivity {
 
     private void defineCurrentUser() {
 
-        if (Common.mCurrentUser == null) {
+        if (Common.dbCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
-                Common.mCurrentUser = userList.get(0);
+                Common.dbCurrentUser = userList.get(0);
             } else {
                 //ищем активного
                 for (User user:userList
                         ) {
-                    if (user.getIsCurrentUser()==1) {
-                        Common.mCurrentUser=user;
+                    if (user.isCurrentUser()==1) {
+                        Common.dbCurrentUser =user;
                         break;
                     }
                 }
-                if (Common.mCurrentUser == null) {
+                if (Common.dbCurrentUser == null) {
                     Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
                     startActivity(intent);
                 }
             }
 
         }
-        if (Common.mCurrentUser!=null) {
-            this.setTitle(getTitle() + "(" + Common.mCurrentUser.getName() + ")");
+        if (Common.dbCurrentUser !=null) {
+            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
 
     }
@@ -120,7 +120,7 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     private boolean isUserDefined() {
-        if (Common.mCurrentUser==null) {
+        if (Common.dbCurrentUser ==null) {
             Toast toast = Toast.makeText(ActivityMain.this,
                     "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
             toast.show();
@@ -132,10 +132,10 @@ public class ActivityMain extends AppCompatActivity {
     private boolean isDBNotEmpty() {
 
         List<Exercise> list=new ArrayList<Exercise>();
-        if (Common.mCurrentUser == null) {
+        if (Common.dbCurrentUser == null) {
             //list = DB.getAllActiveExercises();
         } else {
-            list = DB.getAllActiveExercisesOfUser(Common.mCurrentUser.getID());
+            list = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
         }
         if (list.size() == 0) {
             Toast toast = Toast.makeText(ActivityMain.this,
@@ -166,10 +166,10 @@ public class ActivityMain extends AppCompatActivity {
                             SQLiteDatabase dbSQL = DB.getWritableDatabase();
                             DB.onUpgrade(dbSQL, 1, 2);
 
-                            if (Common.mCurrentUser!=null) {
+                            if (Common.dbCurrentUser !=null) {
                                 setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf("(")));
                             }
-                            Common.mCurrentUser=null;
+                            Common.dbCurrentUser =null;
                         } catch (Exception e) {
                             Toast toast = Toast.makeText(ActivityMain.this,
                                     "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
