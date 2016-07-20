@@ -51,7 +51,7 @@ public class ActivityTraining extends AppCompatActivity {
     private Training mCurrentTraining;
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
-    private String mVolumeLastDay = "";
+    private String mExerciseVolumeLastDay = "";
     private final DatabaseManager DB = new DatabaseManager(this);
     private boolean mTrainingIsNew;
     private int mHeight;
@@ -82,7 +82,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         int id = intent.getIntExtra("CurrentID", 0);
 
-        DefineCurrentTraining(id, mCurrentDate);
+        defineCurrentTraining(id, mCurrentDate);
 
         showTrainingOnScreen();
 
@@ -103,7 +103,6 @@ public class ActivityTraining extends AppCompatActivity {
         saveTraining();
         updateTrainingList();
 
-
         int exID = intent.getIntExtra("CurrentExerciseID", 0);
 
         if (exID != 0) {
@@ -118,7 +117,7 @@ public class ActivityTraining extends AppCompatActivity {
         }
     }
 
-    private void DefineCurrentTraining(int mCurrentId, String mCurrentDate) {
+    private void defineCurrentTraining(int mCurrentId, String mCurrentDate) {
         if (mTrainingIsNew) {
 
             mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
@@ -190,10 +189,10 @@ public class ActivityTraining extends AppCompatActivity {
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
         if (etVolume != null) {
-            if ("".equals(mVolumeLastDay)) {
+            if ("".equals(mExerciseVolumeLastDay)) {
                 etVolume.setText("0");
             } else {
-                etVolume.setText(mVolumeLastDay);
+                etVolume.setText(mExerciseVolumeLastDay);
             }
         }
 
@@ -234,12 +233,8 @@ public class ActivityTraining extends AppCompatActivity {
                     }
                 }
                 if (!isFound) {
-                    mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
-                            .addExerciseId(mCurrentExercise.getID())
-                            .addTrainingId(mCurrentTraining.getID())
-                            .addVolume("")
-                            .build();
-                    mCurrentTrainingContent.dbSave(DB);
+
+                    createNewTrainingContent();
                 }
             }
         }
@@ -285,17 +280,10 @@ public class ActivityTraining extends AppCompatActivity {
                 }
 
                 if (!isFound) {
-
-                    mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
-                            .addExerciseId(mCurrentExercise.getID())
-                            .addTrainingId(mCurrentTraining.getID())
-                            .addVolume("")
-                            .build();
-                    mCurrentTrainingContent.dbSave(DB);
+                    createNewTrainingContent();
                 }
             }
         }
-
     }
 
     private void getAllExercisesOfTraining() {
@@ -339,14 +327,9 @@ public class ActivityTraining extends AppCompatActivity {
             if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise() == mCurrentExercise.getID()) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
-                mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
-                        .addExerciseId(mCurrentExercise.getID())
-                        .addTrainingId(mCurrentTraining.getID())
-                        .addVolume("")
-                        .build();
-                mCurrentTrainingContent.dbSave(DB);
+                createNewTrainingContent();
             }
-            showTrainingContentOnScreen(mCurrentExercise);
+            showTrainingContentOnScreen();
 
         }
     }
@@ -362,24 +345,45 @@ public class ActivityTraining extends AppCompatActivity {
                 mCurrentExerciseNumberInList = 0;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
                 //покажем первое упражнение
-                showTrainingContentOnScreen(mCurrentExercise);
-                mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
-                        .addExerciseId(mCurrentExercise.getID())
-                        .addTrainingId(mCurrentTraining.getID())
-                        .addVolume("")
-                        .build();
-                mCurrentTrainingContent.dbSave(DB);
+                createNewTrainingContent();
+                showTrainingContentOnScreen();
+
             }
         }
     }
 
-    private void showTrainingContentOnScreen(final Exercise ex) {
+    private void createNewTrainingContent() {
+        int mExerciseWeightLastDay = 0;
+        List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
+        if (Common.dbCurrentUser != null) {
+            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
+                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
+        }
+        if (mTrainingContentNotNullVolume.size() == 1) {
+            try {
+                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
+            } catch (Exception e) {
+                mExerciseWeightLastDay = 0;
+            }
+        }
+
+        mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+                .addExerciseId(mCurrentExercise.getID())
+                .addTrainingId(mCurrentTraining.getID())
+                .addVolume("")
+                .addWeight(mExerciseWeightLastDay)
+                .build();
+        mCurrentTrainingContent.dbSave(DB);
+        mTrainingContentList.add(mCurrentTrainingContent);
+    }
+
+    private void showTrainingContentOnScreen() {
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
         if (ivPicture != null) {
 
-            if (ex.getPicture() != null && !"".equals(ex.getPicture())) {
-                ivPicture.setImageResource(getResources().getIdentifier(ex.getPicture(), "drawable", getPackageName()));
+            if (mCurrentExercise.getPicture() != null && !"".equals(mCurrentExercise.getPicture())) {
+                ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
             } else {
                 ivPicture.setBackgroundColor(Color.WHITE);
             }
@@ -388,12 +392,12 @@ public class ActivityTraining extends AppCompatActivity {
         TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
 
-            tvExplanation.setText(ex.getExplanation());
+            tvExplanation.setText(mCurrentExercise.getExplanation());
         }
         TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
         if (tvExerciseName != null) {
 
-            tvExerciseName.setText("Упражнение: " + ex.getName());
+            tvExerciseName.setText("Упражнение: " + mCurrentExercise.getName());
         }
 
         EditText etComment = (EditText) findViewById(R.id.etComment);
@@ -422,35 +426,33 @@ public class ActivityTraining extends AppCompatActivity {
             String mVolumeDefault = mCurrentExercise.getVolumeDefault();
             btDefaultVolume.setText("DEFAULT VOL: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
         }
+
         Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
             List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
 
             if (Common.dbCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeOfUser(Common.dbCurrentUser.getID(),
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
                         Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {
                 try {
-                    mVolumeLastDay = mTrainingsContentList.get(0).getVolume();
-
+                    mExerciseVolumeLastDay = mTrainingsContentList.get(0).getVolume();
                 } catch (Exception e) {
-                    mVolumeLastDay = "";
+                    mExerciseVolumeLastDay = "";
                 }
-//                try {
-//                    mCurrentTrainingContent.setWeight(String.valueOf(mTrainingsContentList.get(0).getVolume()));
-//                } catch (Exception e) {}
-
             }
-            btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mVolumeLastDay) ? "--" : mVolumeLastDay));
-
+            btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mExerciseVolumeLastDay) ? "--" : mExerciseVolumeLastDay));
         }
 
         int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
         TextView etWeight = (TextView) findViewById(mWeight);
-        if (etWeight != null && mCurrentTrainingContent != null) {
-
-            etWeight.setText(String.valueOf(mCurrentTrainingContent.getWeight()));
+        if (etWeight != null) {
+            String etWeightText = "";
+            if (mCurrentTrainingContent != null) {
+                etWeightText = String.valueOf(mCurrentTrainingContent.getWeight());
+            }
+            etWeight.setText(etWeightText);
         }
     }
 
@@ -462,7 +464,7 @@ public class ActivityTraining extends AppCompatActivity {
             tableDoesNotContainElementException.printStackTrace();
         }
 
-        showTrainingContentOnScreen(mCurrentExercise);
+        showTrainingContentOnScreen();
 
     }
 
@@ -629,9 +631,16 @@ public class ActivityTraining extends AppCompatActivity {
 
                 mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
             }
+            EditText etWeight = (EditText) findViewById(R.id.etWeight);
+            if (etWeight != null) {
+
+                mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
+            }
         }
-        mTrainingContentList.add(mCurrentTrainingContent);
         mCurrentTrainingContent.dbSave(DB);
+        if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
+
+        }
 
     }
 
@@ -922,10 +931,13 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void saveAndGoToNewExercise(final int steps) {
 
-        saveTrainingContent(true);
+        boolean readFromScreen = true;
+
+        saveTrainingContent(readFromScreen);
         int mStepsABS = Math.abs(steps);
         for (int i = 1; i <= mStepsABS; i++) {
-            saveTrainingContent(false);
+            readFromScreen = false;
+            saveTrainingContent(readFromScreen);
 
             if (steps < 0) {
                 setPreviousExercise();

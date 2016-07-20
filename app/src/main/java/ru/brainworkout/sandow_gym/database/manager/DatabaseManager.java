@@ -796,7 +796,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingsContentList;
     }
 
-    public List<TrainingContent> getLastExerciseNotNullVolumeOfUser(int user_id, String mDateTo, int exercise_id) {
+    public List<TrainingContent> getLastExerciseNotNullVolumeAndWeightOfUser(int user_id, String mDateTo, int exercise_id) {
 
         mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
 

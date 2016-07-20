@@ -33,11 +33,11 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         getIntentParams();
 
-        SetParamsOnScreen();
+        SetParametersOnScreen();
 
     }
 
-    private void SetParamsOnScreen() {
+    private void SetParametersOnScreen() {
 
         Calendar calendar = Calendar.getInstance();
 

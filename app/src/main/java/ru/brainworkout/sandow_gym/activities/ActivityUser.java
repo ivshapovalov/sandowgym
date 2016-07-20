@@ -1,5 +1,7 @@
 package ru.brainworkout.sandow_gym.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,9 @@ import java.util.List;
 
 import ru.brainworkout.sandow_gym.R;
 import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandow_gym.database.entities.Exercise;
+import ru.brainworkout.sandow_gym.database.entities.Training;
+import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
 import ru.brainworkout.sandow_gym.database.entities.User;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
 import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
@@ -162,12 +167,45 @@ public class ActivityUser extends AppCompatActivity {
     public void btDelete_onClick(final View view) {
 
         Common.blink(view);
-        //DB.deleteExercise(mCurrentExercise);
-        mCurrentUser.dbDelete(DB);
 
-        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+
+        new AlertDialog.Builder(this)
+                .setMessage("Вы действительно хотите удалить текущего пользователя, его тренировки и упражнения?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        List<Exercise> exercisesOfUser=DB.getAllExercisesOfUser(mCurrentUser.getID());
+                        List<Training> trainingsOfUser=DB.getAllTrainingsOfUser(mCurrentUser.getID());
+                        for (Training currentTraining:trainingsOfUser
+                             ) {
+                            DB.deleteTrainingContentOfTraining(currentTraining.getID());
+                            currentTraining.dbDelete(DB);
+
+                        }
+                        for (Exercise currentExercise:exercisesOfUser
+                                ) {
+                            currentExercise.dbDelete(DB);
+
+                        }
+
+                        mCurrentUser.dbDelete(DB);
+
+                        if (mCurrentUser.equals(Common.dbCurrentUser)) {
+                            List<User> userList = DB.getAllUsers();
+                            if (userList.size() == 1) {
+                                User currentUser=userList.get(0);
+                                Common.dbCurrentUser = currentUser;
+                                currentUser.setIsCurrentUser(1);
+                                currentUser.dbSave(DB);
+                            }
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+
+                    }
+                }).setNegativeButton("Нет", null).show();
 
     }
 }

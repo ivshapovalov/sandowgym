@@ -246,12 +246,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
         try
 
         {
-
             HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
             HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings");
             HSSFRow currentRow = myExcelSheet.getRow(0);
-
-
 
             int mColumn = 0;
             int mColumnCount = 0;
@@ -329,6 +326,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
                 Training training = new Training.TrainingBuilder(Integer.valueOf(id)).addDay(day).build();
+                mTrainingsList.add(training);
 
             }
 

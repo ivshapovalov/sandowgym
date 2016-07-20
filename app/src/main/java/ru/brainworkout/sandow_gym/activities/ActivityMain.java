@@ -61,7 +61,10 @@ public class ActivityMain extends AppCompatActivity {
         if (Common.dbCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
-                Common.dbCurrentUser = userList.get(0);
+                User currentUser=userList.get(0);
+                Common.dbCurrentUser = currentUser;
+                currentUser.setIsCurrentUser(1);
+                currentUser.dbSave(DB);
             } else {
                 //ищем активного
                 for (User user:userList
