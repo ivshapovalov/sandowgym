@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -19,6 +20,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
     private boolean mShowExplanation;
     private boolean mShowVolumeDefaultButton;
     private boolean mShowVolumeLastDayButton;
+    private int mPlusMinusButtonValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
         Common.blink(view);
         SharedPreferences.Editor editor = mSettings.edit();
+        editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, mShowPicture);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, mShowVolumeDefaultButton);
@@ -56,6 +59,12 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
+            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE,10);
+        } else {
+            mPlusMinusButtonValue = 10;
+        }
 
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
             mShowExplanation = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
@@ -83,6 +92,12 @@ public class ActivityTrainingOptions extends AppCompatActivity {
     }
 
     private void setPreferencesOnScreen() {
+
+        int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue","id", getPackageName());
+        EditText txt = (EditText) findViewById(mPlusMinusButtonID);
+        if (txt != null) {
+            txt.setText(mPlusMinusButtonValue);
+        }
 
         int mPictureID = getResources().getIdentifier("rbShowPicture" + (mShowPicture ? "Yes" : "No"), "id", getPackageName());
         RadioButton but = (RadioButton) findViewById(mPictureID);

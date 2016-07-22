@@ -44,12 +44,40 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linePlusMinusButtonValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/lineMain">
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="40"
+            android:text="+/- BUTTON VALUE"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_color"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/etPlusMinusButtonValue"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/lineShowPicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineMain"
+        android:layout_below="@+id/linePlusMinusButtonValue"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 

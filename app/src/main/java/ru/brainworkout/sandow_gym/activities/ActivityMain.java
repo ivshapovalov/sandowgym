@@ -27,6 +27,7 @@ public class ActivityMain extends AppCompatActivity {
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
+    public static final String APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE = "training_plus_minus_button_value";
 
     private static final int MAX_VERTICAL_BUTTON_COUNT = 8;
     private final DatabaseManager DB = new DatabaseManager(this);

@@ -43,11 +43,14 @@ public class ActivityTraining extends AppCompatActivity {
 
     private static final int NUMBER_OF_VIEWS = 30000;
     private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;
+
     private SharedPreferences mSettings;
+    private int mPlusMinusButtonValue;
     private boolean mShowPicture;
     private boolean mShowExplanation;
     private boolean mShowVolumeDefaultButton;
     private boolean mShowVolumeLastDayButton;
+
     private Training mCurrentTraining;
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
@@ -799,7 +802,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         Common.blink(view);
 
-        VolumeChange(-10);
+        VolumeChange(-1 * mPlusMinusButtonValue);
     }
 
     public void btVolumeRight_onClick(final View view) {
@@ -813,7 +816,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         Common.blink(view);
 
-        VolumeChange(10);
+        VolumeChange(mPlusMinusButtonValue);
     }
 
     private void VolumeChange(final int dx) {
@@ -964,6 +967,12 @@ public class ActivityTraining extends AppCompatActivity {
 
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
 
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
+            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
+        } else {
+            mPlusMinusButtonValue = 10;
+        }
+
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
             mShowExplanation = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
         } else {
@@ -990,6 +999,18 @@ public class ActivityTraining extends AppCompatActivity {
     }
 
     private void setPreferencesOnScreen() {
+
+        Button btVolumePlus = (Button) findViewById(R.id.btVolumePlus);
+
+        if (btVolumePlus != null) {
+            btVolumePlus.setText(mPlusMinusButtonValue);
+        }
+
+        Button btVolumeMinus = (Button) findViewById(R.id.btVolumeMinus);
+
+        if (btVolumeMinus != null) {
+            btVolumeMinus.setText(-1*mPlusMinusButtonValue);
+        }
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
 
