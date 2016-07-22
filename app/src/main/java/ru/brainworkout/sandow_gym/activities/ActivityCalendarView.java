@@ -76,10 +76,10 @@ public class ActivityCalendarView extends AppCompatActivity {
             }
         });
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
+
+
 
     private void getIntentParams() {
 

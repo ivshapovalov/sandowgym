@@ -45,10 +45,9 @@ public class ActivityExercise extends AppCompatActivity {
         showExerciseOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
+
 
     private void showExerciseOnScreen() {
 

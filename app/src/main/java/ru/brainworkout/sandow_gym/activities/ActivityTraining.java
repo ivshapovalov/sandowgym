@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ru.brainworkout.sandow_gym.common.Common;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
@@ -115,10 +116,9 @@ public class ActivityTraining extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.dbCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
+
 
     private void defineCurrentTraining(int mCurrentId, String mCurrentDate) {
         if (mTrainingIsNew) {
@@ -1003,13 +1003,13 @@ public class ActivityTraining extends AppCompatActivity {
         Button btVolumePlus = (Button) findViewById(R.id.btVolumePlus);
 
         if (btVolumePlus != null) {
-            btVolumePlus.setText(mPlusMinusButtonValue);
+            btVolumePlus.setText(String.valueOf(mPlusMinusButtonValue));
         }
 
         Button btVolumeMinus = (Button) findViewById(R.id.btVolumeMinus);
 
         if (btVolumeMinus != null) {
-            btVolumeMinus.setText(-1*mPlusMinusButtonValue);
+            btVolumeMinus.setText(String.valueOf(-1*mPlusMinusButtonValue));
         }
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);

@@ -44,11 +44,9 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         showExercises();
 
-        if (Common.dbCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
-
+        Common.setTitleOfActivity(this);
     }
+
 
     @Override
     public void onResume() {

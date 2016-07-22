@@ -41,7 +41,9 @@ public class ActivityMain extends AppCompatActivity {
         showButtons();
 
         defineCurrentUser();
+        Common.setTitleOfActivity(this);
     }
+
 
     private void showButtons() {
 
@@ -75,15 +77,9 @@ public class ActivityMain extends AppCompatActivity {
                         break;
                     }
                 }
-                if (Common.dbCurrentUser == null) {
-                    Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
-                    startActivity(intent);
-                }
+                isUserDefined();
             }
 
-        }
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
         }
 
     }
@@ -115,7 +111,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void bt_NewTraining_onClick(final View view) {
 
-        if (isDBNotEmpty()) {
+        if (isUserDefined()  & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
             startActivity(intent);

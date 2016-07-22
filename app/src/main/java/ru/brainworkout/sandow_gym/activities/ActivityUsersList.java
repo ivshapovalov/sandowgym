@@ -41,11 +41,9 @@ public class ActivityUsersList extends AppCompatActivity {
 
         showUsers();
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
-
+        Common.setTitleOfActivity(this);
     }
+
 
     @Override
     public void onResume() {

@@ -30,12 +30,21 @@ public class ActivityTrainingOptions extends AppCompatActivity {
         getPreferencesFromFile();
         setPreferencesOnScreen();
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
 
+
     public void buttonSave_onClick(View view) {
+
+        int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
+        EditText txt = (EditText) findViewById(mPlusMinusButtonID);
+        if (txt != null) {
+            try {
+                mPlusMinusButtonValue = Integer.valueOf(txt.getText().toString());
+            } catch (ClassCastException e) {
+
+            }
+        }
 
         Common.blink(view);
         SharedPreferences.Editor editor = mSettings.edit();
@@ -61,7 +70,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
 
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
-            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE,10);
+            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
         } else {
             mPlusMinusButtonValue = 10;
         }
@@ -93,10 +102,10 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
     private void setPreferencesOnScreen() {
 
-        int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue","id", getPackageName());
+        int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
         EditText txt = (EditText) findViewById(mPlusMinusButtonID);
         if (txt != null) {
-            txt.setText(mPlusMinusButtonValue);
+            txt.setText(String.valueOf(mPlusMinusButtonValue));
         }
 
         int mPictureID = getResources().getIdentifier("rbShowPicture" + (mShowPicture ? "Yes" : "No"), "id", getPackageName());
@@ -147,7 +156,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
                             mShowExplanation = true;
                             break;
                         case R.id.rbShowExplanationNo:
-                            mShowExplanation= false;
+                            mShowExplanation = false;
                             break;
                         default:
                             mShowExplanation = false;
@@ -177,7 +186,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
                             mShowVolumeDefaultButton = true;
                             break;
                         case R.id.rbShowVolumeDefaultButtonNo:
-                            mShowVolumeDefaultButton= false;
+                            mShowVolumeDefaultButton = false;
                             break;
                         default:
                             mShowVolumeDefaultButton = false;
@@ -206,7 +215,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
                             mShowVolumeLastDayButton = true;
                             break;
                         case R.id.rbShowVolumeLastDayButtonNo:
-                            mShowVolumeLastDayButton= false;
+                            mShowVolumeLastDayButton = false;
                             break;
                         default:
                             mShowVolumeLastDayButton = false;

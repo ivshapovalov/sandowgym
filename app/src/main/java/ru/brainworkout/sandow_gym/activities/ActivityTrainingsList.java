@@ -58,9 +58,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
         showTrainings();
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
 
     @Override

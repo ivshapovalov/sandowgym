@@ -51,10 +51,9 @@ public class ActivityUser extends AppCompatActivity {
         showUserOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if (Common.dbCurrentUser !=null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
+
 
     private void showUserOnScreen() {
 
@@ -156,7 +155,7 @@ public class ActivityUser extends AppCompatActivity {
 
             }
         } else {
-            if (Common.dbCurrentUser.equals(mCurrentUser)) {
+            if (Common.dbCurrentUser!=null && Common.dbCurrentUser.equals(mCurrentUser)) {
                 Common.dbCurrentUser=null;
             }
 

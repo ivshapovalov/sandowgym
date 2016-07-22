@@ -60,10 +60,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         updateScreen();
 
-        if (Common.dbCurrentUser != null) {
-            this.setTitle(getTitle() + "(" + Common.dbCurrentUser.getName() + ")");
-        }
+        Common.setTitleOfActivity(this);
     }
+
 
     private void getIntentParams() {
         Intent intent = getIntent();

@@ -56,18 +56,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="40"
+            android:layout_weight="50"
             android:text="+/- BUTTON VALUE"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/text_color"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="numberSigned"
+            android:inputType="numberDecimal"
             android:ems="10"
-            android:id="@+id/etPlusMinusButtonValue"/>
+            android:id="@+id/etPlusMinusButtonValue"
+            android:layout_weight="50"/>
 
     </LinearLayout>
 

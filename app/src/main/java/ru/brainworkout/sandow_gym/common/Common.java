@@ -1,5 +1,6 @@
 package ru.brainworkout.sandow_gym.common;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -46,6 +47,14 @@ public class Common {
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(1);
         v.startAnimation(anim);
+    }
+
+
+
+    public static void setTitleOfActivity(Activity currentActivity) {
+        if (Common.dbCurrentUser !=null) {
+            currentActivity.setTitle(currentActivity.getTitle() + " : " + Common.dbCurrentUser.getName() + "");
+        }
     }
 
 }
