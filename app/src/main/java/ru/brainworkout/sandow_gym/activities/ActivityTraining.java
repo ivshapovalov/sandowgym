@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import ru.brainworkout.sandow_gym.common.Common;
 import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
@@ -105,7 +104,7 @@ public class ActivityTraining extends AppCompatActivity {
         }
 
         saveTraining();
-        updateTrainingList();
+        updateButtonsListOfExercises();
 
         int exID = intent.getIntExtra("CurrentExerciseID", 0);
 
@@ -210,14 +209,6 @@ public class ActivityTraining extends AppCompatActivity {
         startActivity(intent);
 
     }
-
-
-    private class ExerciseComparator implements Comparator {
-        public int compare(Object ex1, Object ex2) {
-            return ((Exercise) (ex1)).getID() - ((Exercise) (ex2)).getID();
-        }
-    }
-
     private void setNextExercise() {
 
         if (mActiveExercises.size() != 0) {
@@ -225,18 +216,8 @@ public class ActivityTraining extends AppCompatActivity {
 
                 mCurrentExerciseNumberInList++;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-                //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
-                boolean isFound = false;
-                for (TrainingContent mTr : mTrainingContentList) {
-                    if (mTr.getIdExercise() == mCurrentExercise.getID()) {
-                        isFound = true;
-                        mCurrentTrainingContent = mTr;
-                        mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
-                        break;
-                    }
-                }
-                if (!isFound) {
 
+                if (isTrainingContentNew()) {
                     createNewTrainingContent();
                 }
             }
@@ -259,7 +240,7 @@ public class ActivityTraining extends AppCompatActivity {
             tvExplanation.setText(mCurrentExercise.getExplanation());
         }
         showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
-        updateTrainingList();
+        updateButtonsListOfExercises();
 
     }
 
@@ -271,22 +252,22 @@ public class ActivityTraining extends AppCompatActivity {
                 mCurrentExerciseNumberInList--;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
 
-                //ищем есть ли в списке упражнение с ID. Если нет - создаем новое, есть - выводим на экран
-                boolean isFound = false;
-                for (TrainingContent mTr : mTrainingContentList) {
-                    if (mTr.getIdExercise() == mCurrentExercise.getID()) {
-                        isFound = true;
-                        mCurrentTrainingContent = mTr;
-                        mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
-                        break;
-                    }
-                }
-
-                if (!isFound) {
+                if (isTrainingContentNew()) {
                     createNewTrainingContent();
                 }
             }
         }
+    }
+
+    private boolean isTrainingContentNew() {
+        for (TrainingContent mTr : mTrainingContentList) {
+            if (mTr.getIdExercise() == mCurrentExercise.getID()) {
+                mCurrentTrainingContent = mTr;
+                //mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
+                return false;
+            }
+        }
+        return true;
     }
 
     private void getAllExercisesOfTraining() {
@@ -319,13 +300,16 @@ public class ActivityTraining extends AppCompatActivity {
             }
         }
 
-        //отсортируем по ID список упражнений
-        Collections.sort(mActiveExercises, new ExerciseComparator());
+        Collections.sort(mActiveExercises, new Comparator() {
+            public int compare(Object ex1, Object ex2) {
+                return ((Exercise) (ex1)).getID() - ((Exercise) (ex2)).getID();
+            }
+        });
 
         if (mActiveExercises.size() != 0) {
             mCurrentExerciseNumberInList = 0;
             mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-            //покажем первое упражнение
+
 
             if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise() == mCurrentExercise.getID()) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
@@ -377,7 +361,7 @@ public class ActivityTraining extends AppCompatActivity {
                 .addWeight(mExerciseWeightLastDay)
                 .build();
         mCurrentTrainingContent.dbSave(DB);
-        mTrainingContentList.add(mCurrentTrainingContent);
+
     }
 
     private void showTrainingContentOnScreen() {
@@ -420,7 +404,6 @@ public class ActivityTraining extends AppCompatActivity {
                     etVolume.setText("");
                 }
             }
-
         }
 
         Button btDefaultVolume = (Button) findViewById(R.id.btVolumeDefault);
@@ -468,7 +451,6 @@ public class ActivityTraining extends AppCompatActivity {
         }
 
         showTrainingContentOnScreen();
-
     }
 
 //    public boolean onTouchEvent(MotionEvent event)
@@ -509,14 +491,13 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void showTrainingOnScreen() {
 
-        //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
             tvID.setText(String.valueOf(mCurrentTraining.getID()));
         }
-        //Имя
+
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
         TextView etDay = (TextView) findViewById(mDayID);
         if (etDay != null) {
@@ -526,7 +507,6 @@ public class ActivityTraining extends AppCompatActivity {
                 etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
             }
         }
-
     }
 
     public void btClose_onClick(final View view) {
@@ -541,7 +521,6 @@ public class ActivityTraining extends AppCompatActivity {
     }
 
     private void getPropertiesFromScreen() {
-
 
         //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
@@ -596,13 +575,11 @@ public class ActivityTraining extends AppCompatActivity {
 
             }
         }
-
     }
 
     public void btSave_onClick(final View view) {
 
         Common.blink(view);
-
         saveTraining();
 
     }
@@ -621,7 +598,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     }
 
-    private void saveTrainingContent(final boolean readFromScreen) {
+    private void saveCurrentTrainingContent(final boolean readFromScreen) {
 
         if (readFromScreen) {
             EditText etVolume = (EditText) findViewById(R.id.etVolume);
@@ -642,7 +619,7 @@ public class ActivityTraining extends AppCompatActivity {
         }
         mCurrentTrainingContent.dbSave(DB);
         if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
-
+            mTrainingContentList.add(mCurrentTrainingContent);
         }
 
     }
@@ -696,7 +673,6 @@ public class ActivityTraining extends AppCompatActivity {
         private Activity activity;
         static final int MIN_DISTANCE = 200;
         private float downX, downY, upX, upY;
-
 
         public SwipeDetectorActivity(final Activity activity) {
             this.activity = activity;
@@ -794,28 +770,24 @@ public class ActivityTraining extends AppCompatActivity {
     public void btVolumeLeft_onClick(final View view) {
 
         Common.blink(view);
-
         VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(final View view) {
 
         Common.blink(view);
-
         VolumeChange(-1 * mPlusMinusButtonValue);
     }
 
     public void btVolumeRight_onClick(final View view) {
 
         Common.blink(view);
-
         VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(final View view) {
 
         Common.blink(view);
-
         VolumeChange(mPlusMinusButtonValue);
     }
 
@@ -833,9 +805,10 @@ public class ActivityTraining extends AppCompatActivity {
             mVolume = mVolume < 0 ? 0 : mVolume;
             etVolume.setText(String.valueOf(mVolume));
         }
+
     }
 
-    private void updateTrainingList() {
+    private void updateButtonsListOfExercises() {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int btWidth = displaymetrics.widthPixels / MAX_NUMBER_OF_TRANSFER_BUTTONS;
@@ -862,65 +835,55 @@ public class ActivityTraining extends AppCompatActivity {
                 mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
             }
 
-            Button but = new Button(this);
-            but.setLayoutParams(params);
-            but.setText("<-");
-            but.setTextSize(mTextSize);
-            but.setWidth(btWidth);
-            but.setBackgroundResource(R.drawable.bt_border);
-            but.setGravity(Gravity.CENTER);
-            but.setWidth(btWidth);
-            but.setHeight(btWidth);
-            but.setTextColor(getResources().getColor(R.color.text_color));
-            trow.addView(but);
-            but.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    btTrainingListPrevious_onClick((TextView) v);
-                }
-            });
+            Button butPrevious= createNewExerciseButtonInButtonsList(trow, btWidth,  params, "<-",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                btTrainingListPrevious_onClick((TextView) v);
+                            }
+                        }
+                );
 
             for (int mCount = mNumBegin; mCount <= mNumEnd; mCount++) {
-                but = new Button(this);
-                but.setLayoutParams(params);
-                but.setId(NUMBER_OF_VIEWS + mCount);
-                but.setText(String.valueOf(mCount));
-                but.setTextSize(mTextSize);
-                but.setWidth(btWidth);
-                but.setHeight(btWidth);
-                but.setBackgroundResource(R.drawable.bt_border);
-                but.setGravity(Gravity.CENTER);
-                but.setTextColor(getResources().getColor(R.color.text_color));
-                if (mCount - 1 == mCurrentExerciseNumberInList) {
-                    but.setTextColor(Color.RED);
-                    but.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                }
-                trow.addView(but);
-                but.setOnClickListener(new View.OnClickListener() {
+                Button butNumber= createNewExerciseButtonInButtonsList(trow, btWidth,  params, String.valueOf(mCount), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         btTrainingList_onClick((TextView) v);
                     }
                 });
+                butNumber.setId(NUMBER_OF_VIEWS + mCount);
+                if (mCount - 1 == mCurrentExerciseNumberInList) {
+                    butNumber.setTextColor(Color.RED);
+                    butNumber.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+               }
             }
 
-            but = new Button(this);
-            but.setLayoutParams(params);
-            but.setText("->");
-            but.setWidth(btWidth);
-            but.setHeight(btWidth);
-            but.setTextSize(mTextSize);
-            but.setBackgroundResource(R.drawable.bt_border);
-            but.setGravity(Gravity.CENTER);
-            but.setTextColor(getResources().getColor(R.color.text_color));
-            trow.addView(but);
-            but.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    btTrainingListNext_onClick((TextView) v);
-                }
-            });
+            Button butNext= createNewExerciseButtonInButtonsList(trow, btWidth,  params, "->",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            btTrainingListNext_onClick((TextView) v);
+                        }
+                    }
+            );
         }
+
+    }
+
+    private Button createNewExerciseButtonInButtonsList(TableRow trow, int btWidth, TableRow.LayoutParams params, String mName,View.OnClickListener mListener ) {
+
+        Button but = new Button(this);
+        but.setLayoutParams(params);
+        but.setText(String.valueOf(mName));
+        but.setTextSize(mTextSize);
+        but.setWidth(btWidth);
+        but.setHeight(btWidth);
+        but.setBackgroundResource(R.drawable.bt_border);
+        but.setGravity(Gravity.CENTER);
+        but.setTextColor(getResources().getColor(R.color.text_color));
+        but.setOnClickListener(mListener);
+        trow.addView(but);
+        return but;
 
     }
 
@@ -936,17 +899,16 @@ public class ActivityTraining extends AppCompatActivity {
 
         boolean readFromScreen = true;
 
-        saveTrainingContent(readFromScreen);
+        saveCurrentTrainingContent(readFromScreen);
         int mStepsABS = Math.abs(steps);
         for (int i = 1; i <= mStepsABS; i++) {
             readFromScreen = false;
-            saveTrainingContent(readFromScreen);
-
             if (steps < 0) {
                 setPreviousExercise();
             } else {
                 setNextExercise();
             }
+            saveCurrentTrainingContent(readFromScreen);
         }
         showExercise();
     }
@@ -1009,7 +971,7 @@ public class ActivityTraining extends AppCompatActivity {
         Button btVolumeMinus = (Button) findViewById(R.id.btVolumeMinus);
 
         if (btVolumeMinus != null) {
-            btVolumeMinus.setText(String.valueOf(-1*mPlusMinusButtonValue));
+            btVolumeMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
         }
 
         ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
