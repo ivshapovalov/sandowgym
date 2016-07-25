@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.database.manager;
+package ru.brainworkout.sandowgym.database.manager;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.database.entities.Exercise;
-import ru.brainworkout.sandow_gym.database.entities.Training;
-import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
-import ru.brainworkout.sandow_gym.database.entities.User;
+import ru.brainworkout.sandowgym.database.entities.Exercise;
+import ru.brainworkout.sandowgym.database.entities.Training;
+import ru.brainworkout.sandowgym.database.entities.TrainingContent;
+import ru.brainworkout.sandowgym.database.entities.User;
 
 public class DatabaseManager extends SQLiteOpenHelper {
     // All Static variables

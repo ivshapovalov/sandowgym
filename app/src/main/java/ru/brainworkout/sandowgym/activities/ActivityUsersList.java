@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.activities;
+package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +13,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.R;
-import ru.brainworkout.sandow_gym.common.Common;
-import ru.brainworkout.sandow_gym.database.entities.User;
-import ru.brainworkout.sandow_gym.database.manager.AndroidDatabaseManager;
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.R;
+import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.database.entities.User;
+import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
 public class ActivityUsersList extends AppCompatActivity {
 

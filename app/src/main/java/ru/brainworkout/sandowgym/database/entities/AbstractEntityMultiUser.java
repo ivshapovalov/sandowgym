@@ -1,6 +1,6 @@
-package ru.brainworkout.sandow_gym.database.entities;
+package ru.brainworkout.sandowgym.database.entities;
 
-import ru.brainworkout.sandow_gym.common.Common;
+import ru.brainworkout.sandowgym.common.Common;
 
 public abstract class AbstractEntityMultiUser extends AbstractEntity {
 

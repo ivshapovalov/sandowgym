@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.database.manager;
+package ru.brainworkout.sandowgym.database.manager;
 
 public class TableDoesNotContainElementException extends RuntimeException{
 

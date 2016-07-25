@@ -1,7 +1,4 @@
-package ru.brainworkout.sandow_gym.database.entities;
-
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+package ru.brainworkout.sandowgym.database.entities;
 
 
 public abstract class AbstractEntity {

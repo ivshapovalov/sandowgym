@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.brainworkout.sandow_gym">
+    package="ru.brainworkout.sandowgym">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ActivityMain">
+        <activity android:name="ru.brainworkout.sandowgym.activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,42 +19,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ActivityExercisesList"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityExercisesList"
             android:label="@string/exercises_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityExercise"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityExercise"
             android:label="@string/exercise_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityTrainingsList"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityTrainingsList"
             android:label="@string/trainings_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityTraining"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityTraining"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityTrainingOptions"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityTrainingOptions"
             android:label="@string/training_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityCalendarView"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityCalendarView"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".database.manager.AndroidDatabaseManager"
+            android:name="ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".activities.ActivityFileExportImport"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityFileExportImport"
             android:label="@string/export_import_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityUsersList"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityUsersList"
             android:label="@string/users_list_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityUser"
+            android:name="ru.brainworkout.sandowgym.activities.ActivityUser"
             android:label="@string/user_name"
             android:screenOrientation="portrait" />
     </application>

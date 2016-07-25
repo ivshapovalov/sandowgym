@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.activities;
+package ru.brainworkout.sandowgym.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,13 +31,13 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.common.Common;
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.entities.Exercise;
-import ru.brainworkout.sandow_gym.R;
-import ru.brainworkout.sandow_gym.database.entities.Training;
-import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
-import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.entities.Exercise;
+import ru.brainworkout.sandowgym.R;
+import ru.brainworkout.sandowgym.database.entities.Training;
+import ru.brainworkout.sandowgym.database.entities.TrainingContent;
+import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityTraining extends AppCompatActivity {
 

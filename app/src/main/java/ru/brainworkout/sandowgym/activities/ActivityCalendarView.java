@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.activities;
+package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +10,8 @@ import android.widget.CalendarView;
 import java.util.Calendar;
 import java.util.Date;
 
-import ru.brainworkout.sandow_gym.common.Common;
-import ru.brainworkout.sandow_gym.R;
+import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.R;
 
 public class ActivityCalendarView extends AppCompatActivity {
 

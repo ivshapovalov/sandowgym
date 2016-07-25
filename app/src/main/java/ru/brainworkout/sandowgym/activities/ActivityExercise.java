@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.activities;
+package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +11,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ru.brainworkout.sandow_gym.common.Common;
-import ru.brainworkout.sandow_gym.database.entities.Exercise;
-import ru.brainworkout.sandow_gym.R;
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.database.entities.Exercise;
+import ru.brainworkout.sandowgym.R;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityExercise extends AppCompatActivity {
 

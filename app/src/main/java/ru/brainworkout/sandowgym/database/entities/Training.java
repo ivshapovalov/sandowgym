@@ -1,14 +1,14 @@
-package ru.brainworkout.sandow_gym.database.entities;
+package ru.brainworkout.sandowgym.database.entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ru.brainworkout.sandow_gym.common.Common;
-import ru.brainworkout.sandow_gym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandow_gym.database.interfaces.SaveToDB;
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class Training extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
 

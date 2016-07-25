@@ -1,4 +1,4 @@
-package ru.brainworkout.sandow_gym.activities;
+package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Environment;
@@ -28,13 +28,13 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandow_gym.*;
-import ru.brainworkout.sandow_gym.common.*;
-import ru.brainworkout.sandow_gym.database.entities.Exercise;
-import ru.brainworkout.sandow_gym.database.entities.Training;
-import ru.brainworkout.sandow_gym.database.entities.TrainingContent;
-import ru.brainworkout.sandow_gym.database.manager.DatabaseManager;
-import ru.brainworkout.sandow_gym.database.manager.TableDoesNotContainElementException;
+import ru.brainworkout.sandowgym.*;
+import ru.brainworkout.sandowgym.common.*;
+import ru.brainworkout.sandowgym.database.entities.Exercise;
+import ru.brainworkout.sandowgym.database.entities.Training;
+import ru.brainworkout.sandowgym.database.entities.TrainingContent;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 
 public class ActivityFileExportImport extends AppCompatActivity {
