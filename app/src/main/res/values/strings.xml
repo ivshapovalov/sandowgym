@@ -8,4 +8,6 @@
     <string name="export_import_name">Export-Import</string>
     <string name="users_list_name">Users</string>
     <string name="user_name">User</string>
+    <string name="weight_calendar_change_list_name">Weight calendar</string>
+    <string name="weight_calendar_name">Weight update</string>
 </resources>

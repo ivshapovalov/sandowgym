@@ -16,6 +16,7 @@ import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
 import ru.brainworkout.sandowgym.database.entities.User;
+import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 
 public class DatabaseManager extends SQLiteOpenHelper {
     // All Static variables
@@ -31,6 +32,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String TABLE_EXERCISES = "exercises";
     private static final String TABLE_TRAININGS = "trainings";
     private static final String TABLE_TRAINING_CONTENT = "training_content";
+    private static final String TABLE_WEIGHT_CHANGE_CALENDAR = "weight_change_calendar";
 
     // Exercise AbstractEntity Columns names
     private static final String KEY_EXERCISE_ID = "exercise_id";
@@ -55,6 +57,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_WEIGHT = "training_weight";
     private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
+    //  WeightCalendarChange AbstractEntity Columns names
+    private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID = "weight_change_calendar_id";
+    private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID_USER = "exercise_id_user";
+    private static final String KEY_WEIGHT_CHANGE_CALENDAR_DAY = "weight_change_calendar_day";
+    private static final String KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT = "weight_change_calendar_weight";
+
     //  Users AbstractEntity Columns names
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_NAME = "user_name";
@@ -73,6 +81,22 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 + KEY_USER_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_USER_NAME + " TEXT," + KEY_USER_IS_CURRENT + " INTEGER)";
         db.execSQL(CREATE_USERS_TABLE);
+
+        //календарь смены весов
+        String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
+                + KEY_WEIGHT_CHANGE_CALENDAR_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+                + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " TEXT," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER)";
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
+
+        String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " ASC)";
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC);
+        String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " DESC)";
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC);
+
+        String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " ASC)";
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC);
+        String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " DESC)";
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC);
 
         //упражнения
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
@@ -94,7 +118,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
                 + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_TRAINING_ID_USER + " INTEGER, "
-                + KEY_TRAINING_DAY + " STRING,"
+                + KEY_TRAINING_DAY + " TEXT,"
                 + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
                 + ")";
         db.execSQL(CREATE_TRAININGS_TABLE);
@@ -150,6 +174,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
@@ -163,6 +189,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public void DeleteDB(SQLiteDatabase db) {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
 
@@ -182,6 +210,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.insert(TABLE_USERS, null, values);
         db.close();
     }
+
+    public void addWeightCalendarChange(WeightChangeCalendar weightCalendarChange) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightCalendarChange.getID());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightCalendarChange.getIdUser());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDayString());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightCalendarChange.getWeight());
+
+        db.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
+        db.close();
+    }
+
 
     public void addExercise(Exercise exercise) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -205,15 +247,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate;
-        try {
-            sDate = dateformat.format(training.getDay());
-        } catch (Exception e) {
-            sDate = null;
-        }
         values.put(KEY_TRAINING_ID_USER, training.getIdUser());
-        values.put(KEY_TRAINING_DAY, sDate);
+        values.put(KEY_TRAINING_DAY, training.getDayString());
         // Inserting Row
         db.insert(TABLE_TRAININGS, null, values);
         db.close(); // Closing database connection
@@ -247,10 +282,37 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no User with id - " + id);
         } else {
-            user = new User.UserBuilder(Integer.parseInt(cursor.getString(0))).addName(cursor.getString(1)).addIsCurrentUser(Integer.parseInt(cursor.getString(2))).build();
+            user = new User.UserBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addName(cursor.getString(1))
+                    .addIsCurrentUser(Integer.parseInt(cursor.getString(2)))
+                    .build();
 
             cursor.close();
             return user;
+        }
+    }
+
+    public WeightChangeCalendar getWeightChangeCalendar(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_WEIGHT_CHANGE_CALENDAR, new String[]{KEY_WEIGHT_CHANGE_CALENDAR_ID,
+                        KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, KEY_WEIGHT_CHANGE_CALENDAR_DAY, KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT},
+                KEY_WEIGHT_CHANGE_CALENDAR_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        WeightChangeCalendar weightChangeCalendar = null;
+        if (cursor.getCount() == 0) {
+            throw new TableDoesNotContainElementException("There is no User with id - " + id);
+        } else {
+            weightChangeCalendar = new WeightChangeCalendar
+                    .WeightChangeCalendarBuilder(Integer.parseInt(cursor.getString(0)))
+                    .addDay(cursor.getString(2))
+                    .addWeight(Integer.parseInt(cursor.getString(3)))
+                    .build();
+
+            cursor.close();
+            return weightChangeCalendar;
         }
     }
 
@@ -342,7 +404,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
-    public TrainingContent getTrainingContent(int exercise_id, int training_id)  {
+    public TrainingContent getTrainingContent(int exercise_id, int training_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         TrainingContent trainingContent;
@@ -369,6 +431,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_USERS, null, null);
+
+    }
+
+    public void deleteAllWeightChangeCalendar() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, null, null);
+
+    }
+
+    public void deleteAllWeightChangeCalendarOfUser(int user_id) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=?", new String[]{String.valueOf(user_id)});
 
     }
 
@@ -435,6 +512,49 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
         return userList;
+    }
+
+    public List<WeightChangeCalendar> getAllWeightChangeCalendar() {
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.WeightChangeCalendarBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(2))
+                        .addWeight(Integer.parseInt(cursor.getString(3)))
+                        .build();
+                weightChangeCalendarList.add(weightChangeCalendar);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return weightChangeCalendarList;
+    }
+
+    public List<WeightChangeCalendar> getAllWeightChangeCalendarOfUser(int user_id) {
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + " WHERE "
+                + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_ID;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.WeightChangeCalendarBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(2))
+                        .addWeight(Integer.parseInt(cursor.getString(3)))
+                        .build();
+                weightChangeCalendarList.add(weightChangeCalendar);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return weightChangeCalendarList;
     }
 
     public List<Exercise> getAllExercises() {
@@ -601,6 +721,39 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
         return exerciseList;
+    }
+
+    public List<WeightChangeCalendar> getWeightChangeCalendarOfUserByDates(int user_id, String mDateFrom, String mDateTo) {
+
+        mDateFrom = "".equals(mDateFrom) ? "0000-00-00" : mDateFrom;
+        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID + ","
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + ","
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + ","
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT
+                + " FROM "+ TABLE_WEIGHT_CHANGE_CALENDAR
+                + "WHERE " + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " AND "
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + ">= \"" + mDateFrom + "\" AND "
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + "<=\"" + mDateTo
+                + " ORDER BY "
+                + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.WeightChangeCalendarBuilder(cursor.getInt(0))
+                        .addDay(cursor.getString(2))
+                        .addWeight(Integer.parseInt(cursor.getString(3)))
+                        .build();
+                weightChangeCalendarList.add(weightChangeCalendar);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return weightChangeCalendarList;
     }
 
     public List<Training> getAllTrainings() {
@@ -887,6 +1040,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     }
 
+    public int getWeightChangeCalendarMaxNumber() {
+        String countQuery = "SELECT  MAX(" + KEY_WEIGHT_CHANGE_CALENDAR_ID + ") FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            return cursor.getInt(0);
+        } else {
+            cursor.close();
+            return 0;
+        }
+
+    }
+
     public int getExerciseMaxNumber() {
         String countQuery = "SELECT  MAX(" + KEY_EXERCISE_ID + ") FROM " + TABLE_EXERCISES + "";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -940,6 +1108,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
         return db.update(TABLE_USERS, values, KEY_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getID())});
+    }
+
+    public int updateWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDayString());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getIdUser());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
+
+        // updating row
+        return db.update(TABLE_WEIGHT_CHANGE_CALENDAR, values, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
+                new String[]{String.valueOf(weightChangeCalendar.getID())});
     }
 
     public int updateExercise(Exercise exercise) {
@@ -996,6 +1177,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_USERS, KEY_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getID())});
+        db.close();
+    }
+
+    public void deleteWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
+                new String[]{String.valueOf(weightChangeCalendar.getID())});
         db.close();
     }
 

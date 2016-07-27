@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
@@ -38,14 +40,19 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        showButtons();
+        showElementsOnScreen();
 
         defineCurrentUser();
         Common.setTitleOfActivity(this);
     }
 
+    private Date getLastDateOfWeightChange() {
 
-    private void showButtons() {
+        return new Date();
+    }
+
+
+    private void showElementsOnScreen() {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
@@ -55,6 +62,13 @@ public class ActivityMain extends AppCompatActivity {
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
+        }
+
+        Date lastDateOfWeightUpdate=getLastDateOfWeightChange();
+        int tvMessageID = getResources().getIdentifier("tvMessage","id", getPackageName());
+        TextView tvMessage = (TextView) findViewById(tvMessageID);
+        if (tvMessage!=null){
+            tvMessage.setText(" ");
         }
 
     }
