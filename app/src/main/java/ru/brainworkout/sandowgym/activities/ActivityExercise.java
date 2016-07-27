@@ -20,10 +20,6 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 public class ActivityExercise extends AppCompatActivity {
 
 
-
-
-
-
     private Exercise mCurrentExercise;
     private final DatabaseManager DB = new DatabaseManager(this);
 
