@@ -18,6 +18,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     private int _weight;
 
     private WeightChangeCalendar(WeightChangeCalendarBuilder weightChangeCalendarBuilder) {
+        this._id=weightChangeCalendarBuilder.getID();
         this._day = weightChangeCalendarBuilder._day;
         this._weight = weightChangeCalendarBuilder._weight;
     }

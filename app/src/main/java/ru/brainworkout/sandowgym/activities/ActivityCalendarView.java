@@ -24,6 +24,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
     private int mCallerTrainingID;
     private int mCallerExerciseID;
+    private int mCallerWeightChangeCalendarID;
     private String mCallerActivity;
 
     @Override
@@ -37,6 +38,30 @@ public class ActivityCalendarView extends AppCompatActivity {
 
     }
 
+
+    private void getIntentParams() {
+
+        Intent intent = getIntent();
+
+        mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
+        mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
+        mCallerActivity = intent.getStringExtra("CurrentActivity");
+        mCallerTrainingID = intent.getIntExtra("CurrentTrainingID", 0);
+        mCallerExerciseID = intent.getIntExtra("CurrentExerciseID",0);
+        mCallerWeightChangeCalendarID=intent.getIntExtra("CurrentWeightChangeCalendarID",0);
+
+        try {
+            mOldDateFrom = intent.getStringExtra("CurrentDate");
+        } catch (Exception e) {
+            mOldDateFrom = "";
+        }
+        try {
+            mOldDateTo = intent.getStringExtra("CurrentDateTo");
+        } catch (Exception e) {
+            mOldDateTo = "";
+        }
+
+    }
     private void SetParametersOnScreen() {
 
         Calendar calendar = Calendar.getInstance();
@@ -81,28 +106,6 @@ public class ActivityCalendarView extends AppCompatActivity {
 
 
 
-    private void getIntentParams() {
-
-        Intent intent = getIntent();
-
-        mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
-        mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
-        mCallerActivity = intent.getStringExtra("CurrentActivity");
-        mCallerTrainingID = intent.getIntExtra("CurrentTrainingID", 0);
-        mCallerExerciseID = intent.getIntExtra("CurrentExerciseID",0);
-
-        try {
-            mOldDateFrom = intent.getStringExtra("CurrentDate");
-        } catch (Exception e) {
-            mOldDateFrom = "";
-        }
-        try {
-            mOldDateTo = intent.getStringExtra("CurrentDateTo");
-        } catch (Exception e) {
-            mOldDateTo = "";
-        }
-
-    }
 
     public void btSave_onClick(final View view) {
 
@@ -117,8 +120,9 @@ public class ActivityCalendarView extends AppCompatActivity {
         Intent intent = new Intent(ActivityCalendarView.this, myClass);
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentID", mCallerTrainingID);
+        intent.putExtra("CurrentTrainingID", mCallerTrainingID);
         intent.putExtra("CurrentExerciseID", mCallerExerciseID);
+        intent.putExtra("CurrentWeightChangeCalendarID", mCallerWeightChangeCalendarID);
         if (mIsBeginDate) {
             intent.putExtra("CurrentDate", mNewDate);
             intent.putExtra("CurrentDateTo", mOldDateTo);

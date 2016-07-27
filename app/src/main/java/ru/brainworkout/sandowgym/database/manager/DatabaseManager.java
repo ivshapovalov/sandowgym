@@ -59,7 +59,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     //  WeightCalendarChange AbstractEntity Columns names
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID = "weight_change_calendar_id";
-    private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID_USER = "exercise_id_user";
+    private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID_USER = "weight_change_calendar_id_user";
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_DAY = "weight_change_calendar_day";
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT = "weight_change_calendar_weight";
 
@@ -85,6 +85,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         //календарь смены весов
         String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+                + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " INTEGER, "
                 + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " TEXT," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER)";
         db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
 
@@ -583,7 +584,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public List<Exercise> getAllExercisesOfUser(int user_id) {
         List<Exercise> exerciseList = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
+        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "="
+                + user_id + " ORDER BY " + KEY_EXERCISE_ID;
         ;
 
         SQLiteDatabase db = this.getWritableDatabase();

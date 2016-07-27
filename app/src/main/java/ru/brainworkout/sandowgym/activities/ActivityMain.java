@@ -105,6 +105,15 @@ public class ActivityMain extends AppCompatActivity {
 
     }
 
+    public void btWeightCalendarList_onClick(View view) {
+
+        if (isUserDefined()) {
+            Intent intent = new Intent(ActivityMain.this, ActivityWeightChangeCalendarList.class);
+            startActivity(intent);
+        }
+
+    }
+
     public void btExercises_onClick(final View view) {
 
         if (isUserDefined()) {
@@ -177,8 +186,11 @@ public class ActivityMain extends AppCompatActivity {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
+
                             SQLiteDatabase dbSQL = DB.getWritableDatabase();
+                            //DB.DeleteDB(dbSQL);
                             DB.onUpgrade(dbSQL, 1, 2);
+
 
                             if (Common.dbCurrentUser !=null) {
                                 setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf("(")));
@@ -206,4 +218,6 @@ public class ActivityMain extends AppCompatActivity {
                 }).setNegativeButton("Нет", null).show();
 
     }
+
+
 }

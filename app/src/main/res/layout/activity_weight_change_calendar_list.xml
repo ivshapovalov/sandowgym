@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".activities.ActivityUsersList">
+    tools:context=".activities.ActivityExercisesList">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -33,31 +33,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="ADD"
-                android:id="@+id/btUsersAdd"
-                android:onClick="btUsersAdd_onClick"
+                android:id="@+id/btWeightChangeCalendarListAdd"
+                android:onClick="btWeightChangeCalendarListAdd_onClick"
                 android:layout_span="8"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bt_border"
                 android:textColor="@color/text_color" />
 
             <Button
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btExercisesDBEditor"
+                android:id="@+id/btWeightChangeCalendarListClear"
+                android:background="@drawable/bt_border"
+                android:onClick="btDeleteWeightChangeCalendarList_onClick"
+                android:layout_span="8"
+                android:text="CLEAR"
+                android:textColor="@color/text_color" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bWeightChangeCalendarListDBEditor"
                 android:onClick="bt_Edit_onClick"
-                android:layout_span="10"
+                android:layout_span="8"
                 android:text="EDITOR"
                 style="?android:attr/buttonStyleSmall"
                 android:background="@drawable/bt_border"
                 android:textColor="@color/text_color" />
-
 
         </TableRow>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/svTableExercises"
+            android:id="@+id/svTableWeightChangeCalendarList"
             android:layout_marginTop="20dp">
 
         </ScrollView>

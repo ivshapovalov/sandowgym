@@ -1,7 +1,5 @@
 package ru.brainworkout.sandowgym.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,114 +8,132 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.common.Common;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
-import ru.brainworkout.sandowgym.database.entities.Training;
-import ru.brainworkout.sandowgym.database.entities.User;
+import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
-    private User mCurrentUser;
+
+    private WeightChangeCalendar mCurrentWeightChangeCalendar;
+    private boolean mWeightChangeCalendarIsNew;
     private final DatabaseManager DB = new DatabaseManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        setContentView(R.layout.activity_weight_change_calendar);
 
         Intent intent = getIntent();
-        boolean mUserIsNew = intent.getBooleanExtra("IsNew", false);
+        boolean mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
 
-        if (mUserIsNew) {
-            mCurrentUser = new User.UserBuilder(DB.getUserMaxNumber() + 1).build();
+        if (mWeightChangeCalendarIsNew) {
+            mCurrentWeightChangeCalendar = new WeightChangeCalendar.WeightChangeCalendarBuilder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
         } else {
-            int id = intent.getIntExtra("id", 0);
+            int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
             try {
-                mCurrentUser = DB.getUser(id);
+                mCurrentWeightChangeCalendar = DB.getWeightChangeCalendar(id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
         }
 
-        showUserOnScreen();
+        showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Common.setTitleOfActivity(this);
     }
 
+    public void tvDay_onClick(final View view) {
 
-    private void showUserOnScreen() {
+        Common.blink(view);
 
-        int isCurrentID = getResources().getIdentifier("cb_IsCurrent", "id", getPackageName());
-        CheckBox cbIsCurrent = (CheckBox) findViewById(isCurrentID);
-        if (cbIsCurrent != null) {
-            if (mCurrentUser.isCurrentUser() != 0) {
-                cbIsCurrent.setChecked(true);
-            } else {
-                cbIsCurrent.setChecked(false);
-            }
+        Intent intent = new Intent(ActivityWeightChangeCalendar.this, ActivityCalendarView.class);
+
+        intent.putExtra("IsNew", mWeightChangeCalendarIsNew);
+        intent.putExtra("CurrentActivity", "ActivityWeightChangeCalendar");
+        if (!mWeightChangeCalendarIsNew) {
+            intent.putExtra("CurrentWeightChangeCalendar", mCurrentWeightChangeCalendar.getID());
+        }
+        if (mCurrentWeightChangeCalendar.getDay() == null) {
+            intent.putExtra("CurrentDate", "");
+        } else {
+            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), Common.DATE_FORMAT_STRING));
         }
 
-        cbIsCurrent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        startActivity(intent);
 
-                if (mCurrentUser != null) {
-                    if (isChecked) {
-                        mCurrentUser.setIsCurrentUser(1);
-                    } else {
-                        mCurrentUser.setIsCurrentUser(0);
-                    }
+    }
 
-                }
-            }
-        });
-
+    private void showWeightChangeCalendarOnScreen() {
 
         //ID
         int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
-            tvID.setText(String.valueOf(mCurrentUser.getID()));
+            tvID.setText(String.valueOf(mCurrentWeightChangeCalendar.getID()));
         }
 
         //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
-        if (etName != null) {
-            etName.setText(mCurrentUser.getName());
+        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
+        EditText etDay = (EditText) findViewById(mDayID);
+        if (etDay != null) {
+            etDay.setText(mCurrentWeightChangeCalendar.getDayString());
         }
 
+        //Вес
+        int mWeightID = getResources().getIdentifier("et_Weight", "id", getPackageName());
+        EditText etWeight = (EditText) findViewById(mWeightID);
+        if (etWeight != null) {
+            etWeight.setText(String.valueOf(mCurrentWeightChangeCalendar.getWeight()));
+        }
 
     }
 
     public void btClose_onClick(final View view) {
 
         Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getID());
+        Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
+        intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
 
-    private void getPropertiesFromScreen() {
+    private void fillExerciseFromScreen() {
 
-        //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
-        if (etName != null) {
+        //ID
+        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        TextView tvID = (TextView) findViewById(mID);
+        if (tvID != null) {
 
-            mCurrentUser.setName(String.valueOf(etName.getText()));
+            mCurrentWeightChangeCalendar.setID(Integer.parseInt(String.valueOf(tvID.getText())));
+
+        }
+
+        //Day
+        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
+        EditText etDay = (EditText) findViewById(mDayID);
+        if (etDay != null) {
+
+            mCurrentWeightChangeCalendar.setDayString(String.valueOf(etDay.getText()));
+
+        }
+
+        //Weight
+        int WeightID = getResources().getIdentifier("et_Weight", "id", getPackageName());
+        EditText etWeight = (EditText) findViewById(WeightID);
+        if (etWeight != null) {
+
+            mCurrentWeightChangeCalendar.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
 
         }
 
@@ -126,84 +142,25 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
     public void btSave_onClick(final View view) {
 
         Common.blink(view);
-        getPropertiesFromScreen();
+        fillExerciseFromScreen();
 
-        mCurrentUser.dbSave(DB);
+        mCurrentWeightChangeCalendar.dbSave(DB);
 
-        setDBCurrentUser();
-
-        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getID());
+        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
+        intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
-    }
-
-    private void setDBCurrentUser() {
-
-        if (mCurrentUser.isCurrentUser() == 1) {
-            Common.dbCurrentUser =mCurrentUser;
-            List<User> userList = DB.getAllUsers();
-
-            for (User user : userList) {
-
-                if (user.getID()!=mCurrentUser.getID()) {
-                    user.setIsCurrentUser(0);
-                    user.dbSave(DB);
-                }
-
-            }
-        } else {
-            if (Common.dbCurrentUser!=null && Common.dbCurrentUser.equals(mCurrentUser)) {
-                Common.dbCurrentUser=null;
-            }
-
-        }
 
     }
 
     public void btDelete_onClick(final View view) {
 
         Common.blink(view);
+        mCurrentWeightChangeCalendar.dbDelete(DB);
 
-
-        new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить текущего пользователя, его тренировки и упражнения?")
-                .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        List<Exercise> exercisesOfUser=DB.getAllExercisesOfUser(mCurrentUser.getID());
-                        List<Training> trainingsOfUser=DB.getAllTrainingsOfUser(mCurrentUser.getID());
-                        for (Training currentTraining:trainingsOfUser
-                             ) {
-                            DB.deleteTrainingContentOfTraining(currentTraining.getID());
-                            currentTraining.dbDelete(DB);
-
-                        }
-                        for (Exercise currentExercise:exercisesOfUser
-                                ) {
-                            currentExercise.dbDelete(DB);
-
-                        }
-
-                        mCurrentUser.dbDelete(DB);
-
-                        if (mCurrentUser.equals(Common.dbCurrentUser)) {
-                            List<User> userList = DB.getAllUsers();
-                            if (userList.size() == 1) {
-                                User currentUser=userList.get(0);
-                                Common.dbCurrentUser = currentUser;
-                                currentUser.setIsCurrentUser(1);
-                                currentUser.dbSave(DB);
-                            }
-                        }
-
-                        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-
-                    }
-                }).setNegativeButton("Нет", null).show();
+        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
 
     }
 }

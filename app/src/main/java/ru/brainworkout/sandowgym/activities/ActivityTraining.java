@@ -83,7 +83,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         String mCurrentDate = intent.getStringExtra("CurrentDate");
 
-        int id = intent.getIntExtra("CurrentID", 0);
+        int id = intent.getIntExtra("CurrentTrainingID", 0);
 
         defineCurrentTraining(id, mCurrentDate);
 
@@ -1013,7 +1013,5 @@ public class ActivityTraining extends AppCompatActivity {
                 btVolumeLastDay.setVisibility(View.GONE);
             }
         }
-
-
     }
 }

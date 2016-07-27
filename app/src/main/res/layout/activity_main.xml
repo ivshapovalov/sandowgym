@@ -53,6 +53,22 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/weight_calendar_change_list_name"
+                    android:id="@+id/button2"
+                    android:onClick="btWeightCalendarList_onClick"
+                    android:layout_span="30"
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color"
+                    android:nestedScrollingEnabled="true"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/exercises_list_name"
                     android:id="@+id/btMain2"
                     android:onClick="btExercises_onClick"
