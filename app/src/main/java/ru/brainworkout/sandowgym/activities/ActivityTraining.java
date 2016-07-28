@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
+
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
@@ -84,6 +85,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         String mCurrentDate = intent.getStringExtra("CurrentDate");
 
+
         boolean weightIsNeedToUpdate = false;
         if (mTrainingIsNew) {
             weightIsNeedToUpdate = true;
@@ -92,14 +94,6 @@ public class ActivityTraining extends AppCompatActivity {
         int id = intent.getIntExtra("CurrentTrainingID", 0);
 
         defineCurrentTraining(id, mCurrentDate);
-
-        if (weightIsNeedToUpdate || (mCurrentDate != null && mCurrentTraining != null && !mCurrentDate.equals(mCurrentTraining.getDayString()))) {
-            updateCurrentWeightOfTrainingContent();
-            if (mCurrentDate != null) {
-                mCurrentTraining.setDayString(mCurrentDate);
-            }
-        }
-
         showTrainingOnScreen();
 
         //не используем. Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
@@ -109,14 +103,25 @@ public class ActivityTraining extends AppCompatActivity {
 //        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
 //        sv.setOnTouchListener(swipeDetectorActivity);
 
-
         if (mTrainingIsNew) {
             getAllActiveExercises();
         } else {
             getAllExercisesOfTraining();
         }
 
+        String mCurrentDateOld = mCurrentTraining.getDayString();
         saveTraining();
+
+        if (mCurrentDate != null) {
+            mCurrentTraining.setDayString(mCurrentDate);
+            updateDayOnScreen(mCurrentDate);
+
+        }
+        if (weightIsNeedToUpdate || (mCurrentDate != null && mCurrentTraining != null && !mCurrentDate.equals(mCurrentDateOld))) {
+
+            updateCurrentWeightOfTrainingContent();
+        }
+
         updateButtonsListOfExercises();
 
         int exID = intent.getIntExtra("CurrentExerciseID", 0);
@@ -130,27 +135,69 @@ public class ActivityTraining extends AppCompatActivity {
         setTitleOfActivity(this);
     }
 
+    private void updateDayOnScreen(String mCurrentDate) {
+
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView etDay = (TextView) findViewById(mDayID);
+        if (etDay != null) {
+
+            etDay.setText(mCurrentDate);
+
+        }
+    }
+
     private void updateCurrentWeightOfTrainingContent() {
+
+        int mExerciseWeightLastDay = 0;
+        int mWeightInCalendar = 0;
+        List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
+            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
+                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
                     ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
-        if (mWeightChangeCalendarList.size() == 1) {
-            int mExerciseWeightLastDay;
+        if (mTrainingContentNotNullVolume.size() == 1) {
             try {
-                mExerciseWeightLastDay = mWeightChangeCalendarList.get(0).getWeight();
+                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
             } catch (Exception e) {
                 mExerciseWeightLastDay = 0;
+            }
+        }
+        if (mWeightChangeCalendarList.size() == 1) {
+            try {
+                mWeightInCalendar = mWeightChangeCalendarList.get(0).getWeight();
+            } catch (Exception e) {
+                mWeightInCalendar = 0;
             }
             List<TrainingContent> trainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
             for (TrainingContent trainingContent : trainingContentList
                     ) {
                 if (trainingContent.getWeight() == 0) {
-                    trainingContent.setWeight(mExerciseWeightLastDay);
-                    trainingContent.dbSave(DB);
+                    if (mCurrentTrainingContent != null) {
+                        if (trainingContent.getID() == mCurrentTrainingContent.getID()) {
+                            trainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
+                            trainingContent.dbSave(DB);
+                            mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
+                        }
+                    } else {
+                        trainingContent.setWeight(mWeightInCalendar);
+                        trainingContent.dbSave(DB);
+                    }
+
                 }
             }
+
+            int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
+            TextView etWeight = (TextView) findViewById(mWeight);
+            if (etWeight != null) {
+                String curWeight=String.valueOf(etWeight.getText());
+                if (curWeight.trim().equals("")) {
+                    etWeight.setText(String.valueOf(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar));
+                }
+            }
+
         }
 
     }
@@ -373,17 +420,25 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void createNewTrainingContent() {
         int mExerciseWeightLastDay = 0;
+        int mWeightInCalendar = 0;
         List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-//            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
-//                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
+            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
+                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
                     ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
         if (mWeightChangeCalendarList.size() == 1) {
             try {
-                mExerciseWeightLastDay = mWeightChangeCalendarList.get(0).getWeight();
+                mWeightInCalendar = mWeightChangeCalendarList.get(0).getWeight();
+            } catch (Exception e) {
+                mWeightInCalendar = 0;
+            }
+        }
+        if (mTrainingContentNotNullVolume.size() == 1) {
+            try {
+                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
             } catch (Exception e) {
                 mExerciseWeightLastDay = 0;
             }
@@ -393,7 +448,7 @@ public class ActivityTraining extends AppCompatActivity {
                 .addExerciseId(mCurrentExercise.getID())
                 .addTrainingId(mCurrentTraining.getID())
                 .addVolume("")
-                .addWeight(mExerciseWeightLastDay)
+                .addWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar)
                 .build();
         mCurrentTrainingContent.dbSave(DB);
 
@@ -675,10 +730,15 @@ public class ActivityTraining extends AppCompatActivity {
                     .setCancelable(false)
                     .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            List<Training> trainings=DB.getLastTrainingsByDates(mCurrentTraining.getDayString());
+
                             mCurrentTrainingContent.dbDelete(DB);
                             mCurrentTraining.dbDelete(DB);
 
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
+                            if (!trainings.isEmpty()) {
+                                intent.putExtra("id", trainings.get(0).getID());
+                            }
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
