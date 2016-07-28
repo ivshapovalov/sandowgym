@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -43,7 +43,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
         showWeightChangeCalendarList();
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -70,7 +70,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void btWeightChangeCalendarListAdd_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -82,10 +82,10 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<WeightChangeCalendar>();
 
-        if (Common.dbCurrentUser == null) {
+        if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(Common.dbCurrentUser.getID());
+            weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(dbCurrentUser.getID());
         }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableWeightChangeCalendarList);
@@ -175,7 +175,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     private void rowWeightChangeCalendar_onClick(final TableRow v) {
 
-        Common.blink(v);
+        blink(v);
 
         int id = v.getId() % NUMBER_OF_VIEWS;
 
@@ -188,7 +188,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -198,7 +198,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -207,7 +207,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void btDeleteWeightChangeCalendarList_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите удалить все изменения весов пользователия?")
@@ -215,8 +215,8 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        if (Common.dbCurrentUser != null) {
-                            DB.deleteAllWeightChangeCalendarOfUser(Common.dbCurrentUser.getID());
+                        if (dbCurrentUser != null) {
+                            DB.deleteAllWeightChangeCalendarOfUser(dbCurrentUser.getID());
                             showWeightChangeCalendarList();
                         }
 

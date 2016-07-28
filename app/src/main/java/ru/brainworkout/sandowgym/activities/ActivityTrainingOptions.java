@@ -10,7 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 
 
 public class ActivityTrainingOptions extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
         getPreferencesFromFile();
         setPreferencesOnScreen();
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -46,7 +46,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
             }
         }
 
-        Common.blink(view);
+        blink(view);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
@@ -61,7 +61,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
     public void buttonCancel_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         this.finish();
 
     }

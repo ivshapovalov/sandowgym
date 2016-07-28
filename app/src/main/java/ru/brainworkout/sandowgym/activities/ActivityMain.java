@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -43,7 +43,7 @@ public class ActivityMain extends AppCompatActivity {
         showElementsOnScreen();
 
         defineCurrentUser();
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
     private Date getLastDateOfWeightChange() {
@@ -75,11 +75,11 @@ public class ActivityMain extends AppCompatActivity {
 
     private void defineCurrentUser() {
 
-        if (Common.dbCurrentUser == null) {
+        if (dbCurrentUser == null) {
             List<User> userList = DB.getAllUsers();
             if (userList.size() == 1) {
                 User currentUser=userList.get(0);
-                Common.dbCurrentUser = currentUser;
+                dbCurrentUser = currentUser;
                 currentUser.setIsCurrentUser(1);
                 currentUser.dbSave(DB);
             } else {
@@ -87,7 +87,7 @@ public class ActivityMain extends AppCompatActivity {
                 for (User user:userList
                         ) {
                     if (user.isCurrentUser()==1) {
-                        Common.dbCurrentUser =user;
+                        dbCurrentUser =user;
                         break;
                     }
                 }
@@ -143,7 +143,7 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     private boolean isUserDefined() {
-        if (Common.dbCurrentUser ==null) {
+        if (dbCurrentUser ==null) {
             Toast toast = Toast.makeText(ActivityMain.this,
                     "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
             toast.show();
@@ -155,10 +155,10 @@ public class ActivityMain extends AppCompatActivity {
     private boolean isDBNotEmpty() {
 
         List<Exercise> list=new ArrayList<Exercise>();
-        if (Common.dbCurrentUser == null) {
+        if (dbCurrentUser == null) {
             //list = DB.getAllActiveExercises();
         } else {
-            list = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
+            list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
         }
         if (list.size() == 0) {
             Toast toast = Toast.makeText(ActivityMain.this,
@@ -192,10 +192,10 @@ public class ActivityMain extends AppCompatActivity {
                             DB.onUpgrade(dbSQL, 1, 2);
 
 
-                            if (Common.dbCurrentUser !=null) {
+                            if (dbCurrentUser !=null) {
                                 setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf("(")));
                             }
-                            Common.dbCurrentUser =null;
+                            dbCurrentUser =null;
                         } catch (Exception e) {
                             Toast toast = Toast.makeText(ActivityMain.this,
                                     "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);

@@ -16,11 +16,10 @@ import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Common extends AppCompatActivity{
+public class Common{
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
-    public final DatabaseManager DB = new DatabaseManager(this);
 
     public static Date ConvertStringToDate(final String date, final String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);

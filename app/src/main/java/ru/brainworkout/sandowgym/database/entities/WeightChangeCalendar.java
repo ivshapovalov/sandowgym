@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -42,7 +42,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
         if (_day == null) {
             sDate = "";
         } else {
-            SimpleDateFormat dateformat = new SimpleDateFormat(Common.DATE_FORMAT_STRING);
+            SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
             sDate = dateformat.format(_day);
         }
         return sDate;
@@ -54,7 +54,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
 
     public void setDayString(String _day) {
 
-        this._day = Common.ConvertStringToDate(_day, Common.DATE_FORMAT_STRING);
+        this._day = ConvertStringToDate(_day, DATE_FORMAT_STRING);
 
     }
 
@@ -96,7 +96,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
             return this;
         }
         public Builder addDay(String day) {
-            this._day = Common.ConvertStringToDate(day, Common.DATE_FORMAT_STRING);
+            this._day = ConvertStringToDate(day, DATE_FORMAT_STRING);
             return this;
         }
 

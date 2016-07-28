@@ -12,7 +12,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
@@ -40,7 +40,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
     private void defineCurrentWeightChangeCalendar(int mCurrentId, String mCurrentDate) {
@@ -57,7 +57,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
                 }
             } else {
                 try {
-                    mCurrentWeightChangeCalendar.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
+                    mCurrentWeightChangeCalendar.setDay(ConvertStringToDate(mCurrentDate, DATE_FORMAT_STRING));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -93,7 +93,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void tvDay_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         fillWeightChangeCalendarFromScreen();
         if (mCurrentWeightChangeCalendar.getWeight()!=0) {
@@ -110,7 +110,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         if (mCurrentWeightChangeCalendar.getDay() == null) {
             intent.putExtra("CurrentDate", "");
         } else {
-            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), Common.DATE_FORMAT_STRING));
+            intent.putExtra("CurrentDate", ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), DATE_FORMAT_STRING));
         }
 
         startActivity(intent);
@@ -139,7 +139,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
             if (mCurrentWeightChangeCalendar.getDay() == null) {
                 tvDay.setText("");
             } else {
-                tvDay.setText(Common.ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), Common.DATE_FORMAT_STRING));
+                tvDay.setText(ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), DATE_FORMAT_STRING));
             }
         }
 
@@ -154,7 +154,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
         intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -195,7 +195,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         fillWeightChangeCalendarFromScreen();
 
         mCurrentWeightChangeCalendar.dbSave(DB);
@@ -209,7 +209,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         mCurrentWeightChangeCalendar.dbDelete(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);

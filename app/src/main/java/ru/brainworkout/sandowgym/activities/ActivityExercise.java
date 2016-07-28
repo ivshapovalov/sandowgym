@@ -10,8 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -46,7 +45,7 @@ public class ActivityExercise extends AppCompatActivity {
         showExerciseOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -125,7 +124,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
         intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -182,7 +181,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         fillExerciseFromScreen();
 
         mCurrentExercise.dbSave(DB);
@@ -196,7 +195,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         mCurrentExercise.dbDelete(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);

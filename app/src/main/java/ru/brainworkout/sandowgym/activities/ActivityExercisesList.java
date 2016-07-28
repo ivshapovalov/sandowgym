@@ -18,7 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
@@ -44,7 +44,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         showExercises();
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -71,7 +71,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void btExercisesAdd_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -80,7 +80,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void bt_ExercisesFillDefault_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         List<Exercise> exercises = CreateDefaultExercises();
         for (Exercise ex : exercises) {
@@ -96,10 +96,10 @@ public class ActivityExercisesList extends AppCompatActivity {
 
         List<Exercise> exercises = new ArrayList<Exercise>();
 
-        if (Common.dbCurrentUser == null) {
+        if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            exercises = DB.getAllExercisesOfUser(Common.dbCurrentUser.getID());
+            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getID());
         }
 
 
@@ -180,7 +180,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     private void rowExercise_onClick(final TableRow v) {
 
-        Common.blink(v);
+        blink(v);
 
         int id = v.getId() % NUMBER_OF_VIEWS;
 
@@ -193,7 +193,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -203,7 +203,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -212,7 +212,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void btDeleteAllExercises_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите удалить все упражения пользователя?")
@@ -220,8 +220,8 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        if (Common.dbCurrentUser != null) {
-                            DB.deleteAllExercisesOfUser(Common.dbCurrentUser.getID());
+                        if (dbCurrentUser != null) {
+                            DB.deleteAllExercisesOfUser(dbCurrentUser.getID());
                             showExercises();
                         }
 

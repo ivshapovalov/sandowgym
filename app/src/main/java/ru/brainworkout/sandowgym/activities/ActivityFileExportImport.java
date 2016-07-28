@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.*;
-import ru.brainworkout.sandowgym.common.*;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
@@ -60,7 +60,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         updateScreen();
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -444,7 +444,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btClose_onClick(View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -453,13 +453,13 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void tvDayFrom_onClick(View view) {
 
-        Common.blink(view);
+        blink(view);
         day_onClick(true);
     }
 
     public void tvDayTo_onClick(View view) {
 
-        Common.blink(view);
+        blink(view);
         day_onClick(false);
     }
 
@@ -478,14 +478,14 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btImportFromFile_onClick(View view) {
 
-        Common.blink(view);
+        blink(view);
         loadFromFile();
 
     }
 
     public void btExportToFile_onClick(View view) {
 
-        Common.blink(view);
+        blink(view);
         if (mDateFrom == null || "".equals(mDateFrom)) {
             mDateFrom = "0000-00-00";
         }
@@ -527,7 +527,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btDayFromClear_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
         if (tvDayFrom != null) {
@@ -538,7 +538,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btDayToClear_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {

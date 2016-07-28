@@ -31,7 +31,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
@@ -127,14 +127,14 @@ public class ActivityTraining extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
     private void updateCurrentWeightOfTrainingContent() {
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
-        if (Common.dbCurrentUser != null) {
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(Common.dbCurrentUser.getID(),
-                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
+        if (dbCurrentUser != null) {
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
+                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
         if (mWeightChangeCalendarList.size() == 1) {
             int mExerciseWeightLastDay;
@@ -169,7 +169,7 @@ public class ActivityTraining extends AppCompatActivity {
                 }
             } else {
                 try {
-                    mCurrentTraining.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
+                    mCurrentTraining.setDay(ConvertStringToDate(mCurrentDate, DATE_FORMAT_STRING));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -203,7 +203,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeDefault_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {
                 int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
@@ -218,7 +218,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLastDay_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
         if (etVolume != null) {
@@ -233,7 +233,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btOptions_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityTrainingOptions.class);
 
@@ -304,7 +304,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllExercisesOfTraining() {
 
-        mActiveExercises = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
+        mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
         mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
 
         for (TrainingContent tr : mTrainingContentList
@@ -355,8 +355,8 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllActiveExercises() {
 
-        if (Common.dbCurrentUser != null) {
-            mActiveExercises = DB.getAllActiveExercisesOfUser(Common.dbCurrentUser.getID());
+        if (dbCurrentUser != null) {
+            mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
             mTrainingContentList = new ArrayList<>();
 
             Exercise ex1;
@@ -375,11 +375,11 @@ public class ActivityTraining extends AppCompatActivity {
         int mExerciseWeightLastDay = 0;
         List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
-        if (Common.dbCurrentUser != null) {
+        if (dbCurrentUser != null) {
 //            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
 //                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(Common.dbCurrentUser.getID(),
-                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
+                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
         if (mWeightChangeCalendarList.size() == 1) {
             try {
@@ -452,9 +452,9 @@ public class ActivityTraining extends AppCompatActivity {
         if (btYesterdayVolume != null) {
             List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
 
-            if (Common.dbCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
-                        Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
+            if (dbCurrentUser != null) {
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
+                        ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {
                 try {
@@ -539,14 +539,14 @@ public class ActivityTraining extends AppCompatActivity {
             if (mCurrentTraining.getDay() == null) {
                 etDay.setText("");
             } else {
-                etDay.setText(Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
+                etDay.setText(ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
             }
         }
     }
 
     public void btClose_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
         intent.putExtra("id", mCurrentTraining.getID());
@@ -570,7 +570,7 @@ public class ActivityTraining extends AppCompatActivity {
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
 
-            Date d = Common.ConvertStringToDate(String.valueOf(tvDay.getText()), Common.DATE_FORMAT_STRING);
+            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()), DATE_FORMAT_STRING);
 
             if (d != null) {
                 try {
@@ -614,7 +614,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         saveTraining();
 
     }
@@ -666,7 +666,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         if (!mTrainingIsNew) {
 
@@ -688,7 +688,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void tvDay_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
 
@@ -700,7 +700,7 @@ public class ActivityTraining extends AppCompatActivity {
         if (mCurrentTraining.getDay() == null) {
             intent.putExtra("CurrentDate", "");
         } else {
-            intent.putExtra("CurrentDate", Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
+            intent.putExtra("CurrentDate", ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
         }
         intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
 
@@ -809,25 +809,25 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLeft_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         VolumeChange(-1 * mPlusMinusButtonValue);
     }
 
     public void btVolumeRight_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         VolumeChange(mPlusMinusButtonValue);
     }
 

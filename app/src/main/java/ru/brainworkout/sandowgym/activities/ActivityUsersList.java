@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -41,7 +41,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
         showUsers();
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -68,7 +68,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void btUsersAdd_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -143,7 +143,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     private void rowUser_onClick(final TableRow v) {
 
-        Common.blink(v);
+        blink(v);
 
         int id = v.getId() % NUMBER_OF_VIEWS;
 
@@ -156,7 +156,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -165,7 +165,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

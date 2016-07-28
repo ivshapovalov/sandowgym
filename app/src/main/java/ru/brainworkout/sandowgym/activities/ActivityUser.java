@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.common.Common;
+import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.User;
@@ -50,7 +50,7 @@ public class ActivityUser extends AppCompatActivity {
         showUserOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        Common.setTitleOfActivity(this);
+        setTitleOfActivity(this);
     }
 
 
@@ -102,7 +102,7 @@ public class ActivityUser extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
         intent.putExtra("id", mCurrentUser.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -125,7 +125,7 @@ public class ActivityUser extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
         getPropertiesFromScreen();
 
         mCurrentUser.dbSave(DB);
@@ -142,7 +142,7 @@ public class ActivityUser extends AppCompatActivity {
     private void setDBCurrentUser() {
 
         if (mCurrentUser.isCurrentUser() == 1) {
-            Common.dbCurrentUser =mCurrentUser;
+            dbCurrentUser =mCurrentUser;
             List<User> userList = DB.getAllUsers();
 
             for (User user : userList) {
@@ -154,8 +154,8 @@ public class ActivityUser extends AppCompatActivity {
 
             }
         } else {
-            if (Common.dbCurrentUser!=null && Common.dbCurrentUser.equals(mCurrentUser)) {
-                Common.dbCurrentUser=null;
+            if (dbCurrentUser!=null && dbCurrentUser.equals(mCurrentUser)) {
+                dbCurrentUser=null;
             }
 
         }
@@ -164,7 +164,7 @@ public class ActivityUser extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        Common.blink(view);
+        blink(view);
 
 
         new AlertDialog.Builder(this)
@@ -188,11 +188,11 @@ public class ActivityUser extends AppCompatActivity {
 
                         mCurrentUser.dbDelete(DB);
 
-                        if (mCurrentUser.equals(Common.dbCurrentUser)) {
+                        if (mCurrentUser.equals(dbCurrentUser)) {
                             List<User> userList = DB.getAllUsers();
                             if (userList.size() == 1) {
                                 User currentUser=userList.get(0);
-                                Common.dbCurrentUser = currentUser;
+                                dbCurrentUser = currentUser;
                                 currentUser.setIsCurrentUser(1);
                                 currentUser.dbSave(DB);
                             }
