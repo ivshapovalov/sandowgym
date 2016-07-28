@@ -78,7 +78,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tv_ID"
+                            android:id="@+id/tvID"
                             android:layout_span="5"
                             style="@android:style/TextAppearance.Small"/>
 
@@ -86,7 +86,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="IS ACTIVE"
-                            android:id="@+id/cb_IsActive"
+                            android:id="@+id/cbIsActive"
                             android:layout_span="15"
                             style="@android:style/TextAppearance.Small"
                             android:enabled="true"
@@ -111,7 +111,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
                             android:ems="10"
-                            android:id="@+id/et_Name"
+                            android:id="@+id/etName"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:textColor="@color/text_color" />
@@ -135,7 +135,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
-                            android:id="@+id/et_Explanation"
+                            android:id="@+id/etExplanation"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:layout_gravity="bottom"
@@ -158,7 +158,7 @@
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/et_Picture"
+                            android:id="@+id/etPicture"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:layout_gravity="bottom"
@@ -182,7 +182,7 @@
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/et_VolumeDefault"
+                            android:id="@+id/etVolumeDefault"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:textColor="@color/text_color" />

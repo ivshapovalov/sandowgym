@@ -185,7 +185,7 @@ public class ActivityExercisesList extends AppCompatActivity {
         int id = v.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
-        intent.putExtra("id", id);
+        intent.putExtra("CurrentExerciseID", id);
         intent.putExtra("IsNew", false);
         startActivity(intent);
 
@@ -235,7 +235,7 @@ public class ActivityExercisesList extends AppCompatActivity {
         int i = 0;
         int maxNum = DB.getExerciseMaxNumber() + 1;
         //1
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -247,7 +247,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //2
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -259,7 +259,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //3
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -272,7 +272,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //4
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -284,7 +284,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //5
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -296,7 +296,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //6
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -309,7 +309,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //7
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -323,7 +323,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //8
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -336,7 +336,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //9
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -349,7 +349,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //10
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -361,7 +361,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //11
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -375,7 +375,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //12
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -388,7 +388,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //13
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -401,7 +401,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //14
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -415,7 +415,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //15
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -429,7 +429,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //16
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -442,7 +442,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //17
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -454,7 +454,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //18
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(
@@ -467,7 +467,7 @@ public class ActivityExercisesList extends AppCompatActivity {
                 .build());
 
         //19
-        exercises.add(new Exercise.ExerciseBuilder(maxNum + (i++))
+        exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
                 .addName("Сандов №" + String.valueOf(i))
                 .addExplanation(

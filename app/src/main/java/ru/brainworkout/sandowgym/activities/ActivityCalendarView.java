@@ -15,13 +15,14 @@ import ru.brainworkout.sandowgym.R;
 
 public class ActivityCalendarView extends AppCompatActivity {
 
-    private boolean mTrainingIsNew;
+
     private boolean mIsBeginDate;
 
     private String mOldDateFrom;
     private String mNewDate;
     private String mOldDateTo;
 
+    private boolean mCallerIsNew;
     private int mCallerTrainingID;
     private int mCallerExerciseID;
     private int mCallerWeightChangeCalendarID;
@@ -44,7 +45,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         Intent intent = getIntent();
 
         mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
-        mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
+        mCallerIsNew = intent.getBooleanExtra("IsNew", false);
         mCallerActivity = intent.getStringExtra("CurrentActivity");
         mCallerTrainingID = intent.getIntExtra("CurrentTrainingID", 0);
         mCallerExerciseID = intent.getIntExtra("CurrentExerciseID",0);
@@ -118,7 +119,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         }
 
         Intent intent = new Intent(ActivityCalendarView.this, myClass);
-        intent.putExtra("IsNew", mTrainingIsNew);
+        intent.putExtra("IsNew", mCallerIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
         intent.putExtra("CurrentTrainingID", mCallerTrainingID);
         intent.putExtra("CurrentExerciseID", mCallerExerciseID);
@@ -146,10 +147,11 @@ public class ActivityCalendarView extends AppCompatActivity {
             e.printStackTrace();
         }
         Intent intent = new Intent(ActivityCalendarView.this, myClass);
-        intent.putExtra("IsNew", mTrainingIsNew);
+        intent.putExtra("IsNew", mCallerIsNew);
         intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentID", mCallerTrainingID);
+        intent.putExtra("CurrentTrainingID", mCallerTrainingID);
         intent.putExtra("CurrentExerciseID", mCallerExerciseID);
+        intent.putExtra("CurrentWeightChangeCalendarID", mCallerWeightChangeCalendarID);
         intent.putExtra("CurrentDate", mOldDateFrom);
         intent.putExtra("CurrentDateTo", mOldDateTo);
 

@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.common.Common;
+import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
@@ -83,9 +84,21 @@ public class ActivityTraining extends AppCompatActivity {
 
         String mCurrentDate = intent.getStringExtra("CurrentDate");
 
+        boolean weightIsNeedToUpdate = false;
+        if (mTrainingIsNew) {
+            weightIsNeedToUpdate = true;
+        }
+
         int id = intent.getIntExtra("CurrentTrainingID", 0);
 
         defineCurrentTraining(id, mCurrentDate);
+
+        if (weightIsNeedToUpdate || (mCurrentDate != null && mCurrentTraining != null && !mCurrentDate.equals(mCurrentTraining.getDayString()))) {
+            updateCurrentWeightOfTrainingContent();
+            if (mCurrentDate != null) {
+                mCurrentTraining.setDayString(mCurrentDate);
+            }
+        }
 
         showTrainingOnScreen();
 
@@ -112,17 +125,40 @@ public class ActivityTraining extends AppCompatActivity {
             saveAndGoToNewExercise(exID);
         }
 
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Common.setTitleOfActivity(this);
     }
 
+    private void updateCurrentWeightOfTrainingContent() {
+        List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
+        if (Common.dbCurrentUser != null) {
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(Common.dbCurrentUser.getID(),
+                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
+        }
+        if (mWeightChangeCalendarList.size() == 1) {
+            int mExerciseWeightLastDay;
+            try {
+                mExerciseWeightLastDay = mWeightChangeCalendarList.get(0).getWeight();
+            } catch (Exception e) {
+                mExerciseWeightLastDay = 0;
+            }
+            List<TrainingContent> trainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
+            for (TrainingContent trainingContent : trainingContentList
+                    ) {
+                if (trainingContent.getWeight() == 0) {
+                    trainingContent.setWeight(mExerciseWeightLastDay);
+                    trainingContent.dbSave(DB);
+                }
+            }
+        }
+
+    }
 
     private void defineCurrentTraining(int mCurrentId, String mCurrentDate) {
         if (mTrainingIsNew) {
 
-            mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
+            mCurrentTraining = new Training.Builder(DB).build();
             //Calendar calendar = Calendar.getInstance();
             if ((mCurrentDate == null)) {
                 String cal = (Calendar.getInstance().getTime()).toLocaleString();
@@ -142,22 +178,17 @@ public class ActivityTraining extends AppCompatActivity {
         } else {
 
             if (mCurrentId == 0) {
-                mCurrentTraining = new Training.TrainingBuilder(DB.getTrainingMaxNumber() + 1).build();
+                mCurrentTraining = new Training.Builder(DB).build();
             } else {
 
                 try {
-                    mCurrentTraining = DB.getTraining(mCurrentId);
+                    mCurrentTraining = Training.getTrainingFromDB(DB, mCurrentId);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     //возможно удалили элемент
                     tableDoesNotContainElementException.printStackTrace();
                 }
             }
-            try {
-                if ((mCurrentDate != null)) {
-                    mCurrentTraining.setDayString(mCurrentDate);
-                }
-            } catch (Exception e) {
-            }
+
         }
     }
 
@@ -209,6 +240,7 @@ public class ActivityTraining extends AppCompatActivity {
         startActivity(intent);
 
     }
+
     private void setNextExercise() {
 
         if (mActiveExercises.size() != 0) {
@@ -292,7 +324,7 @@ public class ActivityTraining extends AppCompatActivity {
                 //добавим в список упражнений упражнение старое
                 Exercise ex = null;
                 try {
-                    ex = DB.getExercise(id_ex);
+                    ex = Exercise.getExerciseFromDB(DB, id_ex);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     tableDoesNotContainElementException.printStackTrace();
                 }
@@ -342,19 +374,22 @@ public class ActivityTraining extends AppCompatActivity {
     private void createNewTrainingContent() {
         int mExerciseWeightLastDay = 0;
         List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
+        List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (Common.dbCurrentUser != null) {
-            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
-                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
+//            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(Common.dbCurrentUser.getID(),
+//                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING), mCurrentExercise.getID());
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(Common.dbCurrentUser.getID(),
+                    Common.ConvertDateToString(mCurrentTraining.getDay(), Common.DATE_FORMAT_STRING));
         }
-        if (mTrainingContentNotNullVolume.size() == 1) {
+        if (mWeightChangeCalendarList.size() == 1) {
             try {
-                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
+                mExerciseWeightLastDay = mWeightChangeCalendarList.get(0).getWeight();
             } catch (Exception e) {
                 mExerciseWeightLastDay = 0;
             }
         }
 
-        mCurrentTrainingContent = new TrainingContent.TrainingContentBuilder(DB.getTrainingContentMaxNumber() + 1)
+        mCurrentTrainingContent = new TrainingContent.Builder(DB)
                 .addExerciseId(mCurrentExercise.getID())
                 .addTrainingId(mCurrentTraining.getID())
                 .addVolume("")
@@ -445,7 +480,7 @@ public class ActivityTraining extends AppCompatActivity {
     private void showTrainingContentOnScreen(final int ex_id) {
 
         try {
-            mCurrentExercise = DB.getExercise(ex_id);
+            mCurrentExercise = Exercise.getExerciseFromDB(DB, ex_id);
         } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
             tableDoesNotContainElementException.printStackTrace();
         }
@@ -614,7 +649,12 @@ public class ActivityTraining extends AppCompatActivity {
             EditText etWeight = (EditText) findViewById(R.id.etWeight);
             if (etWeight != null) {
 
-                mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
+                String weight = String.valueOf(etWeight.getText());
+                if (weight.trim().equals("")) {
+                    mCurrentTrainingContent.setWeight(0);
+                } else {
+                    mCurrentTrainingContent.setWeight(Integer.parseInt(weight));
+                }
             }
         }
         mCurrentTrainingContent.dbSave(DB);
@@ -835,17 +875,17 @@ public class ActivityTraining extends AppCompatActivity {
                 mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
             }
 
-            Button butPrevious= createNewExerciseButtonInButtonsList(trow, btWidth,  params, "<-",
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                btTrainingListPrevious_onClick((TextView) v);
-                            }
+            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<-",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            btTrainingListPrevious_onClick((TextView) v);
                         }
-                );
+                    }
+            );
 
             for (int mCount = mNumBegin; mCount <= mNumEnd; mCount++) {
-                Button butNumber= createNewExerciseButtonInButtonsList(trow, btWidth,  params, String.valueOf(mCount), new View.OnClickListener() {
+                Button butNumber = createNewExerciseButtonInButtonsList(trow, btWidth, params, String.valueOf(mCount), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         btTrainingList_onClick((TextView) v);
@@ -855,10 +895,10 @@ public class ActivityTraining extends AppCompatActivity {
                 if (mCount - 1 == mCurrentExerciseNumberInList) {
                     butNumber.setTextColor(Color.RED);
                     butNumber.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-               }
+                }
             }
 
-            Button butNext= createNewExerciseButtonInButtonsList(trow, btWidth,  params, "->",
+            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, "->",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -870,7 +910,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     }
 
-    private Button createNewExerciseButtonInButtonsList(TableRow trow, int btWidth, TableRow.LayoutParams params, String mName,View.OnClickListener mListener ) {
+    private Button createNewExerciseButtonInButtonsList(TableRow trow, int btWidth, TableRow.LayoutParams params, String mName, View.OnClickListener mListener) {
 
         Button but = new Button(this);
         but.setLayoutParams(params);

@@ -1,17 +1,17 @@
 package ru.brainworkout.sandowgym.database.entities;
 
 
-import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class User extends AbstractEntity implements SaveToDB,DeleteFromDb {
+public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb {
     private int _id;
     private String _name;
     private int _isCurrentUser;
 
-    private User(UserBuilder builder) {
+    private User(Builder builder) {
 
         this._id = builder._id;
         this._name = builder._name;
@@ -83,21 +83,21 @@ public class User extends AbstractEntity implements SaveToDB,DeleteFromDb {
         return _id;
     }
 
-    public static class UserBuilder extends AbstractEntity {
+    public static class Builder extends AbstractEntity {
 
         private String _name;
         private int _isCurrentUser;
 
-        public UserBuilder(int id) {
+        public Builder(int id) {
             this._id = id;
         }
 
-        public UserBuilder addName(String name) {
+        public Builder addName(String name) {
             this._name = name;
             return this;
         }
 
-        public UserBuilder addIsCurrentUser(int isCurrentUser) {
+        public Builder addIsCurrentUser(int isCurrentUser) {
             this._isCurrentUser = isCurrentUser;
             return this;
         }

@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context=".activities.ActivityExercise">
-
+    tools:context=".activities.ActivityWeightChangeCalendar">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -78,7 +76,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tv_ID"
+                            android:id="@+id/tvID"
                             android:layout_span="5"
                             style="@android:style/TextAppearance.Small"/>
 
@@ -123,7 +121,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
-                            android:id="@+id/et_Weight"
+                            android:id="@+id/etWeight"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:layout_gravity="bottom"
@@ -132,10 +130,6 @@
 
                 </TableLayout>
             </ScrollView>
-
-
-
     </TableLayout>
-
 </RelativeLayout>
 

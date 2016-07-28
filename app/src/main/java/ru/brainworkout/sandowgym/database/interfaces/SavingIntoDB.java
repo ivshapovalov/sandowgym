@@ -2,7 +2,9 @@ package ru.brainworkout.sandowgym.database.interfaces;
 
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
-public interface DeleteFromDb {
+public interface SavingIntoDB {
 
-    void dbDelete(DatabaseManager db);
+    void dbSave(DatabaseManager db);
+
+
 }

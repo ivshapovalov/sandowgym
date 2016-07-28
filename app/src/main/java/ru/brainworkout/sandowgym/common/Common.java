@@ -1,22 +1,28 @@
 package ru.brainworkout.sandowgym.common;
 
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.User;
+import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Common {
+public class Common extends AppCompatActivity{
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
+    public final DatabaseManager DB = new DatabaseManager(this);
 
-    public static Date ConvertStringToDate(final String date,final String format) {
+    public static Date ConvertStringToDate(final String date, final String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         Date d = null;
         try {
@@ -28,13 +34,14 @@ public class Common {
         return d;
     }
 
-    public static String ConvertDateToString(final Date date,final String format) {
+    public static String ConvertDateToString(final Date date, final String format) {
 
         SimpleDateFormat dateformat = new SimpleDateFormat(format);
-        String sDate="";
+        String sDate = "";
         try {
             sDate = dateformat.format(date);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return sDate;
 
@@ -50,11 +57,12 @@ public class Common {
     }
 
 
-
     public static void setTitleOfActivity(Activity currentActivity) {
-        if (Common.dbCurrentUser !=null) {
+        if (Common.dbCurrentUser != null) {
             currentActivity.setTitle(currentActivity.getTitle() + " : " + Common.dbCurrentUser.getName() + "");
         }
     }
+
+
 
 }

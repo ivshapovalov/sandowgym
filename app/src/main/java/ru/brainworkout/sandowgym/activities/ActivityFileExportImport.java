@@ -324,7 +324,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String day = s.substring(0, s.indexOf("("));
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
-                Training training = new Training.TrainingBuilder(Integer.valueOf(id)).addDay(day).build();
+                Training training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
                 mTrainingsList.add(training);
 
             }
@@ -336,7 +336,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
                  String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
 
-                Exercise exercise = new Exercise.ExerciseBuilder(Integer.valueOf(id))
+                Exercise exercise = new Exercise.Builder(Integer.valueOf(id))
                         .addName(name)
                         .addVolumeDefault(def_volume)
                         .build();
@@ -394,7 +394,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
                 }
 
-                TrainingContent trainingContent = new TrainingContent.TrainingContentBuilder(++maxNum)
+                TrainingContent trainingContent = new TrainingContent.Builder(++maxNum)
                         .addExerciseId(curExercise.getID())
                         .addTrainingId(curTraining.getID())
                         .build();

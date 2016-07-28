@@ -1,11 +1,11 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
+public class TrainingContent extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
 
     private int _id_exercise;
     private int _id_training;
@@ -13,7 +13,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB
     private String _volume="";
     private int _weight=0; //кг
 
-    private TrainingContent(TrainingContentBuilder builder) {
+    private TrainingContent(Builder builder) {
 
         this._id = builder._id;
         this._id_exercise=builder._id_exercise;
@@ -80,7 +80,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB
 
     }
 
-    public static class TrainingContentBuilder extends AbstractEntity {
+    public static class Builder extends AbstractEntity {
 
         private int _id_exercise;
         private int _id_training;
@@ -88,27 +88,31 @@ public class TrainingContent extends AbstractEntityMultiUser implements SaveToDB
         private String _volume="";
         private int _weight=0; //кг
 
-        public TrainingContentBuilder(int id) {
+        public Builder(int id) {
             this._id = id;
         }
 
-        public TrainingContentBuilder addExerciseId(int idExercise) {
+        public Builder(DatabaseManager DB) {
+            this._id=DB.getTrainingContentMaxNumber() + 1;
+        }
+
+        public Builder addExerciseId(int idExercise) {
             this._id_exercise = idExercise;
             return this;
         }
-        public TrainingContentBuilder addTrainingId(int idTraining) {
+        public Builder addTrainingId(int idTraining) {
             this._id_training = idTraining;
             return this;
         }
-        public TrainingContentBuilder addComment(String comment) {
+        public Builder addComment(String comment) {
             this._comment = comment;
             return this;
         }
-        public TrainingContentBuilder addVolume(String volume) {
+        public Builder addVolume(String volume) {
             this._volume = volume;
             return this;
         }
-        public TrainingContentBuilder addWeight(int weight) {
+        public Builder addWeight(int weight) {
             this._weight = weight;
             return this;
         }

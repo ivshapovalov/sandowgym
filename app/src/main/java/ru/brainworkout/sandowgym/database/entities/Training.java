@@ -1,20 +1,22 @@
 package ru.brainworkout.sandowgym.database.entities;
 
+import android.content.Context;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ru.brainworkout.sandowgym.common.Common;
-import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Training extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
+public class Training extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
 
     private Date _day;
 
-    private Training(TrainingBuilder builder) {
+    private Training(Builder builder) {
 
         this._id = builder._id;
         this._day = builder._day;
@@ -73,20 +75,26 @@ public class Training extends AbstractEntityMultiUser implements SaveToDB,Delete
 
     }
 
+    public static Training getTrainingFromDB(DatabaseManager DB, int id) {
+        return DB.getTraining(id);
+    }
 
-    public static class TrainingBuilder extends AbstractEntity {
+    public static class Builder extends AbstractEntity {
 
         private Date _day;
 
-        public TrainingBuilder(int id) {
-            this._id = id;
+        public Builder(DatabaseManager DB) {
+            this._id = DB.getTrainingMaxNumber() + 1;
+        }
+        public Builder(int _id) {
+            this._id = _id;
         }
 
-        public TrainingBuilder addDay(Date day) {
+        public Builder addDay(Date day) {
             this._day = day;
             return this;
         }
-        public TrainingBuilder addDay(String day) {
+        public Builder addDay(String day) {
             this._day = Common.ConvertStringToDate(day, Common.DATE_FORMAT_STRING);
             return this;
         }

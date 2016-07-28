@@ -1,11 +1,11 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Exercise extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb {
+public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
 
     private int _is_active=1;
     private String _name="";
@@ -13,7 +13,7 @@ public class Exercise extends AbstractEntityMultiUser implements SaveToDB,Delete
     private String _volume_default="";
     private String _picture="--";
 
-    private Exercise(ExerciseBuilder builder) {
+    private Exercise(Builder builder) {
 
         this._id = builder._id;
         this._name = builder._name;
@@ -91,7 +91,7 @@ public class Exercise extends AbstractEntityMultiUser implements SaveToDB,Delete
 
     }
 
-    public static class ExerciseBuilder extends AbstractEntity {
+    public static class Builder extends AbstractEntity {
 
         private int _is_active=1;
         private String _name="";
@@ -99,32 +99,35 @@ public class Exercise extends AbstractEntityMultiUser implements SaveToDB,Delete
         private String _volume_default="";
         private String _picture="--";
 
-        public ExerciseBuilder(int id) {
+        public Builder(int id) {
             this._id = id;
         }
 
+        public Builder(DatabaseManager DB) {
+            this._id=DB.getExerciseMaxNumber() + 1;
+        }
 
-        public ExerciseBuilder addIsActive(int is_active) {
+        public Builder addIsActive(int is_active) {
             this._is_active = is_active;
             return this;
         }
 
-        public ExerciseBuilder addName(String name) {
+        public Builder addName(String name) {
             this._name = name;
             return this;
         }
 
-        public ExerciseBuilder addExplanation(String explanation) {
+        public Builder addExplanation(String explanation) {
             this._explanation = explanation;
             return this;
         }
 
-        public ExerciseBuilder addVolumeDefault(String volumeDefault) {
+        public Builder addVolumeDefault(String volumeDefault) {
             this._volume_default = volumeDefault;
             return this;
         }
 
-        public ExerciseBuilder addPicture(String picture) {
+        public Builder addPicture(String picture) {
             this._picture = picture;
             return this;
         }
@@ -138,6 +141,9 @@ public class Exercise extends AbstractEntityMultiUser implements SaveToDB,Delete
 
     }
 
+    public static Exercise getExerciseFromDB (DatabaseManager DB,int id) {
+        return DB.getExercise(id);
+    }
 
 }
 

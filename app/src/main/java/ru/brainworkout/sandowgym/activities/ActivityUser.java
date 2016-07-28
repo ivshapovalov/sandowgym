@@ -37,7 +37,7 @@ public class ActivityUser extends AppCompatActivity {
         boolean mUserIsNew = intent.getBooleanExtra("IsNew", false);
 
         if (mUserIsNew) {
-            mCurrentUser = new User.UserBuilder(DB.getUserMaxNumber() + 1).build();
+            mCurrentUser = new User.Builder(DB.getUserMaxNumber() + 1).build();
         } else {
             int id = intent.getIntExtra("id", 0);
             try {
@@ -56,7 +56,7 @@ public class ActivityUser extends AppCompatActivity {
 
     private void showUserOnScreen() {
 
-        int isCurrentID = getResources().getIdentifier("cb_IsCurrent", "id", getPackageName());
+        int isCurrentID = getResources().getIdentifier("cbIsCurrent", "id", getPackageName());
         CheckBox cbIsCurrent = (CheckBox) findViewById(isCurrentID);
         if (cbIsCurrent != null) {
             if (mCurrentUser.isCurrentUser() != 0) {
@@ -83,7 +83,7 @@ public class ActivityUser extends AppCompatActivity {
 
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -91,7 +91,7 @@ public class ActivityUser extends AppCompatActivity {
         }
 
         //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
+        int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
             etName.setText(mCurrentUser.getName());
@@ -113,7 +113,7 @@ public class ActivityUser extends AppCompatActivity {
     private void getPropertiesFromScreen() {
 
         //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
+        int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
 

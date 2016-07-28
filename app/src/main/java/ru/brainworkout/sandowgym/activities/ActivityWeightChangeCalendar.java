@@ -5,15 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.text.ParseException;
+import java.util.Calendar;
 
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.common.Common;
-import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
@@ -32,18 +31,11 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         setContentView(R.layout.activity_weight_change_calendar);
 
         Intent intent = getIntent();
-        boolean mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
+        mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
 
-        if (mWeightChangeCalendarIsNew) {
-            mCurrentWeightChangeCalendar = new WeightChangeCalendar.WeightChangeCalendarBuilder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
-        } else {
-            int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
-            try {
-                mCurrentWeightChangeCalendar = DB.getWeightChangeCalendar(id);
-            } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
-                tableDoesNotContainElementException.printStackTrace();
-            }
-        }
+        String mCurrentDate = intent.getStringExtra("CurrentDate");
+        int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
+        defineCurrentWeightChangeCalendar(id,mCurrentDate);
 
         showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -51,16 +43,69 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         Common.setTitleOfActivity(this);
     }
 
+    private void defineCurrentWeightChangeCalendar(int mCurrentId, String mCurrentDate) {
+        if (mWeightChangeCalendarIsNew) {
+
+            mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
+            //Calendar calendar = Calendar.getInstance();
+            if ((mCurrentDate == null)) {
+                String cal = (Calendar.getInstance().getTime()).toLocaleString();
+                try {
+                    mCurrentWeightChangeCalendar.setDay(Calendar.getInstance().getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    mCurrentWeightChangeCalendar.setDay(Common.ConvertStringToDate(mCurrentDate, Common.DATE_FORMAT_STRING));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+
+            try {
+
+            } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                tableDoesNotContainElementException.printStackTrace();
+            }
+
+            if (mCurrentId == 0) {
+                mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
+            } else {
+
+                try {
+                    mCurrentWeightChangeCalendar = DB.getWeightChangeCalendar(mCurrentId);
+                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                    //возможно удалили элемент
+                    tableDoesNotContainElementException.printStackTrace();
+                }
+            }
+            try {
+                if ((mCurrentDate != null)) {
+                    mCurrentWeightChangeCalendar.setDayString(mCurrentDate);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
     public void tvDay_onClick(final View view) {
 
         Common.blink(view);
+
+        fillWeightChangeCalendarFromScreen();
+        if (mCurrentWeightChangeCalendar.getWeight()!=0) {
+            saveCurrentWeightChangeCalendarToDB();
+        }
 
         Intent intent = new Intent(ActivityWeightChangeCalendar.this, ActivityCalendarView.class);
 
         intent.putExtra("IsNew", mWeightChangeCalendarIsNew);
         intent.putExtra("CurrentActivity", "ActivityWeightChangeCalendar");
         if (!mWeightChangeCalendarIsNew) {
-            intent.putExtra("CurrentWeightChangeCalendar", mCurrentWeightChangeCalendar.getID());
+            intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         }
         if (mCurrentWeightChangeCalendar.getDay() == null) {
             intent.putExtra("CurrentDate", "");
@@ -72,10 +117,15 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     }
 
+    private void saveCurrentWeightChangeCalendarToDB() {
+        mCurrentWeightChangeCalendar.dbSave(DB);
+        mWeightChangeCalendarIsNew=false;
+    }
+
     private void showWeightChangeCalendarOnScreen() {
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -83,14 +133,18 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         }
 
         //Имя
-        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
-        EditText etDay = (EditText) findViewById(mDayID);
-        if (etDay != null) {
-            etDay.setText(mCurrentWeightChangeCalendar.getDayString());
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView tvDay = (TextView) findViewById(mDayID);
+        if (tvDay != null) {
+            if (mCurrentWeightChangeCalendar.getDay() == null) {
+                tvDay.setText("");
+            } else {
+                tvDay.setText(Common.ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), Common.DATE_FORMAT_STRING));
+            }
         }
 
         //Вес
-        int mWeightID = getResources().getIdentifier("et_Weight", "id", getPackageName());
+        int mWeightID = getResources().getIdentifier("etWeight", "id", getPackageName());
         EditText etWeight = (EditText) findViewById(mWeightID);
         if (etWeight != null) {
             etWeight.setText(String.valueOf(mCurrentWeightChangeCalendar.getWeight()));
@@ -101,17 +155,17 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
     public void btClose_onClick(final View view) {
 
         Common.blink(view);
-        Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
         intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
 
-    private void fillExerciseFromScreen() {
+    private void fillWeightChangeCalendarFromScreen() {
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -120,16 +174,16 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         }
 
         //Day
-        int mDayID = getResources().getIdentifier("et_Day", "id", getPackageName());
-        EditText etDay = (EditText) findViewById(mDayID);
-        if (etDay != null) {
+        int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
+        TextView tvDay = (TextView) findViewById(mDayID);
+        if (tvDay != null) {
 
-            mCurrentWeightChangeCalendar.setDayString(String.valueOf(etDay.getText()));
+            mCurrentWeightChangeCalendar.setDayString(String.valueOf(tvDay.getText()));
 
         }
 
         //Weight
-        int WeightID = getResources().getIdentifier("et_Weight", "id", getPackageName());
+        int WeightID = getResources().getIdentifier("etWeight", "id", getPackageName());
         EditText etWeight = (EditText) findViewById(WeightID);
         if (etWeight != null) {
 
@@ -142,7 +196,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
     public void btSave_onClick(final View view) {
 
         Common.blink(view);
-        fillExerciseFromScreen();
+        fillWeightChangeCalendarFromScreen();
 
         mCurrentWeightChangeCalendar.dbSave(DB);
 

@@ -33,11 +33,11 @@ public class ActivityExercise extends AppCompatActivity {
         boolean mExerciseIsNew = intent.getBooleanExtra("IsNew", false);
 
         if (mExerciseIsNew) {
-            mCurrentExercise = new Exercise.ExerciseBuilder(DB.getExerciseMaxNumber() + 1).build();
+            mCurrentExercise = new Exercise.Builder(DB).build();
         } else {
-            int id = intent.getIntExtra("id", 0);
+            int id = intent.getIntExtra("CurrentExerciseID", 0);
             try {
-                mCurrentExercise = DB.getExercise(id);
+                mCurrentExercise = Exercise.getExerciseFromDB(DB,id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
@@ -52,7 +52,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     private void showExerciseOnScreen() {
 
-        int mIsActiveID = getResources().getIdentifier("cb_IsActive", "id", getPackageName());
+        int mIsActiveID = getResources().getIdentifier("cbIsActive", "id", getPackageName());
         CheckBox cbIsActive = (CheckBox) findViewById(mIsActiveID);
         if (cbIsActive != null) {
             if (mCurrentExercise.getIsActive() != 0) {
@@ -79,7 +79,7 @@ public class ActivityExercise extends AppCompatActivity {
 
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -87,28 +87,28 @@ public class ActivityExercise extends AppCompatActivity {
         }
 
         //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
+        int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
             etName.setText(mCurrentExercise.getName());
         }
 
         //Описание
-        int mExplanationID = getResources().getIdentifier("et_Explanation", "id", getPackageName());
+        int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
             etExplanation.setText(mCurrentExercise.getExplanation());
         }
 
         //Картинка
-        int mPictureID = getResources().getIdentifier("et_Picture", "id", getPackageName());
+        int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
             etPicture.setText(mCurrentExercise.getPicture());
         }
 
         //Количество по умолчанию
-        int mVolumeID = getResources().getIdentifier("et_VolumeDefault", "id", getPackageName());
+        int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
             etVolume.setText(mCurrentExercise.getVolumeDefault());
@@ -127,7 +127,7 @@ public class ActivityExercise extends AppCompatActivity {
 
         Common.blink(view);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("id", mCurrentExercise.getID());
+        intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -136,7 +136,7 @@ public class ActivityExercise extends AppCompatActivity {
     private void fillExerciseFromScreen() {
 
         //ID
-        int mID = getResources().getIdentifier("tv_ID", "id", getPackageName());
+        int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
@@ -145,7 +145,7 @@ public class ActivityExercise extends AppCompatActivity {
         }
 
         //Имя
-        int mNameID = getResources().getIdentifier("et_Name", "id", getPackageName());
+        int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
 
@@ -154,7 +154,7 @@ public class ActivityExercise extends AppCompatActivity {
         }
 
         //Описание
-        int mExplanationID = getResources().getIdentifier("et_Explanation", "id", getPackageName());
+        int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
 
@@ -163,7 +163,7 @@ public class ActivityExercise extends AppCompatActivity {
         }
 
         //Картинка
-        int mPictureID = getResources().getIdentifier("et_Picture", "id", getPackageName());
+        int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
 
@@ -171,7 +171,7 @@ public class ActivityExercise extends AppCompatActivity {
 
         }
         //Количество по умолчанию
-        int mVolumeID = getResources().getIdentifier("et_VolumeDefault", "id", getPackageName());
+        int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
 
@@ -188,7 +188,7 @@ public class ActivityExercise extends AppCompatActivity {
         mCurrentExercise.dbSave(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("id", mCurrentExercise.getID());
+        intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 

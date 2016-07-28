@@ -184,7 +184,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
         Common.blink(v);
         int id = v.getId() % NUMBER_OF_VIEWS;
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
-        intent.putExtra("CurrentID", id);
+        intent.putExtra("CurrentTrainingID", id);
         intent.putExtra("IsNew", false);
         startActivity(intent);
 

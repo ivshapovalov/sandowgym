@@ -5,19 +5,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ru.brainworkout.sandowgym.common.Common;
-import ru.brainworkout.sandowgym.database.interfaces.DeleteFromDb;
-import ru.brainworkout.sandowgym.database.interfaces.SaveToDB;
+import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
+import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 /**
  * Created by Ivan on 25.07.2016.
  */
-public class WeightChangeCalendar extends AbstractEntityMultiUser implements SaveToDB,DeleteFromDb{
+public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
     private Date _day;
     private int _weight;
 
-    private WeightChangeCalendar(WeightChangeCalendarBuilder weightChangeCalendarBuilder) {
+    private WeightChangeCalendar(Builder weightChangeCalendarBuilder) {
         this._id=weightChangeCalendarBuilder.getID();
         this._day = weightChangeCalendarBuilder._day;
         this._weight = weightChangeCalendarBuilder._weight;
@@ -82,25 +82,25 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
 
     }
 
-    public static class WeightChangeCalendarBuilder extends AbstractEntity {
+    public static class Builder extends AbstractEntity {
 
         private Date _day;
         private int _weight;
 
-        public WeightChangeCalendarBuilder(int id) {
+        public Builder(int id) {
             this._id = id;
         }
 
-        public WeightChangeCalendarBuilder addDay(Date day) {
+        public Builder addDay(Date day) {
             this._day = day;
             return this;
         }
-        public WeightChangeCalendarBuilder addDay(String day) {
+        public Builder addDay(String day) {
             this._day = Common.ConvertStringToDate(day, Common.DATE_FORMAT_STRING);
             return this;
         }
 
-        public WeightChangeCalendarBuilder addWeight(int _weight) {
+        public Builder addWeight(int _weight) {
             this._weight = _weight;
             return this;
         }
