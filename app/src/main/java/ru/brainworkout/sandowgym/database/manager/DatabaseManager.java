@@ -538,7 +538,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public List<WeightChangeCalendar> getAllWeightChangeCalendarOfUser(int user_id) {
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + " WHERE "
-                + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_ID;
+                + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
