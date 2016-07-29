@@ -117,10 +117,7 @@ public class ActivityTraining extends AppCompatActivity {
             updateDayOnScreen(mCurrentDate);
 
         }
-        if (weightIsNeedToUpdate || (mCurrentDate != null && mCurrentTraining != null && !mCurrentDate.equals(mCurrentDateOld))) {
 
-            updateCurrentWeightOfTrainingContent();
-        }
 
         updateButtonsListOfExercises();
 
@@ -128,6 +125,11 @@ public class ActivityTraining extends AppCompatActivity {
 
         if (exID != 0) {
             saveAndGoToNewExercise(exID);
+        }
+
+        if (weightIsNeedToUpdate || (mCurrentDate != null && mCurrentTraining != null && !mCurrentDate.equals(mCurrentDateOld))) {
+
+            updateCurrentWeightOfTrainingContent();
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -175,26 +177,23 @@ public class ActivityTraining extends AppCompatActivity {
             for (TrainingContent trainingContent : trainingContentList
                     ) {
                 if (trainingContent.getWeight() == 0) {
+                    trainingContent.setWeight(mWeightInCalendar);
                     if (mCurrentTrainingContent != null) {
                         if (trainingContent.getID() == mCurrentTrainingContent.getID()) {
                             trainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
-                            trainingContent.dbSave(DB);
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
-                    } else {
-                        trainingContent.setWeight(mWeightInCalendar);
-                        trainingContent.dbSave(DB);
                     }
-
+                    trainingContent.dbSave(DB);
                 }
             }
 
             int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
             TextView etWeight = (TextView) findViewById(mWeight);
             if (etWeight != null) {
-                String curWeight=String.valueOf(etWeight.getText());
-                if (curWeight.trim().equals("")) {
-                    etWeight.setText(String.valueOf(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar));
+
+                if (mCurrentTrainingContent != null) {
+                    etWeight.setText(String.valueOf(mCurrentTrainingContent.getWeight()));
                 }
             }
 
@@ -642,7 +641,7 @@ public class ActivityTraining extends AppCompatActivity {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
 
             } catch (Exception e) {
-
+                mCurrentTrainingContent.setVolume(String.valueOf(0));
             }
         }
 
@@ -652,7 +651,7 @@ public class ActivityTraining extends AppCompatActivity {
                 mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
 
             } catch (Exception e) {
-
+                mCurrentTrainingContent.setWeight(0);
             }
         }
 
@@ -748,6 +747,9 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void tvDay_onClick(final View view) {
 
+        getPropertiesFromScreen();
+        mCurrentTrainingContent.dbSave(DB);
+        mCurrentTraining.dbSave(DB);
         blink(view);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
