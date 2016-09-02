@@ -210,6 +210,14 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     }
 
+    public void onBackPressed() {
+
+        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
     public void btDeleteAllExercises_onClick(final View view) {
 
         blink(view);

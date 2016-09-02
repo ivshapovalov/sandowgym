@@ -110,6 +110,7 @@ public class ActivityUser extends AppCompatActivity {
 
     }
 
+
     private void getPropertiesFromScreen() {
 
         //Имя

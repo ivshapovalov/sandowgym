@@ -1,5 +1,7 @@
 package ru.brainworkout.sandowgym.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -166,6 +168,14 @@ public class ActivityUsersList extends AppCompatActivity {
     public void buttonHome_onClick(final View view) {
 
         blink(view);
+        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    public void onBackPressed() {
+
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

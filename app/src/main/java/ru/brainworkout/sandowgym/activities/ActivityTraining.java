@@ -184,6 +184,9 @@ public class ActivityTraining extends AppCompatActivity {
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
                     }
+
+
+
                     trainingContent.dbSave(DB);
                 }
             }
