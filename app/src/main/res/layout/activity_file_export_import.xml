@@ -201,15 +201,24 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
-            <TextView
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/tvPathToFiles"
-                android:layout_span="45"
-                android:gravity="left|center"
-                android:background="@drawable/abc_list_selector_background_transition_holo_light" />
+                android:id="@+id/scrollView3"
+                android:layout_span="45">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvPathToFiles"
+                    android:layout_span="45"
+                    android:gravity="bottom"
+                    android:background="@drawable/abc_list_selector_background_transition_holo_light"
+                    />
+            </ScrollView>
         </TableRow>
 
     </TableLayout>

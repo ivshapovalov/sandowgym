@@ -76,6 +76,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                                            List<Exercise> mExercisesList) {
 
         message = new StringBuilder();
+        int countTrainings = 1;
         List<String[]> data = new ArrayList<String[]>();
         StringBuilder mNewString = new StringBuilder();
         if (mShowSymbols) {
@@ -92,7 +93,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             } else {
                 mNewString.append(mCurrentTraining.getDayString()).append(SYMBOL_SPLIT);
             }
-            message.append(mCurrentTraining.getDayString()).append('\n');
+            message.append(countTrainings++).append(") ").append(mCurrentTraining.getDayString()).append('\n');
         }
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
