@@ -56,12 +56,13 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="EXPORT INCLUDE  #ID%WEIGHT"
+                android:text="FULL VIEW"
                 android:id="@+id/textView8"
                 android:layout_span="30"
                 android:gravity="center_vertical|start|center_horizontal"
@@ -69,36 +70,40 @@
                 android:textColor="@color/text_color" />
 
             <RadioGroup
-                android:id="@+id/rgShowSymbols"
+                android:id="@+id/rgFullView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_span="15">
 
                 <RadioButton
-                    android:id="@+id/rbShowSymbolsYes"
+                    android:id="@+id/rbFullViewYes"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="30"
                     android:checked="false"
                     android:text="YES"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:textSize="10dp"/>
 
                 <RadioButton
-                    android:id="@+id/rbShowSymbolsNo"
+                    android:id="@+id/rbFullViewNo"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="30"
                     android:text="NO"
                     android:textColor="@color/text_color"
-                    android:checked="true" />
+                    android:checked="true"
+                    android:textSize="10dp"/>
+
             </RadioGroup>
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -150,7 +155,8 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="match_parent"

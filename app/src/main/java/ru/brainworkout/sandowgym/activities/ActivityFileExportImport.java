@@ -26,10 +26,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.brainworkout.sandowgym.*;
+
 import static ru.brainworkout.sandowgym.common.Common.*;
+
+import ru.brainworkout.sandowgym.common.TypeOfView;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
@@ -45,10 +50,13 @@ public class ActivityFileExportImport extends AppCompatActivity {
     private static final String SYMBOL_SPLIT = ";";
     private String mDateFrom;
     private String mDateTo;
-    private boolean mShowSymbols = false;
+    private boolean mFullView = false;
     private final DatabaseManager DB = new DatabaseManager(this);
 
     private StringBuilder message = new StringBuilder();
+
+    private List<Training> trainingsList=new ArrayList<>();
+    private List<Exercise> exercisesList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,44 +80,57 @@ public class ActivityFileExportImport extends AppCompatActivity {
         mDateTo = mCurrentDateTo;
     }
 
-    private List<String[]> createDataArray(List<Training> mTrainingsList,
-                                           List<Exercise> mExercisesList) {
+    private List<String[]> createDataArray(TypeOfView type) {
 
         message = new StringBuilder();
         int countTrainings = 1;
         List<String[]> data = new ArrayList<String[]>();
         StringBuilder mNewString = new StringBuilder();
-        if (mShowSymbols) {
-            mNewString.append("EXERCISE(" + SYMBOL_ID + "ID" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE(" + SYMBOL_ID + "ID" + ");");
-        } else {
-            mNewString.append("EXERCISE(" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE;");
-
+        switch (type) {
+            case FULL:
+                mNewString.append("EXERCISE(" + SYMBOL_ID + "ID" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE(" + SYMBOL_ID + "ID" + ");");
+                break;
+            default:
+                mNewString.append("EXERCISE(" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE;");
+                break;
         }
-        for (Training mCurrentTraining : mTrainingsList
+
+        for (Training mCurrentTraining : trainingsList
                 ) {
-            if (mShowSymbols) {
-                mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID())
-                        .append(")").append(SYMBOL_SPLIT);
-            } else {
-                mNewString.append(mCurrentTraining.getDayString()).append(SYMBOL_SPLIT);
+            switch (type) {
+                case FULL:
+                    mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID())
+                            .append(")").append(SYMBOL_SPLIT);
+                    break;
+                default:
+                    mNewString.append(mCurrentTraining.getDayString()).append(SYMBOL_SPLIT);
+                    break;
+
             }
+
             message.append(countTrainings++).append(") ").append(mCurrentTraining.getDayString()).append('\n');
         }
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
 
-        for (Exercise mCurrentExercise : mExercisesList
+        for (Exercise mCurrentExercise : exercisesList
                 ) {
             mNewString = new StringBuilder();
-            if (mShowSymbols) {
-                mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_ID).
-                        append(String.valueOf(mCurrentExercise.getID())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
-                        .append(")").append(SYMBOL_SPLIT);
-            } else {
-                mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
-                        .append(")").append(SYMBOL_SPLIT);
+
+            switch (type) {
+                case FULL:
+                    mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_ID).
+                            append(String.valueOf(mCurrentExercise.getID())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
+                            .append(")").append(SYMBOL_SPLIT);
+                    break;
+                default:
+                    mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
+                            .append(")").append(SYMBOL_SPLIT);
+                    break;
+
             }
-            for (Training mCurrentTraining : mTrainingsList
+
+            for (Training mCurrentTraining : trainingsList
                     ) {
                 try {
                     TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
@@ -119,16 +140,33 @@ public class ActivityFileExportImport extends AppCompatActivity {
                     } else {
                         mNewString.append(curVolume);
                     }
-                    if (mShowSymbols) {
-                        int curWeight = mCurrentTrainingContent.getWeight();
-                        mNewString.append("(").append(SYMBOL_WEIGHT).append(mCurrentTrainingContent.getWeight()).append(")");
+                    switch (type) {
+                        case FULL:
+                            int curWeight = mCurrentTrainingContent.getWeight();
+                            mNewString.append("(").append(SYMBOL_WEIGHT).append(mCurrentTrainingContent.getWeight()).append(")");
+                            break;
+                        case SHORT_WITH_WEIGHTS:
+                            mNewString.append("(").append(mCurrentTrainingContent.getWeight()).append(")");
+                            break;
+                        default:
+
+                            break;
+
                     }
-                        mNewString.append(SYMBOL_SPLIT);
+
+                    mNewString.append(SYMBOL_SPLIT);
 
 
                 } catch (TableDoesNotContainElementException e) {
-                    if (mShowSymbols) {
-                        mNewString.append("(").append(SYMBOL_WEIGHT).append(")");
+                    switch (type) {
+                        case FULL:
+                            mNewString.append("(").append(SYMBOL_WEIGHT).append(")");
+                            break;
+
+                        default:
+
+                            break;
+
                     }
                     mNewString.append(SYMBOL_SPLIT);
                 }
@@ -141,7 +179,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
         return data;
     }
 
-    private void writeToFile(List<String[]> data) {
+    private void writeToFile(Map<TypeOfView, List<String[]>> dataSheets) {
 
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
         if (!exportDir.exists())
@@ -163,62 +201,19 @@ public class ActivityFileExportImport extends AppCompatActivity {
             }
 
             Workbook book = new HSSFWorkbook();
-            Sheet sheet = book.createSheet("trainings");
 
-            Row row = sheet.createRow(0);
+            for (Map.Entry<TypeOfView, List<String []>> dataSheet : dataSheets.entrySet()) {
+                addSheetWithData(dataSheet.getValue(), book, dataSheet.getKey().getName());
+            }
+
+            Row row;
             Cell cName;
-            Font font = book.getFontAt((short) 0);
-            CellStyle boldStyle = book.createCellStyle();
-            boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-            boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            boldStyle.setFont(font);
-
+            Sheet sheet2 = book.createSheet("legend");
+            row = sheet2.createRow(0);
             cName = row.createCell(0);
+            cName.setCellValue("подробное описание");
 
-            cName.setCellStyle(boldStyle);
-            cName.setCellValue(data.get(0)[0]);
-            cName.setCellStyle(boldStyle);
 
-            CellStyle usualStyle = book.createCellStyle();
-            usualStyle.setFont(font);
-            CellStyle dateStyle = book.createCellStyle();
-
-            dateStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-            dateStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            DataFormat format = book.createDataFormat();
-            dateStyle.setFont(font);
-
-            for (int j = 1; j < data.get(0).length; j++) {
-                cName = row.createCell(j);
-                cName.setCellStyle(dateStyle);
-                cName.setCellValue(data.get(0)[j]);
-                cName.setCellStyle(dateStyle);
-            }
-
-            for (int i = 1; i < data.size(); i++) {
-                row = sheet.createRow(i);
-                for (int j = 0; j < data.get(i).length; j++) {
-                    cName = row.createCell(j);
-
-                    if (j == 0) {
-                        cName.setCellStyle(boldStyle);
-                    } else {
-                        cName.setCellStyle(usualStyle);
-                    }
-                    try {
-                        cName.setCellValue(Integer.valueOf(data.get(i)[j]));
-                    } catch (Exception e) {
-                        cName.setCellValue((data.get(i)[j]));
-                    }
-                    if (j == 0) {
-                        cName.setCellStyle(boldStyle);
-                    } else {
-                        cName.setCellStyle(usualStyle);
-                    }
-                }
-
-            }
-            book.getSheetAt(0).setPrintGridlines(true);
             book.write(new FileOutputStream(file));
             book.close();
 
@@ -239,6 +234,64 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     }
 
+    private void addSheetWithData(List<String[]> data, Workbook book, String sheetName) {
+        Sheet sheet = book.createSheet(sheetName);
+        Row row = sheet.createRow(0);
+        Cell cName;
+        Font font = book.getFontAt((short) 0);
+        CellStyle boldStyle = book.createCellStyle();
+        boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+        boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        boldStyle.setFont(font);
+
+        cName = row.createCell(0);
+
+        cName.setCellStyle(boldStyle);
+        cName.setCellValue(data.get(0)[0]);
+        cName.setCellStyle(boldStyle);
+
+        CellStyle usualStyle = book.createCellStyle();
+        usualStyle.setFont(font);
+        CellStyle dateStyle = book.createCellStyle();
+
+        dateStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+        dateStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        DataFormat format = book.createDataFormat();
+        dateStyle.setFont(font);
+
+        for (int j = 1; j < data.get(0).length; j++) {
+            cName = row.createCell(j);
+            cName.setCellStyle(dateStyle);
+            cName.setCellValue(data.get(0)[j]);
+            cName.setCellStyle(dateStyle);
+        }
+
+        for (int i = 1; i < data.size(); i++) {
+            row = sheet.createRow(i);
+            for (int j = 0; j < data.get(i).length; j++) {
+                cName = row.createCell(j);
+
+                if (j == 0) {
+                    cName.setCellStyle(boldStyle);
+                } else {
+                    cName.setCellStyle(usualStyle);
+                }
+                try {
+                    cName.setCellValue(Integer.valueOf(data.get(i)[j]));
+                } catch (Exception e) {
+                    cName.setCellValue((data.get(i)[j]));
+                }
+                if (j == 0) {
+                    cName.setCellStyle(boldStyle);
+                } else {
+                    cName.setCellStyle(usualStyle);
+                }
+            }
+
+        }
+        book.getSheetAt(0).setPrintGridlines(true);
+    }
+
     private void readFromFile(File file) {
 
         List<String[]> data = new ArrayList<>();
@@ -247,7 +300,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         {
             HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
-            HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings");
+            HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings_full");
             HSSFRow currentRow = myExcelSheet.getRow(0);
 
             int mColumn = 0;
@@ -288,7 +341,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 }
 
             }
-            StringBuilder mNewString  = new StringBuilder();
+            StringBuilder mNewString = new StringBuilder();
             for (mRow = 0; mRow < mRowCount; mRow++) {
                 currentRow = myExcelSheet.getRow(mRow);
                 if (mRow != 0) {
@@ -317,8 +370,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             myExcelBook.close();
 
-            List<Training> mTrainingsList = new ArrayList<Training>();
-            List<Exercise> mExercisesList = new ArrayList<Exercise>();
+            trainingsList = new ArrayList<Training>();
+            exercisesList = new ArrayList<Exercise>();
 
             for (int i = 1; i < data.get(0).length; i++) {
                 String s = data.get(0)[i];
@@ -326,26 +379,27 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
                 Training training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
-                mTrainingsList.add(training);
+                trainingsList.add(training);
 
             }
 
             for (int i = 1; i < data.size(); i++) {
                 String s = data.get(i)[0];
-                String name =s.substring(0, s.indexOf("("));;
+                String name = s.substring(0, s.indexOf("("));
+                ;
                 //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
                 String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
-                 String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
+                String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
 
                 Exercise exercise = new Exercise.Builder(Integer.valueOf(id))
                         .addName(name)
                         .addVolumeDefault(def_volume)
                         .build();
-                  mExercisesList.add(exercise);
+                exercisesList.add(exercise);
 
             }
 
-            writeDataToDB(mTrainingsList, mExercisesList, data);
+            writeDataToDB(data);
 
         } catch (Exception e) {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
@@ -358,13 +412,13 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     }
 
-    private void writeDataToDB(List<Training> mTrainingsList, List<Exercise> mExercisesList, List<String[]> data) throws Exception {
+    private void writeDataToDB(List<String[]> data) throws Exception {
 
         message = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
-        for (int curTrainingIndex = 0; curTrainingIndex < mTrainingsList.size(); curTrainingIndex++
+        for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++
                 ) {
-            Training curTraining = mTrainingsList.get(curTrainingIndex);
+            Training curTraining =trainingsList.get(curTrainingIndex);
             message.append(curTraining.getDayString()).append('\n');
             Training dbTraining;
             try {
@@ -377,9 +431,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
             }
 
 
-            for (int curExerciseIndex = 0; curExerciseIndex < mExercisesList.size(); curExerciseIndex++
+            for (int curExerciseIndex = 0; curExerciseIndex < exercisesList.size(); curExerciseIndex++
                     ) {
-                Exercise curExercise = mExercisesList.get(curExerciseIndex);
+                Exercise curExercise = exercisesList.get(curExerciseIndex);
                 Exercise dbExercise;
                 try {
                     dbExercise = DB.getExercise(curExercise.getID());
@@ -501,10 +555,21 @@ public class ActivityFileExportImport extends AppCompatActivity {
         if (mDateTo == null || "".equals(mDateFrom)) {
             mDateTo = "9999-99-99";
         }
-        List<Training> trainingList = DB.getTrainingsByDates(mDateFrom, mDateTo);
-        List<Exercise> exerciseList = DB.getExercisesByDates(mDateFrom, mDateTo);
-        List<String[]> data = createDataArray(trainingList, exerciseList);
-        writeToFile(data);
+        trainingsList=new ArrayList<>();
+        exercisesList=new ArrayList<>();
+        trainingsList = DB.getTrainingsByDates(mDateFrom, mDateTo);
+        exercisesList = DB.getExercisesByDates(mDateFrom, mDateTo);
+
+        Map<TypeOfView, List<String[]>> dataSheets = new HashMap<>();
+        if (mFullView) {
+            dataSheets.put(TypeOfView.SHORT, createDataArray(TypeOfView.SHORT));
+            dataSheets.put(TypeOfView.FULL, createDataArray(TypeOfView.FULL));
+            dataSheets.put(TypeOfView.SHORT_WITH_WEIGHTS, createDataArray(TypeOfView.SHORT_WITH_WEIGHTS));
+        } else {
+            dataSheets.put(TypeOfView.SHORT, createDataArray(TypeOfView.SHORT));
+        }
+
+        writeToFile(dataSheets);
 
     }
 
@@ -579,7 +644,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             }
         }
 
-        RadioGroup radiogroup = (RadioGroup) findViewById(R.id.rgShowSymbols);
+        RadioGroup radiogroup = (RadioGroup) findViewById(R.id.rgFullView);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -589,14 +654,14 @@ public class ActivityFileExportImport extends AppCompatActivity {
                     switch (checkedId) {
                         case -1:
                             break;
-                        case R.id.rbShowSymbolsYes:
-                            mShowSymbols = true;
+                        case R.id.rbFullViewYes:
+                            mFullView = true;
                             break;
-                        case R.id.rbShowSymbolsNo:
-                            mShowSymbols = false;
+                        case R.id.rbFullViewNo:
+                            mFullView = false;
                             break;
                         default:
-                            mShowSymbols = false;
+                            mFullView = false;
                             break;
                     }
                 }
