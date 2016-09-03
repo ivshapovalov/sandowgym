@@ -66,7 +66,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
     private boolean mFullView = false;
     private final DatabaseManager DB = new DatabaseManager(this);
 
-    private StringBuilder message = new StringBuilder();
+    private StringBuilder messageTrainingList = new StringBuilder();
+    private StringBuilder messageErrors = new StringBuilder();
 
     private List<Training> trainingsList = new ArrayList<>();
     private List<Exercise> exercisesList = new ArrayList<>();
@@ -95,7 +96,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private List<String[]> createDataArray(TypeOfView type) {
 
-        message = new StringBuilder();
+        messageTrainingList = new StringBuilder();
         int countTrainings = 1;
         List<String[]> data = new ArrayList<String[]>();
         StringBuilder mNewString = new StringBuilder();
@@ -121,7 +122,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             }
 
-            message.append(countTrainings++).append(") ").append(mCurrentTraining.getDayString()).append('\n');
+            messageTrainingList.append(countTrainings++).append(") ").append(mCurrentTraining.getDayString()).append('\n');
         }
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
@@ -233,7 +234,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             if (tvPath != null) {
                 tvPath.setText("");
                 tvPath.setText("В файл XLS по пути \n" + Environment.getExternalStorageDirectory().toString() + '\n'
-                        + " успешно выгружены тренировки\n" + message.toString());
+                        + " успешно выгружены тренировки\n" + messageTrainingList.toString());
             }
         } catch (Exception e) {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
@@ -246,24 +247,50 @@ public class ActivityFileExportImport extends AppCompatActivity {
     }
 
     private void FillLegendSheet(Sheet sheetLegend) {
+
+        int rowCount=0;
+
         Row row;
-        Cell cName;
-        row = sheetLegend.createRow(0);
-        cName = row.createCell(0);
-        cName.setCellValue("Подробное описание");
-        row = sheetLegend.createRow(1);
-        cName = row.createCell(0);
-        cName.setCellValue("# - Обозначение для ID. Пример \"Упраждение номер один (#10)\" - будет загружено упражнение с ID 10." +
+        Cell cell;
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("Подробное описание");
+
+
+        rowCount++;
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("Все специальные символы должны располагаться в круглых скобках");
+
+
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("#");
+        cell = row.createCell(1);
+        cell.setCellValue("Обозначение для ID. Пример \"Упражнение номер 1 (#10)\" - будет загружено упражнение с ID 10 и именем \"Упражнение номер 1\".\n" +
                 " По ID происходит поиск в базе данных. Если тренировка или упражнение не найдены - создаются новые.");
 
-        row = sheetLegend.createRow(2);
-        cName = row.createCell(0);
-        cName.setCellValue("$ - Обозначение для веса гантель. Вес может быть указан как для всей тренировки (\"2016-07-04(#10$5)\" - будет загружена тренировка с ID 10 и весами во всех упражнения - 5)" +
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("$");
+        cell = row.createCell(1);
+        cell.setCellValue("Обозначение для веса гантель. Вес может быть указан как для всей тренировки (\"2016-07-04(#10$5)\" -\n будет загружена тренировка с ID 10 и весами во всех упражнения - 5)" +
                 " или для каждого упражнения отдельно 20($5)");
 
-        row = sheetLegend.createRow(3);
-        cName = row.createCell(0);
-        cName.setCellValue("% - Обозначение для веса количества по умолчанию. Пример \"Упражнение номер один(#10%19)\" - будет загружено упражнение с ID 10 и количеством по умолчанию 19");
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("%");
+        cell = row.createCell(1);
+        cell.setCellValue("Обозначение для веса количества по умолчанию. Пример \"Упражнение номер один(#10%19)\" - \n будет загружено упражнение с ID 10 и количеством по умолчанию 19");
+
+        rowCount++;
+
+        row = sheetLegend.createRow(rowCount++);
+        cell = row.createCell(0);
+        cell.setCellValue("YYYY-MM-DD");
+        cell = row.createCell(1);
+        cell.setCellValue("Формат даты в тренировках. Пример 2016-08-25");
+
 
     }
 
@@ -337,14 +364,16 @@ public class ActivityFileExportImport extends AppCompatActivity {
             if (myExcelSheet == null) {
                 int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
                 TextView tvPath = (TextView) findViewById(mPath);
+                StringBuilder errorMessage = new StringBuilder();
                 if (tvPath != null) {
-                    tvPath.setText("Отсутствует лист trainings_full");
-                    tvPath.setText("Пытаемся загрузить тренировки из листа trainings");
+                    errorMessage.append("Missed sheet - \"trainings_full\"").append("\n")
+                            .append("Try to load data from sheet \"trainings\"").append("\n");
                     myExcelSheet = myExcelBook.getSheet("trainings");
                     if (myExcelSheet == null) {
-                        tvPath.setText("Отсутствует лист trainings");
-                        tvPath.setText("Тренировки не загружены из " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
+                        errorMessage.append("Missed sheet - \"trainings\"").append("\n")
+                                .append("Trainings didn't load from " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
                     }
+                    tvPath.setText(errorMessage.toString());
                 }
 
             }
@@ -357,7 +386,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
-                tvPath.setText("Тренировки не загружены из " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
+                tvPath.setText("Trainings didn't load from " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
             }
             e.printStackTrace();
         }
@@ -441,6 +470,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         trainingsList = new ArrayList<Training>();
         exercisesList = new ArrayList<Exercise>();
+        List<String> trainingWeights = new ArrayList<>();
+
+        int trainingsCount = 1;
 
         for (int i = 1; i < data.get(0).length; i++) {
             String s = data.get(0)[i];
@@ -454,39 +486,32 @@ public class ActivityFileExportImport extends AppCompatActivity {
             String id;
             int indexSymbolID = s.indexOf(SYMBOL_ID);
             if (indexSymbolID != -1) {
-                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolID);
-                if (nextSpecialSymbol != -1) {
-                    id = s.substring(indexSymbolID + 1, nextSpecialSymbol);
-                } else {
-                    id = s.substring(indexSymbolID + 1);
-                }
+                id = textBeforeNextSpecialSymbol(s, indexSymbolID);
             } else {
-                id="";
+                id = "";
             }
 
             String weightOfAllTraining;
             int indexSymbolWeight = s.indexOf(SYMBOL_WEIGHT);
             if (indexSymbolWeight != -1) {
-                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolWeight);
-                if (nextSpecialSymbol != -1) {
-                    weightOfAllTraining = s.substring(indexSymbolWeight + 1, nextSpecialSymbol);
-                } else {
-                    weightOfAllTraining = s.substring(indexSymbolWeight + 1);
-                }
+                weightOfAllTraining = textBeforeNextSpecialSymbol(s, indexSymbolWeight);
+
             } else {
-                weightOfAllTraining="";
+                weightOfAllTraining = "";
             }
+            trainingWeights.add(weightOfAllTraining);
 
             Training training;
             if (!"".equals(id)) {
                 training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
             } else {
-                training = new Training.Builder(DB.getTrainingMaxNumber() + 1).addDay(day).build();
+                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(day).build();
             }
             trainingsList.add(training);
 
         }
 
+        int exercisesCount = 1;
         for (int i = 1; i < data.size(); i++) {
             String s = data.get(i)[0];
             String name = s.substring(0, s.indexOf("("));
@@ -494,27 +519,17 @@ public class ActivityFileExportImport extends AppCompatActivity {
             String id;
             int indexSymbolID = s.indexOf(SYMBOL_ID);
             if (indexSymbolID != -1) {
-                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolID);
-                if (nextSpecialSymbol != -1) {
-                    id = s.substring(indexSymbolID + 1, nextSpecialSymbol);
-                } else {
-                    id = s.substring(indexSymbolID + 1);
-                }
+                id = textBeforeNextSpecialSymbol(s, indexSymbolID);
             } else {
-                id="";
+                id = "";
             }
 
             String def_volume;
             int indexSymbolDefaultVolume = s.indexOf(SYMBOL_DEF_VOLUME);
             if (indexSymbolDefaultVolume != -1) {
-                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolDefaultVolume);
-                if (nextSpecialSymbol != -1) {
-                    def_volume = s.substring(indexSymbolDefaultVolume + 1, nextSpecialSymbol);
-                } else {
-                    def_volume = s.substring(indexSymbolDefaultVolume + 1);
-                }
+                def_volume = textBeforeNextSpecialSymbol(s, indexSymbolDefaultVolume);
             } else {
-                def_volume="";
+                def_volume = "";
             }
 
             Exercise exercise;
@@ -525,7 +540,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                         .build();
 
             } else {
-                exercise = new Exercise.Builder(DB.getExerciseMaxNumber() + 1)
+                exercise = new Exercise.Builder(DB.getExerciseMaxNumber() + exercisesCount++)
                         .addName(name)
                         .addVolumeDefault(def_volume)
                         .build();
@@ -534,12 +549,12 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         }
 
-        message = new StringBuilder();
+        messageTrainingList = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++
                 ) {
             Training curTraining = trainingsList.get(curTrainingIndex);
-            message.append(curTraining.getDayString()).append('\n');
+            messageTrainingList.append(curTraining.getDayString()).append('\n');
             Training dbTraining;
             try {
                 dbTraining = DB.getTraining(curTraining.getID());
@@ -573,19 +588,25 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 //разбираем ячейку со значениями количества и веса
                 String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];
                 //String volume = cellValue;
-                String volume = cellValue.substring(0, cellValue.indexOf("("));
+
+                String volume;
+                int indexSymbolBrackets = cellValue.indexOf("(");
+                if (indexSymbolBrackets != -1) {
+                    volume = cellValue.substring(0, indexSymbolBrackets);
+                } else {
+                    volume = cellValue.substring(0);
+                }
 
                 String weight;
                 int indexSymbolWeight = cellValue.indexOf(SYMBOL_WEIGHT);
                 if (indexSymbolWeight != -1) {
-                    int nextSpecialSymbol = findNextSpecialSymbol(cellValue, indexSymbolWeight);
-                    if (nextSpecialSymbol != -1) {
-                        weight = cellValue.substring(indexSymbolWeight + 1, nextSpecialSymbol);
-                    } else {
-                        weight = cellValue.substring(indexSymbolWeight + 1);
-                    }
+
+                    weight = textBeforeNextSpecialSymbol(cellValue, indexSymbolWeight);
+
                 } else {
-                    weight="";
+                    //check common weight of training
+                    weight = trainingWeights.get(curTrainingIndex);
+
                 }
 
                 int iWeight;
@@ -603,46 +624,47 @@ public class ActivityFileExportImport extends AppCompatActivity {
                     dbTrainingContent = DB.getTrainingContent(curExercise.getID(), curTraining.getID());
                     dbTrainingContent.setVolume(trainingContent.getVolume());
                     dbTrainingContent.setWeight(trainingContent.getWeight());
-//                    System.out.println("max num:" + maxNum);
-//                    System.out.println("update tc:" + dbTrainingContent.getID());
                     DB.updateTrainingContent(dbTrainingContent);
                 } catch (TableDoesNotContainElementException e) {
-//                    System.out.println("max num:" + maxNum);
-//                    System.out.println("update tc:" + trainingContent.getID());
                     DB.addTrainingContent(trainingContent);
                 }
 
             }
 
-            int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
-            TextView tvPath = (TextView) findViewById(mPath);
-            if (tvPath != null) {
-                tvPath.setText("");
-                tvPath.setText("Из файла  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
-                        + " успешно загружены тренировки\n" + message.toString());
+        }
+        int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
+        TextView tvPath = (TextView) findViewById(mPath);
+        if (tvPath != null) {
 
-            }
+            messageTrainingList.insert(0,"From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
+                            + " successfully loaded trainings:"+"\n")
+            .insert(0, tvPath.getText().toString());
+            tvPath.setText("");
+            tvPath.setText(messageTrainingList);
+
         }
     }
 
-    private int findNextSpecialSymbol(String s, int currentPosition) {
+    private String textBeforeNextSpecialSymbol(String s, int currentPosition) {
 
         List<Integer> positions = new ArrayList<>();
 
         for (String symbol : specialSymbols
                 ) {
-            int position = s.indexOf(symbol, currentPosition);
+            int position = s.indexOf(symbol, currentPosition + 1);
             if (position != -1) {
                 positions.add(position);
             }
 
         }
         Collections.sort(positions);
+
         if (!positions.isEmpty()) {
-            return positions.get(0);
+            return s.substring(currentPosition + 1, positions.get(0));
         } else {
-            return -1;
+            return s.substring(currentPosition + 1);
         }
+
     }
 
     public void btClose_onClick(View view) {

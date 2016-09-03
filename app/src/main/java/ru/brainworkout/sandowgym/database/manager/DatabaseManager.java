@@ -810,7 +810,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT  " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "," + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=\"" + mDateTo
-                + "\" ORDER BY " + KEY_TRAINING_ID;
+                + "\" ORDER BY " + KEY_TRAINING_DAY;
 
 
         SQLiteDatabase db = this.getWritableDatabase();
