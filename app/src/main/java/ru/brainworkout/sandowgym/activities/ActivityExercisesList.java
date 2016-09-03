@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
+
+import ru.brainworkout.sandowgym.common.Common;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
@@ -42,10 +46,19 @@ public class ActivityExercisesList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercises_list);
 
+        if (!Common.isDebug) {
+            int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
+            Button btEditor = (Button) findViewById(mEditorID);
+            HideEditorButton(btEditor);
+        }
+
+
         showExercises();
 
         setTitleOfActivity(this);
     }
+
+
 
 
     @Override

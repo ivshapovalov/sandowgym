@@ -55,8 +55,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private StringBuilder message = new StringBuilder();
 
-    private List<Training> trainingsList=new ArrayList<>();
-    private List<Exercise> exercisesList=new ArrayList<>();
+    private List<Training> trainingsList = new ArrayList<>();
+    private List<Exercise> exercisesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,7 +202,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             Workbook book = new HSSFWorkbook();
 
-            for (Map.Entry<TypeOfView, List<String []>> dataSheet : dataSheets.entrySet()) {
+            for (Map.Entry<TypeOfView, List<String[]>> dataSheet : dataSheets.entrySet()) {
                 addSheetWithData(dataSheet.getValue(), book, dataSheet.getKey().getName());
             }
 
@@ -301,103 +301,22 @@ public class ActivityFileExportImport extends AppCompatActivity {
         {
             HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
             HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings_full");
-            HSSFRow currentRow = myExcelSheet.getRow(0);
-
-            int mColumn = 0;
-            int mColumnCount = 0;
-
-            while (true) {
-
-                try {
-                    String name = currentRow.getCell(mColumn).getStringCellValue();
-                    if ("".equals(name)) {
-                        mColumnCount = mColumn;
-                        break;
+            if (myExcelSheet == null) {
+                int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
+                TextView tvPath = (TextView) findViewById(mPath);
+                if (tvPath != null) {
+                    tvPath.setText("Отсутствует лист trainings_full");
+                    tvPath.setText("Пытаемся загрузить тренировки из листа trainings");
+                    myExcelSheet = myExcelBook.getSheet("trainings");
+                    if (myExcelSheet == null) {
+                        tvPath.setText("Отсутствует лист trainings");
+                        tvPath.setText("Тренировки не загружены из " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
                     }
-                    mColumn++;
-                } catch (Exception e) {
-                    mColumnCount = mColumn;
-                    break;
                 }
 
             }
-            int mRow = 0;
-            int mRowCount = 0;
-            mColumn = 0;
-            while (true) {
-                currentRow = myExcelSheet.getRow(mRow);
-                try {
-                    String name = currentRow.getCell(mColumn).getStringCellValue();
-                    if ("".equals(name)) {
-
-                        mRowCount = mRow;
-                        break;
-                    }
-
-                    mRow++;
-                } catch (Exception e) {
-                    mRowCount = mRow;
-                    break;
-                }
-
-            }
-            StringBuilder mNewString = new StringBuilder();
-            for (mRow = 0; mRow < mRowCount; mRow++) {
-                currentRow = myExcelSheet.getRow(mRow);
-                if (mRow != 0) {
-                    String[] entries = mNewString.toString().split(";");
-                    data.add(entries);
-                    mNewString = new StringBuilder();
-                }
-                for (mColumn = 0; mColumn < mColumnCount; mColumn++) {
-                    try {
-                        if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-                            mNewString.append("").append(SYMBOL_SPLIT);
-                        } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-                            int num = (int) currentRow.getCell(mColumn).getNumericCellValue();
-                            mNewString.append(num).append(SYMBOL_SPLIT);
-                        } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                            String name = currentRow.getCell(mColumn).getStringCellValue();
-                            mNewString.append(name).append(SYMBOL_SPLIT);
-                        }
-                    } catch (Exception e) {
-                        mNewString.append(0).append(SYMBOL_SPLIT);
-                    }
-                }
-            }
-            String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
-            data.add(entries);
-
+            data = ReadDataFromSheet(myExcelSheet);
             myExcelBook.close();
-
-            trainingsList = new ArrayList<Training>();
-            exercisesList = new ArrayList<Exercise>();
-
-            for (int i = 1; i < data.get(0).length; i++) {
-                String s = data.get(0)[i];
-                String day = s.substring(0, s.indexOf("("));
-                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
-                //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
-                Training training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
-                trainingsList.add(training);
-
-            }
-
-            for (int i = 1; i < data.size(); i++) {
-                String s = data.get(i)[0];
-                String name = s.substring(0, s.indexOf("("));
-                ;
-                //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
-                String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
-                String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
-
-                Exercise exercise = new Exercise.Builder(Integer.valueOf(id))
-                        .addName(name)
-                        .addVolumeDefault(def_volume)
-                        .build();
-                exercisesList.add(exercise);
-
-            }
 
             writeDataToDB(data);
 
@@ -412,13 +331,128 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     }
 
+    private List<String[]> ReadDataFromSheet(HSSFSheet myExcelSheet) {
+
+        List<String[]> data = new ArrayList<>();
+        ;
+        HSSFRow currentRow = myExcelSheet.getRow(0);
+
+        int mColumn = 0;
+        int mColumnCount = 0;
+
+        while (true) {
+
+            try {
+                String name = currentRow.getCell(mColumn).getStringCellValue();
+                if ("".equals(name)) {
+                    mColumnCount = mColumn;
+                    break;
+                }
+                mColumn++;
+            } catch (Exception e) {
+                mColumnCount = mColumn;
+                break;
+            }
+
+        }
+        int mRow = 0;
+        int mRowCount = 0;
+        mColumn = 0;
+        while (true) {
+            currentRow = myExcelSheet.getRow(mRow);
+            try {
+                String name = currentRow.getCell(mColumn).getStringCellValue();
+                if ("".equals(name)) {
+
+                    mRowCount = mRow;
+                    break;
+                }
+
+                mRow++;
+            } catch (Exception e) {
+                mRowCount = mRow;
+                break;
+            }
+
+        }
+        StringBuilder mNewString = new StringBuilder();
+        for (mRow = 0; mRow < mRowCount; mRow++) {
+            currentRow = myExcelSheet.getRow(mRow);
+            if (mRow != 0) {
+                String[] entries = mNewString.toString().split(";");
+                data.add(entries);
+                mNewString = new StringBuilder();
+            }
+            for (mColumn = 0; mColumn < mColumnCount; mColumn++) {
+                try {
+                    if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+                        mNewString.append("").append(SYMBOL_SPLIT);
+                    } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                        int num = (int) currentRow.getCell(mColumn).getNumericCellValue();
+                        mNewString.append(num).append(SYMBOL_SPLIT);
+                    } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+                        String name = currentRow.getCell(mColumn).getStringCellValue();
+                        mNewString.append(name).append(SYMBOL_SPLIT);
+                    }
+                } catch (Exception e) {
+                    mNewString.append(0).append(SYMBOL_SPLIT);
+                }
+            }
+        }
+        String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
+        data.add(entries);
+        return data;
+    }
+
     private void writeDataToDB(List<String[]> data) throws Exception {
+
+        trainingsList = new ArrayList<Training>();
+        exercisesList = new ArrayList<Exercise>();
+
+        for (int i = 1; i < data.get(0).length; i++) {
+            String s = data.get(0)[i];
+            String day = s.substring(0, s.indexOf("("));
+            String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
+            //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
+            Training training;
+            if (!"".equals(id)) {
+                training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
+            } else {
+                training = new Training.Builder(DB.getTrainingMaxNumber() + 1).addDay(day).build();
+            }
+            trainingsList.add(training);
+
+        }
+
+        for (int i = 1; i < data.size(); i++) {
+            String s = data.get(i)[0];
+            String name = s.substring(0, s.indexOf("("));
+            ;
+            //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
+            String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
+            String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
+            Exercise exercise;
+            if (!"".equals(id)) {
+                exercise = new Exercise.Builder(Integer.valueOf(id))
+                        .addName(name)
+                        .addVolumeDefault(def_volume)
+                        .build();
+
+            } else {
+                exercise = new Exercise.Builder(DB.getExerciseMaxNumber()+1)
+                        .addName(name)
+                        .addVolumeDefault(def_volume)
+                        .build();
+            }
+            exercisesList.add(exercise);
+
+        }
 
         message = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++
                 ) {
-            Training curTraining =trainingsList.get(curTrainingIndex);
+            Training curTraining = trainingsList.get(curTrainingIndex);
             message.append(curTraining.getDayString()).append('\n');
             Training dbTraining;
             try {
@@ -555,8 +589,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
         if (mDateTo == null || "".equals(mDateFrom)) {
             mDateTo = "9999-99-99";
         }
-        trainingsList=new ArrayList<>();
-        exercisesList=new ArrayList<>();
+        trainingsList = new ArrayList<>();
+        exercisesList = new ArrayList<>();
         trainingsList = DB.getTrainingsByDates(mDateFrom, mDateTo);
         exercisesList = DB.getExercisesByDates(mDateFrom, mDateTo);
 

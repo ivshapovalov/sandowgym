@@ -43,7 +43,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btExercisesDBEditor"
+                android:id="@+id/btUsersDBEditor"
                 android:onClick="bt_Edit_onClick"
                 android:layout_span="10"
                 android:text="EDITOR"

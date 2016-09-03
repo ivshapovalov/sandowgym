@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
+
+import ru.brainworkout.sandowgym.common.Common;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.R;
@@ -38,6 +40,12 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainings_list);
+
+        if (!Common.isDebug) {
+            int mEditorID = getResources().getIdentifier("bTrainingsDBEditor", "id", getPackageName());
+            Button btEditor = (Button) findViewById(mEditorID);
+            HideEditorButton(btEditor);
+        }
 
         Intent intent = getIntent();
 

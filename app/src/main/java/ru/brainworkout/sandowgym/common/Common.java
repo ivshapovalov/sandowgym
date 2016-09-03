@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.TableRow;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ public class Common{
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
+    public static final boolean isDebug=true;
 
     public static Date ConvertStringToDate(final String date, final String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
@@ -62,6 +65,13 @@ public class Common{
         }
     }
 
+    public static void HideEditorButton(Button btEditor) {
 
+        if (btEditor != null) {
+            TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+            params.span = 0;
+            btEditor.setLayoutParams(params);
+        }
+    }
 
 }

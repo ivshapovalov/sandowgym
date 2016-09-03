@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -19,6 +20,8 @@ import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
+
+import ru.brainworkout.sandowgym.common.Common;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
@@ -40,6 +43,12 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weight_change_calendar_list);
+
+        if (!Common.isDebug) {
+            int mEditorID = getResources().getIdentifier("bWeightChangeCalendarListDBEditor", "id", getPackageName());
+            Button btEditor = (Button) findViewById(mEditorID);
+            HideEditorButton(btEditor);
+        }
 
         showWeightChangeCalendarList();
 
