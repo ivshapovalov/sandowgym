@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,18 @@ public class ActivityFileExportImport extends AppCompatActivity {
     private static final String SYMBOL_WEIGHT = "$";
     private static final String SYMBOL_DEF_VOLUME = "%";
     private static final String SYMBOL_SPLIT = ";";
+
+    private static List<String> specialSymbols = new ArrayList<>();
+
+    static {
+
+        specialSymbols.add(SYMBOL_ID);
+        specialSymbols.add(SYMBOL_WEIGHT);
+        specialSymbols.add(SYMBOL_DEF_VOLUME);
+        specialSymbols.add(SYMBOL_SPLIT);
+        specialSymbols.add(")");
+    }
+
     private String mDateFrom;
     private String mDateTo;
     private boolean mFullView = false;
@@ -209,9 +222,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
             Row row;
             Cell cName;
             Sheet sheet2 = book.createSheet("legend");
-            row = sheet2.createRow(0);
-            cName = row.createCell(0);
-            cName.setCellValue("подробное описание");
+            FillLegendSheet(sheet2);
 
 
             book.write(new FileOutputStream(file));
@@ -231,6 +242,28 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 tvPath.setText("Файл не выгружен в " + Environment.getExternalStorageDirectory().toString());
             }
         }
+
+    }
+
+    private void FillLegendSheet(Sheet sheetLegend) {
+        Row row;
+        Cell cName;
+        row = sheetLegend.createRow(0);
+        cName = row.createCell(0);
+        cName.setCellValue("Подробное описание");
+        row = sheetLegend.createRow(1);
+        cName = row.createCell(0);
+        cName.setCellValue("# - Обозначение для ID. Пример \"Упраждение номер один (#10)\" - будет загружено упражнение с ID 10." +
+                " По ID происходит поиск в базе данных. Если тренировка или упражнение не найдены - создаются новые.");
+
+        row = sheetLegend.createRow(2);
+        cName = row.createCell(0);
+        cName.setCellValue("$ - Обозначение для веса гантель. Вес может быть указан как для всей тренировки (\"2016-07-04(#10$5)\" - будет загружена тренировка с ID 10 и весами во всех упражнения - 5)" +
+                " или для каждого упражнения отдельно 20($5)");
+
+        row = sheetLegend.createRow(3);
+        cName = row.createCell(0);
+        cName.setCellValue("% - Обозначение для веса количества по умолчанию. Пример \"Упражнение номер один(#10%19)\" - будет загружено упражнение с ID 10 и количеством по умолчанию 19");
 
     }
 
@@ -411,9 +444,39 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
         for (int i = 1; i < data.get(0).length; i++) {
             String s = data.get(0)[i];
-            String day = s.substring(0, s.indexOf("("));
-            String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
-            //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf("&"));
+            String day;
+            if (s.indexOf("(") != -1) {
+                day = s.substring(0, s.indexOf("("));
+            } else {
+                day = s.substring(0);
+            }
+
+            String id;
+            int indexSymbolID = s.indexOf(SYMBOL_ID);
+            if (indexSymbolID != -1) {
+                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolID);
+                if (nextSpecialSymbol != -1) {
+                    id = s.substring(indexSymbolID + 1, nextSpecialSymbol);
+                } else {
+                    id = s.substring(indexSymbolID + 1);
+                }
+            } else {
+                id="";
+            }
+
+            String weightOfAllTraining;
+            int indexSymbolWeight = s.indexOf(SYMBOL_WEIGHT);
+            if (indexSymbolWeight != -1) {
+                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolWeight);
+                if (nextSpecialSymbol != -1) {
+                    weightOfAllTraining = s.substring(indexSymbolWeight + 1, nextSpecialSymbol);
+                } else {
+                    weightOfAllTraining = s.substring(indexSymbolWeight + 1);
+                }
+            } else {
+                weightOfAllTraining="";
+            }
+
             Training training;
             if (!"".equals(id)) {
                 training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
@@ -427,10 +490,33 @@ public class ActivityFileExportImport extends AppCompatActivity {
         for (int i = 1; i < data.size(); i++) {
             String s = data.get(i)[0];
             String name = s.substring(0, s.indexOf("("));
-            ;
-            //String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(")"));
-            String id = s.substring(s.indexOf(SYMBOL_ID) + 1, s.indexOf(SYMBOL_DEF_VOLUME));
-            String def_volume = s.substring(s.indexOf(SYMBOL_DEF_VOLUME) + 1, s.indexOf(")"));
+
+            String id;
+            int indexSymbolID = s.indexOf(SYMBOL_ID);
+            if (indexSymbolID != -1) {
+                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolID);
+                if (nextSpecialSymbol != -1) {
+                    id = s.substring(indexSymbolID + 1, nextSpecialSymbol);
+                } else {
+                    id = s.substring(indexSymbolID + 1);
+                }
+            } else {
+                id="";
+            }
+
+            String def_volume;
+            int indexSymbolDefaultVolume = s.indexOf(SYMBOL_DEF_VOLUME);
+            if (indexSymbolDefaultVolume != -1) {
+                int nextSpecialSymbol = findNextSpecialSymbol(s, indexSymbolDefaultVolume);
+                if (nextSpecialSymbol != -1) {
+                    def_volume = s.substring(indexSymbolDefaultVolume + 1, nextSpecialSymbol);
+                } else {
+                    def_volume = s.substring(indexSymbolDefaultVolume + 1);
+                }
+            } else {
+                def_volume="";
+            }
+
             Exercise exercise;
             if (!"".equals(id)) {
                 exercise = new Exercise.Builder(Integer.valueOf(id))
@@ -439,7 +525,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
                         .build();
 
             } else {
-                exercise = new Exercise.Builder(DB.getExerciseMaxNumber()+1)
+                exercise = new Exercise.Builder(DB.getExerciseMaxNumber() + 1)
                         .addName(name)
                         .addVolumeDefault(def_volume)
                         .build();
@@ -457,10 +543,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
             Training dbTraining;
             try {
                 dbTraining = DB.getTraining(curTraining.getID());
-                //System.out.println("add tr:" + dbTraining.getID());
                 DB.updateTraining(curTraining);
             } catch (TableDoesNotContainElementException e) {
-                //System.out.println("add tr:" + curTraining.getID());
                 DB.addTraining(curTraining);
             }
 
@@ -473,12 +557,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
                     dbExercise = DB.getExercise(curExercise.getID());
                     dbExercise.setName(curExercise.getName());
                     curExercise = dbExercise;
-                    //System.out.println("update ex:" + dbExercise.getID());
                     DB.updateExercise(dbExercise);
 
                 } catch (TableDoesNotContainElementException e) {
                     curExercise.setIsActive(1);
-                    // System.out.println("add ex:" + curExercise.getID());
                     DB.addExercise(curExercise);
 
                 }
@@ -492,7 +574,19 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];
                 //String volume = cellValue;
                 String volume = cellValue.substring(0, cellValue.indexOf("("));
-                String weight = cellValue.substring(cellValue.indexOf(SYMBOL_WEIGHT) + 1, cellValue.indexOf(")"));
+
+                String weight;
+                int indexSymbolWeight = cellValue.indexOf(SYMBOL_WEIGHT);
+                if (indexSymbolWeight != -1) {
+                    int nextSpecialSymbol = findNextSpecialSymbol(cellValue, indexSymbolWeight);
+                    if (nextSpecialSymbol != -1) {
+                        weight = cellValue.substring(indexSymbolWeight + 1, nextSpecialSymbol);
+                    } else {
+                        weight = cellValue.substring(indexSymbolWeight + 1);
+                    }
+                } else {
+                    weight="";
+                }
 
                 int iWeight;
                 try {
@@ -500,9 +594,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
                 } catch (NumberFormatException e) {
                     iWeight = 0;
                 }
-                trainingContent.setVolume(volume);
-//                trainingContent.setWeight(5);
                 trainingContent.setWeight(iWeight);
+
+                trainingContent.setVolume(volume);
 
                 TrainingContent dbTrainingContent;
                 try {
@@ -528,6 +622,26 @@ public class ActivityFileExportImport extends AppCompatActivity {
                         + " успешно загружены тренировки\n" + message.toString());
 
             }
+        }
+    }
+
+    private int findNextSpecialSymbol(String s, int currentPosition) {
+
+        List<Integer> positions = new ArrayList<>();
+
+        for (String symbol : specialSymbols
+                ) {
+            int position = s.indexOf(symbol, currentPosition);
+            if (position != -1) {
+                positions.add(position);
+            }
+
+        }
+        Collections.sort(positions);
+        if (!positions.isEmpty()) {
+            return positions.get(0);
+        } else {
+            return -1;
         }
     }
 
@@ -704,5 +818,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
 
     }
+
+
 }
 
