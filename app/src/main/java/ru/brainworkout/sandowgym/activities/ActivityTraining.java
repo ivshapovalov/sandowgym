@@ -103,6 +103,9 @@ public class ActivityTraining extends AppCompatActivity {
 //        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
 //        sv.setOnTouchListener(swipeDetectorActivity);
 
+
+
+
         if (mTrainingIsNew) {
             getAllActiveExercises();
         } else {
