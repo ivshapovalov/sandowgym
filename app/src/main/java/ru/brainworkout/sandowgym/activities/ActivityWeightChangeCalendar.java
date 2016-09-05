@@ -106,9 +106,9 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
             intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         }
         if (mCurrentWeightChangeCalendar.getDay() == null) {
-            intent.putExtra("CurrentDate", "");
+            intent.putExtra("CurrentDateInMillis", 0);
         } else {
-            intent.putExtra("CurrentDate", ConvertDateToString(mCurrentWeightChangeCalendar.getDay(), DATE_FORMAT_STRING));
+            intent.putExtra("CurrentDate", mCurrentWeightChangeCalendar.getDayInMillis());
         }
 
         startActivity(intent);
