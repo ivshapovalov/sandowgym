@@ -86,7 +86,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " INTEGER, "
-                + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " TEXT," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER)";
+                + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " INTEGER," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER)";
         db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " ASC)";
@@ -119,7 +119,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
                 + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_TRAINING_ID_USER + " INTEGER, "
-                + KEY_TRAINING_DAY + " TEXT,"
+                + KEY_TRAINING_DAY + " INTEGER,"
                 + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
                 + ")";
         db.execSQL(CREATE_TRAININGS_TABLE);
@@ -218,7 +218,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightCalendarChange.getID());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightCalendarChange.getIdUser());
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDayString());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDayInMillis());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightCalendarChange.getWeight());
 
         db.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
@@ -249,7 +249,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
         values.put(KEY_TRAINING_ID_USER, training.getIdUser());
-        values.put(KEY_TRAINING_DAY, training.getDayString());
+        values.put(KEY_TRAINING_DAY, training.getDayInMillis());
         // Inserting Row
         db.insert(TABLE_TRAININGS, null, values);
         db.close(); // Closing database connection
@@ -307,7 +307,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             throw new TableDoesNotContainElementException("There is no User with id - " + id);
         } else {
             weightChangeCalendar = new WeightChangeCalendar.Builder(Integer.parseInt(cursor.getString(0)))
-                    .addDay(cursor.getString(2))
+                    .addDay(cursor.getInt(2))
                     .addWeight(Integer.parseInt(cursor.getString(3)))
                     .build();
 
@@ -351,7 +351,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.getCount() == 0) {
             throw new TableDoesNotContainElementException("There is no Training with id - " + id);
         } else {
-            Training training = new Training.Builder(Integer.parseInt(cursor.getString(0))).addDay(cursor.getString(1)).build();
+            Training training = new Training.Builder(Integer.parseInt(cursor.getString(0))).addDay(cursor.getInt(1)).build();
             cursor.close();
             return training;
         }
@@ -524,7 +524,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(2))
+                        .addDay(cursor.getInt(2))
                         .addWeight(Integer.parseInt(cursor.getString(3)))
                         .build();
                 weightChangeCalendarList.add(weightChangeCalendar);
@@ -546,7 +546,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(2))
+                        .addDay(cursor.getInt(2))
                         .addWeight(Integer.parseInt(cursor.getString(3)))
                         .build();
                 weightChangeCalendarList.add(weightChangeCalendar);
@@ -746,7 +746,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(2))
+                        .addDay(cursor.getInt(2))
                         .addWeight(Integer.parseInt(cursor.getString(3)))
                         .build();
                 weightChangeCalendarList.add(weightChangeCalendar);
@@ -769,7 +769,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(2))
+                        .addDay(cursor.getInt(2))
                         .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -791,7 +791,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(2))
+                        .addDay(cursor.getInt(2))
                         .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -820,7 +820,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(1))
+                        .addDay(cursor.getInt(1))
                         .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -850,7 +850,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(1))
+                        .addDay(cursor.getInt(1))
                         .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -876,7 +876,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(1))
+                        .addDay(cursor.getInt(1))
                         .build();
                 trainingsList.add(training);
             } while (cursor.moveToNext());
@@ -902,7 +902,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training.Builder(cursor.getInt(0))
-                        .addDay(cursor.getString(1))
+                        .addDay(cursor.getInt(1))
                         .build();
 
                 trainingsList.add(training);
@@ -950,9 +950,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingsContentList;
     }
 
-    public List<TrainingContent> getLastExerciseNotNullVolumeAndWeightOfUser(int user_id, String mDateTo, int exercise_id) {
+    public List<TrainingContent> getLastExerciseNotNullVolumeAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
 
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+        mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
 
         List<TrainingContent> trainingsContentList = new ArrayList<>();
         String selectQuery = "SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + ","
@@ -986,9 +986,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingsContentList;
     }
 
-        public List<WeightChangeCalendar> getWeightOfUserFromWeightCalendar(int user_id, String mDateTo) {
+        public List<WeightChangeCalendar> getWeightOfUserFromWeightCalendar(int user_id, long mDateTo) {
 
-            mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+            mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
 
             List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
             String selectQuery = "SELECT " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID + ","
@@ -1006,7 +1006,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                     if (cursor.getInt(2) != 0 & cursor.getString(1) != null) {
 
                         WeightChangeCalendar weightChangeCalendar=new WeightChangeCalendar.Builder(cursor.getInt(0))
-                                .addDay(cursor.getString(1)).addWeight(cursor.getInt(2)).build();
+                                .addDay(cursor.getInt(1)).addWeight(cursor.getInt(2)).build();
                         weightChangeCalendarList.add(weightChangeCalendar);
                     }
                 } while (cursor.moveToNext());
@@ -1145,7 +1145,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDayString());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDayInMillis());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getIdUser());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
 
@@ -1175,13 +1175,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
 
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        String sDate = "";
-        if (training.getDay() != null) {
-            sDate = dateformat.format(training.getDay());
-        }
         values.put(KEY_TRAINING_ID_USER, training.getIdUser());
-        values.put(KEY_TRAINING_DAY, sDate);
+        values.put(KEY_TRAINING_DAY, training.getDayInMillis());
 
         // updating row
         return db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",

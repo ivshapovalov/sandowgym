@@ -2,6 +2,7 @@ package ru.brainworkout.sandowgym.database.entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
@@ -46,6 +47,11 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
             sDate = dateformat.format(_day);
         }
         return sDate;
+    }
+
+    public long getDayInMillis() {
+
+        return _day.getTime();
     }
 
     public void setDay(Date _day) throws ParseException {
@@ -95,8 +101,8 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
             this._day = day;
             return this;
         }
-        public Builder addDay(String day) {
-            this._day = ConvertStringToDate(day, DATE_FORMAT_STRING);
+        public Builder addDay(long day) {
+            this._day = ConvertMillisToDate(day);
             return this;
         }
 

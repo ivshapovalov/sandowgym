@@ -79,6 +79,10 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
         return DB.getTraining(id);
     }
 
+    public long getDayInMillis() {
+        return _day.getTime();
+    }
+
     public static class Builder extends AbstractEntity {
 
         private Date _day;
@@ -94,8 +98,8 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
             this._day = day;
             return this;
         }
-        public Builder addDay(String day) {
-            this._day = ConvertStringToDate(day, DATE_FORMAT_STRING);
+        public Builder addDay(long day) {
+            this._day = ConvertMillisToDate(day);
             return this;
         }
 

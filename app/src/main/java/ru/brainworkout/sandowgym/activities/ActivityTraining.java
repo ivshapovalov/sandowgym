@@ -159,9 +159,9 @@ public class ActivityTraining extends AppCompatActivity {
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
             mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING), mCurrentExercise.getID());
+                    mCurrentTraining.getDay().getTime(), mCurrentExercise.getID());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
-                    ConvertDateToString(mCurrentTraining.getDay(), DATE_FORMAT_STRING));
+                    mCurrentTraining.getDay().getTime());
         }
         if (mTrainingContentNotNullVolume.size() == 1) {
             try {

@@ -36,6 +36,10 @@ public class Common{
         return d;
     }
 
+    public static Date ConvertMillisToDate(final long Millis) {
+        return new Date(Millis);
+    }
+
     public static String ConvertDateToString(final Date date, final String format) {
 
         SimpleDateFormat dateformat = new SimpleDateFormat(format);

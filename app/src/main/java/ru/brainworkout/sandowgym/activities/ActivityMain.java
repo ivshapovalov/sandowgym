@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +41,10 @@ public class ActivityMain extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Calendar cal= Calendar.getInstance();
+//
+//        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
 
         showElementsOnScreen();
 
