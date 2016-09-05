@@ -33,9 +33,9 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         Intent intent = getIntent();
         mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
 
-        String mCurrentDate = intent.getStringExtra("CurrentDate");
+        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis",0);
         int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
-        defineCurrentWeightChangeCalendar(id,mCurrentDate);
+        defineCurrentWeightChangeCalendar(id,currentDateInMillis);
 
         showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -43,12 +43,12 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
         setTitleOfActivity(this);
     }
 
-    private void defineCurrentWeightChangeCalendar(int mCurrentId, String mCurrentDate) {
+    private void defineCurrentWeightChangeCalendar(int mCurrentId, long currentDateInMillis) {
         if (mWeightChangeCalendarIsNew) {
 
             mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
             //Calendar calendar = Calendar.getInstance();
-            if ((mCurrentDate == null)) {
+            if ((currentDateInMillis==0)) {
                 String cal = (Calendar.getInstance().getTime()).toLocaleString();
                 try {
                     mCurrentWeightChangeCalendar.setDay(Calendar.getInstance().getTime());
@@ -56,11 +56,9 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } else {
-                try {
-                    mCurrentWeightChangeCalendar.setDay(ConvertStringToDate(mCurrentDate, DATE_FORMAT_STRING));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+
+                    mCurrentWeightChangeCalendar.setDayInMillis(currentDateInMillis);
+
             }
 
         } else {
@@ -83,8 +81,8 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
                 }
             }
             try {
-                if ((mCurrentDate != null)) {
-                    mCurrentWeightChangeCalendar.setDayString(mCurrentDate);
+                if ((currentDateInMillis != 0)) {
+                    mCurrentWeightChangeCalendar.setDayInMillis(currentDateInMillis);
                 }
             } catch (Exception e) {
             }

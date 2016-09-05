@@ -503,9 +503,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             Training training;
             if (!"".equals(id)) {
-                training = new Training.Builder(Integer.valueOf(id)).addDay(day).build();
+                training = new Training.Builder(Integer.valueOf(id)).addDay(ConvertStringToDate(day,DATE_FORMAT_STRING).getTime()).build();
             } else {
-                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(day).build();
+                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(ConvertStringToDate(day,DATE_FORMAT_STRING).getTime()).build();
             }
             trainingsList.add(training);
 

@@ -58,6 +58,12 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
         this._day = _day;
     }
 
+    public void setDayInMillis(long millis) {
+
+            this._day = new Date(millis);
+
+    }
+
     public void setDayString(String _day) {
 
         this._day = ConvertStringToDate(_day, DATE_FORMAT_STRING);
