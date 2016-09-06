@@ -138,13 +138,21 @@ public class ActivityMain extends AppCompatActivity {
 
     }
 
-    public void bt_NewTraining_onClick(final View view) {
+    public void btNewTraining_onClick(final View view) {
 
         if (isUserDefined()  & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
             startActivity(intent);
         }
+
+    }
+
+    public void btTools_onClick(final View view) {
+
+            Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
+            startActivity(intent);
+
 
     }
 
@@ -175,41 +183,6 @@ public class ActivityMain extends AppCompatActivity {
             return true;
 
         }
-    }
-
-    public void btExportImport_onClick(final View view) {
-
-        Intent intent = new Intent(ActivityMain.this, ActivityFileExportImport.class);
-        startActivity(intent);
-
-    }
-
-    public void btClearBD_onClick(final View view) {
-
-        new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите очистить базу данных?")
-                .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        try {
-
-                            SQLiteDatabase dbSQL = DB.getWritableDatabase();
-                            //DB.DeleteDB(dbSQL);
-                            DB.onUpgrade(dbSQL, 1, 2);
-
-
-                            if (dbCurrentUser !=null) {
-                                setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf("(")));
-                            }
-                            dbCurrentUser =null;
-                        } catch (Exception e) {
-                            Toast toast = Toast.makeText(ActivityMain.this,
-                                    "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    }
-                }).setNegativeButton("Нет", null).show();
-
     }
 
     public void onBackPressed() {

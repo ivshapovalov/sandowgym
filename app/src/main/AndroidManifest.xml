@@ -23,6 +23,14 @@
             android:label="@string/exercises_list_name"
             android:screenOrientation="portrait" />
         <activity
+            android:name="ru.brainworkout.sandowgym.activities.ActivityAbout"
+            android:label="@string/about_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="ru.brainworkout.sandowgym.activities.ActivityTools"
+            android:label="@string/tools_name"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="ru.brainworkout.sandowgym.activities.ActivityExercise"
             android:label="@string/exercise_name"
             android:screenOrientation="portrait" />

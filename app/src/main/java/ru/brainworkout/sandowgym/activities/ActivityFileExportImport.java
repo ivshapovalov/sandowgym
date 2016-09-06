@@ -670,7 +670,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
     public void btClose_onClick(View view) {
 
         blink(view);
-        Intent intent = new Intent(ActivityFileExportImport.this, ActivityMain.class);
+        Intent intent = new Intent(ActivityFileExportImport.this, ActivityTools.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -678,7 +678,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void onBackPressed() {
 
-        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityTools.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">SANDOW GYM</string>
+    <string name="tools_name">Tools"</string>
     <string name="exercises_list_name">Exercises</string>
     <string name="exercise_name">Exercise"</string>
     <string name="trainings_list_name">Trainings</string>
@@ -10,4 +11,7 @@
     <string name="user_name">User</string>
     <string name="weight_calendar_change_list_name">Weight calendar</string>
     <string name="weight_calendar_name">Weight update</string>
+    <string name="about_name">About</string>
+    <string name="about_text">2016. This program will help you to train Sandows gymnastics</string>
+
 </resources>

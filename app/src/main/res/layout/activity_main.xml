@@ -102,22 +102,7 @@
                     android:layout_height="wrap_content"
                     android:text="NEW TRAINING"
                     android:id="@+id/btMain4"
-                    android:onClick="bt_NewTraining_onClick"
-                    android:layout_span="30"
-                    android:background="@drawable/bt_border"
-                    android:textColor="@color/text_color" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CLEAR DATABASE"
-                    android:id="@+id/btMain5"
-                    android:onClick="btClearBD_onClick"
+                    android:onClick="btNewTraining_onClick"
                     android:layout_span="30"
                     android:background="@drawable/bt_border"
                     android:textColor="@color/text_color" />
@@ -130,12 +115,12 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EXPORT/IMPORT"
-                    android:id="@+id/btMain1"
+                    android:text="TOOLS"
+                    android:id="@+id/button8"
                     android:layout_span="30"
-                    android:onClick="btExportImport_onClick"
+                    android:onClick="btTools_onClick"
                     android:background="@drawable/bt_border"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"/>
             </TableRow>
 
             <TableRow
