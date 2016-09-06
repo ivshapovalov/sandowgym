@@ -61,8 +61,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
         specialSymbols.add(")");
     }
 
-    private String mDateFrom;
-    private String mDateTo;
+    private long mDateFrom;
+    private long mDateTo;
     private boolean mFullView = false;
     private final DatabaseManager DB = new DatabaseManager(this);
 
@@ -88,8 +88,8 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private void getIntentParams() {
         Intent intent = getIntent();
-        String mCurrentDate = intent.getStringExtra("CurrentDate");
-        String mCurrentDateTo = intent.getStringExtra("CurrentDateTo");
+        long mCurrentDate = intent.getLongExtra("CurrentDateInMillis",0);
+        long mCurrentDateTo = intent.getLongExtra("CurrentDateToInMillis",0);
         mDateFrom = mCurrentDate;
         mDateTo = mCurrentDateTo;
     }
@@ -503,9 +503,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
             Training training;
             if (!"".equals(id)) {
-                training = new Training.Builder(Integer.valueOf(id)).addDay(ConvertStringToDate(day,DATE_FORMAT_STRING).getTime()).build();
+                training = new Training.Builder(Integer.valueOf(id)).addDay(ConvertStringToDate(day).getTime()).build();
             } else {
-                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(ConvertStringToDate(day,DATE_FORMAT_STRING).getTime()).build();
+                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(ConvertStringToDate(day).getTime()).build();
             }
             trainingsList.add(training);
 
@@ -719,11 +719,11 @@ public class ActivityFileExportImport extends AppCompatActivity {
     public void btExportToFile_onClick(View view) {
 
         blink(view);
-        if (mDateFrom == null || "".equals(mDateFrom)) {
-            mDateFrom = "0000-00-00";
+        if (mDateFrom == 0 ) {
+            mDateFrom = Long.MIN_VALUE;
         }
-        if (mDateTo == null || "".equals(mDateFrom)) {
-            mDateTo = "9999-99-99";
+        if (mDateTo == 0 ) {
+            mDateTo = Long.MAX_VALUE;
         }
         trainingsList = new ArrayList<>();
         exercisesList = new ArrayList<>();
@@ -753,16 +753,16 @@ public class ActivityFileExportImport extends AppCompatActivity {
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
         if (tvDayFrom != null) {
-            intent.putExtra("CurrentDate", String.valueOf(tvDayFrom.getText()));
+            intent.putExtra("CurrentDateInMillis", ConvertStringToDate(String.valueOf(tvDayFrom.getText())));
         } else {
-            intent.putExtra("CurrentDate", "");
+            intent.putExtra("CurrentDateInMillis", 0);
         }
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {
-            intent.putExtra("CurrentDateTo", String.valueOf(tvDayTo.getText()));
+            intent.putExtra("CurrentDateToInMillis", ConvertStringToDate(String.valueOf(tvDayTo.getText())));
         } else {
-            intent.putExtra("CurrentDateTo", "");
+            intent.putExtra("CurrentDateToInMillis", "");
         }
 
         startActivity(intent);
@@ -797,20 +797,20 @@ public class ActivityFileExportImport extends AppCompatActivity {
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView etDayFrom = (TextView) findViewById(mDayFromID);
         if (etDayFrom != null) {
-            if (mDateFrom == null || mDateFrom == "") {
+            if (mDateFrom == 0 ) {
                 etDayFrom.setText("");
             } else {
-                etDayFrom.setText(mDateFrom);
+                etDayFrom.setText(ConvertMillisToString(mDateFrom));
             }
         }
 
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView etDayTo = (TextView) findViewById(mDayToID);
         if (etDayTo != null) {
-            if (mDateTo == null || mDateTo == "") {
+            if (mDateTo == 0 ) {
                 etDayTo.setText("");
             } else {
-                etDayTo.setText(mDateTo);
+                etDayTo.setText(ConvertMillisToString(mDateTo));
             }
         }
 

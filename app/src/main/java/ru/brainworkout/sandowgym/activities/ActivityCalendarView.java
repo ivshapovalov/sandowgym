@@ -8,13 +8,11 @@ import android.view.View;
 import android.widget.CalendarView;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.R;
 
 public class ActivityCalendarView extends AppCompatActivity {
-
 
     private boolean mIsBeginDate;
 
@@ -34,7 +32,6 @@ public class ActivityCalendarView extends AppCompatActivity {
         setContentView(R.layout.activity_calendar_view);
 
         getIntentParams();
-
         SetParametersOnScreen();
 
     }
@@ -69,34 +66,38 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         if (mIsBeginDate || mCallerActivity == "ActivityTraining") {
             if (mOldDateFromInMillis !=0) {
-                Date d = new Date(mOldDateFromInMillis);
-                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                calendar.setTimeInMillis(mOldDateFromInMillis);
                 mNewDateInMillis = mOldDateFromInMillis;
             }
 
         } else {
             if (mOldDateToInMillis != 0 ) {
-                Date d = new Date(mOldDateToInMillis);
-                calendar.set(d.getYear() + 1900, d.getMonth(), d.getDate());
+                calendar.setTimeInMillis(mOldDateToInMillis);
                 mNewDateInMillis = mOldDateToInMillis;
             }
         }
 
         if (mNewDateInMillis ==0 ) {
-            mNewDateInMillis =calendar.getTime().getTime();
+            calendar.clear(Calendar.HOUR);
+            calendar.clear(Calendar.HOUR_OF_DAY);
+            calendar.clear(Calendar.MINUTE);
+            calendar.clear(Calendar.SECOND);
+            calendar.clear(Calendar.MILLISECOND);
+            mNewDateInMillis =calendar.getTimeInMillis();
 
         }
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-        calendarView.setDate(calendar.getTimeInMillis(), true, false);
+        calendarView.setDate(mNewDateInMillis, true, false);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year,
                                             int month, int dayOfMonth) {
 
-                Calendar cal = Calendar.getInstance();
-                cal.set(year,month,dayOfMonth);
-                mNewDateInMillis =cal.getTime().getTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.clear(Calendar.MILLISECOND);
+                calendar.set(year,month,dayOfMonth,0,0,0);
+                mNewDateInMillis =calendar.getTimeInMillis();
 
             }
         });

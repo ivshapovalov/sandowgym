@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
@@ -14,44 +15,33 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 
 public class Training extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
 
-    private Date _day;
+    private long day;
 
     private Training(Builder builder) {
 
-        this._id = builder._id;
-        this._day = builder._day;
+        this.id = builder.id;
+        this.day = builder.day;
     }
 
-    public Date getDay() {
+    public long getDay() {
 
-        return _day;
+        return day;
     }
 
     public String getDayString() {
 
-        String sDate;
-        if (_day == null) {
-            sDate = "";
-        } else {
-            SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
-            sDate = dateformat.format(_day);
-        }
-        return sDate;
+        return ConvertMillisToString(day);
+
     }
 
-
-    public void setDay(Date _day) throws ParseException {
-        this._day = _day;
+    public void setDay(long day)  {
+        this.day = day;
     }
 
-    public void setDayInMillis(long millis) {
-
-        this._day = new Date(millis);
-    }
 
     public void setDayString(String _day) {
 
-        this._day = ConvertStringToDate(_day, DATE_FORMAT_STRING);
+        this.day = ConvertStringToDate(_day).getTime();
 
     }
 
@@ -84,27 +74,19 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
         return DB.getTraining(id);
     }
 
-    public long getDayInMillis() {
-        return _day.getTime();
-    }
-
     public static class Builder extends AbstractEntity {
 
-        private Date _day;
+        private long day;
 
         public Builder(DatabaseManager DB) {
-            this._id = DB.getTrainingMaxNumber() + 1;
+            this.id = DB.getTrainingMaxNumber() + 1;
         }
-        public Builder(int _id) {
-            this._id = _id;
+        public Builder(int id) {
+            this.id = id;
         }
 
-        public Builder addDay(Date day) {
-            this._day = day;
-            return this;
-        }
         public Builder addDay(long day) {
-            this._day = ConvertMillisToDate(day);
+            this.day = day;
             return this;
         }
 

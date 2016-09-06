@@ -33,7 +33,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     private final DatabaseManager DB = new DatabaseManager(this);
 
-    private String mCurrentDate = "";
+    private long mCurrentDateInMillis = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +49,15 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        mCurrentDate = intent.getStringExtra("CurrentDate");
-        if (mCurrentDate == null) {
-            mCurrentDate = "";
-        }
+        mCurrentDateInMillis = intent.getLongExtra("CurrentDateInMillis",0);
 
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
         Button btDay = (Button) findViewById(mDayID);
         if (btDay != null) {
-            if (mCurrentDate == null || mCurrentDate.equals("")) {
+            if (mCurrentDateInMillis == 0) {
                 btDay.setText("");
             } else {
-                btDay.setText(mCurrentDate);
+                btDay.setText(ConvertMillisToString(mCurrentDateInMillis));
             }
         }
 
@@ -79,8 +76,8 @@ public class ActivityTrainingsList extends AppCompatActivity {
         int id = intent.getIntExtra("id", 0);
 
         if (id == 0) {
-            if (!(mCurrentDate == null || mCurrentDate.equals(""))) {
-                List<Training> trainings = DB.getTrainingsByDates(mCurrentDate, mCurrentDate);
+            if (!(mCurrentDateInMillis == 0)) {
+                List<Training> trainings = DB.getTrainingsByDates(mCurrentDateInMillis, mCurrentDateInMillis);
                 if (trainings.size() == 1) {
                     id = trainings.get(0).getID();
                 }
@@ -142,8 +139,8 @@ public class ActivityTrainingsList extends AppCompatActivity {
         layout.setStretchAllColumns(true);
         for (int numEx = 0; numEx < trainings.size(); numEx++) {
             TableRow mRow = new TableRow(this);
-            String data = "";
-            data = trainings.get(numEx).getDayString();
+            long data = 0;
+            data = trainings.get(numEx).getDay();
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
             mRow.setId(NUMBER_OF_VIEWS + trainings.get(numEx).getID());
@@ -160,7 +157,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
-            if (mCurrentDate != null && mCurrentDate.equals(data)) {
+            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==data) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -168,12 +165,12 @@ public class ActivityTrainingsList extends AppCompatActivity {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(data);
+            txt.setText(ConvertMillisToString(data));
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.bt_border);
-            if (mCurrentDate != null && mCurrentDate.equals(data)) {
+            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==data) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -251,7 +248,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
         blink(view);
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
-        intent.putExtra("CurrentDate", mCurrentDate);
+        intent.putExtra("CurrentDateInMillis", mCurrentDateInMillis);
         intent.putExtra("CurrentActivity", "ActivityTrainingsList");
 
         startActivity(intent);
@@ -265,7 +262,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
         if (btDay != null) {
 
             btDay.setText("");
-            mCurrentDate = "";
+            mCurrentDateInMillis = 0;
             showTrainings();
         }
     }

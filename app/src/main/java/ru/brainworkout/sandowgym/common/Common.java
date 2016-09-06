@@ -24,8 +24,8 @@ public class Common{
     public static User dbCurrentUser;
     public static final boolean isDebug=true;
 
-    public static Date ConvertStringToDate(final String date, final String format) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+    public static Date ConvertStringToDate(final String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
         Date d = null;
         try {
             d = dateFormat.parse(String.valueOf(date));
@@ -40,9 +40,12 @@ public class Common{
         return new Date(Millis);
     }
 
-    public static String ConvertDateToString(final Date date, final String format) {
+    public static String ConvertMillisToString(final long Millis) {
+        return ConvertDateToString(new Date(Millis));
+    }
+    public static String ConvertDateToString(final Date date) {
 
-        SimpleDateFormat dateformat = new SimpleDateFormat(format);
+        SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
         String sDate = "";
         try {
             sDate = dateformat.format(date);

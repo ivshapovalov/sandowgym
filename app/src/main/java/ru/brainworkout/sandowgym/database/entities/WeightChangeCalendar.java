@@ -15,58 +15,40 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
  * Created by Ivan on 25.07.2016.
  */
 public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
-    private Date _day;
-    private int _weight;
+    private long day;
+    private int weight;
 
     private WeightChangeCalendar(Builder weightChangeCalendarBuilder) {
-        this._id=weightChangeCalendarBuilder.getID();
-        this._day = weightChangeCalendarBuilder._day;
-        this._weight = weightChangeCalendarBuilder._weight;
+        this.id=weightChangeCalendarBuilder.id;
+        this.day = weightChangeCalendarBuilder.day;
+        this.weight = weightChangeCalendarBuilder.weight;
     }
 
     public int getWeight() {
-        return _weight;
+        return weight;
     }
 
-    public void setWeight(int _weight) {
-        this._weight = _weight;
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
-    public Date getDay() {
+    public long getDay() {
 
-        return _day;
+        return day;
     }
 
     public String getDayString() {
 
-        String sDate;
-        if (_day == null) {
-            sDate = "";
-        } else {
-            SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
-            sDate = dateformat.format(_day);
-        }
-        return sDate;
+        return ConvertMillisToString(day);
     }
 
-    public long getDayInMillis() {
-
-        return _day.getTime();
+    public void setDay(long day) {
+        this.day = day;
     }
 
-    public void setDay(Date _day) throws ParseException {
-        this._day = _day;
-    }
+    public void setDayString(String day) {
 
-    public void setDayInMillis(long millis) {
-
-            this._day = new Date(millis);
-
-    }
-
-    public void setDayString(String _day) {
-
-        this._day = ConvertStringToDate(_day, DATE_FORMAT_STRING);
+        this.day = ConvertStringToDate(day).getTime();
 
     }
 
@@ -96,24 +78,20 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
 
     public static class Builder extends AbstractEntity {
 
-        private Date _day;
-        private int _weight;
+        private long day;
+        private int weight;
 
         public Builder(int id) {
-            this._id = id;
+            this.id = id;
         }
 
-        public Builder addDay(Date day) {
-            this._day = day;
-            return this;
-        }
         public Builder addDay(long day) {
-            this._day = ConvertMillisToDate(day);
+            this.day = day;
             return this;
         }
 
-        public Builder addWeight(int _weight) {
-            this._weight = _weight;
+        public Builder addWeight(int weight) {
+            this.weight = weight;
             return this;
         }
 

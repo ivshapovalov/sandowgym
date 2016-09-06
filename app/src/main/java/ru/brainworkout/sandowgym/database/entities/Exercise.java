@@ -7,62 +7,62 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 
 public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
 
-    private int _is_active=1;
-    private String _name="";
-    private String _explanation="";
-    private String _volume_default="";
-    private String _picture="--";
+    private int is_active=1;
+    private String name="";
+    private String explanation="";
+    private String volume_default="";
+    private String picture="--";
 
     private Exercise(Builder builder) {
 
-        this._id = builder._id;
-        this._name = builder._name;
-        this._explanation = builder._explanation;
-        this._volume_default=builder._volume_default;
-        this._picture=builder._picture;
+        this.id = builder.id;
+        this.name = builder.name;
+        this.explanation = builder.explanation;
+        this.volume_default=builder.volume_default;
+        this.picture=builder.picture;
 
     }
 
     public String getPicture() {
-        return _picture;
+        return picture;
     }
 
-    public void setPicture(String _picture) {
-        this._picture = _picture;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
 
     public int getIsActive() {
-        return _is_active;
+        return is_active;
     }
 
-    public void setIsActive(int _is_active) {
-        this._is_active = _is_active;
+    public void setIsActive(int is_active) {
+        this.is_active = is_active;
     }
 
 
     public String getName() {
-        return _name;
+        return name;
     }
 
-    public void setName(String _name) {
-        this._name = _name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getExplanation() {
-        return this._explanation;
+        return this.explanation;
     }
 
     public void setExplanation(String explanation) {
-        this._explanation = explanation;
+        this.explanation = explanation;
     }
 
     public String getVolumeDefault() {
-        return _volume_default;
+        return volume_default;
     }
 
-    public void setVolumeDefault(String _volume_default) {
-        this._volume_default = _volume_default;
+    public void setVolumeDefault(String volume_default) {
+        this.volume_default = volume_default;
     }
 
     @Override
@@ -93,42 +93,42 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
 
     public static class Builder extends AbstractEntity {
 
-        private int _is_active=1;
-        private String _name="";
-        private String _explanation="";
-        private String _volume_default="";
-        private String _picture="--";
+        private int is_active=1;
+        private String name="";
+        private String explanation="";
+        private String volume_default="";
+        private String picture="--";
 
         public Builder(int id) {
-            this._id = id;
+            this.id = id;
         }
 
         public Builder(DatabaseManager DB) {
-            this._id=DB.getExerciseMaxNumber() + 1;
+            this.id=DB.getExerciseMaxNumber() + 1;
         }
 
         public Builder addIsActive(int is_active) {
-            this._is_active = is_active;
+            this.is_active = is_active;
             return this;
         }
 
         public Builder addName(String name) {
-            this._name = name;
+            this.name = name;
             return this;
         }
 
         public Builder addExplanation(String explanation) {
-            this._explanation = explanation;
+            this.explanation = explanation;
             return this;
         }
 
         public Builder addVolumeDefault(String volumeDefault) {
-            this._volume_default = volumeDefault;
+            this.volume_default = volumeDefault;
             return this;
         }
 
         public Builder addPicture(String picture) {
-            this._picture = picture;
+            this.picture = picture;
             return this;
         }
 

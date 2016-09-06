@@ -218,7 +218,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightCalendarChange.getID());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightCalendarChange.getIdUser());
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDayInMillis());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightCalendarChange.getWeight());
 
         db.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
@@ -249,7 +249,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getID());
         values.put(KEY_TRAINING_ID_USER, training.getIdUser());
-        values.put(KEY_TRAINING_DAY, training.getDayInMillis());
+        values.put(KEY_TRAINING_DAY, training.getDay());
         // Inserting Row
         db.insert(TABLE_TRAININGS, null, values);
         db.close(); // Closing database connection
@@ -659,10 +659,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return exerciseList;
     }
 
-    public List<Exercise> getExercisesByDates(String mDateFrom, String mDateTo) {
+    public List<Exercise> getExercisesByDates(long mDateFrom, long mDateTo) {
 
-        mDateFrom = "".equals(mDateFrom) ? "0000-00-00" : mDateFrom;
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+        mDateFrom = mDateFrom==0 ? Long.MIN_VALUE : mDateFrom;
+        mDateTo = mDateTo==0 ? Long.MAX_VALUE: mDateTo;
         List<Exercise> exerciseList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + "," + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
@@ -801,10 +801,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public List<Training> getTrainingsByDates(String mDateFrom, String mDateTo) {
+    public List<Training> getTrainingsByDates(long mDateFrom, long mDateTo) {
 
-        mDateFrom = "".equals(mDateFrom) ? "0000-00-00" : mDateFrom;
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+        mDateFrom = mDateFrom==0 ? Long.MAX_VALUE : mDateFrom;
+        mDateTo = mDateTo==0 ? Long.MAX_VALUE : mDateTo;
 
         List<Training> trainingsList = new ArrayList<>();
         // Select All Query
@@ -1145,7 +1145,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDayInMillis());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getIdUser());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
 
@@ -1176,7 +1176,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(KEY_TRAINING_ID_USER, training.getIdUser());
-        values.put(KEY_TRAINING_DAY, training.getDayInMillis());
+        values.put(KEY_TRAINING_DAY, training.getDay());
 
         // updating row
         return db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",

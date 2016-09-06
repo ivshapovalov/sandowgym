@@ -112,11 +112,11 @@ public class ActivityTraining extends AppCompatActivity {
             getAllExercisesOfTraining();
         }
 
-        long currentDateOldInMillis = mCurrentTraining.getDayInMillis();
+        long currentDateOldInMillis = mCurrentTraining.getDay();
         saveTraining();
 
         if (currentDateInMillis != 0) {
-            mCurrentTraining.setDayInMillis(currentDateInMillis);
+            mCurrentTraining.setDay(currentDateInMillis);
             updateDayOnScreen(currentDateInMillis);
 
         }
@@ -146,7 +146,7 @@ public class ActivityTraining extends AppCompatActivity {
         TextView etDay = (TextView) findViewById(mDayID);
         if (etDay != null) {
 
-            etDay.setText(ConvertDateToString(ConvertMillisToDate(currentDateInMillis),DATE_FORMAT_STRING));
+            etDay.setText(ConvertDateToString(ConvertMillisToDate(currentDateInMillis)));
 
         }
     }
@@ -159,9 +159,9 @@ public class ActivityTraining extends AppCompatActivity {
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
             mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                    mCurrentTraining.getDay().getTime(), mCurrentExercise.getID());
+                    mCurrentTraining.getDay(), mCurrentExercise.getID());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
-                    mCurrentTraining.getDay().getTime());
+                    mCurrentTraining.getDay());
         }
         if (mTrainingContentNotNullVolume.size() == 1) {
             try {
@@ -212,16 +212,15 @@ public class ActivityTraining extends AppCompatActivity {
 
             mCurrentTraining = new Training.Builder(DB).build();
             //Calendar calendar = Calendar.getInstance();
-            if ((currentDateInMillis ==0)) {
-                String cal = (Calendar.getInstance().getTime()).toLocaleString();
-                try {
-                    mCurrentTraining.setDay(Calendar.getInstance().getTime());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+            if (currentDateInMillis ==0) {
+                Calendar cal = Calendar.getInstance();
+                cal.clear(Calendar.MILLISECOND);
+                cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
+                    mCurrentTraining.setDay(cal.getTimeInMillis());
+
             } else {
 
-                    mCurrentTraining.setDayInMillis(currentDateInMillis);
+                    mCurrentTraining.setDay(currentDateInMillis);
               }
 
         } else {
@@ -427,9 +426,9 @@ public class ActivityTraining extends AppCompatActivity {
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
             mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                    mCurrentTraining.getDayInMillis(), mCurrentExercise.getID());
+                    mCurrentTraining.getDay(), mCurrentExercise.getID());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
-                    mCurrentTraining.getDayInMillis());
+                    mCurrentTraining.getDay());
         }
         if (mWeightChangeCalendarList.size() == 1) {
             try {
@@ -511,7 +510,7 @@ public class ActivityTraining extends AppCompatActivity {
 
             if (dbCurrentUser != null) {
                 mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                        mCurrentTraining.getDayInMillis(), mCurrentExercise.getID());
+                        mCurrentTraining.getDay(), mCurrentExercise.getID());
             }
             if (mTrainingsContentList.size() == 1) {
                 try {
@@ -593,7 +592,7 @@ public class ActivityTraining extends AppCompatActivity {
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
         TextView etDay = (TextView) findViewById(mDayID);
         if (etDay != null) {
-            if (mCurrentTraining.getDay() == null) {
+            if (mCurrentTraining.getDay() == 0) {
                 etDay.setText("");
             } else {
                 etDay.setText(mCurrentTraining.getDayString());
@@ -627,14 +626,10 @@ public class ActivityTraining extends AppCompatActivity {
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
 
-            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()), DATE_FORMAT_STRING);
+            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
 
             if (d != null) {
-                try {
-                    mCurrentTraining.setDay(d);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                    mCurrentTraining.setDay(d.getTime());
             }
 
         }
@@ -762,10 +757,10 @@ public class ActivityTraining extends AppCompatActivity {
         if (!mTrainingIsNew) {
             intent.putExtra("CurrentTrainingID", mCurrentTraining.getID());
         }
-        if (mCurrentTraining.getDay() == null) {
+        if (mCurrentTraining.getDay() == 0) {
             intent.putExtra("CurrentDateInMillis", 0);
         } else {
-            intent.putExtra("CurrentDateInMillis", mCurrentTraining.getDayInMillis());
+            intent.putExtra("CurrentDateInMillis", mCurrentTraining.getDay());
         }
         intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
 
