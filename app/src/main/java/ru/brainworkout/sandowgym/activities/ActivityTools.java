@@ -41,7 +41,7 @@ public class ActivityTools extends AppCompatActivity {
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
-        }
+    }
 
     }
 
