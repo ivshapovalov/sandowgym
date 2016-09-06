@@ -54,7 +54,7 @@ public class ActivityCalendarView extends AppCompatActivity {
             mOldDateFromInMillis = 0;
         }
         try {
-            mOldDateToInMillis = intent.getLongExtra("CurrentDateTo",0);
+            mOldDateToInMillis = intent.getLongExtra("CurrentDateToInMillis",0);
         } catch (Exception e) {
             mOldDateToInMillis = 0;
         }

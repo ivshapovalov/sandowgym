@@ -113,15 +113,12 @@ public class ActivityTraining extends AppCompatActivity {
         }
 
         long currentDateOldInMillis = mCurrentTraining.getDay();
-        saveTraining();
-
         if (currentDateInMillis != 0) {
-            mCurrentTraining.setDay(currentDateInMillis);
+           mCurrentTraining.setDay(currentDateInMillis);
             updateDayOnScreen(currentDateInMillis);
 
         }
-
-
+        saveTraining();
         updateButtonsListOfExercises();
 
         int exID = intent.getIntExtra("CurrentExerciseID", 0);

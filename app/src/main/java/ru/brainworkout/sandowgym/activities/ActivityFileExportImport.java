@@ -88,10 +88,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private void getIntentParams() {
         Intent intent = getIntent();
-        long mCurrentDate = intent.getLongExtra("CurrentDateInMillis",0);
-        long mCurrentDateTo = intent.getLongExtra("CurrentDateToInMillis",0);
-        mDateFrom = mCurrentDate;
-        mDateTo = mCurrentDateTo;
+        long mCurrentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
+        long mCurrentDateToInMillis = intent.getLongExtra("CurrentDateToInMillis", 0);
+        mDateFrom = mCurrentDateInMillis;
+        mDateTo = mCurrentDateToInMillis;
     }
 
     private List<String[]> createDataArray(TypeOfView type) {
@@ -248,7 +248,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     private void FillLegendSheet(Sheet sheetLegend) {
 
-        int rowCount=0;
+        int rowCount = 0;
 
         Row row;
         Cell cell;
@@ -636,9 +636,9 @@ public class ActivityFileExportImport extends AppCompatActivity {
         TextView tvPath = (TextView) findViewById(mPath);
         if (tvPath != null) {
 
-            messageTrainingList.insert(0,"From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
-                            + " successfully loaded trainings:"+"\n")
-            .insert(0, tvPath.getText().toString());
+            messageTrainingList.insert(0, "From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
+                    + " successfully loaded trainings:" + "\n")
+                    .insert(0, tvPath.getText().toString());
             tvPath.setText("");
             tvPath.setText(messageTrainingList);
 
@@ -696,6 +696,34 @@ public class ActivityFileExportImport extends AppCompatActivity {
         day_onClick(false);
     }
 
+    private void day_onClick(boolean isBeginDate) {
+
+
+        Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
+        intent.putExtra("IsBeginDate", isBeginDate);
+        intent.putExtra("CurrentActivity", "ActivityFileExportImport");
+
+        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
+        TextView tvDayFrom = (TextView) findViewById(mDayFromID);
+        intent.putExtra("CurrentDateInMillis", 0);
+        intent.putExtra("CurrentDateToInMillis", "");
+        if (tvDayFrom != null) {
+            if (!"".equals(String.valueOf(tvDayFrom.getText()).trim())) {
+                intent.putExtra("CurrentDateInMillis", ConvertStringToDate(String.valueOf(tvDayFrom.getText())).getTime());
+            }
+        }
+        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
+        TextView tvDayTo = (TextView) findViewById(mDayToID);
+        if (tvDayTo != null) {
+            if (!"".equals(String.valueOf(tvDayTo.getText()).trim())) {
+                intent.putExtra("CurrentDateToInMillis", ConvertStringToDate(String.valueOf(tvDayTo.getText())).getTime());
+            }
+        }
+
+        startActivity(intent);
+
+    }
+
 
     private void loadFromFile() {
 
@@ -719,10 +747,10 @@ public class ActivityFileExportImport extends AppCompatActivity {
     public void btExportToFile_onClick(View view) {
 
         blink(view);
-        if (mDateFrom == 0 ) {
+        if (mDateFrom == 0) {
             mDateFrom = Long.MIN_VALUE;
         }
-        if (mDateTo == 0 ) {
+        if (mDateTo == 0) {
             mDateTo = Long.MAX_VALUE;
         }
         trainingsList = new ArrayList<>();
@@ -740,32 +768,6 @@ public class ActivityFileExportImport extends AppCompatActivity {
         }
 
         writeToFile(dataSheets);
-
-    }
-
-    private void day_onClick(boolean isBeginDate) {
-
-
-        Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
-        intent.putExtra("IsBeginDate", isBeginDate);
-        intent.putExtra("CurrentActivity", "ActivityFileExportImport");
-
-        int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
-        TextView tvDayFrom = (TextView) findViewById(mDayFromID);
-        if (tvDayFrom != null) {
-            intent.putExtra("CurrentDateInMillis", ConvertStringToDate(String.valueOf(tvDayFrom.getText())));
-        } else {
-            intent.putExtra("CurrentDateInMillis", 0);
-        }
-        int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
-        TextView tvDayTo = (TextView) findViewById(mDayToID);
-        if (tvDayTo != null) {
-            intent.putExtra("CurrentDateToInMillis", ConvertStringToDate(String.valueOf(tvDayTo.getText())));
-        } else {
-            intent.putExtra("CurrentDateToInMillis", "");
-        }
-
-        startActivity(intent);
 
     }
 
@@ -797,7 +799,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView etDayFrom = (TextView) findViewById(mDayFromID);
         if (etDayFrom != null) {
-            if (mDateFrom == 0 ) {
+            if (mDateFrom == 0) {
                 etDayFrom.setText("");
             } else {
                 etDayFrom.setText(ConvertMillisToString(mDateFrom));
@@ -807,7 +809,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView etDayTo = (TextView) findViewById(mDayToID);
         if (etDayTo != null) {
-            if (mDateTo == 0 ) {
+            if (mDateTo == 0) {
                 etDayTo.setText("");
             } else {
                 etDayTo.setText(ConvertMillisToString(mDateTo));
