@@ -87,7 +87,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         }
         CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-        calendarView.setDate(mNewDateInMillis, true, false);
+        calendarView.setDate(mNewDateInMillis, false, true);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override

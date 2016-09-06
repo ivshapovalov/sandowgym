@@ -212,7 +212,8 @@ public class ActivityTraining extends AppCompatActivity {
             if (currentDateInMillis ==0) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
-                cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
+                //cal.set(9999,11,31,12,59,59);
+                //cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
                     mCurrentTraining.setDay(cal.getTimeInMillis());
 
             } else {
