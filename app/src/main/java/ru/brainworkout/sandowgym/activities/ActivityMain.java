@@ -24,6 +24,9 @@ import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
+
+
+
 public class ActivityMain extends AppCompatActivity {
 
     public static final String APP_PREFERENCES = "mysettings";

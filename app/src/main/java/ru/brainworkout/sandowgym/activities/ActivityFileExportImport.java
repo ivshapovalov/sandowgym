@@ -725,7 +725,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
     }
 
 
-    private void loadFromFile() {
+    public void loadFromFile() {
 
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
         if (exportDir.exists()) {
@@ -747,6 +747,11 @@ public class ActivityFileExportImport extends AppCompatActivity {
     public void btExportToFile_onClick(View view) {
 
         blink(view);
+        exportToFile();
+
+    }
+
+    public void exportToFile() {
         if (mDateFrom == 0) {
             mDateFrom = Long.MIN_VALUE;
         }
@@ -768,7 +773,6 @@ public class ActivityFileExportImport extends AppCompatActivity {
         }
 
         writeToFile(dataSheets);
-
     }
 
     public void btDayFromClear_onClick(final View view) {

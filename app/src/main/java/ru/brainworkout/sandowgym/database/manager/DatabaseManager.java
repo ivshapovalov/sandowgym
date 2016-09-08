@@ -1,5 +1,6 @@
 package ru.brainworkout.sandowgym.database.manager;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.brainworkout.sandowgym.activities.ActivityFileExportImport;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
@@ -171,7 +173,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
+
+
+       //  Drop older table if existed
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 
@@ -185,6 +189,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         // Create tables again
         onCreate(db);
+//
+
     }
 
     public void DeleteDB(SQLiteDatabase db) {
