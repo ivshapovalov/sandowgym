@@ -428,6 +428,7 @@ public class ActivityTraining extends AppCompatActivity {
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
                     mCurrentTraining.getDay());
         }
+        mWeightInCalendar = 0;
         if (mWeightChangeCalendarList.size() == 1) {
             try {
                 mWeightInCalendar = mWeightChangeCalendarList.get(0).getWeight();
@@ -435,6 +436,7 @@ public class ActivityTraining extends AppCompatActivity {
                 mWeightInCalendar = 0;
             }
         }
+        mExerciseWeightLastDay = 0;
         if (mTrainingContentNotNullVolume.size() == 1) {
             try {
                 mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
@@ -510,6 +512,7 @@ public class ActivityTraining extends AppCompatActivity {
                 mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
                         mCurrentTraining.getDay(), mCurrentExercise.getID());
             }
+            mExerciseVolumeLastDay = "";
             if (mTrainingsContentList.size() == 1) {
                 try {
                     mExerciseVolumeLastDay = mTrainingsContentList.get(0).getVolume();

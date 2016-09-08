@@ -490,9 +490,19 @@ public class ActivityExercisesList extends AppCompatActivity {
         //19
         exercises.add(new Exercise.Builder(maxNum + (i++))
                 .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
+                .addName("Подтягивания")
                 .addExplanation(
                         "Подтягивания на перекладине любым хватом."
+                )
+                .addVolumeDefault("--")
+                .addPicture("ic_ex_" + String.valueOf(i))
+                .build());
+
+        exercises.add(new Exercise.Builder(maxNum + (i++))
+                .addIsActive(1)
+                .addName("Планка" )
+                .addExplanation(
+                        "Планка"
                 )
                 .addVolumeDefault("--")
                 .addPicture("ic_ex_" + String.valueOf(i))

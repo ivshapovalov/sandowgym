@@ -41,11 +41,6 @@ public class ActivityMain extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        Calendar cal= Calendar.getInstance();
-//
-//        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
-
         showElementsOnScreen();
 
         defineCurrentUser();
