@@ -90,7 +90,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void tvDay_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         fillWeightChangeCalendarFromScreen();
         if (mCurrentWeightChangeCalendar.getWeight()!=0) {
@@ -151,7 +151,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
         intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -192,7 +192,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         fillWeightChangeCalendarFromScreen();
 
         mCurrentWeightChangeCalendar.dbSave(DB);
@@ -206,7 +206,7 @@ public class ActivityWeightChangeCalendar extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         mCurrentWeightChangeCalendar.dbDelete(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);

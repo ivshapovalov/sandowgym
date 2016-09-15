@@ -45,8 +45,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
             }
         }
-
-        blink(view);
+        blink(view,this);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
@@ -61,7 +60,7 @@ public class ActivityTrainingOptions extends AppCompatActivity {
 
     public void buttonCancel_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         this.finish();
 
     }

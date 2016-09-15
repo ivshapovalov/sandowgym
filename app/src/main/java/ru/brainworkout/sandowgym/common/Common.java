@@ -1,6 +1,8 @@
 package ru.brainworkout.sandowgym.common;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -56,7 +58,12 @@ public class Common{
 
     }
 
-    public static void blink(final View v) {
+    public static void blink(final View v, final Activity activity) {
+
+        long mills = 100L;
+        Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(mills);
+
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
         anim.setDuration(100);
         anim.setStartOffset(0);

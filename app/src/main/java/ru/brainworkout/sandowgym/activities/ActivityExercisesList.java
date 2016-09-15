@@ -84,7 +84,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void btExercisesAdd_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -93,7 +93,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void bt_ExercisesFillDefault_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         List<Exercise> exercises = CreateDefaultExercises();
         for (Exercise ex : exercises) {
@@ -191,11 +191,11 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     }
 
-    private void rowExercise_onClick(final TableRow v) {
+    private void rowExercise_onClick(final TableRow view) {
 
-        blink(v);
+        blink(view,this);
 
-        int id = v.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
         intent.putExtra("CurrentExerciseID", id);
@@ -206,7 +206,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -216,7 +216,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -233,7 +233,7 @@ public class ActivityExercisesList extends AppCompatActivity {
 
     public void btDeleteAllExercises_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите удалить все упражения пользователя?")

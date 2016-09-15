@@ -669,7 +669,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btClose_onClick(View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityTools.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -686,13 +686,13 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void tvDayFrom_onClick(View view) {
 
-        blink(view);
+        blink(view,this);
         day_onClick(true);
     }
 
     public void tvDayTo_onClick(View view) {
 
-        blink(view);
+        blink(view,this);
         day_onClick(false);
     }
 
@@ -739,14 +739,14 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btImportFromFile_onClick(View view) {
 
-        blink(view);
+        blink(view,this);
         loadFromFile();
 
     }
 
     public void btExportToFile_onClick(View view) {
 
-        blink(view);
+        blink(view,this);
         exportToFile();
 
     }
@@ -777,7 +777,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btDayFromClear_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
         if (tvDayFrom != null) {
@@ -788,7 +788,7 @@ public class ActivityFileExportImport extends AppCompatActivity {
 
     public void btDayToClear_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {

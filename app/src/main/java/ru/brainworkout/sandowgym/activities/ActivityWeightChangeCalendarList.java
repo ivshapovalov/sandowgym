@@ -79,7 +79,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void btWeightChangeCalendarListAdd_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -182,11 +182,11 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     }
 
-    private void rowWeightChangeCalendar_onClick(final TableRow v) {
+    private void rowWeightChangeCalendar_onClick(final TableRow view) {
 
-        blink(v);
+        blink(view,this);
 
-        int id = v.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
         intent.putExtra("CurrentWeightChangeCalendarID", id);
@@ -197,7 +197,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
@@ -207,7 +207,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -216,7 +216,7 @@ public class ActivityWeightChangeCalendarList extends AppCompatActivity {
 
     public void btDeleteWeightChangeCalendarList_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите удалить все изменения весов пользователия?")

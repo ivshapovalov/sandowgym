@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -249,7 +250,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeDefault_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {
                 int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
@@ -264,7 +265,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLastDay_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
         if (etVolume != null) {
@@ -279,7 +280,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btOptions_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityTrainingOptions.class);
 
@@ -603,7 +604,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
         intent.putExtra("id", mCurrentTraining.getID());
@@ -667,7 +668,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         saveTraining();
 
     }
@@ -719,7 +720,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         if (!mTrainingIsNew) {
 
@@ -749,7 +750,7 @@ public class ActivityTraining extends AppCompatActivity {
         getPropertiesFromScreen();
         mCurrentTrainingContent.dbSave(DB);
         mCurrentTraining.dbSave(DB);
-        blink(view);
+        blink(view,this);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
 
@@ -870,25 +871,25 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLeft_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         VolumeChange(-1 * mPlusMinusButtonValue);
     }
 
     public void btVolumeRight_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         VolumeChange(mPlusMinusButtonValue);
     }
 

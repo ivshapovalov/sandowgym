@@ -124,7 +124,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
         intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -181,7 +181,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         fillExerciseFromScreen();
 
         mCurrentExercise.dbSave(DB);
@@ -195,7 +195,7 @@ public class ActivityExercise extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         mCurrentExercise.dbDelete(DB);
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);

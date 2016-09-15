@@ -101,7 +101,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void bt_TrainingsAdd_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
         intent.putExtra("IsNew", true);
         startActivity(intent);
@@ -184,10 +184,10 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     }
 
-    private void rowTraining_onClick(final TableRow v) {
+    private void rowTraining_onClick(final TableRow view) {
 
-        blink(v);
-        int id = v.getId() % NUMBER_OF_VIEWS;
+        blink(view,this);
+        int id = view.getId() % NUMBER_OF_VIEWS;
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
         intent.putExtra("CurrentTrainingID", id);
         intent.putExtra("IsNew", false);
@@ -197,7 +197,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void bt_Edit_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(dbmanager);
 
@@ -205,7 +205,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -222,7 +222,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void btDeleteAllTrainings_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
 
         new AlertDialog.Builder(this)
                 .setMessage("Вы действительно хотите удалить все тренировки и их содержимое?")
@@ -246,7 +246,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void btDay_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
         intent.putExtra("CurrentDateInMillis", mCurrentDateInMillis);
         intent.putExtra("CurrentActivity", "ActivityTrainingsList");
@@ -256,7 +256,7 @@ public class ActivityTrainingsList extends AppCompatActivity {
 
     public void btTrainingsFilterDelete_onClick(final View view) {
 
-        blink(view);
+        blink(view,this);
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
         Button btDay = (Button) findViewById(mDayID);
         if (btDay != null) {
