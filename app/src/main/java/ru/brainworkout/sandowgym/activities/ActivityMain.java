@@ -101,6 +101,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btUsers_onClick(final View view) {
 
+        blink(view,this);
         Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
         startActivity(intent);
 
@@ -108,6 +109,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btWeightCalendarList_onClick(View view) {
 
+        blink(view,this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityWeightChangeCalendarList.class);
             startActivity(intent);
@@ -117,6 +119,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btExercises_onClick(final View view) {
 
+        blink(view,this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityExercisesList.class);
             startActivity(intent);
@@ -126,6 +129,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btTrainings_onClick(final View view) {
 
+        blink(view,this);
         if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTrainingsList.class);
             startActivity(intent);
@@ -135,6 +139,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btNewTraining_onClick(final View view) {
 
+        blink(view,this);
         if (isUserDefined()  & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
@@ -145,6 +150,7 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btTools_onClick(final View view) {
 
+            blink(view,this);
             Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
             startActivity(intent);
 

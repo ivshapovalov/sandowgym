@@ -991,6 +991,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btTrainingList_onClick(TextView view) {
 
+        blink(view,this);
         int newId = view.getId() % NUMBER_OF_VIEWS;
         int step = newId - (mCurrentExerciseNumberInList + 1);
         saveAndGoToNewExercise(step);
