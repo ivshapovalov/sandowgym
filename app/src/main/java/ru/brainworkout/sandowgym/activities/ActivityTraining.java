@@ -1018,12 +1018,15 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void btTrainingListPrevious_onClick(final TextView view) {
 
+        blink(view,this);
+
         saveAndGoToNewExercise(-5);
 
     }
 
     private void btTrainingListNext_onClick(final TextView view) {
 
+        blink(view,this);
         saveAndGoToNewExercise(5);
 
     }
