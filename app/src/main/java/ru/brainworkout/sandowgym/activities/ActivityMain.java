@@ -150,9 +150,9 @@ public class ActivityMain extends AppCompatActivity {
 
     public void btTools_onClick(final View view) {
 
-            blink(view,this);
-            Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
-            startActivity(intent);
+        blink(view,this);
+        Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
+        startActivity(intent);
 
 
     }

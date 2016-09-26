@@ -60,7 +60,7 @@ public class Common{
 
     public static void blink(final View v, final Activity activity) {
 
-        long mills = 100L;
+        long mills = 50L;
         Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(mills);
 
