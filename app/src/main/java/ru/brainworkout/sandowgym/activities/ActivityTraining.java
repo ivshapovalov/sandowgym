@@ -84,7 +84,7 @@ public class ActivityTraining extends AppCompatActivity {
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
 
-        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis",0);
+        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
 
 
         boolean weightIsNeedToUpdate = false;
@@ -113,7 +113,7 @@ public class ActivityTraining extends AppCompatActivity {
 
         long currentDateOldInMillis = mCurrentTraining.getDay();
         if (currentDateInMillis != 0) {
-           mCurrentTraining.setDay(currentDateInMillis);
+            mCurrentTraining.setDay(currentDateInMillis);
             updateDayOnScreen(currentDateInMillis);
 
         }
@@ -126,7 +126,7 @@ public class ActivityTraining extends AppCompatActivity {
             saveAndGoToNewExercise(exID);
         }
 
-        if (weightIsNeedToUpdate || (currentDateInMillis != 0 && mCurrentTraining != null && currentDateInMillis!=currentDateOldInMillis)) {
+        if (weightIsNeedToUpdate || (currentDateInMillis != 0 && mCurrentTraining != null && currentDateInMillis != currentDateOldInMillis)) {
 
             updateCurrentWeightOfTrainingContent();
         }
@@ -185,7 +185,6 @@ public class ActivityTraining extends AppCompatActivity {
                     }
 
 
-
                     trainingContent.dbSave(DB);
                 }
             }
@@ -208,17 +207,17 @@ public class ActivityTraining extends AppCompatActivity {
 
             mCurrentTraining = new Training.Builder(DB).build();
             //Calendar calendar = Calendar.getInstance();
-            if (currentDateInMillis ==0) {
+            if (currentDateInMillis == 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
                 //cal.set(9999,11,31,12,59,59);
                 //cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
-                    mCurrentTraining.setDay(cal.getTimeInMillis());
+                mCurrentTraining.setDay(cal.getTimeInMillis());
 
             } else {
 
-                    mCurrentTraining.setDay(currentDateInMillis);
-              }
+                mCurrentTraining.setDay(currentDateInMillis);
+            }
 
         } else {
 
@@ -248,7 +247,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeDefault_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {
                 int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
@@ -263,7 +262,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLastDay_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
         if (etVolume != null) {
@@ -278,7 +277,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btOptions_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityTrainingOptions.class);
 
@@ -400,15 +399,27 @@ public class ActivityTraining extends AppCompatActivity {
 
     private void getAllActiveExercises() {
 
+        //при инициализации тренировки создадим сразу контент
         if (dbCurrentUser != null) {
             mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
             mTrainingContentList = new ArrayList<>();
 
+
+            for (Exercise ex : mActiveExercises
+                    ) {
+                mCurrentExercise = ex;
+                createNewTrainingContent();
+                if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
+                    mTrainingContentList.add(mCurrentTrainingContent);
+                }
+            }
+            //перемещаемся на первое
             if (mActiveExercises.size() != 0) {
                 mCurrentExerciseNumberInList = 0;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
+                mCurrentTrainingContent = mTrainingContentList.get(mCurrentExerciseNumberInList);
                 //покажем первое упражнение
-                createNewTrainingContent();
+                //createNewTrainingContent();
                 showTrainingContentOnScreen();
 
             }
@@ -601,7 +612,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
 
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
         intent.putExtra("id", mCurrentTraining.getID());
@@ -628,7 +639,7 @@ public class ActivityTraining extends AppCompatActivity {
             Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
 
             if (d != null) {
-                    mCurrentTraining.setDay(d.getTime());
+                mCurrentTraining.setDay(d.getTime());
             }
 
         }
@@ -665,7 +676,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         saveTraining();
 
     }
@@ -717,7 +728,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btDelete_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
 
         if (!mTrainingIsNew) {
 
@@ -726,7 +737,7 @@ public class ActivityTraining extends AppCompatActivity {
                     .setCancelable(false)
                     .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            List<Training> trainings=DB.getLastTrainingsByDates(mCurrentTraining.getDayString());
+                            List<Training> trainings = DB.getLastTrainingsByDates(mCurrentTraining.getDayString());
 
                             mCurrentTrainingContent.dbDelete(DB);
                             mCurrentTraining.dbDelete(DB);
@@ -747,7 +758,7 @@ public class ActivityTraining extends AppCompatActivity {
         getPropertiesFromScreen();
         mCurrentTrainingContent.dbSave(DB);
         mCurrentTraining.dbSave(DB);
-        blink(view,this);
+        blink(view, this);
 
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
 
@@ -868,25 +879,25 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btVolumeLeft_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         VolumeChange(-1);
     }
 
     public void btVolumeLeft10_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         VolumeChange(-1 * mPlusMinusButtonValue);
     }
 
     public void btVolumeRight_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         VolumeChange(1);
     }
 
     public void btVolumeRight10_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         VolumeChange(mPlusMinusButtonValue);
     }
 
@@ -923,18 +934,26 @@ public class ActivityTraining extends AppCompatActivity {
 
             int mNumBegin = 0;
             int mNumEnd = 0;
-            if (mCurrentExerciseNumberInList + 1 <= 3) {
+            if (mCurrentExerciseNumberInList + 1 <= 2) {
                 mNumBegin = 1;
-                mNumEnd = 5;
-            } else if (mCurrentExerciseNumberInList >= mActiveExercises.size() - 3) {
-                mNumBegin = mActiveExercises.size() - 4;
+                mNumEnd = 3;
+            } else if (mCurrentExerciseNumberInList >= mActiveExercises.size() - 2) {
+                mNumBegin = mActiveExercises.size() - 2;
                 mNumEnd = mActiveExercises.size();
             } else {
-                mNumBegin = (mCurrentExerciseNumberInList + 1) - 2;
-                mNumEnd = (mCurrentExerciseNumberInList + 1) + 2;
+                mNumBegin = (mCurrentExerciseNumberInList + 1) - 1;
+                mNumEnd = (mCurrentExerciseNumberInList + 1) + 1;
             }
 
-            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<-",
+            Button butFirst = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<<",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            btTrainingListFirst_onClick((TextView) v);
+                        }
+                    }
+            );
+            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -957,11 +976,19 @@ public class ActivityTraining extends AppCompatActivity {
                 }
             }
 
-            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, "->",
+            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             btTrainingListNext_onClick((TextView) v);
+                        }
+                    }
+            );
+            Button butLast = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">>",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            btTrainingListLast_onClick((TextView) v);
                         }
                     }
             );
@@ -988,7 +1015,7 @@ public class ActivityTraining extends AppCompatActivity {
 
     public void btTrainingList_onClick(TextView view) {
 
-        blink(view,this);
+        blink(view, this);
         int newId = view.getId() % NUMBER_OF_VIEWS;
         int step = newId - (mCurrentExerciseNumberInList + 1);
         saveAndGoToNewExercise(step);
@@ -1001,11 +1028,17 @@ public class ActivityTraining extends AppCompatActivity {
 
         saveCurrentTrainingContent(readFromScreen);
         int mStepsABS = Math.abs(steps);
+
         for (int i = 1; i <= mStepsABS; i++) {
             readFromScreen = false;
-            if (steps < 0) {
+            if (steps < 0 && mCurrentExerciseNumberInList == 0) {
+                break;
+            } else if (steps < 0 && mCurrentExerciseNumberInList != 0) {
+
                 setPreviousExercise();
-            } else {
+            } else if (steps > 0 && mCurrentExerciseNumberInList == mActiveExercises.size() - 1) {
+                break;
+            } else if (steps > 0 && mCurrentExerciseNumberInList != mActiveExercises.size() - 1) {
                 setNextExercise();
             }
             saveCurrentTrainingContent(readFromScreen);
@@ -1014,17 +1047,24 @@ public class ActivityTraining extends AppCompatActivity {
     }
 
     private void btTrainingListPrevious_onClick(final TextView view) {
-
-        blink(view,this);
-
-        saveAndGoToNewExercise(-5);
-
+        blink(view, this);
+        saveAndGoToNewExercise(-3);
     }
 
     private void btTrainingListNext_onClick(final TextView view) {
+        blink(view, this);
+        saveAndGoToNewExercise(3);
 
-        blink(view,this);
-        saveAndGoToNewExercise(5);
+    }
+
+    private void btTrainingListFirst_onClick(final TextView view) {
+        blink(view, this);
+        saveAndGoToNewExercise(-mCurrentExerciseNumberInList);
+    }
+
+    private void btTrainingListLast_onClick(final TextView view) {
+        blink(view, this);
+        saveAndGoToNewExercise(mActiveExercises.size() - mCurrentExerciseNumberInList);
 
     }
 
