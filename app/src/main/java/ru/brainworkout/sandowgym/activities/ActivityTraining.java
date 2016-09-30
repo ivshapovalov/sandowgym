@@ -105,8 +105,6 @@ public class ActivityTraining extends AppCompatActivity {
 //        sv.setOnTouchListener(swipeDetectorActivity);
 
 
-
-
         if (mTrainingIsNew) {
             getAllActiveExercises();
         } else {
@@ -406,7 +404,6 @@ public class ActivityTraining extends AppCompatActivity {
             mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
             mTrainingContentList = new ArrayList<>();
 
-            Exercise ex1;
             if (mActiveExercises.size() != 0) {
                 mCurrentExerciseNumberInList = 0;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);

@@ -52,7 +52,6 @@ public class ActivityExercisesList extends AppCompatActivity {
             HideEditorButton(btEditor);
         }
 
-
         showExercises();
 
         setTitleOfActivity(this);
