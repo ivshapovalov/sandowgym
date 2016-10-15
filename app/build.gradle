@@ -9,7 +9,7 @@ android {
     buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId 'ru.brainworkout.sandowgym'
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 2
         versionName '2.0'
@@ -28,7 +28,8 @@ android {
         }
         applicationVariants.all { variant ->
             variant.outputs.each { output ->
-                output.outputFile = file("$project.buildDir/outputs/apk/sandow_test.apk")
+                //output.outputFile = file("$project.buildDir/outputs/apk/sandow_test.apk")
+                output.outputFile = file("Q://Dropbox/android/sandow_test.apk")
             }
         }
     }

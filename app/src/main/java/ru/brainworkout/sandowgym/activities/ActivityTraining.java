@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,9 +102,9 @@ public class ActivityTraining extends AppCompatActivity {
         //не используем. Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
         //убираю скрол вправо, влево. перемещение кнопками внизу
 
-//        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
-//        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
-//        sv.setOnTouchListener(swipeDetectorActivity);
+        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
+        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
+        sv.setOnTouchListener(swipeDetectorActivity);
 
 
         if (mTrainingIsNew) {
@@ -135,6 +137,18 @@ public class ActivityTraining extends AppCompatActivity {
 
         setTitleOfActivity(this);
     }
+
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setContentView(R.layout.activity_training);
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+//            setContentView(R.layout.activity_training);
+//        }
+//    }
 
     private void updateDayOnScreen(long currentDateInMillis) {
 
@@ -789,7 +803,7 @@ public class ActivityTraining extends AppCompatActivity {
         }
 
         public final void onRightToLeftSwipe() {
-            // System.out.println("Right to Left swipe [Previous]");
+           // System.out.println("Right to Left swipe [Previous]");
             Toast.makeText(ActivityTraining.this, "[Следующее упражнение]", Toast.LENGTH_SHORT).show();
             setNextExercise();
             showExercise();
@@ -1157,4 +1171,6 @@ public class ActivityTraining extends AppCompatActivity {
             }
         }
     }
+
+
 }
