@@ -44,7 +44,7 @@ import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class ActivityTraining extends AppCompatActivity {
+public class ActivityTraining extends ActivityAbstract {
 
     private static final int NUMBER_OF_VIEWS = 30000;
     private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;

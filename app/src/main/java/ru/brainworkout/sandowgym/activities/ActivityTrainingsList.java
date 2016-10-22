@@ -26,7 +26,7 @@ import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.entities.Training;
 
-public class ActivityTrainingsList extends AppCompatActivity {
+public class ActivityTrainingsList extends ActivityAbstract {
     private static final int MAX_VERTICAL_BUTTONS_COUNT = 15;
     private static final int MAX_HORIZONTAL_BUTTONS_COUNT = 2;
     private final int NUMBER_OF_VIEWS = 20000;

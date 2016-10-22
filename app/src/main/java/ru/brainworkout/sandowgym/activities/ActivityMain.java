@@ -24,7 +24,7 @@ import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
-public class ActivityMain extends AppCompatActivity {
+public class ActivityMain extends ActivityAbstract {
 
     public static final String APP_PREFERENCES = "mysettings";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
@@ -42,8 +42,6 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showElementsOnScreen();
-
-        defineCurrentUser();
         setTitleOfActivity(this);
     }
 
@@ -70,31 +68,6 @@ public class ActivityMain extends AppCompatActivity {
         TextView tvMessage = (TextView) findViewById(tvMessageID);
         if (tvMessage!=null){
             tvMessage.setText(" ");
-        }
-
-    }
-
-    private void defineCurrentUser() {
-
-        if (dbCurrentUser == null) {
-            List<User> userList = DB.getAllUsers();
-            if (userList.size() == 1) {
-                User currentUser=userList.get(0);
-                dbCurrentUser = currentUser;
-                currentUser.setIsCurrentUser(1);
-                currentUser.dbSave(DB);
-            } else {
-                //ищем активного
-                for (User user:userList
-                        ) {
-                    if (user.isCurrentUser()==1) {
-                        dbCurrentUser =user;
-                        break;
-                    }
-                }
-                isUserDefined();
-            }
-
         }
 
     }
@@ -155,16 +128,6 @@ public class ActivityMain extends AppCompatActivity {
         startActivity(intent);
 
 
-    }
-
-    private boolean isUserDefined() {
-        if (dbCurrentUser ==null) {
-            Toast toast = Toast.makeText(ActivityMain.this,
-                    "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
-            toast.show();
-            return false;
-        }
-        return true;
     }
 
     private boolean isDBNotEmpty() {

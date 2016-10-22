@@ -26,7 +26,7 @@ import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
-public class ActivityWeightChangeCalendarList extends AppCompatActivity {
+public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
     private final int MAX_VERTICAL_BUTTON_COUNT = 17;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 3;

@@ -16,7 +16,7 @@ import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import static ru.brainworkout.sandowgym.common.Common.dbCurrentUser;
 import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
 
-public class ActivityTools extends AppCompatActivity {
+public class ActivityTools extends ActivityAbstract {
 
     private static final int MAX_VERTICAL_BUTTON_COUNT = 10;
     private final DatabaseManager DB = new DatabaseManager(this);

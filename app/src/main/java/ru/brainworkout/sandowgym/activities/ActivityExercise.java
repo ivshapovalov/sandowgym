@@ -16,7 +16,7 @@ import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class ActivityExercise extends AppCompatActivity {
+public class ActivityExercise extends ActivityAbstract {
 
 
     private Exercise mCurrentExercise;

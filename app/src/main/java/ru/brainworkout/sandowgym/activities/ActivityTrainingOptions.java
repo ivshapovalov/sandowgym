@@ -13,7 +13,7 @@ import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
 
 
-public class ActivityTrainingOptions extends AppCompatActivity {
+public class ActivityTrainingOptions extends ActivityAbstract {
 
     private SharedPreferences mSettings;
     private boolean mShowPicture;

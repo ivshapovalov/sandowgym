@@ -17,7 +17,7 @@ import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class ActivityWeightChangeCalendar extends AppCompatActivity {
+public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     private WeightChangeCalendar mCurrentWeightChangeCalendar;
     private boolean mWeightChangeCalendarIsNew;

@@ -43,7 +43,7 @@ import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 
-public class ActivityFileExportImport extends AppCompatActivity {
+public class ActivityFileExportImport extends ActivityAbstract {
 
     private static final String SYMBOL_ID = "#";
     private static final String SYMBOL_WEIGHT = "$";
