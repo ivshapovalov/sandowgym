@@ -959,7 +959,7 @@ public class ActivityTraining extends ActivityAbstract {
                 mNumEnd = (mCurrentExerciseNumberInList + 1) + 1;
             }
 
-            Button butFirst = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<<",
+            Button butFirst = createNewExerciseButtonInButtonsList(trow, btWidth, params, "1",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -967,7 +967,7 @@ public class ActivityTraining extends ActivityAbstract {
                         }
                     }
             );
-            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<",
+            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<<<",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -990,7 +990,7 @@ public class ActivityTraining extends ActivityAbstract {
                 }
             }
 
-            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">",
+            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">>>",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -998,7 +998,7 @@ public class ActivityTraining extends ActivityAbstract {
                         }
                     }
             );
-            Button butLast = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">>",
+            Button butLast = createNewExerciseButtonInButtonsList(trow, btWidth, params, String.valueOf(mActiveExercises.size()),
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
