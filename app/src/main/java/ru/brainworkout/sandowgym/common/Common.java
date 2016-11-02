@@ -75,7 +75,18 @@ public class Common{
 
     public static void setTitleOfActivity(Activity currentActivity) {
         if (Common.dbCurrentUser != null) {
-            currentActivity.setTitle(currentActivity.getTitle() + " : " + Common.dbCurrentUser.getName() + "");
+            CharSequence title = currentActivity.getTitle();
+            if (title.toString().contains("(")) {
+                title = title.subSequence(0, title.toString().indexOf("("));
+            }
+            title = title + "(" + Common.dbCurrentUser.getName() + ")";
+            currentActivity.setTitle(title);
+        } else {
+            CharSequence title = currentActivity.getTitle();
+            if (title.toString().contains("(")) {
+                title = title.subSequence(0, title.toString().indexOf("("));
+            }
+            currentActivity.setTitle(title);
         }
     }
 

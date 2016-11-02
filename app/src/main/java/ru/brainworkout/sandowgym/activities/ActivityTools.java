@@ -5,11 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
 
@@ -41,22 +41,19 @@ public class ActivityTools extends ActivityAbstract {
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
-    }
+        }
 
     }
 
     public void btExportImport_onClick(final View view) {
-
         Intent intent = new Intent(ActivityTools.this, ActivityFileExportImport.class);
         startActivity(intent);
-
     }
 
     public void btAbout_onClick(final View view) {
 
         Intent intent = new Intent(ActivityTools.this, ActivityAbout.class);
         startActivity(intent);
-
     }
 
     public void btClearBD_onClick(final View view) {
@@ -69,37 +66,26 @@ public class ActivityTools extends ActivityAbstract {
                         try {
 
                             SQLiteDatabase dbSQL = DB.getWritableDatabase();
-                            //DB.DeleteDB(dbSQL);
-                            DB.onUpgrade(dbSQL, 1, 2);
+                            DB.clearDB(dbSQL);
+                            dbCurrentUser = null;
 
-
-                            if (dbCurrentUser !=null) {
-                                setTitle(getTitle().toString().substring(0,getTitle().toString().indexOf(":")));
-                            }
-                            dbCurrentUser =null;
                             Toast toast = Toast.makeText(ActivityTools.this,
                                     "База данных очищена!", Toast.LENGTH_SHORT);
                             toast.show();
+                            setTitleOfActivity(ActivityTools.this);
 
                         } catch (Exception e) {
-
                             Toast toast = Toast.makeText(ActivityTools.this,
                                     "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
                             toast.show();
-
                         }
                     }
                 }).setNegativeButton("Нет", null).show();
-
     }
 
     public void onBackPressed() {
-
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
-
-
 }
