@@ -19,13 +19,13 @@ import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.User;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityUser extends AppCompatActivity {
 
     private User mCurrentUser;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

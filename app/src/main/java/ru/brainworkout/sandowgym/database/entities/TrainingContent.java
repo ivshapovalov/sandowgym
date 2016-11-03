@@ -2,7 +2,7 @@ package ru.brainworkout.sandowgym.database.entities;
 
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class TrainingContent extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
@@ -57,7 +57,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     }
 
     @Override
-    public void dbSave(DatabaseManager db) {
+    public void dbSave(SQLiteDatabaseManager db) {
 
         try {
             db.getTrainingContent(this.getID());
@@ -69,7 +69,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     }
 
     @Override
-    public void dbDelete(DatabaseManager db) {
+    public void dbDelete(SQLiteDatabaseManager db) {
 
             try {
                 db.getTrainingContent(this.getID());
@@ -92,7 +92,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
             this.id = id;
         }
 
-        public Builder(DatabaseManager DB) {
+        public Builder(SQLiteDatabaseManager DB) {
             this.id=DB.getTrainingContentMaxNumber() + 1;
         }
 

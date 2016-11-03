@@ -2,7 +2,6 @@ package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -39,7 +38,7 @@ import ru.brainworkout.sandowgym.common.TypeOfView;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.Training;
 import ru.brainworkout.sandowgym.database.entities.TrainingContent;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 
@@ -64,7 +63,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
     private long mDateFrom;
     private long mDateTo;
     private boolean mFullView = false;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private StringBuilder messageTrainingList = new StringBuilder();
     private StringBuilder messageErrors = new StringBuilder();

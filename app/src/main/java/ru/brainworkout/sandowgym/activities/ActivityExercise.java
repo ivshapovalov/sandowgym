@@ -2,7 +2,6 @@ package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
@@ -13,14 +12,14 @@ import android.widget.TextView;
 import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityExercise extends ActivityAbstract {
 
 
     private Exercise mCurrentExercise;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

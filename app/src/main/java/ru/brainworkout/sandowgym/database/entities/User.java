@@ -3,7 +3,7 @@ package ru.brainworkout.sandowgym.database.entities;
 
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb {
@@ -44,7 +44,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     }
 
     @Override
-    public void dbSave(DatabaseManager db) {
+    public void dbSave(SQLiteDatabaseManager db) {
         User user = (User) this;
         try {
             db.getUser(this.getID());
@@ -58,7 +58,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     }
 
     @Override
-    public void dbDelete(DatabaseManager db) {
+    public void dbDelete(SQLiteDatabaseManager db) {
         try {
             db.getUser(this.getID());
             db.deleteUser((User) this);

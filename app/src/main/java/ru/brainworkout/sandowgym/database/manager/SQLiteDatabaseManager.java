@@ -17,7 +17,7 @@ import ru.brainworkout.sandowgym.database.entities.TrainingContent;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 
-public class DatabaseManager extends SQLiteOpenHelper {
+public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "trainingCalendar";
@@ -61,7 +61,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_USER_IS_CURRENT = "user_is_current";
 
-    public DatabaseManager(Context context) {
+    public SQLiteDatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

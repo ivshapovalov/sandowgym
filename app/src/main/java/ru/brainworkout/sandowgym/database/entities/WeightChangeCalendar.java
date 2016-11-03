@@ -1,14 +1,9 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 /**
@@ -53,7 +48,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     }
 
     @Override
-    public void dbSave(DatabaseManager db) {
+    public void dbSave(SQLiteDatabaseManager db) {
 
         try {
             db.getWeightChangeCalendar(this.getID());
@@ -65,7 +60,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     }
 
     @Override
-    public void dbDelete(DatabaseManager db) {
+    public void dbDelete(SQLiteDatabaseManager db) {
 
         try {
             db.getWeightChangeCalendar(this.getID());

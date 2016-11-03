@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import ru.brainworkout.sandowgym.R;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.brainworkout.sandowgym.common.Common.dbCurrentUser;
 import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
@@ -19,7 +19,7 @@ import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
 public class ActivityTools extends ActivityAbstract {
 
     private static final int MAX_VERTICAL_BUTTON_COUNT = 10;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

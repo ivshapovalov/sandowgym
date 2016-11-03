@@ -1,16 +1,9 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-import android.content.Context;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class Training extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
@@ -47,7 +40,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
 
 
     @Override
-    public void dbSave(DatabaseManager db) {
+    public void dbSave(SQLiteDatabaseManager db) {
         try {
             db.getTraining(this.getID());
             db.updateTraining((Training) this);
@@ -58,7 +51,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
     }
 
     @Override
-    public void dbDelete(DatabaseManager db) {
+    public void dbDelete(SQLiteDatabaseManager db) {
 
             try {
                 db.getTraining(this.getID());
@@ -70,7 +63,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
 
     }
 
-    public static Training getTrainingFromDB(DatabaseManager DB, int id) {
+    public static Training getTrainingFromDB(SQLiteDatabaseManager DB, int id) {
         return DB.getTraining(id);
     }
 
@@ -78,7 +71,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
 
         private long day;
 
-        public Builder(DatabaseManager DB) {
+        public Builder(SQLiteDatabaseManager DB) {
             this.id = DB.getTrainingMaxNumber() + 1;
         }
         public Builder(int id) {

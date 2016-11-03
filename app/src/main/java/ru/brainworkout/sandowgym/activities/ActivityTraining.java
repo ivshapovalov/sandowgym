@@ -6,11 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -25,8 +23,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -37,7 +33,7 @@ import java.util.List;
 import static ru.brainworkout.sandowgym.common.Common.*;
 
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.entities.Training;
@@ -60,7 +56,7 @@ public class ActivityTraining extends ActivityAbstract {
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
     private String mExerciseVolumeLastDay = "";
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private boolean mTrainingIsNew;
     private int mHeight;
     private int mWidth;
@@ -138,26 +134,12 @@ public class ActivityTraining extends ActivityAbstract {
         setTitleOfActivity(this);
     }
 
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//
-//        // Checks the orientation of the screen
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            setContentView(R.layout.activity_training);
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-//            setContentView(R.layout.activity_training);
-//        }
-//    }
-
     private void updateDayOnScreen(long currentDateInMillis) {
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
         TextView etDay = (TextView) findViewById(mDayID);
         if (etDay != null) {
-
             etDay.setText(ConvertDateToString(ConvertMillisToDate(currentDateInMillis)));
-
         }
     }
 
@@ -197,8 +179,6 @@ public class ActivityTraining extends ActivityAbstract {
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
                     }
-
-
                     trainingContent.dbSave(DB);
                 }
             }
@@ -211,9 +191,7 @@ public class ActivityTraining extends ActivityAbstract {
                     etWeight.setText(String.valueOf(mCurrentTrainingContent.getWeight()));
                 }
             }
-
         }
-
     }
 
     private void defineCurrentTraining(int mCurrentId, long currentDateInMillis) {
@@ -246,7 +224,6 @@ public class ActivityTraining extends ActivityAbstract {
                     tableDoesNotContainElementException.printStackTrace();
                 }
             }
-
         }
     }
 
@@ -260,7 +237,6 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     public void btVolumeDefault_onClick(final View view) {
-
         blink(view, this);
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {

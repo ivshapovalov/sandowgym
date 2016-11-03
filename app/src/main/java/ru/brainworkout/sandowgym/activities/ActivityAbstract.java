@@ -8,13 +8,13 @@ import android.widget.Toast;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.database.entities.User;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.brainworkout.sandowgym.common.Common.dbCurrentUser;
 
 public abstract class ActivityAbstract extends AppCompatActivity {
 
-    protected final DatabaseManager DB = new DatabaseManager(this);
+    protected final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

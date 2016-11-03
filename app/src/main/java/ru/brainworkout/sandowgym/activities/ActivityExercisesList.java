@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -24,7 +22,7 @@ import static ru.brainworkout.sandowgym.common.Common.*;
 
 import ru.brainworkout.sandowgym.common.Common;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
 
@@ -34,7 +32,7 @@ public class ActivityExercisesList extends ActivityAbstract {
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
     private final int NUMBER_OF_VIEWS = 10000;
 
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private int mHeight = 0;
     private int mWidth = 0;

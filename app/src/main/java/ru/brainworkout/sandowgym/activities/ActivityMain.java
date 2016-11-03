@@ -3,26 +3,23 @@ package ru.brainworkout.sandowgym.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
+
 import static ru.brainworkout.sandowgym.common.Common.*;
+
 import ru.brainworkout.sandowgym.database.entities.Exercise;
-import ru.brainworkout.sandowgym.database.entities.User;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 public class ActivityMain extends ActivityAbstract {
 
@@ -34,7 +31,7 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE = "training_plus_minus_button_value";
 
     private static final int MAX_VERTICAL_BUTTON_COUNT = 10;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,67 +60,58 @@ public class ActivityMain extends ActivityAbstract {
             }
         }
 
-        Date lastDateOfWeightUpdate=getLastDateOfWeightChange();
-        int tvMessageID = getResources().getIdentifier("tvMessage","id", getPackageName());
+        Date lastDateOfWeightUpdate = getLastDateOfWeightChange();
+        int tvMessageID = getResources().getIdentifier("tvMessage", "id", getPackageName());
         TextView tvMessage = (TextView) findViewById(tvMessageID);
-        if (tvMessage!=null){
+        if (tvMessage != null) {
             tvMessage.setText(" ");
         }
-
     }
 
     public void btUsers_onClick(final View view) {
-
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
         startActivity(intent);
-
     }
 
     public void btWeightCalendarList_onClick(View view) {
-
-        blink(view,this);
+        blink(view, this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityWeightChangeCalendarList.class);
             startActivity(intent);
         }
-
     }
 
     public void btExercises_onClick(final View view) {
-
-        blink(view,this);
+        blink(view, this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityExercisesList.class);
             startActivity(intent);
         }
-
     }
 
     public void btTrainings_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTrainingsList.class);
             startActivity(intent);
         }
-
     }
 
     public void btNewTraining_onClick(final View view) {
 
-        blink(view,this);
-        if (isUserDefined()  & isDBNotEmpty()) {
+        blink(view, this);
+        if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
             startActivity(intent);
         }
-
     }
 
     public void btTools_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
         startActivity(intent);
 
@@ -132,7 +120,7 @@ public class ActivityMain extends ActivityAbstract {
 
     private boolean isDBNotEmpty() {
 
-        List<Exercise> list=new ArrayList<Exercise>();
+        List<Exercise> list = new ArrayList<Exercise>();
         if (dbCurrentUser == null) {
             //list = DB.getAllActiveExercises();
         } else {
@@ -145,7 +133,6 @@ public class ActivityMain extends ActivityAbstract {
             return false;
         } else {
             return true;
-
         }
     }
 

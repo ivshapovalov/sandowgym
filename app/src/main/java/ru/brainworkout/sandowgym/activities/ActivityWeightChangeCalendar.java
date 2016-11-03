@@ -2,26 +2,24 @@ package ru.brainworkout.sandowgym.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
-import ru.brainworkout.sandowgym.database.manager.DatabaseManager;
+import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     private WeightChangeCalendar mCurrentWeightChangeCalendar;
     private boolean mWeightChangeCalendarIsNew;
-    private final DatabaseManager DB = new DatabaseManager(this);
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
