@@ -1,5 +1,7 @@
 package ru.brainworkout.sandowgym.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +11,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import static ru.brainworkout.sandowgym.common.Common.*;
+
 import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -17,9 +21,8 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 
 public class ActivityExercise extends ActivityAbstract {
 
-
-    private Exercise mCurrentExercise;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private Exercise mCurrentExercise;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +38,13 @@ public class ActivityExercise extends ActivityAbstract {
         } else {
             int id = intent.getIntExtra("CurrentExerciseID", 0);
             try {
-                mCurrentExercise = Exercise.getExerciseFromDB(DB,id);
+                mCurrentExercise = Exercise.getExerciseFromDB(DB, id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
         }
-
         showExerciseOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
         setTitleOfActivity(this);
     }
 
@@ -122,13 +123,11 @@ public class ActivityExercise extends ActivityAbstract {
     }
 
     public void btClose_onClick(final View view) {
-
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
         intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     private void fillExerciseFromScreen() {
@@ -141,23 +140,19 @@ public class ActivityExercise extends ActivityAbstract {
             mCurrentExercise.setID(Integer.parseInt(String.valueOf(tvID.getText())));
 
         }
-
         //Имя
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
 
             mCurrentExercise.setName(String.valueOf(etName.getText()));
-
         }
 
         //Описание
         int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
-
             mCurrentExercise.setExplanation(String.valueOf(etExplanation.getText()));
-
         }
 
         //Картинка
@@ -166,7 +161,6 @@ public class ActivityExercise extends ActivityAbstract {
         if (etPicture != null) {
 
             mCurrentExercise.setPicture(String.valueOf(etPicture.getText()));
-
         }
         //Количество по умолчанию
         int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
@@ -180,26 +174,28 @@ public class ActivityExercise extends ActivityAbstract {
 
     public void btSave_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         fillExerciseFromScreen();
-
         mCurrentExercise.dbSave(DB);
-
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
         intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     public void btDelete_onClick(final View view) {
 
-        blink(view,this);
-        mCurrentExercise.dbDelete(DB);
-
-        Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
+        blink(view, this);
+        new AlertDialog.Builder(this)
+                .setMessage("Do you want to delete current exercise?")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mCurrentExercise.dbDelete(DB);
+                        Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Нет", null).show();
     }
 }

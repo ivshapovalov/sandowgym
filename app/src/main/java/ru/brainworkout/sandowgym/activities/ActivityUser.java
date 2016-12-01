@@ -158,37 +158,18 @@ public class ActivityUser extends AppCompatActivity {
             if (dbCurrentUser!=null && dbCurrentUser.equals(mCurrentUser)) {
                 dbCurrentUser=null;
             }
-
         }
-
     }
 
     public void btDelete_onClick(final View view) {
 
         blink(view,this);
-
-
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить текущего пользователя, его тренировки и упражнения?")
+                .setMessage("Do you want to delete current user, his trainings and other??")
                 .setCancelable(false)
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        List<Exercise> exercisesOfUser=DB.getAllExercisesOfUser(mCurrentUser.getID());
-                        List<Training> trainingsOfUser=DB.getAllTrainingsOfUser(mCurrentUser.getID());
-                        for (Training currentTraining:trainingsOfUser
-                             ) {
-                            DB.deleteTrainingContentOfTraining(currentTraining.getID());
-                            currentTraining.dbDelete(DB);
-
-                        }
-                        for (Exercise currentExercise:exercisesOfUser
-                                ) {
-                            currentExercise.dbDelete(DB);
-
-                        }
-
                         mCurrentUser.dbDelete(DB);
-
                         if (mCurrentUser.equals(dbCurrentUser)) {
                             List<User> userList = DB.getAllUsers();
                             if (userList.size() == 1) {
@@ -197,14 +178,15 @@ public class ActivityUser extends AppCompatActivity {
                                 currentUser.setIsCurrentUser(1);
                                 currentUser.dbSave(DB);
                             }
+                            else {
+                                dbCurrentUser=null;
+                            }
                         }
 
                         Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-
                     }
                 }).setNegativeButton("Нет", null).show();
-
     }
 }

@@ -721,17 +721,13 @@ public class ActivityTraining extends ActivityAbstract {
         blink(view, this);
 
         if (!mTrainingIsNew) {
-
             new AlertDialog.Builder(this)
-                    .setMessage("Вы действительно хотите удалить текущую тренировку?")
+                    .setMessage("Do you want to delete current training??")
                     .setCancelable(false)
                     .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             List<Training> trainings = DB.getLastTrainingsByDates(mCurrentTraining.getDayString());
-
-                            mCurrentTrainingContent.dbDelete(DB);
                             mCurrentTraining.dbDelete(DB);
-
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
                             if (!trainings.isEmpty()) {
                                 intent.putExtra("id", trainings.get(0).getID());

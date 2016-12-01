@@ -19,7 +19,7 @@ import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 
 public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "trainingCalendar";
 
     private static final String TABLE_USERS = "users";
@@ -78,7 +78,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " INTEGER, "
-                + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " INTEGER," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER)";
+                + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " INTEGER," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER,"
+                + " FOREIGN KEY(" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                +")";
         db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " ASC)";
@@ -98,7 +100,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_EXERCISE_IS_ACTIVE + " INTEGER, "
                 + KEY_EXERCISE_NAME + " TEXT," + KEY_EXERCISE_EXPLANATION + " TEXT,"
                 + KEY_EXERCISE_VOLUME_DEFAULT + " TEXT," + KEY_EXERCISE_PICTURE_NAME + " TEXT, "
-                + " FOREIGN KEY(" + KEY_EXERCISE_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                + " FOREIGN KEY(" + KEY_EXERCISE_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")" +
+                " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
         db.execSQL(CREATE_EXERCISES_TABLE);
 
@@ -112,7 +115,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_TRAINING_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_TRAINING_ID_USER + " INTEGER, "
                 + KEY_TRAINING_DAY + " INTEGER,"
-                + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ") " +
+                " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
         db.execSQL(CREATE_TRAININGS_TABLE);
 
@@ -135,9 +139,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_TRAINING_CONTENT_VOLUME + " TEXT,"
                 + KEY_TRAINING_CONTENT_WEIGHT + " INTEGER, "
                 + KEY_TRAINING_CONTENT_COMMENT + " TEXT,"
-                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS + "(" + KEY_TRAINING_ID + "),"
-                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_EXERCISE + ") REFERENCES " + TABLE_EXERCISES + "(" + KEY_EXERCISE_ID + "),"
-                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
+                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS
+                + "(" + KEY_TRAINING_ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_EXERCISE + ") REFERENCES "
+                + TABLE_EXERCISES + "(" + KEY_EXERCISE_ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_USER + ") REFERENCES " +
+                TABLE_USERS + "(" + KEY_USER_ID + ") ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
         db.execSQL(CREATE_TRAINING_CONTENT_TABLE);
 
@@ -194,6 +201,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys=ON");
     }
 
     public synchronized void addUser(User user) {

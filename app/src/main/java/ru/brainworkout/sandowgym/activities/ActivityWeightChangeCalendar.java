@@ -1,5 +1,7 @@
 package ru.brainworkout.sandowgym.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +10,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
+
 import static ru.brainworkout.sandowgym.common.Common.*;
+
+import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
@@ -30,9 +36,9 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         Intent intent = getIntent();
         mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
 
-        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis",0);
+        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
         int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
-        defineCurrentWeightChangeCalendar(id,currentDateInMillis);
+        defineCurrentWeightChangeCalendar(id, currentDateInMillis);
 
         showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -45,16 +51,16 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
             mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
             //Calendar calendar = Calendar.getInstance();
-            if ((currentDateInMillis==0)) {
+            if ((currentDateInMillis == 0)) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
-                cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
+                cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
 
                 mCurrentWeightChangeCalendar.setDay(cal.getTimeInMillis());
 
             } else {
 
-                    mCurrentWeightChangeCalendar.setDay(currentDateInMillis);
+                mCurrentWeightChangeCalendar.setDay(currentDateInMillis);
 
             }
 
@@ -88,10 +94,10 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     public void tvDay_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
 
         fillWeightChangeCalendarFromScreen();
-        if (mCurrentWeightChangeCalendar.getWeight()!=0) {
+        if (mCurrentWeightChangeCalendar.getWeight() != 0) {
             saveCurrentWeightChangeCalendarToDB();
         }
 
@@ -114,7 +120,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     private void saveCurrentWeightChangeCalendarToDB() {
         mCurrentWeightChangeCalendar.dbSave(DB);
-        mWeightChangeCalendarIsNew=false;
+        mWeightChangeCalendarIsNew = false;
     }
 
     private void showWeightChangeCalendarOnScreen() {
@@ -149,7 +155,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     public void btClose_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
         intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getID());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -190,7 +196,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     public void btSave_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         fillWeightChangeCalendarFromScreen();
 
         mCurrentWeightChangeCalendar.dbSave(DB);
@@ -204,12 +210,17 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     public void btDelete_onClick(final View view) {
 
-        blink(view,this);
-        mCurrentWeightChangeCalendar.dbDelete(DB);
-
-        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
+        blink(view, this);
+        new AlertDialog.Builder(this)
+                .setMessage("Do you want to delete current plan??")
+                .setCancelable(false)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mCurrentWeightChangeCalendar.dbDelete(DB);
+                       Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Нет", null).show();
     }
 }
