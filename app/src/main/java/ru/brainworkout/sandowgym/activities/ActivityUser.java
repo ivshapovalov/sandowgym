@@ -165,7 +165,7 @@ public class ActivityUser extends AppCompatActivity {
 
         blink(view,this);
         new AlertDialog.Builder(this)
-                .setMessage("Do you want to delete current user, his trainings and other??")
+                .setMessage("Do you want to delete current user, his trainings and other?")
                 .setCancelable(false)
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

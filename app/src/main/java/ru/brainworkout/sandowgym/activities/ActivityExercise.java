@@ -48,7 +48,6 @@ public class ActivityExercise extends ActivityAbstract {
         setTitleOfActivity(this);
     }
 
-
     private void showExerciseOnScreen() {
 
         int mIsActiveID = getResources().getIdentifier("cbIsActive", "id", getPackageName());
@@ -64,18 +63,15 @@ public class ActivityExercise extends ActivityAbstract {
         cbIsActive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 if (mCurrentExercise != null) {
                     if (isChecked) {
                         mCurrentExercise.setIsActive(1);
                     } else {
                         mCurrentExercise.setIsActive(0);
                     }
-
                 }
             }
         });
-
 
         //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
@@ -184,7 +180,6 @@ public class ActivityExercise extends ActivityAbstract {
     }
 
     public void btDelete_onClick(final View view) {
-
         blink(view, this);
         new AlertDialog.Builder(this)
                 .setMessage("Do you want to delete current exercise?")

@@ -9,7 +9,8 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:stretchColumns="*">
+        android:stretchColumns="*"
+        android:shrinkColumns="*">
 
         <TableRow
             android:layout_width="match_parent"
@@ -23,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
-                android:layout_span="8"
+                android:layout_span="9"
                 android:background="@drawable/bt_border"
                 android:text="HOME"
                 android:textColor="@color/text_color" />
@@ -67,11 +68,54 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btExercisesDBEditor"
                 android:onClick="bt_Edit_onClick"
-                android:layout_span="8"
+                android:layout_span="9"
                 android:text="EDITOR"
                 style="?android:attr/buttonStyleSmall"
                 android:background="@drawable/bt_border"
                 android:textColor="@color/text_color" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tableRow"
+            android:background="@drawable/bt_border">
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button7"
+                android:onClick="btPreviousPage_onClick"
+                android:layout_span="19"
+                android:background="@drawable/bt_border"
+                android:text="PREVIOUS PAGE"
+                android:textColor="@color/text_color"/>
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btPageNumber"
+                android:layout_span="10"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color"
+                android:nestedScrollingEnabled="true"
+                android:clickable="false"/>
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NEXT PAGE"
+                android:id="@+id/button22"
+                android:onClick="btNextPage_onClick"
+                android:layout_span="19"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color"/>
 
         </TableRow>
 
