@@ -33,6 +33,7 @@ import ru.brainworkout.sandowgym.R;
 public class ActivityExercisesList extends ActivityAbstract {
 
     private final int MAX_VERTICAL_BUTTON_COUNT = 15;
+    private final int ROWS_COUNT = 17;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
     private final int NUMBER_OF_VIEWS = 10000;
 
@@ -40,7 +41,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private int mHeight = 0;
     private int mWidth = 0;
-    private int mTextSize = 0;
+   private int mTextSize = 0;
 
     Map<Integer, List<Exercise>> pagingExercices = new HashMap<>();
     private int currentPage = 1;
@@ -120,7 +121,6 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private void showExercises() {
 
-
         Button pageNumber= (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
             pageNumber.setText(String.valueOf(currentPage));
@@ -138,23 +138,19 @@ public class ActivityExercisesList extends ActivityAbstract {
         mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
         mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
-                getApplicationContext().getResources().getDisplayMetrics().density);
+               getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
-
         if (trowButtons != null)
-
         {
             trowButtons.setMinimumHeight(mHeight);
         }
-
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
         List<Exercise> page= pagingExercices.get(currentPage);
         if (page==null) return;
         int currentPageSize=page.size();
-
         for (int numEx = 0;numEx < currentPageSize; numEx++)
         {
             TableRow mRow = new TableRow(this);
@@ -197,8 +193,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         int pageNumber=1;
         for (int i = 0; i < exercises.size(); i++) {
             pageContent.add(exercises.get(i));
-            if (pageContent.size() == MAX_VERTICAL_BUTTON_COUNT) {
-
+            if (pageContent.size() == ROWS_COUNT) {
                 pagingExercices.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
@@ -521,6 +516,8 @@ public class ActivityExercisesList extends ActivityAbstract {
     }
 
     public void btNextPage_onClick(View view) {
+        blink(view, this);
+
         if (currentPage!=pagingExercices.size()) {
             currentPage++;
         }
@@ -528,6 +525,7 @@ public class ActivityExercisesList extends ActivityAbstract {
     }
 
     public void btPreviousPage_onClick(View view) {
+        blink(view, this);
         if(currentPage!=1) {
             currentPage--;
         }
