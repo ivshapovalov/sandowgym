@@ -40,12 +40,12 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private SharedPreferences mSettings;
     private int rows_number = 17;
+    Map<Integer, List<Exercise>> pagingExercices = new HashMap<>();
+    private int currentPage = 1;
+
     private int mHeight = 0;
     private int mWidth = 0;
     private int mTextSize = 0;
-
-    Map<Integer, List<Exercise>> pagingExercices = new HashMap<>();
-    private int currentPage = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
