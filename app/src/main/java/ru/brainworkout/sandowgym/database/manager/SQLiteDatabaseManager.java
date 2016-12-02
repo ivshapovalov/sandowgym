@@ -814,8 +814,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "," + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " FROM " + TABLE_TRAININGS + " WHERE "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=\"" + mDateTo
-                + "\" ORDER BY " + KEY_TRAINING_DAY;
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
+                + " ORDER BY " + KEY_TRAINING_DAY;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
@@ -831,14 +831,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public synchronized List<Training> getTrainingsOfUserByDates(int user_id, String mDateFrom, String mDateTo) {
-        mDateFrom = "".equals(mDateFrom) ? "0000-00-00" : mDateFrom;
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+    public synchronized List<Training> getTrainingsOfUserByDates(int user_id, long mDateFrom, long mDateTo) {
+        mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
+        mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "," + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " FROM " + TABLE_TRAININGS + " WHERE "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= \"" + mDateFrom + "\" AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=\"" + mDateTo
-                + "\" ORDER BY " + KEY_TRAINING_ID;
+                + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id+" AND "
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
+                + " ORDER BY " + KEY_TRAINING_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
@@ -854,12 +854,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public synchronized List<Training> getLastTrainingsByDates(String mDateTo) {
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+    public synchronized List<Training> getLastTrainingsByDates(long mDateTo) {
+        mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "," + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
-                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<\"" + mDateTo + "\" ) ORDER BY " + KEY_TRAINING_ID;
+                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -876,13 +876,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public synchronized List<Training> getLastTrainingsOfUserByDates(int user_id, String mDateTo) {
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+    public synchronized List<Training> getLastTrainingsOfUserByDates(int user_id, long mDateTo) {
+        mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "," + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
-                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<\"" + mDateTo + "\" ) ORDER BY " + KEY_TRAINING_ID;
+                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -902,9 +902,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public synchronized List<TrainingContent> getLastExerciseNotNullVolume(String mDateTo, int exercise_id) {
+    public synchronized List<TrainingContent> getLastExerciseNotNullVolume(long mDateTo, int exercise_id) {
 
-        mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
+        mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
 
         List<TrainingContent> trainingsContentList = new ArrayList<>();
         String selectQuery = "SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + ","
@@ -917,7 +917,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " LEFT JOIN (SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " FROM "
                 + TABLE_TRAININGS + " ) AS " + TABLE_TRAININGS
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
-                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<\"" + mDateTo + "\"" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
+                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -955,7 +955,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " LEFT JOIN (SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " FROM "
                 + TABLE_TRAININGS + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id + ") AS " + TABLE_TRAININGS
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
-                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<\"" + mDateTo + "\"" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
+                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + "" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -987,7 +987,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT
                 + " FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + " WHERE "
                 + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " =" + user_id
-                + " AND " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + "<=\"" + mDateTo + "\"" + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " desc limit 1";
+                + " AND " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + "<=" + mDateTo + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
