@@ -56,6 +56,13 @@ public class ActivityTools extends ActivityAbstract {
         startActivity(intent);
     }
 
+    public void btOptions_onClick(View view) {
+
+        Intent intent = new Intent(ActivityTools.this, ActivityOptions.class);
+        startActivity(intent);
+
+    }
+
     public void btClearBD_onClick(final View view) {
 
         new AlertDialog.Builder(this)
@@ -88,4 +95,6 @@ public class ActivityTools extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
+
 }

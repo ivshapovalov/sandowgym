@@ -2,9 +2,11 @@ package ru.brainworkout.sandowgym.activities;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -17,10 +19,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
 
@@ -32,16 +32,17 @@ import ru.brainworkout.sandowgym.R;
 
 public class ActivityExercisesList extends ActivityAbstract {
 
+    //TODO height count
     private final int MAX_VERTICAL_BUTTON_COUNT = 15;
-    private final int ROWS_COUNT = 17;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
     private final int NUMBER_OF_VIEWS = 10000;
-
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
+    private SharedPreferences mSettings;
+    private int rows_number = 17;
     private int mHeight = 0;
     private int mWidth = 0;
-   private int mTextSize = 0;
+    private int mTextSize = 0;
 
     Map<Integer, List<Exercise>> pagingExercices = new HashMap<>();
     private int currentPage = 1;
@@ -57,10 +58,19 @@ public class ActivityExercisesList extends ActivityAbstract {
             Button btEditor = (Button) findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
-
+        getPreferencesFromFile();
         getPagingExercises();
         showExercises();
         setTitleOfActivity(this);
+    }
+
+    private void getPreferencesFromFile() {
+        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        } else {
+            rows_number = 17;
+        }
     }
 
 
@@ -121,14 +131,13 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private void showExercises() {
 
-        Button pageNumber= (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
             pageNumber.setText(String.valueOf(currentPage));
         }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
-        try
-        {
+        try {
             sv.removeAllViews();
         } catch (NullPointerException e) {
         }
@@ -138,21 +147,19 @@ public class ActivityExercisesList extends ActivityAbstract {
         mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
         mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
-               getApplicationContext().getResources().getDisplayMetrics().density);
+                getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
-        if (trowButtons != null)
-        {
+        if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        List<Exercise> page= pagingExercices.get(currentPage);
-        if (page==null) return;
-        int currentPageSize=page.size();
-        for (int numEx = 0;numEx < currentPageSize; numEx++)
-        {
+        List<Exercise> page = pagingExercices.get(currentPage);
+        if (page == null) return;
+        int currentPageSize = page.size();
+        for (int numEx = 0; numEx < currentPageSize; numEx++) {
             TableRow mRow = new TableRow(this);
             mRow.setId(NUMBER_OF_VIEWS + page.get(numEx).getID());
             mRow.setOnClickListener(new View.OnClickListener() {
@@ -190,16 +197,18 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private void PageExercices(List<Exercise> exercises) {
         List<Exercise> pageContent = new ArrayList<>();
-        int pageNumber=1;
+        int pageNumber = 1;
         for (int i = 0; i < exercises.size(); i++) {
             pageContent.add(exercises.get(i));
-            if (pageContent.size() == ROWS_COUNT) {
+            if (pageContent.size() == rows_number) {
                 pagingExercices.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
-        pagingExercices.put(pageNumber,pageContent);
+        if (pageContent.size()!=0) {
+            pagingExercices.put(pageNumber, pageContent);
+        }
     }
 
     private void rowExercise_onClick(final TableRow view) {
@@ -518,7 +527,7 @@ public class ActivityExercisesList extends ActivityAbstract {
     public void btNextPage_onClick(View view) {
         blink(view, this);
 
-        if (currentPage!=pagingExercices.size()) {
+        if (currentPage != pagingExercices.size()) {
             currentPage++;
         }
         showExercises();
@@ -526,7 +535,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     public void btPreviousPage_onClick(View view) {
         blink(view, this);
-        if(currentPage!=1) {
+        if (currentPage != 1) {
             currentPage--;
         }
         showExercises();

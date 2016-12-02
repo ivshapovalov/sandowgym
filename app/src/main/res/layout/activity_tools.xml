@@ -68,6 +68,22 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="OPTIONS"
+                    android:id="@+id/btMain6"
+                    android:onClick="btOptions_onClick"
+                    android:layout_span="30"
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color"
+                    android:singleLine="true"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="ABOUT"
                     android:id="@+id/btMain2"
                     android:onClick="btAbout_onClick"

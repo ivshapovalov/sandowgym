@@ -30,7 +30,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="ru.brainworkout.sandowgym.activities.ActivityTools"
-            android:label="@string/tools_name"
+            android:label="@string/tools"
             android:screenOrientation="portrait" />
         <activity
             android:name="ru.brainworkout.sandowgym.activities.ActivityExercise"
@@ -44,6 +44,10 @@
             android:name="ru.brainworkout.sandowgym.activities.ActivityTraining"
             android:label="@string/training_name"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="ru.brainworkout.sandowgym.activities.ActivityOptions"
+            android:label="@string/options"
+            android:screenOrientation="portrait" />
         <activity
             android:name="ru.brainworkout.sandowgym.activities.ActivityTrainingOptions"
             android:label="@string/training_name"

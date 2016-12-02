@@ -24,6 +24,7 @@ import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 public class ActivityMain extends ActivityAbstract {
 
     public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS = "rows_on_page_in_lists";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";

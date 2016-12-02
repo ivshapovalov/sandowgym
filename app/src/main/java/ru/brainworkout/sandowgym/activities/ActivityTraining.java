@@ -84,7 +84,6 @@ public class ActivityTraining extends ActivityAbstract {
 
         long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
 
-
         boolean weightIsNeedToUpdate = false;
         if (mTrainingIsNew) {
             weightIsNeedToUpdate = true;

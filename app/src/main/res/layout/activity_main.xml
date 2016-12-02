@@ -115,7 +115,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TOOLS"
+                    android:text="@string/tools"
                     android:id="@+id/button8"
                     android:layout_span="30"
                     android:onClick="btTools_onClick"

@@ -1,17 +1,18 @@
 <resources>
     <string name="app_name">SANDOW GYM</string>
-    <string name="tools_name">Tools"</string>
-    <string name="exercises_list_name">Exercises</string>
-    <string name="exercise_name">Exercise"</string>
-    <string name="trainings_list_name">Trainings</string>
-    <string name="training_name">Training"</string>
-    <string name="calendar_view_name">Date choice</string>
-    <string name="export_import_name">Export-Import</string>
-    <string name="users_list_name">Users</string>
-    <string name="user_name">User</string>
-    <string name="weight_calendar_change_list_name">Weight calendar</string>
-    <string name="weight_calendar_name">Weight update</string>
-    <string name="about_name">About</string>
+    <string name="tools">TOOLS"</string>
+    <string name="exercises_list_name">EXERCISES</string>
+    <string name="exercise_name">EXERCISE"</string>
+    <string name="trainings_list_name">TRAININGS</string>
+    <string name="training_name">RAINING"</string>
+    <string name="options">OPTIONS"</string>
+    <string name="calendar_view_name">DATE CHOICE</string>
+    <string name="export_import_name">EXPORT-IMPORT</string>
+    <string name="users_list_name">USERS</string>
+    <string name="user_name">USER</string>
+    <string name="weight_calendar_change_list_name">WEIGHT CALENDAR</string>
+    <string name="weight_calendar_name">WEIGHT UPDATE</string>
+    <string name="about_name">ABOUT</string>
     <string name="about_text">2016. This program will help you to train Sandows gymnastics</string>
 
 </resources>
