@@ -71,6 +71,8 @@ public class ActivityUsersList extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
+        getPreferencesFromFile();
+        pageUsers();
         showUsers();
 
         Intent intent = getIntent();

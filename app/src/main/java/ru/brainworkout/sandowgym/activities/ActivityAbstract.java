@@ -54,4 +54,6 @@ public abstract class ActivityAbstract extends AppCompatActivity {
         }
         return true;
     }
+
+
 }
