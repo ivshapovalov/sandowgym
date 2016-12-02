@@ -59,30 +59,20 @@ public class ActivityExercisesList extends ActivityAbstract {
             HideEditorButton(btEditor);
         }
         getPreferencesFromFile();
-        getPagingExercises();
+        pageExercises();
         showExercises();
         setTitleOfActivity(this);
     }
 
-    private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
-        } else {
-            rows_number = 17;
-        }
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-
+        getPreferencesFromFile();
+        pageExercises();
         showExercises();
-
+        setTitleOfActivity(this);
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
-
         TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
@@ -94,6 +84,14 @@ public class ActivityExercisesList extends ActivityAbstract {
         }
     }
 
+    private void getPreferencesFromFile() {
+        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        } else {
+            rows_number = 17;
+        }
+    }
 
     public void btExercisesAdd_onClick(final View view) {
 
@@ -114,19 +112,31 @@ public class ActivityExercisesList extends ActivityAbstract {
             ex.dbSave(DB);
 
         }
-        getPagingExercises();
+        pageExercises();
         showExercises();
 
     }
 
-    private void getPagingExercises() {
+    private void pageExercises() {
         List<Exercise> exercises = new ArrayList<Exercise>();
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
             exercises = DB.getAllExercisesOfUser(dbCurrentUser.getID());
         }
-        PageExercices(exercises);
+        List<Exercise> pageContent = new ArrayList<>();
+        int pageNumber = 1;
+        for (int i = 0; i < exercises.size(); i++) {
+            pageContent.add(exercises.get(i));
+            if (pageContent.size() == rows_number) {
+                pagingExercices.put(pageNumber, pageContent);
+                pageContent = new ArrayList<>();
+                pageNumber++;
+            }
+        }
+        if (pageContent.size()!=0) {
+            pagingExercices.put(pageNumber, pageContent);
+        }
     }
 
     private void showExercises() {
@@ -159,9 +169,10 @@ public class ActivityExercisesList extends ActivityAbstract {
         List<Exercise> page = pagingExercices.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
-        for (int numEx = 0; numEx < currentPageSize; numEx++) {
+        for (int num = 0; num < currentPageSize; num++) {
+            Exercise exercise=page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(NUMBER_OF_VIEWS + page.get(numEx).getID());
+            mRow.setId(NUMBER_OF_VIEWS + exercise.getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -172,7 +183,7 @@ public class ActivityExercisesList extends ActivityAbstract {
             mRow.setBackgroundResource(R.drawable.bt_border);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(page.get(numEx).getID()));
+            txt.setText(String.valueOf(exercise.getID()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -181,7 +192,7 @@ public class ActivityExercisesList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(String.valueOf(page.get(numEx).getName()));
+            txt.setText(String.valueOf(exercise.getName()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -193,22 +204,6 @@ public class ActivityExercisesList extends ActivityAbstract {
             layout.addView(mRow);
         }
         sv.addView(layout);
-    }
-
-    private void PageExercices(List<Exercise> exercises) {
-        List<Exercise> pageContent = new ArrayList<>();
-        int pageNumber = 1;
-        for (int i = 0; i < exercises.size(); i++) {
-            pageContent.add(exercises.get(i));
-            if (pageContent.size() == rows_number) {
-                pagingExercices.put(pageNumber, pageContent);
-                pageContent = new ArrayList<>();
-                pageNumber++;
-            }
-        }
-        if (pageContent.size()!=0) {
-            pagingExercices.put(pageNumber, pageContent);
-        }
     }
 
     private void rowExercise_onClick(final TableRow view) {

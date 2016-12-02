@@ -1,8 +1,10 @@
 package ru.brainworkout.sandowgym.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -15,7 +17,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
 
@@ -31,6 +35,10 @@ public class ActivityTrainingsList extends ActivityAbstract {
     private final int NUMBER_OF_VIEWS = 20000;
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private SharedPreferences mSettings;
+    private int rows_number = 17;
+    Map<Integer, List<Training>> pagingTrainings = new HashMap<>();
+    private int currentPage = 1;
 
     private long mCurrentDateInMillis = 0;
 
@@ -60,17 +68,52 @@ public class ActivityTrainingsList extends ActivityAbstract {
             }
         }
 
+        getPreferencesFromFile();
+        pageTrainings();
+
         showTrainings();
 
         setTitleOfActivity(this);
     }
 
+    private void pageTrainings() {
+        List<Training> trainings = new ArrayList<>();
+        if (dbCurrentUser == null) {
+            //exercises = DB.getAllExercises();
+        } else {
+            trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getID());
+        }
+        List<Training> pageContent = new ArrayList<>();
+        int pageNumber = 1;
+        for (int i = 0; i < trainings.size(); i++) {
+            pageContent.add(trainings.get(i));
+            if (pageContent.size() == rows_number) {
+                pagingTrainings.put(pageNumber, pageContent);
+                pageContent = new ArrayList<>();
+                pageNumber++;
+            }
+        }
+        if (pageContent.size()!=0) {
+            pagingTrainings.put(pageNumber, pageContent);
+        }
+    }
+
+    private void getPreferencesFromFile() {
+        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        } else {
+            rows_number = 17;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-
+        getPreferencesFromFile();
+        pageTrainings();
         showTrainings();
-
+        setTitleOfActivity(this);
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
 
@@ -109,12 +152,11 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
     private void showTrainings() {
 
-        List<Training> trainings=new ArrayList<Training>();
-        if (dbCurrentUser == null) {
-            //trainings = DB.getAllTrainings();
-        } else {
-            trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getID());
+        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        if (pageNumber != null) {
+            pageNumber.setText(String.valueOf(currentPage));
         }
+
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
         try {
             sv.removeAllViews();
@@ -126,23 +168,23 @@ public class ActivityTrainingsList extends ActivityAbstract {
         int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTONS_COUNT;
         int mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTONS_COUNT;
         int mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
-
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
-
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
-
         TableLayout layout = new TableLayout(this);
 
         layout.setStretchAllColumns(true);
-        for (int numEx = 0; numEx < trainings.size(); numEx++) {
+
+        List<Training> page = pagingTrainings.get(currentPage);
+        if (page == null) return;
+        int currentPageSize = page.size();
+        for (int num = 0; num < currentPageSize; num++) {
             TableRow mRow = new TableRow(this);
-            long data = 0;
-            data = trainings.get(numEx).getDay();
+            Training training=page.get(num);
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            mRow.setId(NUMBER_OF_VIEWS + trainings.get(numEx).getID());
+            mRow.setId(NUMBER_OF_VIEWS + training.getID());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -151,12 +193,13 @@ public class ActivityTrainingsList extends ActivityAbstract {
             });
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(trainings.get(numEx).getID()));
+            txt.setText(String.valueOf(training.getID()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
-            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==data) {
+            long currentDay = page.get(num).getDay();
+            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==currentDay) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -164,12 +207,12 @@ public class ActivityTrainingsList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(ConvertMillisToString(data));
+            txt.setText(ConvertMillisToString(currentDay));
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.bt_border);
-            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==data) {
+            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis==currentDay) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -264,5 +307,22 @@ public class ActivityTrainingsList extends ActivityAbstract {
             mCurrentDateInMillis = 0;
             showTrainings();
         }
+    }
+
+    public void btNextPage_onClick(View view) {
+        blink(view, this);
+
+        if (currentPage != pagingTrainings.size()) {
+            currentPage++;
+        }
+        showTrainings();
+    }
+
+    public void btPreviousPage_onClick(View view) {
+        blink(view, this);
+        if (currentPage != 1) {
+            currentPage--;
+        }
+        showTrainings();
     }
 }
