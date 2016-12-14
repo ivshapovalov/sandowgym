@@ -1,16 +1,12 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-
 public abstract class AbstractEntity {
 
     protected int id;
 
-    public AbstractEntity() {
+    public AbstractEntity() {}
 
-    }
-
-
-    public int getID() {
+    public int getId() {
         return this.id;
     }
 

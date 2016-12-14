@@ -36,9 +36,10 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
-    private int rows_number = 17;
-    Map<Integer, List<Training>> pagingTrainings = new HashMap<>();
+    private int rowsNumber;
+    private Map<Integer, List<Training>> pagedTrainings = new HashMap<>();
     private int currentPage = 1;
+    private int idIntentTraining;
 
     private long mCurrentDateInMillis = 0;
 
@@ -56,22 +57,21 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         Intent intent = getIntent();
         mCurrentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
-        int id = intent.getIntExtra("id", 0);
+        idIntentTraining= intent.getIntExtra("id", 0);
 
-        if (id == 0) {
+        if (idIntentTraining == 0) {
             if (mCurrentDateInMillis != 0) {
                 List<Training> trainings = DB.getTrainingsByDates(mCurrentDateInMillis, mCurrentDateInMillis);
                 if (trainings.size() == 1) {
-                    id = trainings.get(0).getID();
+                    idIntentTraining = trainings.get(0).getId();
                 }
             }
 
         }
         getPreferencesFromFile();
-        pageTrainings(id);
-        showTrainings();
-        if (id != 0) {
-            TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
+        updateTrainings();
+        if (idIntentTraining != 0) {
+            TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentTraining);
             if (mRow != null) {
 
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
@@ -97,38 +97,46 @@ public class ActivityTrainingsList extends ActivityAbstract {
         setTitleOfActivity(this);
     }
 
-    private void pageTrainings(int id) {
+    private void updateTrainings() {
+        pageTrainings();
+        showTrainings();
+    }
+
+    private void pageTrainings() {
         List<Training> trainings = new ArrayList<>();
         if (dbCurrentUser == null) {
         } else {
-                trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getID());
+                trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getId());
         }
         List<Training> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < trainings.size(); i++) {
-            if (id != 0) {
-                if (trainings.get(i).getID() == id) {
+            if (idIntentTraining != 0) {
+                if (trainings.get(i).getId() == idIntentTraining) {
                     currentPage = pageNumber;
                 }
             }
             pageContent.add(trainings.get(i));
-            if (pageContent.size() == rows_number) {
-                pagingTrainings.put(pageNumber, pageContent);
+            if (pageContent.size() == rowsNumber) {
+                pagedTrainings.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size() != 0) {
-            pagingTrainings.put(pageNumber, pageContent);
+            pagedTrainings.put(pageNumber, pageContent);
+        }
+        if (pagedTrainings.size()==0) {
+            currentPage=0;
         }
     }
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
-            rows_number = 17;
+            rowsNumber = 17;
         }
     }
 
@@ -143,7 +151,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         Button pageNumber = (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage));
+            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedTrainings.size());
         }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
@@ -165,7 +173,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         layout.setStretchAllColumns(true);
 
-        List<Training> page = pagingTrainings.get(currentPage);
+        List<Training> page = pagedTrainings.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
@@ -173,7 +181,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             Training training = page.get(num);
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            mRow.setId(NUMBER_OF_VIEWS + training.getID());
+            mRow.setId(NUMBER_OF_VIEWS + training.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -182,7 +190,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             });
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(training.getID()));
+            txt.setText(String.valueOf(training.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -229,8 +237,9 @@ public class ActivityTrainingsList extends ActivityAbstract {
     public void bt_Edit_onClick(final View view) {
 
         blink(view, this);
-        Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
-        startActivity(dbmanager);
+        Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
 
     }
 
@@ -256,21 +265,16 @@ public class ActivityTrainingsList extends ActivityAbstract {
         blink(view, this);
 
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить все тренировки и их содержимое?")
+                .setMessage("Do you wish to delete all training with content?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         if (dbCurrentUser != null) {
-                            DB.deleteAllTrainingsOfUser(dbCurrentUser.getID());
-                            DB.deleteAllTrainingContentOfUser(dbCurrentUser.getID());
-
-                            showTrainings();
+                            DB.deleteAllTrainingsOfUser(dbCurrentUser.getId());
+                            updateTrainings();
                         }
-
-
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("No", null).show();
 
     }
 
@@ -281,8 +285,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
         intent.putExtra("CurrentDateInMillis", mCurrentDateInMillis);
         intent.putExtra("CurrentActivity", "ActivityTrainingsList");
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -302,7 +305,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
     public void btNextPage_onClick(View view) {
         blink(view, this);
 
-        if (currentPage != pagingTrainings.size()) {
+        if (currentPage != pagedTrainings.size()) {
             currentPage++;
         }
         showTrainings();

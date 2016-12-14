@@ -44,15 +44,13 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 
 public class ActivityFileExportImport extends ActivityAbstract {
 
-    private static final String SYMBOL_ID = "#";
-    private static final String SYMBOL_WEIGHT = "$";
-    private static final String SYMBOL_DEF_VOLUME = "%";
-    private static final String SYMBOL_SPLIT = ";";
+    private final String SYMBOL_ID = "#";
+    private final String SYMBOL_WEIGHT = "$";
+    private final String SYMBOL_DEF_VOLUME = "%";
+    private final String SYMBOL_SPLIT = ";";
+    private List<String> specialSymbols = new ArrayList<>();
 
-    private static List<String> specialSymbols = new ArrayList<>();
-
-    static {
-
+    {
         specialSymbols.add(SYMBOL_ID);
         specialSymbols.add(SYMBOL_WEIGHT);
         specialSymbols.add(SYMBOL_DEF_VOLUME);
@@ -78,9 +76,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         setContentView(R.layout.activity_file_export_import);
 
         getIntentParams();
-
         updateScreen();
-
         setTitleOfActivity(this);
     }
 
@@ -112,15 +108,13 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 ) {
             switch (type) {
                 case FULL:
-                    mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getID())
+                    mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getId())
                             .append(")").append(SYMBOL_SPLIT);
                     break;
                 default:
                     mNewString.append(mCurrentTraining.getDayString()).append(SYMBOL_SPLIT);
                     break;
-
             }
-
             messageTrainingList.append(countTrainings++).append(") ").append(mCurrentTraining.getDayString()).append('\n');
         }
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
@@ -133,7 +127,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             switch (type) {
                 case FULL:
                     mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_ID).
-                            append(String.valueOf(mCurrentExercise.getID())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
+                            append(String.valueOf(mCurrentExercise.getId())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
                             .append(")").append(SYMBOL_SPLIT);
                     break;
                 default:
@@ -146,7 +140,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             for (Training mCurrentTraining : trainingsList
                     ) {
                 try {
-                    TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getID(), mCurrentTraining.getID());
+                    TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getId(), mCurrentTraining.getId());
                     String curVolume = mCurrentTrainingContent.getVolume();
                     if (curVolume == null || "".equals(curVolume.trim())) {
                         mNewString.append("0");
@@ -162,29 +156,19 @@ public class ActivityFileExportImport extends ActivityAbstract {
                             mNewString.append("(").append(mCurrentTrainingContent.getWeight()).append(")");
                             break;
                         default:
-
                             break;
-
                     }
-
                     mNewString.append(SYMBOL_SPLIT);
-
-
                 } catch (TableDoesNotContainElementException e) {
                     switch (type) {
                         case FULL:
                             mNewString.append("(").append(SYMBOL_WEIGHT).append(")");
                             break;
-
                         default:
-
                             break;
-
                     }
                     mNewString.append(SYMBOL_SPLIT);
                 }
-
-
             }
             entries = mNewString.toString().split(SYMBOL_SPLIT);
             data.add(entries);
@@ -193,28 +177,16 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     private void writeToFile(Map<TypeOfView, List<String[]>> dataSheets) {
-
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (!exportDir.exists())
-
-        {
+        if (!exportDir.exists()) {
             exportDir.mkdirs();
         }
         File file = new File(exportDir, "trainings.xls");
-
-        try
-
-        {
-
+        try {
             if (file.createNewFile()) {
-                //System.out.println("File is created!");
-
             } else {
-                //System.out.println("File already exists.");
             }
-
             Workbook book = new HSSFWorkbook();
-
             for (Map.Entry<TypeOfView, List<String[]>> dataSheet : dataSheets.entrySet()) {
                 addSheetWithData(dataSheet.getValue(), book, dataSheet.getKey().getName());
             }
@@ -223,8 +195,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
             Cell cName;
             Sheet sheet2 = book.createSheet("legend");
             FillLegendSheet(sheet2);
-
-
             book.write(new FileOutputStream(file));
             book.close();
 
@@ -232,17 +202,17 @@ public class ActivityFileExportImport extends ActivityAbstract {
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
                 tvPath.setText("");
-                tvPath.setText("В файл XLS по пути \n" + Environment.getExternalStorageDirectory().toString() + '\n'
-                        + " успешно выгружены тренировки\n" + messageTrainingList.toString());
+                tvPath.setText(String.format("Write to file \n '%s' \n  successfull. Trainings: \n '%s'",
+                        Environment.getExternalStorageDirectory().toString(),
+                        messageTrainingList.toString()));
             }
         } catch (Exception e) {
             int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
             TextView tvPath = (TextView) findViewById(mPath);
             if (tvPath != null) {
-                tvPath.setText("Файл не выгружен в " + Environment.getExternalStorageDirectory().toString());
+                tvPath.setText("Fail didn't created  " + Environment.getExternalStorageDirectory().toString());
             }
         }
-
     }
 
     private void FillLegendSheet(Sheet sheetLegend) {
@@ -253,34 +223,34 @@ public class ActivityFileExportImport extends ActivityAbstract {
         Cell cell;
         row = sheetLegend.createRow(rowCount++);
         cell = row.createCell(0);
-        cell.setCellValue("Подробное описание");
-
+        cell.setCellValue("Detail description");
 
         rowCount++;
         row = sheetLegend.createRow(rowCount++);
         cell = row.createCell(0);
-        cell.setCellValue("Все специальные символы должны располагаться в круглых скобках");
-
+        cell.setCellValue("All special symbols must be in ()");
 
         row = sheetLegend.createRow(rowCount++);
         cell = row.createCell(0);
         cell.setCellValue("#");
         cell = row.createCell(1);
-        cell.setCellValue("Обозначение для ID. Пример \"Упражнение номер 1 (#10)\" - будет загружено упражнение с ID 10 и именем \"Упражнение номер 1\".\n" +
-                " По ID происходит поиск в базе данных. Если тренировка или упражнение не найдены - создаются новые.");
+        cell.setCellValue("ID. Example 'Exercise 10(#10)' - exercise with ID = '10' and name 'Exercise 10' \n" +
+                " Searching in database works by ID. If training or exercise didn't found - it will be created ");
 
         row = sheetLegend.createRow(rowCount++);
         cell = row.createCell(0);
         cell.setCellValue("$");
         cell = row.createCell(1);
-        cell.setCellValue("Обозначение для веса гантель. Вес может быть указан как для всей тренировки (\"2016-07-04(#10$5)\" -\n будет загружена тренировка с ID 10 и весами во всех упражнения - 5)" +
-                " или для каждого упражнения отдельно 20($5)");
+        cell.setCellValue("Weight of barbel. Weight can be for the whole training  ('2016-07-04(#10$5)' -" +
+                "\n training with ID = '10' and weight in all exercises - '5')" +
+                " or for every exercise '20($5)'");
 
         row = sheetLegend.createRow(rowCount++);
         cell = row.createCell(0);
         cell.setCellValue("%");
         cell = row.createCell(1);
-        cell.setCellValue("Обозначение для веса количества по умолчанию. Пример \"Упражнение номер один(#10%19)\" - \n будет загружено упражнение с ID 10 и количеством по умолчанию 19");
+        cell.setCellValue("Default weight of barbell. Example 'Exercise 1(#10%19)' - \n " +
+                "Exercise 1 with с ID = '10' default weight '19'");
 
         rowCount++;
 
@@ -288,9 +258,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         cell = row.createCell(0);
         cell.setCellValue("YYYY-MM-DD");
         cell = row.createCell(1);
-        cell.setCellValue("Формат даты в тренировках. Пример 2016-08-25");
-
-
+        cell.setCellValue("Date format in trainings. Example 2016-08-25");
     }
 
     private void addSheetWithData(List<String[]> data, Workbook book, String sheetName) {
@@ -352,11 +320,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     private void readFromFile(File file) {
-
-        List<String[]> data = new ArrayList<>();
-
+        List<String[]> data;
         try
-
         {
             HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
             HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings_full");
@@ -389,7 +354,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
             }
             e.printStackTrace();
         }
-
     }
 
     private List<String[]> ReadDataFromSheet(HSSFSheet myExcelSheet) {
@@ -467,8 +431,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
     private void writeDataToDB(List<String[]> data) throws Exception {
 
-        trainingsList = new ArrayList<Training>();
-        exercisesList = new ArrayList<Exercise>();
+        trainingsList = new ArrayList<>();
+        exercisesList = new ArrayList<>();
         List<String> trainingWeights = new ArrayList<>();
 
         int trainingsCount = 1;
@@ -502,9 +466,15 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             Training training;
             if (!"".equals(id)) {
-                training = new Training.Builder(Integer.valueOf(id)).addDay(ConvertStringToDate(day).getTime()).build();
+                training = new Training
+                        .Builder(Integer.valueOf(id))
+                        .addDay(convertStringToDate(day).getTime())
+                        .build();
             } else {
-                training = new Training.Builder(DB.getTrainingMaxNumber() + trainingsCount++).addDay(ConvertStringToDate(day).getTime()).build();
+                training = new Training
+                        .Builder(DB.getTrainingMaxNumber() + trainingsCount++)
+                        .addDay(convertStringToDate(day).getTime())
+                        .build();
             }
             trainingsList.add(training);
 
@@ -545,7 +515,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
                         .build();
             }
             exercisesList.add(exercise);
-
         }
 
         messageTrainingList = new StringBuilder();
@@ -554,39 +523,32 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 ) {
             Training curTraining = trainingsList.get(curTrainingIndex);
             messageTrainingList.append(curTraining.getDayString()).append('\n');
-            Training dbTraining;
-            try {
-                dbTraining = DB.getTraining(curTraining.getID());
+            if (DB.containsTraining(curTraining.getId())) {
                 DB.updateTraining(curTraining);
-            } catch (TableDoesNotContainElementException e) {
+            } else {
                 DB.addTraining(curTraining);
             }
-
 
             for (int curExerciseIndex = 0; curExerciseIndex < exercisesList.size(); curExerciseIndex++
                     ) {
                 Exercise curExercise = exercisesList.get(curExerciseIndex);
                 Exercise dbExercise;
-                try {
-                    dbExercise = DB.getExercise(curExercise.getID());
+                if (DB.containsExercise(curExercise.getId())) {
+                    dbExercise = DB.getExercise(curExercise.getId());
                     dbExercise.setName(curExercise.getName());
                     curExercise = dbExercise;
                     DB.updateExercise(dbExercise);
-
-                } catch (TableDoesNotContainElementException e) {
+                } else {
                     curExercise.setIsActive(1);
                     DB.addExercise(curExercise);
-
                 }
 
                 TrainingContent trainingContent = new TrainingContent.Builder(++maxNum)
-                        .addExerciseId(curExercise.getID())
-                        .addTrainingId(curTraining.getID())
+                        .addExercise(curExercise)
+                        .addTraining(curTraining)
                         .build();
 
-                //разбираем ячейку со значениями количества и веса
                 String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];
-                //String volume = cellValue;
 
                 String volume;
                 int indexSymbolBrackets = cellValue.indexOf("(");
@@ -605,7 +567,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 } else {
                     //check common weight of training
                     weight = trainingWeights.get(curTrainingIndex);
-
                 }
 
                 int iWeight;
@@ -620,21 +581,18 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
                 TrainingContent dbTrainingContent;
                 try {
-                    dbTrainingContent = DB.getTrainingContent(curExercise.getID(), curTraining.getID());
+                    dbTrainingContent = DB.getTrainingContent(curExercise.getId(), curTraining.getId());
                     dbTrainingContent.setVolume(trainingContent.getVolume());
                     dbTrainingContent.setWeight(trainingContent.getWeight());
                     DB.updateTrainingContent(dbTrainingContent);
                 } catch (TableDoesNotContainElementException e) {
                     DB.addTrainingContent(trainingContent);
                 }
-
             }
-
         }
         int mPath = getResources().getIdentifier("tvPathToFiles", "id", getPackageName());
         TextView tvPath = (TextView) findViewById(mPath);
         if (tvPath != null) {
-
             messageTrainingList.insert(0, "From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
                     + " successfully loaded trainings:" + "\n")
                     .insert(0, tvPath.getText().toString());
@@ -647,28 +605,24 @@ public class ActivityFileExportImport extends ActivityAbstract {
     private String textBeforeNextSpecialSymbol(String s, int currentPosition) {
 
         List<Integer> positions = new ArrayList<>();
-
         for (String symbol : specialSymbols
                 ) {
             int position = s.indexOf(symbol, currentPosition + 1);
             if (position != -1) {
                 positions.add(position);
             }
-
         }
         Collections.sort(positions);
-
         if (!positions.isEmpty()) {
             return s.substring(currentPosition + 1, positions.get(0));
         } else {
             return s.substring(currentPosition + 1);
         }
-
     }
 
     public void btClose_onClick(View view) {
 
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityTools.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -685,18 +639,17 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
     public void tvDayFrom_onClick(View view) {
 
-        blink(view,this);
+        blink(view, this);
         day_onClick(true);
     }
 
     public void tvDayTo_onClick(View view) {
 
-        blink(view,this);
+        blink(view, this);
         day_onClick(false);
     }
 
     private void day_onClick(boolean isBeginDate) {
-
 
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
         intent.putExtra("IsBeginDate", isBeginDate);
@@ -708,17 +661,17 @@ public class ActivityFileExportImport extends ActivityAbstract {
         intent.putExtra("CurrentDateToInMillis", "");
         if (tvDayFrom != null) {
             if (!"".equals(String.valueOf(tvDayFrom.getText()).trim())) {
-                intent.putExtra("CurrentDateInMillis", ConvertStringToDate(String.valueOf(tvDayFrom.getText())).getTime());
+                intent.putExtra("CurrentDateInMillis", convertStringToDate(String.valueOf(tvDayFrom.getText())).getTime());
             }
         }
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {
             if (!"".equals(String.valueOf(tvDayTo.getText()).trim())) {
-                intent.putExtra("CurrentDateToInMillis", ConvertStringToDate(String.valueOf(tvDayTo.getText())).getTime());
+                intent.putExtra("CurrentDateToInMillis", convertStringToDate(String.valueOf(tvDayTo.getText())).getTime());
             }
         }
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
@@ -730,22 +683,18 @@ public class ActivityFileExportImport extends ActivityAbstract {
         if (exportDir.exists()) {
             File file = new File(exportDir, "trainings.xls");
             if (file.exists()) {
-
                 readFromFile(file);
             }
         }
     }
 
     public void btImportFromFile_onClick(View view) {
-
-        blink(view,this);
+        blink(view, this);
         loadFromFile();
-
     }
 
     public void btExportToFile_onClick(View view) {
-
-        blink(view,this);
+        blink(view, this);
         exportToFile();
 
     }
@@ -775,30 +724,25 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     public void btDayFromClear_onClick(final View view) {
-
-        blink(view,this);
+        blink(view, this);
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
         if (tvDayFrom != null) {
             tvDayFrom.setText("");
         }
-
     }
 
     public void btDayToClear_onClick(final View view) {
-
-        blink(view,this);
+        blink(view, this);
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {
             tvDayTo.setText("");
         }
-
     }
 
     private void updateScreen() {
 
-        //Имя
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView etDayFrom = (TextView) findViewById(mDayFromID);
         if (etDayFrom != null) {
@@ -842,10 +786,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 }
             });
         }
-
-
     }
-
-
 }
 

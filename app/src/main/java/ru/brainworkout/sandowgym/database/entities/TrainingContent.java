@@ -5,22 +5,22 @@ import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class TrainingContent extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
+public class TrainingContent extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
 
-    private int id_exercise;
-    private int id_training;
-    private String comment="";
-    private String volume="";
-    private int weight=0; //кг
+    private Exercise exercise;
+    private Training training;
+    private String comment = "";
+    private String volume = "";
+    private int weight = 0; //кг
 
     private TrainingContent(Builder builder) {
 
         this.id = builder.id;
-        this.id_exercise=builder.id_exercise;
-        this.id_training=builder.id_training;
-        this.comment=builder.comment;
-        this.volume=builder.volume;
-        this.weight=builder.weight;
+        this.exercise = builder.exercise;
+        this.training = builder.training;
+        this.comment = builder.comment;
+        this.volume = builder.volume;
+        this.weight = builder.weight;
     }
 
     public String getVolume() {
@@ -39,14 +39,28 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
         this.volume = volume;
     }
 
-    public int getIdExercise() {
-        return id_exercise;
+    public Exercise getExercise() {
+        return exercise;
+    }
+    public int getExerciseId() {
+        if (exercise != null) {
+            return exercise.getId();
+        } else {
+            return -1;
+        }
     }
 
-    public int getIdTraining() {
-        return id_training;
+    public Training getTraining() {
+        return training;
     }
 
+    public int getTrainingId() {
+        if (training != null) {
+            return training.getId();
+        } else {
+            return -1;
+        }
+    }
 
     public int getWeight() {
         return weight;
@@ -60,7 +74,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     public void dbSave(SQLiteDatabaseManager db) {
 
         try {
-            db.getTrainingContent(this.getID());
+            db.getTrainingContent(this.getId());
             db.updateTrainingContent((TrainingContent) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -71,47 +85,50 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
 
-            try {
-                db.getTrainingContent(this.getID());
-                db.deleteTrainingContent((TrainingContent) this);
-            } catch (TableDoesNotContainElementException e) {
-                //нет такого
-            }
-
+        try {
+            db.getTrainingContent(this.getId());
+            db.deleteTrainingContent((TrainingContent) this);
+        } catch (TableDoesNotContainElementException e) {
+            //нет такого
+        }
     }
 
     public static class Builder extends AbstractEntity {
 
-        private int id_exercise;
-        private int id_training;
-        private String comment="";
-        private String volume="";
-        private int weight=0; //кг
+        private Exercise exercise;
+        private Training training;
+        private String comment = "";
+        private String volume = "";
+        private int weight = 0; //кг
 
         public Builder(int id) {
             this.id = id;
         }
 
         public Builder(SQLiteDatabaseManager DB) {
-            this.id=DB.getTrainingContentMaxNumber() + 1;
+            this.id = DB.getTrainingContentMaxNumber() + 1;
         }
 
-        public Builder addExerciseId(int idExercise) {
-            this.id_exercise = idExercise;
+        public Builder addExercise(Exercise exercise) {
+            this.exercise = exercise;
             return this;
         }
-        public Builder addTrainingId(int idTraining) {
-            this.id_training = idTraining;
+
+        public Builder addTraining(Training training) {
+            this.training = training;
             return this;
         }
+
         public Builder addComment(String comment) {
             this.comment = comment;
             return this;
         }
+
         public Builder addVolume(String volume) {
             this.volume = volume;
             return this;
         }
+
         public Builder addWeight(int weight) {
             this.weight = weight;
             return this;
@@ -121,7 +138,6 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
             TrainingContent trainingContent = new TrainingContent(this);
             return trainingContent;
         }
-
 
 
     }

@@ -6,9 +6,6 @@ import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-/**
- * Created by Ivan on 25.07.2016.
- */
 public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
     private long day;
     private int weight;
@@ -43,7 +40,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
 
     public void setDayString(String day) {
 
-        this.day = ConvertStringToDate(day).getTime();
+        this.day = convertStringToDate(day).getTime();
 
     }
 
@@ -51,7 +48,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     public void dbSave(SQLiteDatabaseManager db) {
 
         try {
-            db.getWeightChangeCalendar(this.getID());
+            db.getWeightChangeCalendar(this.getId());
             db.updateWeightChangeCalendar((WeightChangeCalendar) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -63,7 +60,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     public void dbDelete(SQLiteDatabaseManager db) {
 
         try {
-            db.getWeightChangeCalendar(this.getID());
+            db.getWeightChangeCalendar(this.getId());
             db.deleteWeightChangeCalendar((WeightChangeCalendar) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого

@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:text="DEFAULT FILL"
                 android:id="@+id/btExercisesFillDefault"
-                android:onClick="bt_ExercisesFillDefault_onClick"
+                android:onClick="btExercisesFillDefault_onClick"
                 android:layout_span="14"
                 android:background="@drawable/bt_border"
                 android:textColor="@color/text_color" />

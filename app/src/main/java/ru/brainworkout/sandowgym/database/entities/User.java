@@ -1,12 +1,12 @@
 package ru.brainworkout.sandowgym.database.entities;
 
-
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb {
+
     private int id;
     private String name;
     private int isCurrentUser;
@@ -19,7 +19,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
 
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
@@ -47,7 +47,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     public void dbSave(SQLiteDatabaseManager db) {
         User user = (User) this;
         try {
-            db.getUser(this.getID());
+            db.getUser(this.getId());
             db.updateUser(user);
 
         } catch (TableDoesNotContainElementException e) {
@@ -60,7 +60,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
         try {
-            db.getUser(this.getID());
+            db.getUser(this.getId());
             db.deleteUser((User) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -73,7 +73,6 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
         if (o == null || getClass() != o.getClass()) return false;
 
         User user = (User) o;
-
         return id == user.id;
 
     }
@@ -104,15 +103,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
 
         public User build() {
             User user = new User(this);
-            validateUserObject(user);
             return user;
         }
-
-        private void validateUserObject(User user) {
-            //Do some basic validations to check
-            //if user object does not break any assumption of system
-        }
-
-
     }
 }

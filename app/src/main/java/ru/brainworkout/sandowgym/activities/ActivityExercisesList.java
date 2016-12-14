@@ -32,16 +32,16 @@ import ru.brainworkout.sandowgym.R;
 
 public class ActivityExercisesList extends ActivityAbstract {
 
-    //TODO height count
     private final int MAX_VERTICAL_BUTTON_COUNT = 15;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
     private final int NUMBER_OF_VIEWS = 10000;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private SharedPreferences mSettings;
-    private int rows_number = 17;
-    Map<Integer, List<Exercise>> pagingExercices = new HashMap<>();
+    private int rowsNumber;
+    private Map<Integer, List<Exercise>> pagedExercices = new HashMap<>();
     private int currentPage = 1;
+    private int idIntentExercise;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -59,21 +59,11 @@ public class ActivityExercisesList extends ActivityAbstract {
             HideEditorButton(btEditor);
         }
         getPreferencesFromFile();
-        pageExercises();
-        showExercises();
-        setTitleOfActivity(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getPreferencesFromFile();
-        pageExercises();
-        showExercises();
-        setTitleOfActivity(this);
         Intent intent = getIntent();
-        int id = intent.getIntExtra("id", 0);
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
+        idIntentExercise = intent.getIntExtra("id", 0);
+
+        updateExercises();
+        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentExercise);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -82,14 +72,26 @@ public class ActivityExercisesList extends ActivityAbstract {
                 mScrollView.requestChildFocus(mRow, mRow);
             }
         }
+        setTitleOfActivity(this);
+    }
+
+    private void updateExercises() {
+        pageExercises();
+        showExercises();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
-            rows_number = 17;
+            rowsNumber = 17;
         }
     }
 
@@ -102,18 +104,14 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     }
 
-    public void bt_ExercisesFillDefault_onClick(final View view) {
+    public void btExercisesFillDefault_onClick(final View view) {
 
         blink(view, this);
-
-        List<Exercise> exercises = CreateDefaultExercises();
+        List<Exercise> exercises = Common.createDefaultExercises(DB);
         for (Exercise ex : exercises) {
-
             ex.dbSave(DB);
-
         }
-        pageExercises();
-        showExercises();
+        updateExercises();
 
     }
 
@@ -122,20 +120,28 @@ public class ActivityExercisesList extends ActivityAbstract {
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getID());
+            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getId());
         }
         List<Exercise> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < exercises.size(); i++) {
+            if (idIntentExercise != 0) {
+                if (exercises.get(i).getId() == idIntentExercise) {
+                    currentPage = pageNumber;
+                }
+            }
             pageContent.add(exercises.get(i));
-            if (pageContent.size() == rows_number) {
-                pagingExercices.put(pageNumber, pageContent);
+            if (pageContent.size() == rowsNumber) {
+                pagedExercices.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size()!=0) {
-            pagingExercices.put(pageNumber, pageContent);
+            pagedExercices.put(pageNumber, pageContent);
+        }
+        if (pagedExercices.size()==0) {
+            currentPage=0;
         }
     }
 
@@ -143,7 +149,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         Button pageNumber = (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage));
+            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedExercices.size());
         }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
@@ -166,13 +172,13 @@ public class ActivityExercisesList extends ActivityAbstract {
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        List<Exercise> page = pagingExercices.get(currentPage);
+        List<Exercise> page = pagedExercices.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
             Exercise exercise=page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(NUMBER_OF_VIEWS + exercise.getID());
+            mRow.setId(NUMBER_OF_VIEWS + exercise.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -183,7 +189,7 @@ public class ActivityExercisesList extends ActivityAbstract {
             mRow.setBackgroundResource(R.drawable.bt_border);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(exercise.getID()));
+            txt.setText(String.valueOf(exercise.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -244,285 +250,22 @@ public class ActivityExercisesList extends ActivityAbstract {
         blink(view, this);
 
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить все упражения пользователя?")
+                .setMessage("Do you wish to delete all user exrecises?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         if (dbCurrentUser != null) {
-                            DB.deleteAllExercisesOfUser(dbCurrentUser.getID());
-                            showExercises();
+                            DB.deleteAllExercisesOfUser(dbCurrentUser.getId());
+                            updateExercises();
                         }
-
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("NO", null).show();
     }
 
-    private List<Exercise> CreateDefaultExercises() {
-
-        List<Exercise> exercises = new ArrayList<>();
-        int i = 0;
-        int maxNum = DB.getExerciseMaxNumber() + 1;
-        //1
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями вдоль туловища, ладони обращены вперед (хват снизу), смотреть прямо перед собой.\n" +
-                                "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
-                                "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы)."
-                )
-                .addVolumeDefault("120")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //2
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями вдоль туловища, ладони обращены назад (хват сверху), смотреть прямо перед собой.\n" +
-                                "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
-                                "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы)."
-                )
-                .addVolumeDefault("53")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //3
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями в стороны, ладони вверх," +
-                                " смотреть прямо перед собой. Поочередно сгибайте и разгибайте руки в локтевых суставах. Во время упражнения локти не опускать." +
-                                " Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча и " +
-                                "трехглавые мышцы плеча(трицепсы)."
-                )
-                .addVolumeDefault("24")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //4
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями в стороны, ладони вверх. Одновременно " +
-                                "сгибайте и разгибайте руки в локтевых суставах. Сгибая руки, делайте вдох, разгибая — выдох. Упражнение" +
-                                " развивает бицепсы и трицепсы."
-                )
-                .addVolumeDefault("14")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //5
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями подняты вперед, ладони внутрь. " +
-                                "Разведите прямые руки в стороны и сделайте вдох, быстро вернитесь в исходное положение — выдох." +
-                                "Упражнение развивает грудные мышцы, мышцы спины и плечевого пояса."
-                )
-                .addVolumeDefault("12")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //6
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями к плечам, разверните плечи, смотрите прямо перед собой." +
-                                " Попеременно поднимайте и опускайте руки. Дыхание равномерное. " +
-                                "Упражнение развивает трехглавые мышцы плеча, дельтовидные и трапециевидные мышцы."
-                )
-                .addVolumeDefault("22")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //7
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями вдоль туловища, спина несколько согнута. " +
-                                "Поочередно поднимайте прямые руки вперед до уровня плеч." +
-                                "Поднимая правую руку, делайте вдох, поднимая левую — выдох." +
-                                "Упражнение развивает дельтовидные мышцы."
-                )
-                .addVolumeDefault("17")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //8
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями в стороны, ладони вниз. Одновременно и быстро" +
-                                " поворачивайте кисти вверх и вниз, затем вперед и назад. Дыхание равномерное. Упражнение выполнять до наступления усталости. " +
-                                "Развивает мышцы предплечья и укрепляет лучезапястные суставы."
-                )
-                .addVolumeDefault("--")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //9
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Возьмите гантели за один конец и разведите руки в стороны. " +
-                                "Не сгибая рук, вращайте кисти вперед и назад. Дыхание равномерное. Упражнение выполняйте до утомления." +
-                                "Упражнение развивает мышцы предплечья и укрепляет лучезапястные суставы."
-                )
-                .addVolumeDefault("--")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //10
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями подняты вверх. Не сгибая колен, наклонитесь" +
-                                " вперед и коснитесь руками пола — выдох. Вернитесь в исходное положение — вдох. Первое время упражнение выполняйте без гантелей." +
-                                "Упражнение развивает мышцы спины."
-                )
-                .addVolumeDefault("17")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //11
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями вдоль туловища. Сделайте выпад левой ногой" +
-                                " вперед, правую руку дугообразным движением поднимите на уровень груди — вдох. Вернитесь в исходное положение — выдох." +
-                                " Затем сделайте выпад правой ногой, а левую руку поднимите вперед. Упражнение развивает дельтовидные мышцы и мышцы ног" +
-                                "."
-                )
-                .addVolumeDefault("17")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //12
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки вдоль туловища, смотрите прямо перед собой. Поднимите прямые руки через " +
-                                "стороны вверх — вдох. Опустите в исходное положение — выдох. " +
-                                "Упражнение развивает дельтовидные и трапециевидные мышцы."
-                )
-                .addVolumeDefault("17")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //13
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Отжимания в упоре лежа на полу. Туловище и ноги должны составлять прямую линию." +
-                                " Сгибая руки, делайте вдох, разгибая — выдох. Сгибая руки, касайтесь грудью пола. Упражнение развивает трехглавые мышцы плеча, " +
-                                "грудные мышцы и мышцы плечевого пояса."
-                )
-                .addVolumeDefault("7")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //14
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями вдоль туловища. Наклоните туловище в левую сторону, " +
-                                "правую руку согните так, чтобы гантелью коснуться подмышки. Затем проделайте наклон в другую сторону, сгибая левую руку. Наклоняясь, " +
-                                "делайте выдох, возвращаясь в исходное положение — вдох. Упражнение развивает боковые мышцы живота, бицепсы, трапециевидные и" +
-                                " дельтовидные мышцы."
-                )
-                .addVolumeDefault("53")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //15
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Лежа на спине на полу, ноги закреплены за" +
-                                " неподвижную опору, руки с гантелями подняты вверх, Сядьте и сделайте наклон вперед — выдох. Медленно вернитесь" +
-                                " в исходное положение — вдох. Первое время упражнение можно выполнять без гантелей. Упражнение развивает мышцы " +
-                                "брюшного пресса."
-                )
-                .addVolumeDefault("10")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //16
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Лежа на спине на полу, руки за головой." +
-                                " Поднимите прямые ноги вверх — выдох. Медленно опустите ноги в исходное положение — вдох. Упражнение развивает мышцы" +
-                                " брюшного пресса и четырехглавые мышцы бедра"
-                )
-                .addVolumeDefault("7")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //17
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, пятки вместе, носки врозь, руки с гантелями " +
-                                "опущены вдоль туловища. Медленно поднимитесь на носки — вдох, затем, опускаясь на пятки, присядьте — выдох. " +
-                                "Упражнение развивает икроножные мышцы и четырехглавые мышцы бедра."
-                )
-                .addVolumeDefault("53")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-        //18
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Сандов №" + String.valueOf(i))
-                .addExplanation(
-                        "Стоя, руки с гантелями опущены вдоль туловища." +
-                                " Сгибайте и разгибайте кисти в лучезапястных суставах. Упражнение развивает мышцы" +
-                                " предплечья и укрепляет лучезапястные суставы."
-                )
-                .addVolumeDefault("53")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        //19
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Подтягивания")
-                .addExplanation(
-                        "Подтягивания на перекладине любым хватом."
-                )
-                .addVolumeDefault("--")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        exercises.add(new Exercise.Builder(maxNum + (i++))
-                .addIsActive(1)
-                .addName("Планка")
-                .addExplanation(
-                        "Планка"
-                )
-                .addVolumeDefault("--")
-                .addPicture("ic_ex_" + String.valueOf(i))
-                .build());
-
-        return exercises;
-    }
-
-    public void btNextPage_onClick(View view) {
+       public void btNextPage_onClick(View view) {
         blink(view, this);
 
-        if (currentPage != pagingExercices.size()) {
+        if (currentPage != pagedExercices.size()) {
             currentPage++;
         }
         showExercises();

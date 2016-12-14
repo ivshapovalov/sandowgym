@@ -223,6 +223,5 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                 }
             });
         }
-
     }
 }

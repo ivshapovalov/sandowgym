@@ -1,12 +1,13 @@
 package ru.brainworkout.sandowgym.database.entities;
 
 import static ru.brainworkout.sandowgym.common.Common.*;
+
 import ru.brainworkout.sandowgym.database.interfaces.DeletingFromDb;
 import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Training extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
+public class Training extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
 
     private long day;
 
@@ -27,22 +28,21 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
 
     }
 
-    public void setDay(long day)  {
+    public void setDay(long day) {
         this.day = day;
     }
 
 
     public void setDayString(String _day) {
 
-        this.day = ConvertStringToDate(_day).getTime();
+        this.day = convertStringToDate(_day).getTime();
 
     }
-
 
     @Override
     public void dbSave(SQLiteDatabaseManager db) {
         try {
-            db.getTraining(this.getID());
+            db.getTraining(this.getId());
             db.updateTraining((Training) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -53,13 +53,13 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
 
-            try {
-                db.getTraining(this.getID());
-                db.deleteTraining((Training) this);
-            } catch (TableDoesNotContainElementException e) {
-                //нет такого
+        try {
+            db.getTraining(this.getId());
+            db.deleteTraining((Training) this);
+        } catch (TableDoesNotContainElementException e) {
+            //нет такого
 
-            }
+        }
 
     }
 
@@ -74,6 +74,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
         public Builder(SQLiteDatabaseManager DB) {
             this.id = DB.getTrainingMaxNumber() + 1;
         }
+
         public Builder(int id) {
             this.id = id;
         }
@@ -89,7 +90,5 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB,De
         }
 
     }
-
-
 }
 

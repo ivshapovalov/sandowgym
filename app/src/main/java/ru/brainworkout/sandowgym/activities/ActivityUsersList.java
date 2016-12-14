@@ -23,13 +23,11 @@ import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
 
 import ru.brainworkout.sandowgym.common.Common;
-import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 public class ActivityUsersList extends AppCompatActivity {
-
 
     private final int MAX_VERTICAL_BUTTON_COUNT = 17;
     private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
@@ -38,9 +36,10 @@ public class ActivityUsersList extends AppCompatActivity {
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private SharedPreferences mSettings;
-    private int rows_number = 17;
-    Map<Integer, List<User>> pagingUsers = new HashMap<>();
+    private int rowsNumber;
+    private Map<Integer, List<User>> pagedUsers = new HashMap<>();
     private int currentPage = 1;
+    private int idIntentUser;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -60,41 +59,35 @@ public class ActivityUsersList extends AppCompatActivity {
         }
 
         getPreferencesFromFile();
-        pageUsers();
-        showUsers();
+
+        Intent intent = getIntent();
+        idIntentUser = intent.getIntExtra("id", 0);
+        updateUsers();
+
+        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentUser);
+        if (mRow != null) {
+            int mScrID = getResources().getIdentifier("svTableUsers", "id", getPackageName());
+            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+            if (mScrollView != null) {
+                mScrollView.requestChildFocus(mRow, mRow);
+            }
+        }
 
         setTitleOfActivity(this);
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        getPreferencesFromFile();
+    private void updateUsers() {
         pageUsers();
         showUsers();
-
-        Intent intent = getIntent();
-        int id = intent.getIntExtra("id", 0);
-
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
-        if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
-            if (mScrollView != null) {
-
-                mScrollView.requestChildFocus(mRow, mRow);
-            }
-        }
     }
+
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
-            rows_number = 17;
+            rowsNumber = 17;
         }
     }
 
@@ -114,15 +107,23 @@ public class ActivityUsersList extends AppCompatActivity {
         List<User> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < users.size(); i++) {
+            if (idIntentUser != 0) {
+                if (users.get(i).getId() == idIntentUser) {
+                    currentPage = pageNumber;
+                }
+            }
             pageContent.add(users.get(i));
-            if (pageContent.size() == rows_number) {
-                pagingUsers.put(pageNumber, pageContent);
+            if (pageContent.size() == rowsNumber) {
+                pagedUsers.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size()!=0) {
-            pagingUsers.put(pageNumber, pageContent);
+            pagedUsers.put(pageNumber, pageContent);
+        }
+        if (pagedUsers.size()==0) {
+            currentPage=0;
         }
     }
 
@@ -130,10 +131,10 @@ public class ActivityUsersList extends AppCompatActivity {
 
         Button pageNumber = (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage));
+            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedUsers.size());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
+        ScrollView sv = (ScrollView) findViewById(R.id.svTableUsers);
         try {
 
             sv.removeAllViews();
@@ -156,13 +157,13 @@ public class ActivityUsersList extends AppCompatActivity {
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        List<User> page = pagingUsers.get(currentPage);
+        List<User> page = pagedUsers.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
             TableRow mRow = new TableRow(this);
             User user=page.get(num);
-            mRow.setId(NUMBER_OF_VIEWS + user.getID());
+            mRow.setId(NUMBER_OF_VIEWS + user.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -173,7 +174,7 @@ public class ActivityUsersList extends AppCompatActivity {
             mRow.setBackgroundResource(R.drawable.bt_border);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(user.getID()));
+            txt.setText(String.valueOf(user.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -214,8 +215,8 @@ public class ActivityUsersList extends AppCompatActivity {
     public void bt_Edit_onClick(final View view) {
         blink(view,this);
 
-        Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
-        startActivity(dbmanager);
+        Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
+        startActivity(intent);
     }
 
 
@@ -238,7 +239,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void btNextPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != pagingUsers.size()) {
+        if (currentPage != pagedUsers.size()) {
             currentPage++;
         }
         showUsers();

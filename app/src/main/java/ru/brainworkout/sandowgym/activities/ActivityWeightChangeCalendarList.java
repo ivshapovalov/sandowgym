@@ -26,7 +26,6 @@ import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
 
 import ru.brainworkout.sandowgym.common.Common;
-import ru.brainworkout.sandowgym.database.entities.Exercise;
 import ru.brainworkout.sandowgym.database.entities.WeightChangeCalendar;
 import ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -40,9 +39,10 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private SharedPreferences mSettings;
-    private int rows_number = 17;
-    Map<Integer, List<WeightChangeCalendar>> pagingWeightChangeCalendar = new HashMap<>();
+    private int rowsNumber = 17;
+    private Map<Integer, List<WeightChangeCalendar>> pagedWeightChangeCalendar = new HashMap<>();
     private int currentPage = 1;
+    private int idIntentWeightChangeCalendar;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -61,25 +61,12 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         }
 
         getPreferencesFromFile();
-        pageWeightChangeCalendar();
-        showWeightChangeCalendarList();
-
-        setTitleOfActivity(this);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        getPreferencesFromFile();
-        pageWeightChangeCalendar();
-        showWeightChangeCalendarList();
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
+        idIntentWeightChangeCalendar = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
+        updateweightChangeCalendarList();
 
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + id);
+        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentWeightChangeCalendar);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableWeightChangeCalendarList", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -88,14 +75,20 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
                 mScrollView.requestChildFocus(mRow, mRow);
             }
         }
+        setTitleOfActivity(this);
+    }
+
+    private void updateweightChangeCalendarList() {
+        pageWeightChangeCalendarList();
+        showWeightChangeCalendarList();
     }
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rows_number = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
-            rows_number = 17;
+            rowsNumber = 17;
         }
     }
 
@@ -108,25 +101,33 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
     }
 
-    private void pageWeightChangeCalendar() {
+    private void pageWeightChangeCalendarList() {
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<WeightChangeCalendar>();
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(dbCurrentUser.getID());
+            weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
         }
         List<WeightChangeCalendar> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < weightChangeCalendarList.size(); i++) {
+            if (idIntentWeightChangeCalendar != 0) {
+                if (weightChangeCalendarList.get(i).getId() == idIntentWeightChangeCalendar) {
+                    currentPage = pageNumber;
+                }
+            }
             pageContent.add(weightChangeCalendarList.get(i));
-            if (pageContent.size() == rows_number) {
-                pagingWeightChangeCalendar.put(pageNumber, pageContent);
+            if (pageContent.size() == rowsNumber) {
+                pagedWeightChangeCalendar.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size() != 0) {
-            pagingWeightChangeCalendar.put(pageNumber, pageContent);
+            pagedWeightChangeCalendar.put(pageNumber, pageContent);
+        }
+        if (pagedWeightChangeCalendar.size()==0) {
+            currentPage=0;
         }
     }
 
@@ -134,7 +135,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         Button pageNumber = (Button) findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage));
+            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedWeightChangeCalendar.size());
         }
         ScrollView sv = (ScrollView) findViewById(R.id.svTableWeightChangeCalendarList);
         try {
@@ -158,14 +159,14 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        List<WeightChangeCalendar> page = pagingWeightChangeCalendar.get(currentPage);
+        List<WeightChangeCalendar> page = pagedWeightChangeCalendar.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
 
             WeightChangeCalendar weightChangeCalendar=page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(NUMBER_OF_VIEWS + weightChangeCalendar.getID());
+            mRow.setId(NUMBER_OF_VIEWS + weightChangeCalendar.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -176,7 +177,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
             mRow.setBackgroundResource(R.drawable.bt_border);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(weightChangeCalendar.getID()));
+            txt.setText(String.valueOf(weightChangeCalendar.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
@@ -221,22 +222,16 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
     }
 
     public void bt_Edit_onClick(final View view) {
-
         blink(view, this);
-
-        Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
-        startActivity(dbmanager);
-
+        Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
+        startActivity(intent);
     }
 
-
     public void buttonHome_onClick(final View view) {
-
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     public void btDeleteWeightChangeCalendarList_onClick(final View view) {
@@ -244,24 +239,24 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         blink(view, this);
 
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите удалить все изменения весов пользователия?")
+                .setMessage("Do you wish to delete all weight changes of user?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         if (dbCurrentUser != null) {
-                            DB.deleteAllWeightChangeCalendarOfUser(dbCurrentUser.getID());
-                            showWeightChangeCalendarList();
+                            DB.deleteAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
+                            updateweightChangeCalendarList();
                         }
 
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("No", null).show();
     }
 
     public void btNextPage_onClick(View view) {
         blink(view, this);
 
-        if (currentPage != pagingWeightChangeCalendar.size()) {
+        if (currentPage != pagedWeightChangeCalendar.size()) {
             currentPage++;
         }
         showWeightChangeCalendarList();

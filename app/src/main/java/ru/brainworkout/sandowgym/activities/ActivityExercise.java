@@ -59,7 +59,6 @@ public class ActivityExercise extends ActivityAbstract {
                 cbIsActive.setChecked(false);
             }
         }
-
         cbIsActive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -73,36 +72,30 @@ public class ActivityExercise extends ActivityAbstract {
             }
         });
 
-        //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
-
-            tvID.setText(String.valueOf(mCurrentExercise.getID()));
+            tvID.setText(String.valueOf(mCurrentExercise.getId()));
         }
 
-        //Имя
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
             etName.setText(mCurrentExercise.getName());
         }
 
-        //Описание
         int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
             etExplanation.setText(mCurrentExercise.getExplanation());
         }
 
-        //Картинка
         int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
             etPicture.setText(mCurrentExercise.getPicture());
         }
 
-        //Количество по умолчанию
         int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
@@ -121,22 +114,19 @@ public class ActivityExercise extends ActivityAbstract {
     public void btClose_onClick(final View view) {
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
+        intent.putExtra("CurrentExerciseID", mCurrentExercise.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
     private void fillExerciseFromScreen() {
 
-        //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
-
             mCurrentExercise.setID(Integer.parseInt(String.valueOf(tvID.getText())));
-
         }
-        //Имя
+
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
@@ -144,27 +134,23 @@ public class ActivityExercise extends ActivityAbstract {
             mCurrentExercise.setName(String.valueOf(etName.getText()));
         }
 
-        //Описание
         int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
         EditText etExplanation = (EditText) findViewById(mExplanationID);
         if (etExplanation != null) {
             mCurrentExercise.setExplanation(String.valueOf(etExplanation.getText()));
         }
 
-        //Картинка
         int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
         EditText etPicture = (EditText) findViewById(mPictureID);
         if (etPicture != null) {
 
             mCurrentExercise.setPicture(String.valueOf(etPicture.getText()));
         }
-        //Количество по умолчанию
+
         int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
         EditText etVolume = (EditText) findViewById(mVolumeID);
         if (etVolume != null) {
-
             mCurrentExercise.setVolumeDefault(String.valueOf(etVolume.getText()));
-
         }
     }
 
@@ -174,7 +160,7 @@ public class ActivityExercise extends ActivityAbstract {
         fillExerciseFromScreen();
         mCurrentExercise.dbSave(DB);
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("CurrentExerciseID", mCurrentExercise.getID());
+        intent.putExtra("CurrentExerciseID", mCurrentExercise.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -184,13 +170,13 @@ public class ActivityExercise extends ActivityAbstract {
         new AlertDialog.Builder(this)
                 .setMessage("Do you want to delete current exercise?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mCurrentExercise.dbDelete(DB);
                         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("No", null).show();
     }
 }

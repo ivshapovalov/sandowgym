@@ -16,16 +16,15 @@ import java.util.List;
 
 import ru.brainworkout.sandowgym.R;
 import static ru.brainworkout.sandowgym.common.Common.*;
-import ru.brainworkout.sandowgym.database.entities.Exercise;
-import ru.brainworkout.sandowgym.database.entities.Training;
+
 import ru.brainworkout.sandowgym.database.entities.User;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
 public class ActivityUser extends AppCompatActivity {
 
-    private User mCurrentUser;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +86,7 @@ public class ActivityUser extends AppCompatActivity {
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
-            tvID.setText(String.valueOf(mCurrentUser.getID()));
+            tvID.setText(String.valueOf(mCurrentUser.getId()));
         }
 
         //Имя
@@ -104,7 +103,7 @@ public class ActivityUser extends AppCompatActivity {
 
         blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getID());
+        intent.putExtra("id", mCurrentUser.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -134,7 +133,7 @@ public class ActivityUser extends AppCompatActivity {
         setDBCurrentUser();
 
         Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getID());
+        intent.putExtra("id", mCurrentUser.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -148,7 +147,7 @@ public class ActivityUser extends AppCompatActivity {
 
             for (User user : userList) {
 
-                if (user.getID()!=mCurrentUser.getID()) {
+                if (user.getId()!=mCurrentUser.getId()) {
                     user.setIsCurrentUser(0);
                     user.dbSave(DB);
                 }
@@ -167,7 +166,7 @@ public class ActivityUser extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setMessage("Do you want to delete current user, his trainings and other?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mCurrentUser.dbDelete(DB);
                         if (mCurrentUser.equals(dbCurrentUser)) {
@@ -187,6 +186,6 @@ public class ActivityUser extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("No", null).show();
     }
 }

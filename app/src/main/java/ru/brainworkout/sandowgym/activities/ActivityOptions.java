@@ -24,7 +24,6 @@ public class ActivityOptions extends ActivityAbstract {
         setTitleOfActivity(this);
     }
 
-
     public void buttonSave_onClick(View view) {
 
         int mRowsOnPageID = getResources().getIdentifier("etRowsOnPageInLists", "id", getPackageName());

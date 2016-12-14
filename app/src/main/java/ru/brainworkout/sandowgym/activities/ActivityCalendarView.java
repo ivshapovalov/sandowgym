@@ -33,9 +33,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         getIntentParams();
         SetParametersOnScreen();
-
     }
-
 
     private void getIntentParams() {
 
@@ -134,7 +132,6 @@ public class ActivityCalendarView extends AppCompatActivity {
         intent.putExtra("", mIsBeginDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     public void btClose_onClick(final View view) {

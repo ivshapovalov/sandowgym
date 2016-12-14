@@ -42,7 +42,6 @@ public class ActivityTools extends ActivityAbstract {
                 btName.setHeight(mHeight);
             }
         }
-
     }
 
     public void btExportImport_onClick(final View view) {
@@ -66,28 +65,27 @@ public class ActivityTools extends ActivityAbstract {
     public void btClearBD_onClick(final View view) {
 
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите очистить базу данных?")
+                .setMessage("Do you wish to clear database?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
-
                             SQLiteDatabase dbSQL = DB.getWritableDatabase();
                             DB.clearDB(dbSQL);
                             dbCurrentUser = null;
 
                             Toast toast = Toast.makeText(ActivityTools.this,
-                                    "База данных очищена!", Toast.LENGTH_SHORT);
+                                    "Database cleared!", Toast.LENGTH_SHORT);
                             toast.show();
                             setTitleOfActivity(ActivityTools.this);
 
                         } catch (Exception e) {
                             Toast toast = Toast.makeText(ActivityTools.this,
-                                    "Невозможно подключиться к базе данных!", Toast.LENGTH_SHORT);
+                                    "Unable to connect database!", Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     }
-                }).setNegativeButton("Нет", null).show();
+                }).setNegativeButton("No", null).show();
     }
 
     public void onBackPressed() {

@@ -31,7 +31,6 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
         this.picture = picture;
     }
 
-
     public int getIsActive() {
         return is_active;
     }
@@ -39,7 +38,6 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
     public void setIsActive(int is_active) {
         this.is_active = is_active;
     }
-
 
     public String getName() {
         return name;
@@ -69,7 +67,7 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
     public void dbSave(SQLiteDatabaseManager db) {
 
         try {
-            db.getExercise(this.getID());
+            db.getExercise(this.getId());
             db.updateExercise((Exercise) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -81,9 +79,8 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
 
-
         try {
-            db.getExercise(this.getID());
+            db.getExercise(this.getId());
             db.deleteExercise((Exercise) this);
         } catch (TableDoesNotContainElementException e) {
             //нет такого
@@ -136,8 +133,6 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
             Exercise exercise = new Exercise(this);
             return exercise;
         }
-
-
 
     }
 

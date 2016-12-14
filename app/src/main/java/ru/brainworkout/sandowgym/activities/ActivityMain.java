@@ -44,10 +44,8 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     private Date getLastDateOfWeightChange() {
-
         return new Date();
     }
-
 
     private void showElementsOnScreen() {
 
@@ -72,6 +70,7 @@ public class ActivityMain extends ActivityAbstract {
     public void btUsers_onClick(final View view) {
         blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityUsersList.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -79,6 +78,7 @@ public class ActivityMain extends ActivityAbstract {
         blink(view, this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityWeightChangeCalendarList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
@@ -87,6 +87,7 @@ public class ActivityMain extends ActivityAbstract {
         blink(view, this);
         if (isUserDefined()) {
             Intent intent = new Intent(ActivityMain.this, ActivityExercisesList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
@@ -96,6 +97,7 @@ public class ActivityMain extends ActivityAbstract {
         blink(view, this);
         if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTrainingsList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
@@ -106,6 +108,7 @@ public class ActivityMain extends ActivityAbstract {
         if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
             intent.putExtra("IsNew", true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
@@ -114,8 +117,8 @@ public class ActivityMain extends ActivityAbstract {
 
         blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
 
     }
 
@@ -125,11 +128,11 @@ public class ActivityMain extends ActivityAbstract {
         if (dbCurrentUser == null) {
             //list = DB.getAllActiveExercises();
         } else {
-            list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
+            list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
         }
         if (list.size() == 0) {
             Toast toast = Toast.makeText(ActivityMain.this,
-                    "Отсутствуют активные упражнения. Заполните список упражнений!", Toast.LENGTH_SHORT);
+                    "There is no one active exercises!", Toast.LENGTH_SHORT);
             toast.show();
             return false;
         } else {
@@ -140,15 +143,12 @@ public class ActivityMain extends ActivityAbstract {
     public void onBackPressed() {
 
         new AlertDialog.Builder(this)
-                .setMessage("Вы действительно хотите покинуть программу?")
+                .setMessage("Do you wish to close the program?")
                 .setCancelable(false)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();
                     }
-                }).setNegativeButton("Нет", null).show();
-
+                }).setNegativeButton("No", null).show();
     }
-
-
 }

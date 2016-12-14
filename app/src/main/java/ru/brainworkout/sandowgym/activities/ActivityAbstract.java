@@ -48,7 +48,7 @@ public abstract class ActivityAbstract extends AppCompatActivity {
     public boolean isUserDefined() {
         if (dbCurrentUser == null) {
             Toast toast = Toast.makeText(this,
-                    "Не выбран пользатель. Создайте пользователя и сделайте его активным!", Toast.LENGTH_SHORT);
+                    "No active user. Create user and make it active!", Toast.LENGTH_SHORT);
             toast.show();
             return false;
         }

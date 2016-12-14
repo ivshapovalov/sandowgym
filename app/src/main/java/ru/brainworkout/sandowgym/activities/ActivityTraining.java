@@ -45,6 +45,7 @@ public class ActivityTraining extends ActivityAbstract {
     private static final int NUMBER_OF_VIEWS = 30000;
     private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;
 
+    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
     private int mPlusMinusButtonValue;
     private boolean mShowPicture;
@@ -56,7 +57,6 @@ public class ActivityTraining extends ActivityAbstract {
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
     private String mExerciseVolumeLastDay = "";
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private boolean mTrainingIsNew;
     private int mHeight;
     private int mWidth;
@@ -94,8 +94,8 @@ public class ActivityTraining extends ActivityAbstract {
         defineCurrentTraining(id, currentDateInMillis);
         showTrainingOnScreen();
 
-        //не используем. Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
-        //убираю скрол вправо, влево. перемещение кнопками внизу
+        //Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
+        //убираю пока скрол вправо, влево. перемещение кнопками внизу
 
         SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
         ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
@@ -149,9 +149,9 @@ public class ActivityTraining extends ActivityAbstract {
         List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                    mCurrentTraining.getDay(), mCurrentExercise.getID());
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
+            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+                    mCurrentTraining.getDay(), mCurrentExercise.getId());
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
         }
         if (mTrainingContentNotNullVolume.size() == 1) {
@@ -167,13 +167,13 @@ public class ActivityTraining extends ActivityAbstract {
             } catch (Exception e) {
                 mWeightInCalendar = 0;
             }
-            List<TrainingContent> trainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
+            List<TrainingContent> trainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getId());
             for (TrainingContent trainingContent : trainingContentList
                     ) {
                 if (trainingContent.getWeight() == 0) {
                     trainingContent.setWeight(mWeightInCalendar);
                     if (mCurrentTrainingContent != null) {
-                        if (trainingContent.getID() == mCurrentTrainingContent.getID()) {
+                        if (trainingContent.getId() == mCurrentTrainingContent.getId()) {
                             trainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
@@ -195,31 +195,21 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void defineCurrentTraining(int mCurrentId, long currentDateInMillis) {
         if (mTrainingIsNew) {
-
             mCurrentTraining = new Training.Builder(DB).build();
-            //Calendar calendar = Calendar.getInstance();
             if (currentDateInMillis == 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
-                //cal.set(9999,11,31,12,59,59);
-                //cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
                 mCurrentTraining.setDay(cal.getTimeInMillis());
-
             } else {
-
                 mCurrentTraining.setDay(currentDateInMillis);
             }
-
         } else {
-
             if (mCurrentId == 0) {
                 mCurrentTraining = new Training.Builder(DB).build();
             } else {
-
                 try {
                     mCurrentTraining = Training.getTrainingFromDB(DB, mCurrentId);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
-                    //возможно удалили элемент
                     tableDoesNotContainElementException.printStackTrace();
                 }
             }
@@ -229,10 +219,8 @@ public class ActivityTraining extends ActivityAbstract {
     @Override
     protected void onResume() {
         super.onResume();
-
         getPreferencesFromFile();
         setPreferencesOnScreen();
-
     }
 
     public void btVolumeDefault_onClick(final View view) {
@@ -246,11 +234,9 @@ public class ActivityTraining extends ActivityAbstract {
                 }
             }
         }
-
     }
 
     public void btVolumeLastDay_onClick(final View view) {
-
         blink(view, this);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
         TextView etVolume = (TextView) findViewById(mVolumeID);
@@ -261,15 +247,13 @@ public class ActivityTraining extends ActivityAbstract {
                 etVolume.setText(mExerciseVolumeLastDay);
             }
         }
-
     }
 
     public void btOptions_onClick(final View view) {
 
         blink(view, this);
-
         Intent intent = new Intent(ActivityTraining.this, ActivityTrainingOptions.class);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
@@ -278,10 +262,8 @@ public class ActivityTraining extends ActivityAbstract {
 
         if (mActiveExercises.size() != 0) {
             if (mCurrentExerciseNumberInList != mActiveExercises.size() - 1) {
-
                 mCurrentExerciseNumberInList++;
                 mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
-
                 if (isTrainingContentNew()) {
                     createNewTrainingContent();
                 }
@@ -304,7 +286,7 @@ public class ActivityTraining extends ActivityAbstract {
 
             tvExplanation.setText(mCurrentExercise.getExplanation());
         }
-        showTrainingContentOnScreen(mCurrentTrainingContent.getIdExercise());
+        showTrainingContentOnScreen(mCurrentTrainingContent.getExerciseId());
         updateButtonsListOfExercises();
 
     }
@@ -326,9 +308,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     private boolean isTrainingContentNew() {
         for (TrainingContent mTr : mTrainingContentList) {
-            if (mTr.getIdExercise() == mCurrentExercise.getID()) {
+            if (mTr.getExerciseId() == mCurrentExercise.getId()) {
                 mCurrentTrainingContent = mTr;
-                //mTrainingContentList.remove(mTrainingContentList.indexOf(mTr));
                 return false;
             }
         }
@@ -337,16 +318,16 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void getAllExercisesOfTraining() {
 
-        mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
-        mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getID());
+        mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
+        mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getId());
 
         for (TrainingContent tr : mTrainingContentList
                 ) {
             boolean isFound = false;
-            int id_ex = tr.getIdExercise();
+            int idExercise = tr.getExerciseId();
             for (Exercise ex : mActiveExercises
                     ) {
-                if (ex.getID() == id_ex) {
+                if (ex.getId() == idExercise) {
                     isFound = true;
                     break;
                 }
@@ -357,7 +338,7 @@ public class ActivityTraining extends ActivityAbstract {
                 //добавим в список упражнений упражнение старое
                 Exercise ex = null;
                 try {
-                    ex = Exercise.getExerciseFromDB(DB, id_ex);
+                    ex = Exercise.getExerciseFromDB(DB, idExercise);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     tableDoesNotContainElementException.printStackTrace();
                 }
@@ -367,7 +348,7 @@ public class ActivityTraining extends ActivityAbstract {
 
         Collections.sort(mActiveExercises, new Comparator() {
             public int compare(Object ex1, Object ex2) {
-                return ((Exercise) (ex1)).getID() - ((Exercise) (ex2)).getID();
+                return ((Exercise) (ex1)).getId() - ((Exercise) (ex2)).getId();
             }
         });
 
@@ -376,7 +357,7 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
 
 
-            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getIdExercise() == mCurrentExercise.getID()) {
+            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getExerciseId() == mCurrentExercise.getId()) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 createNewTrainingContent();
@@ -390,10 +371,8 @@ public class ActivityTraining extends ActivityAbstract {
 
         //при инициализации тренировки создадим сразу контент
         if (dbCurrentUser != null) {
-            mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getID());
+            mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
             mTrainingContentList = new ArrayList<>();
-
-
             for (Exercise ex : mActiveExercises
                     ) {
                 mCurrentExercise = ex;
@@ -410,7 +389,6 @@ public class ActivityTraining extends ActivityAbstract {
                 //покажем первое упражнение
                 //createNewTrainingContent();
                 showTrainingContentOnScreen();
-
             }
         }
     }
@@ -421,9 +399,9 @@ public class ActivityTraining extends ActivityAbstract {
         List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                    mCurrentTraining.getDay(), mCurrentExercise.getID());
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getID(),
+            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+                    mCurrentTraining.getDay(), mCurrentExercise.getId());
+            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
         }
         mWeightInCalendar = 0;
@@ -442,15 +420,13 @@ public class ActivityTraining extends ActivityAbstract {
                 mExerciseWeightLastDay = 0;
             }
         }
-
         mCurrentTrainingContent = new TrainingContent.Builder(DB)
-                .addExerciseId(mCurrentExercise.getID())
-                .addTrainingId(mCurrentTraining.getID())
+                .addExercise(mCurrentExercise)
+                .addTraining(mCurrentTraining)
                 .addVolume("")
                 .addWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar)
                 .build();
         mCurrentTrainingContent.dbSave(DB);
-
     }
 
     private void showTrainingContentOnScreen() {
@@ -463,8 +439,8 @@ public class ActivityTraining extends ActivityAbstract {
             } else {
                 ivPicture.setBackgroundColor(Color.WHITE);
             }
-
         }
+
         TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
 
@@ -473,7 +449,7 @@ public class ActivityTraining extends ActivityAbstract {
         TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
         if (tvExerciseName != null) {
 
-            tvExerciseName.setText("Упражнение: " + mCurrentExercise.getName());
+            tvExerciseName.setText("Exercise: " + mCurrentExercise.getName());
         }
 
         EditText etComment = (EditText) findViewById(R.id.etComment);
@@ -507,8 +483,8 @@ public class ActivityTraining extends ActivityAbstract {
             List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
 
             if (dbCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getID(),
-                        mCurrentTraining.getDay(), mCurrentExercise.getID());
+                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+                        mCurrentTraining.getDay(), mCurrentExercise.getId());
             }
             mExerciseVolumeLastDay = "";
             if (mTrainingsContentList.size() == 1) {
@@ -533,7 +509,6 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     private void showTrainingContentOnScreen(final int ex_id) {
-
         try {
             mCurrentExercise = Exercise.getExerciseFromDB(DB, ex_id);
         } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
@@ -585,7 +560,7 @@ public class ActivityTraining extends ActivityAbstract {
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
 
-            tvID.setText(String.valueOf(mCurrentTraining.getID()));
+            tvID.setText(String.valueOf(mCurrentTraining.getId()));
         }
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
@@ -602,9 +577,8 @@ public class ActivityTraining extends ActivityAbstract {
     public void btClose_onClick(final View view) {
 
         blink(view, this);
-
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
-        intent.putExtra("id", mCurrentTraining.getID());
+        intent.putExtra("id", mCurrentTraining.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -612,31 +586,25 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void getPropertiesFromScreen() {
 
-        //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
-
             mCurrentTraining.setID(Integer.parseInt(String.valueOf(tvID.getText())));
-
         }
-        //Имя
+
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
         TextView tvDay = (TextView) findViewById(mDayID);
         if (tvDay != null) {
-
-            Date d = ConvertStringToDate(String.valueOf(tvDay.getText()));
-
+            Date d = convertStringToDate(String.valueOf(tvDay.getText()));
             if (d != null) {
                 mCurrentTraining.setDay(d.getTime());
             }
-
         }
+
         EditText etVolume = (EditText) findViewById(R.id.etVolume);
         if (etVolume != null) {
             try {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
-
             } catch (Exception e) {
                 mCurrentTrainingContent.setVolume(String.valueOf(0));
             }
@@ -646,7 +614,6 @@ public class ActivityTraining extends ActivityAbstract {
         if (etWeight != null) {
             try {
                 mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
-
             } catch (Exception e) {
                 mCurrentTrainingContent.setWeight(0);
             }
@@ -656,32 +623,24 @@ public class ActivityTraining extends ActivityAbstract {
         if (etComment != null) {
             try {
                 mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
-
             } catch (Exception e) {
-
             }
         }
     }
 
     public void btSave_onClick(final View view) {
-
         blink(view, this);
         saveTraining();
-
     }
 
     public void saveTraining() {
 
         getPropertiesFromScreen();
-
         mCurrentTraining.dbSave(DB);
-
         if (mCurrentTrainingContent != null) {
-
             mCurrentTrainingContent.dbSave(DB);
         }
         mTrainingIsNew = false;
-
     }
 
     private void saveCurrentTrainingContent(final boolean readFromScreen) {
@@ -689,17 +648,16 @@ public class ActivityTraining extends ActivityAbstract {
         if (readFromScreen) {
             EditText etVolume = (EditText) findViewById(R.id.etVolume);
             if (etVolume != null) {
-
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
             }
+
             EditText etComment = (EditText) findViewById(R.id.etComment);
             if (etComment != null) {
-
                 mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
             }
+
             EditText etWeight = (EditText) findViewById(R.id.etWeight);
             if (etWeight != null) {
-
                 String weight = String.valueOf(etWeight.getText());
                 if (weight.trim().equals("")) {
                     mCurrentTrainingContent.setWeight(0);
@@ -712,7 +670,6 @@ public class ActivityTraining extends ActivityAbstract {
         if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
             mTrainingContentList.add(mCurrentTrainingContent);
         }
-
     }
 
     public void btDelete_onClick(final View view) {
@@ -722,18 +679,18 @@ public class ActivityTraining extends ActivityAbstract {
             new AlertDialog.Builder(this)
                     .setMessage("Do you want to delete current training??")
                     .setCancelable(false)
-                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             List<Training> trainings = DB.getLastTrainingsByDates(mCurrentTraining.getDay());
                             mCurrentTraining.dbDelete(DB);
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
                             if (!trainings.isEmpty()) {
-                                intent.putExtra("id", trainings.get(0).getID());
+                                intent.putExtra("id", trainings.get(0).getId());
                             }
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
-                    }).setNegativeButton("Нет", null).show();
+                    }).setNegativeButton("No", null).show();
         }
     }
 
@@ -743,13 +700,11 @@ public class ActivityTraining extends ActivityAbstract {
         mCurrentTrainingContent.dbSave(DB);
         mCurrentTraining.dbSave(DB);
         blink(view, this);
-
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
-
         intent.putExtra("IsNew", mTrainingIsNew);
         intent.putExtra("CurrentActivity", "ActivityTraining");
         if (!mTrainingIsNew) {
-            intent.putExtra("CurrentTrainingID", mCurrentTraining.getID());
+            intent.putExtra("CurrentTrainingID", mCurrentTraining.getId());
         }
         if (mCurrentTraining.getDay() == 0) {
             intent.putExtra("CurrentDateInMillis", 0);
@@ -757,111 +712,12 @@ public class ActivityTraining extends ActivityAbstract {
             intent.putExtra("CurrentDateInMillis", mCurrentTraining.getDay());
         }
         intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
 
-    private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {
-
-        private Activity activity;
-        static final int MIN_DISTANCE = 200;
-        private float downX, downY, upX, upY;
-
-        public SwipeDetectorActivity(final Activity activity) {
-            this.activity = activity;
-        }
-
-        public final void onRightToLeftSwipe() {
-           // System.out.println("Right to Left swipe [Previous]");
-            Toast.makeText(ActivityTraining.this, "[Следующее упражнение]", Toast.LENGTH_SHORT).show();
-            setNextExercise();
-            showExercise();
-
-        }
-
-        public void onLeftToRightSwipe() {
-            // System.out.println("Left to Right swipe [Next]");
-            Toast.makeText(ActivityTraining.this, "[Предыдущее упражнение]", Toast.LENGTH_SHORT).show();
-            setPreviousExercise();
-            showExercise();
-
-        }
-
-        public void onTopToBottomSwipe() {
-
-            //Toast.makeText(ActivityTraining.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
-
-        }
-
-        public void onBottomToTopSwipe() {
-
-            //Toast.makeText(ActivityTraining.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
-
-        }
-
-
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN: {
-                    downX = event.getX();
-                    downY = event.getY();
-                    return true;
-                    //break;
-                }
-                case MotionEvent.ACTION_UP: {
-                    upX = event.getX();
-                    upY = event.getY();
-
-                    float deltaX = downX - upX;
-                    float deltaY = downY - upY;
-
-                    // swipe horizontal?
-                    if (Math.abs(deltaX) > MIN_DISTANCE) {
-                        // left or right
-                        //Toast.makeText(ActivityTraining.this, "DeltaX="+String.valueOf(deltaX), Toast.LENGTH_SHORT).show();
-                        if (deltaX < 0) {
-                            this.onLeftToRightSwipe();
-                            return true;
-                        }
-                        if (deltaX > 0) {
-                            this.onRightToLeftSwipe();
-                            return true;
-                        }
-                    } else {
-
-                    }
-
-                    // swipe vertical?
-                    if (Math.abs(deltaY) > MIN_DISTANCE) {
-                        // top or down
-                        //Toast.makeText(ActivityTraining.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
-                        if (deltaY < 0) {
-                            this.onTopToBottomSwipe();
-                            //break;
-                            return true;
-                        }
-                        if (deltaY > 0) {
-                            this.onBottomToTopSwipe();
-                            //break;
-
-                            return true;
-
-                        }
-                    } else {
-
-                    }
-                    //break;
-                    return true;
-                }
-            }
-            //Toast.makeText(ActivityTraining.this, "ЖОПА", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-    }
-
-    public void btVolumeLeft_onClick(final View view) {
+      public void btVolumeLeft_onClick(final View view) {
 
         blink(view, this);
         VolumeChange(-1);
@@ -899,7 +755,6 @@ public class ActivityTraining extends ActivityAbstract {
             mVolume = mVolume < 0 ? 0 : mVolume;
             etVolume.setText(String.valueOf(mVolume));
         }
-
     }
 
     private void updateButtonsListOfExercises() {
@@ -977,7 +832,6 @@ public class ActivityTraining extends ActivityAbstract {
                     }
             );
         }
-
     }
 
     private Button createNewExerciseButtonInButtonsList(TableRow trow, int btWidth, TableRow.LayoutParams params, String mName, View.OnClickListener mListener) {
@@ -994,7 +848,6 @@ public class ActivityTraining extends ActivityAbstract {
         but.setOnClickListener(mListener);
         trow.addView(but);
         return but;
-
     }
 
     public void btTrainingList_onClick(TextView view) {
@@ -1144,9 +997,101 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
-        intent.putExtra("id", mCurrentTraining.getID());
+        intent.putExtra("id", mCurrentTraining.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+    private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {
+        private Activity activity;
+        static final int MIN_DISTANCE = 200;
+        private float downX, downY, upX, upY;
+
+        public SwipeDetectorActivity(final Activity activity) {
+            this.activity = activity;
+        }
+
+        public final void onRightToLeftSwipe() {
+            // System.out.println("Right to Left swipe [Previous]");
+            Toast.makeText(ActivityTraining.this, "[NEXT EXERCISE]", Toast.LENGTH_SHORT).show();
+            setNextExercise();
+            showExercise();
+
+        }
+
+        public void onLeftToRightSwipe() {
+            // System.out.println("Left to Right swipe [Next]");
+            Toast.makeText(ActivityTraining.this, "[PREVIOUS EXERCISE]", Toast.LENGTH_SHORT).show();
+            setPreviousExercise();
+            showExercise();
+
+        }
+
+        public void onTopToBottomSwipe() {
+            //Toast.makeText(ActivityTraining.this, "Top to Bottom swipe [Down]", Toast.LENGTH_SHORT).show();
+        }
+
+        public void onBottomToTopSwipe() {
+            //Toast.makeText(ActivityTraining.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
+
+        }
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    downX = event.getX();
+                    downY = event.getY();
+                    return true;
+                    //break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    upX = event.getX();
+                    upY = event.getY();
+
+                    float deltaX = downX - upX;
+                    float deltaY = downY - upY;
+
+                    // swipe horizontal?
+                    if (Math.abs(deltaX) > MIN_DISTANCE) {
+                        // left or right
+                        //Toast.makeText(ActivityTraining.this, "DeltaX="+String.valueOf(deltaX), Toast.LENGTH_SHORT).show();
+                        if (deltaX < 0) {
+                            this.onLeftToRightSwipe();
+                            return true;
+                        }
+                        if (deltaX > 0) {
+                            this.onRightToLeftSwipe();
+                            return true;
+                        }
+                    } else {
+
+                    }
+
+                    // swipe vertical?
+                    if (Math.abs(deltaY) > MIN_DISTANCE) {
+                        // top or down
+                        //Toast.makeText(ActivityTraining.this, "DeltaY="+String.valueOf(deltaY), Toast.LENGTH_SHORT).show();
+                        if (deltaY < 0) {
+                            this.onTopToBottomSwipe();
+                            //break;
+                            return true;
+                        }
+                        if (deltaY > 0) {
+                            this.onBottomToTopSwipe();
+                            //break;
+
+                            return true;
+
+                        }
+                    } else {
+
+                    }
+                    //break;
+                    return true;
+                }
+            }
+            //Toast.makeText(ActivityTraining.this, "ЖОПА", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
 
 }
