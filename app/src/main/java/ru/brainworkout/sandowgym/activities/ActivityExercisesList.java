@@ -60,7 +60,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         }
         getPreferencesFromFile();
         Intent intent = getIntent();
-        idIntentExercise = intent.getIntExtra("id", 0);
+        idIntentExercise = intent.getIntExtra("currentExerciseId", 0);
 
         updateExercises();
         TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentExercise);
@@ -99,7 +99,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
-        intent.putExtra("IsNew", true);
+        intent.putExtra("isNew", true);
         startActivity(intent);
 
     }
@@ -116,6 +116,7 @@ public class ActivityExercisesList extends ActivityAbstract {
     }
 
     private void pageExercises() {
+        currentPage = 1;
         List<Exercise> exercises = new ArrayList<Exercise>();
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
@@ -219,8 +220,8 @@ public class ActivityExercisesList extends ActivityAbstract {
         int id = view.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
-        intent.putExtra("CurrentExerciseID", id);
-        intent.putExtra("IsNew", false);
+        intent.putExtra("currentExerciseId", id);
+        intent.putExtra("isNew", false);
         startActivity(intent);
 
     }
@@ -252,14 +253,14 @@ public class ActivityExercisesList extends ActivityAbstract {
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to delete all user exrecises?")
                 .setCancelable(false)
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (dbCurrentUser != null) {
                             DB.deleteAllExercisesOfUser(dbCurrentUser.getId());
                             updateExercises();
                         }
                     }
-                }).setNegativeButton("NO", null).show();
+                }).setNegativeButton("No", null).show();
     }
 
        public void btNextPage_onClick(View view) {
@@ -273,7 +274,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     public void btPreviousPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != 1) {
+        if (currentPage > 1) {
             currentPage--;
         }
         showExercises();

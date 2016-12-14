@@ -31,12 +31,12 @@ public class ActivityExercise extends ActivityAbstract {
         setContentView(R.layout.activity_exercise);
 
         Intent intent = getIntent();
-        boolean mExerciseIsNew = intent.getBooleanExtra("IsNew", false);
+        boolean mExerciseIsNew = intent.getBooleanExtra("isNew", false);
 
         if (mExerciseIsNew) {
             mCurrentExercise = new Exercise.Builder(DB).build();
         } else {
-            int id = intent.getIntExtra("CurrentExerciseID", 0);
+            int id = intent.getIntExtra("currentExerciseId", 0);
             try {
                 mCurrentExercise = Exercise.getExerciseFromDB(DB, id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
@@ -111,13 +111,6 @@ public class ActivityExercise extends ActivityAbstract {
         }
     }
 
-    public void btClose_onClick(final View view) {
-        blink(view, this);
-        Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("CurrentExerciseID", mCurrentExercise.getId());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
 
     private void fillExerciseFromScreen() {
 
@@ -159,8 +152,17 @@ public class ActivityExercise extends ActivityAbstract {
         blink(view, this);
         fillExerciseFromScreen();
         mCurrentExercise.dbSave(DB);
+        closeActivity();
+    }
+
+    public void btClose_onClick(final View view) {
+        blink(view, this);
+        closeActivity();
+    }
+
+    private void closeActivity() {
         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
-        intent.putExtra("CurrentExerciseID", mCurrentExercise.getId());
+        intent.putExtra("currentExerciseId", mCurrentExercise.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

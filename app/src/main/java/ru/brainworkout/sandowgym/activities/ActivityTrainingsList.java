@@ -50,13 +50,13 @@ public class ActivityTrainingsList extends ActivityAbstract {
         setContentView(R.layout.activity_trainings_list);
 
         if (!Common.isDebug) {
-            int mEditorID = getResources().getIdentifier("bTrainingsDBEditor", "id", getPackageName());
+            int mEditorID = getResources().getIdentifier("btTrainingsDBEditor", "id", getPackageName());
             Button btEditor = (Button) findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
 
         Intent intent = getIntent();
-        mCurrentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
+        mCurrentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
         idIntentTraining= intent.getIntExtra("id", 0);
 
         if (idIntentTraining == 0) {
@@ -143,7 +143,8 @@ public class ActivityTrainingsList extends ActivityAbstract {
     public void bt_TrainingsAdd_onClick(final View view) {
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
-        intent.putExtra("IsNew", true);
+        intent.putExtra("isNew", true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -228,8 +229,9 @@ public class ActivityTrainingsList extends ActivityAbstract {
         blink(view, this);
         int id = view.getId() % NUMBER_OF_VIEWS;
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
-        intent.putExtra("CurrentTrainingID", id);
-        intent.putExtra("IsNew", false);
+        intent.putExtra("currentTrainingId", id);
+        intent.putExtra("isNew", false);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
@@ -283,8 +285,8 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         blink(view, this);
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
-        intent.putExtra("CurrentDateInMillis", mCurrentDateInMillis);
-        intent.putExtra("CurrentActivity", "ActivityTrainingsList");
+        intent.putExtra("currentDateInMillis", mCurrentDateInMillis);
+        intent.putExtra("currentActivity", "ActivityTrainingsList");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -313,7 +315,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
     public void btPreviousPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != 1) {
+        if (currentPage > 1) {
             currentPage--;
         }
         showTrainings();

@@ -32,10 +32,10 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         setContentView(R.layout.activity_weight_change_calendar);
 
         Intent intent = getIntent();
-        mWeightChangeCalendarIsNew = intent.getBooleanExtra("IsNew", false);
+        mWeightChangeCalendarIsNew = intent.getBooleanExtra("isNew", false);
 
-        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
-        int id = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
+        long currentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
+        int id = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         defineCurrentWeightChangeCalendar(id, currentDateInMillis);
 
         showWeightChangeCalendarOnScreen();
@@ -53,13 +53,9 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
                 cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-
                 mCurrentWeightChangeCalendar.setDay(cal.getTimeInMillis());
-
             } else {
-
                 mCurrentWeightChangeCalendar.setDay(currentDateInMillis);
-
             }
 
         } else {
@@ -101,15 +97,15 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
         Intent intent = new Intent(ActivityWeightChangeCalendar.this, ActivityCalendarView.class);
 
-        intent.putExtra("IsNew", mWeightChangeCalendarIsNew);
-        intent.putExtra("CurrentActivity", "ActivityWeightChangeCalendar");
+        intent.putExtra("isNew", mWeightChangeCalendarIsNew);
+        intent.putExtra("currentActivity", "ActivityWeightChangeCalendar");
         if (!mWeightChangeCalendarIsNew) {
-            intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getId());
+            intent.putExtra("currentWeightChangeCalendarId", mCurrentWeightChangeCalendar.getId());
         }
         if (mCurrentWeightChangeCalendar.getDay() == 0) {
-            intent.putExtra("CurrentDateInMillis", 0);
+            intent.putExtra("currentDateInMillis", 0);
         } else {
-            intent.putExtra("CurrentDateInMillis", mCurrentWeightChangeCalendar.getDay());
+            intent.putExtra("currentDateInMillis", mCurrentWeightChangeCalendar.getDay());
         }
 
         startActivity(intent);
@@ -148,16 +144,6 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     }
 
-    public void btClose_onClick(final View view) {
-
-        blink(view, this);
-        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
-        intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getId());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
-    }
-
     private void fillWeightChangeCalendarFromScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
@@ -186,10 +172,21 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
         mCurrentWeightChangeCalendar.dbSave(DB);
 
+        closeActivity();
+
+    }
+
+    private void closeActivity() {
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
-        intent.putExtra("CurrentWeightChangeCalendarID", mCurrentWeightChangeCalendar.getId());
+        intent.putExtra("currentWeightChangeCalendarId", mCurrentWeightChangeCalendar.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    public void btClose_onClick(final View view) {
+
+        blink(view, this);
+        closeActivity();
 
     }
 

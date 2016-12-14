@@ -33,12 +33,12 @@ public class ActivityUser extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         Intent intent = getIntent();
-        boolean mUserIsNew = intent.getBooleanExtra("IsNew", false);
+        boolean mUserIsNew = intent.getBooleanExtra("isNew", false);
 
         if (mUserIsNew) {
             mCurrentUser = new User.Builder(DB.getUserMaxNumber() + 1).build();
         } else {
-            int id = intent.getIntExtra("id", 0);
+            int id = intent.getIntExtra("currentUserId", 0);
             try {
                 mCurrentUser = DB.getUser(id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
@@ -80,16 +80,12 @@ public class ActivityUser extends AppCompatActivity {
             }
         });
 
-
-        //ID
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
         TextView tvID = (TextView) findViewById(mID);
         if (tvID != null) {
-
             tvID.setText(String.valueOf(mCurrentUser.getId()));
         }
 
-        //Имя
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
@@ -99,26 +95,12 @@ public class ActivityUser extends AppCompatActivity {
 
     }
 
-    public void btClose_onClick(final View view) {
-
-        blink(view,this);
-        Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getId());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
-    }
-
-
     private void getPropertiesFromScreen() {
 
-        //Имя
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
         EditText etName = (EditText) findViewById(mNameID);
         if (etName != null) {
-
             mCurrentUser.setName(String.valueOf(etName.getText()));
-
         }
 
     }
@@ -127,16 +109,24 @@ public class ActivityUser extends AppCompatActivity {
 
         blink(view,this);
         getPropertiesFromScreen();
-
         mCurrentUser.dbSave(DB);
-
         setDBCurrentUser();
+        closeActivity();
 
+    }
+
+    public void btClose_onClick(final View view) {
+
+        blink(view,this);
+        closeActivity();
+
+    }
+
+    private void closeActivity() {
         Intent intent = new Intent(getApplicationContext(), ActivityUsersList.class);
-        intent.putExtra("id", mCurrentUser.getId());
+        intent.putExtra("currentUserId", mCurrentUser.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     private void setDBCurrentUser() {

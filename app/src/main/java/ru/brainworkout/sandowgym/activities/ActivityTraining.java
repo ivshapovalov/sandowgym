@@ -80,16 +80,16 @@ public class ActivityTraining extends ActivityAbstract {
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         Intent intent = getIntent();
-        mTrainingIsNew = intent.getBooleanExtra("IsNew", false);
+        mTrainingIsNew = intent.getBooleanExtra("isNew", false);
 
-        long currentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
+        long currentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
 
         boolean weightIsNeedToUpdate = false;
         if (mTrainingIsNew) {
             weightIsNeedToUpdate = true;
         }
 
-        int id = intent.getIntExtra("CurrentTrainingID", 0);
+        int id = intent.getIntExtra("currentTrainingId", 0);
 
         defineCurrentTraining(id, currentDateInMillis);
         showTrainingOnScreen();
@@ -117,7 +117,7 @@ public class ActivityTraining extends ActivityAbstract {
         saveTraining();
         updateButtonsListOfExercises();
 
-        int exID = intent.getIntExtra("CurrentExerciseID", 0);
+        int exID = intent.getIntExtra("currentExerciseId", 0);
 
         if (exID != 0) {
             saveAndGoToNewExercise(exID);
@@ -701,17 +701,17 @@ public class ActivityTraining extends ActivityAbstract {
         mCurrentTraining.dbSave(DB);
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
-        intent.putExtra("IsNew", mTrainingIsNew);
-        intent.putExtra("CurrentActivity", "ActivityTraining");
+        intent.putExtra("isNew", mTrainingIsNew);
+        intent.putExtra("currentActivity", "ActivityTraining");
         if (!mTrainingIsNew) {
-            intent.putExtra("CurrentTrainingID", mCurrentTraining.getId());
+            intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         }
         if (mCurrentTraining.getDay() == 0) {
-            intent.putExtra("CurrentDateInMillis", 0);
+            intent.putExtra("currentDateInMillis", 0);
         } else {
-            intent.putExtra("CurrentDateInMillis", mCurrentTraining.getDay());
+            intent.putExtra("currentDateInMillis", mCurrentTraining.getDay());
         }
-        intent.putExtra("CurrentExerciseID", mCurrentExerciseNumberInList);
+        intent.putExtra("currentExerciseId", mCurrentExerciseNumberInList);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 

@@ -107,7 +107,7 @@ public class ActivityMain extends ActivityAbstract {
         blink(view, this);
         if (isUserDefined() & isDBNotEmpty()) {
             Intent intent = new Intent(ActivityMain.this, ActivityTraining.class);
-            intent.putExtra("IsNew", true);
+            intent.putExtra("isNew", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }

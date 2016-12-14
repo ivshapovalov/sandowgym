@@ -63,7 +63,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         getPreferencesFromFile();
 
         Intent intent = getIntent();
-        idIntentWeightChangeCalendar = intent.getIntExtra("CurrentWeightChangeCalendarID", 0);
+        idIntentWeightChangeCalendar = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         updateweightChangeCalendarList();
 
         TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentWeightChangeCalendar);
@@ -96,7 +96,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
-        intent.putExtra("IsNew", true);
+        intent.putExtra("isNew", true);
         startActivity(intent);
 
     }
@@ -215,8 +215,8 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         int id = view.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
-        intent.putExtra("CurrentWeightChangeCalendarID", id);
-        intent.putExtra("IsNew", false);
+        intent.putExtra("currentWeightChangeCalendarId", id);
+        intent.putExtra("isNew", false);
         startActivity(intent);
 
     }
@@ -264,7 +264,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
     public void btPreviousPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != 1) {
+        if (currentPage > 1) {
             currentPage--;
         }
         showWeightChangeCalendarList();

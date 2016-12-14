@@ -39,20 +39,20 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        mIsBeginDate = intent.getBooleanExtra("IsBeginDate", true);
-        mCallerIsNew = intent.getBooleanExtra("IsNew", false);
-        mCallerActivity = intent.getStringExtra("CurrentActivity");
-        mCallerTrainingID = intent.getIntExtra("CurrentTrainingID", 0);
-        mCallerExerciseID = intent.getIntExtra("CurrentExerciseID",0);
-        mCallerWeightChangeCalendarID=intent.getIntExtra("CurrentWeightChangeCalendarID",0);
+        mIsBeginDate = intent.getBooleanExtra("isBeginDate", true);
+        mCallerIsNew = intent.getBooleanExtra("isNew", false);
+        mCallerActivity = intent.getStringExtra("currentActivity");
+        mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
+        mCallerExerciseID = intent.getIntExtra("currentExerciseId",0);
+        mCallerWeightChangeCalendarID=intent.getIntExtra("currentWeightChangeCalendarId",0);
 
         try {
-            mOldDateFromInMillis = intent.getLongExtra("CurrentDateInMillis",0);
+            mOldDateFromInMillis = intent.getLongExtra("currentDateInMillis",0);
         } catch (Exception e) {
             mOldDateFromInMillis = 0;
         }
         try {
-            mOldDateToInMillis = intent.getLongExtra("CurrentDateToInMillis",0);
+            mOldDateToInMillis = intent.getLongExtra("currentDateToInMillis",0);
         } catch (Exception e) {
             mOldDateToInMillis = 0;
         }
@@ -117,17 +117,17 @@ public class ActivityCalendarView extends AppCompatActivity {
         }
 
         Intent intent = new Intent(ActivityCalendarView.this, myClass);
-        intent.putExtra("IsNew", mCallerIsNew);
-        intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentTrainingID", mCallerTrainingID);
-        intent.putExtra("CurrentExerciseID", mCallerExerciseID);
-        intent.putExtra("CurrentWeightChangeCalendarID", mCallerWeightChangeCalendarID);
+        intent.putExtra("isNew", mCallerIsNew);
+        intent.putExtra("isBeginDate", mIsBeginDate);
+        intent.putExtra("currentTrainingId", mCallerTrainingID);
+        intent.putExtra("currentExerciseId", mCallerExerciseID);
+        intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
         if (mIsBeginDate) {
-            intent.putExtra("CurrentDateInMillis", mNewDateInMillis);
-            intent.putExtra("CurrentDateToInMillis", mOldDateToInMillis);
+            intent.putExtra("currentDateInMillis", mNewDateInMillis);
+            intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
         } else {
-            intent.putExtra("CurrentDateInMillis", mOldDateFromInMillis);
-            intent.putExtra("CurrentDateToInMillis", mNewDateInMillis);
+            intent.putExtra("currentDateInMillis", mOldDateFromInMillis);
+            intent.putExtra("currentDateToInMillis", mNewDateInMillis);
         }
         intent.putExtra("", mIsBeginDate);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -144,13 +144,13 @@ public class ActivityCalendarView extends AppCompatActivity {
             e.printStackTrace();
         }
         Intent intent = new Intent(ActivityCalendarView.this, myClass);
-        intent.putExtra("IsNew", mCallerIsNew);
-        intent.putExtra("IsBeginDate", mIsBeginDate);
-        intent.putExtra("CurrentTrainingID", mCallerTrainingID);
-        intent.putExtra("CurrentExerciseID", mCallerExerciseID);
-        intent.putExtra("CurrentWeightChangeCalendarID", mCallerWeightChangeCalendarID);
-        intent.putExtra("CurrentDateInMillis", mOldDateFromInMillis);
-        intent.putExtra("CurrentDateToInMillis", mOldDateToInMillis);
+        intent.putExtra("isNew", mCallerIsNew);
+        intent.putExtra("isBeginDate", mIsBeginDate);
+        intent.putExtra("currentTrainingId", mCallerTrainingID);
+        intent.putExtra("currentExerciseId", mCallerExerciseID);
+        intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
+        intent.putExtra("currentDateInMillis", mOldDateFromInMillis);
+        intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

@@ -61,7 +61,7 @@ public class ActivityUsersList extends AppCompatActivity {
         getPreferencesFromFile();
 
         Intent intent = getIntent();
-        idIntentUser = intent.getIntExtra("id", 0);
+        idIntentUser = intent.getIntExtra("currentUserId", 0);
         updateUsers();
 
         TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentUser);
@@ -81,7 +81,6 @@ public class ActivityUsersList extends AppCompatActivity {
         showUsers();
     }
 
-
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
@@ -96,7 +95,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
         blink(view,this);
         Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
-        intent.putExtra("IsNew", true);
+        intent.putExtra("isNew", true);
         startActivity(intent);
 
     }
@@ -206,8 +205,8 @@ public class ActivityUsersList extends AppCompatActivity {
         int id = view.getId() % NUMBER_OF_VIEWS;
 
         Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
-        intent.putExtra("id", id);
-        intent.putExtra("IsNew", false);
+        intent.putExtra("currentUserId", id);
+        intent.putExtra("isNew", false);
         startActivity(intent);
 
     }
@@ -218,7 +217,6 @@ public class ActivityUsersList extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(intent);
     }
-
 
     public void buttonHome_onClick(final View view) {
 
@@ -247,7 +245,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void btPreviousPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != 1) {
+        if (currentPage > 1) {
             currentPage--;
         }
         showUsers();

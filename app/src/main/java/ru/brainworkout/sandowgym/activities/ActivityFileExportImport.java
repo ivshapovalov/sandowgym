@@ -83,8 +83,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
     private void getIntentParams() {
         Intent intent = getIntent();
-        long mCurrentDateInMillis = intent.getLongExtra("CurrentDateInMillis", 0);
-        long mCurrentDateToInMillis = intent.getLongExtra("CurrentDateToInMillis", 0);
+        long mCurrentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
+        long mCurrentDateToInMillis = intent.getLongExtra("currentDateToInMillis", 0);
         mDateFrom = mCurrentDateInMillis;
         mDateTo = mCurrentDateToInMillis;
     }
@@ -652,23 +652,23 @@ public class ActivityFileExportImport extends ActivityAbstract {
     private void day_onClick(boolean isBeginDate) {
 
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
-        intent.putExtra("IsBeginDate", isBeginDate);
-        intent.putExtra("CurrentActivity", "ActivityFileExportImport");
+        intent.putExtra("isBeginDate", isBeginDate);
+        intent.putExtra("currentActivity", "ActivityFileExportImport");
 
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = (TextView) findViewById(mDayFromID);
-        intent.putExtra("CurrentDateInMillis", 0);
-        intent.putExtra("CurrentDateToInMillis", "");
+        intent.putExtra("currentDateInMillis", 0);
+        intent.putExtra("currentDateToInMillis", "");
         if (tvDayFrom != null) {
             if (!"".equals(String.valueOf(tvDayFrom.getText()).trim())) {
-                intent.putExtra("CurrentDateInMillis", convertStringToDate(String.valueOf(tvDayFrom.getText())).getTime());
+                intent.putExtra("currentDateInMillis", convertStringToDate(String.valueOf(tvDayFrom.getText())).getTime());
             }
         }
         int mDayToID = getResources().getIdentifier("tvDayTo", "id", getPackageName());
         TextView tvDayTo = (TextView) findViewById(mDayToID);
         if (tvDayTo != null) {
             if (!"".equals(String.valueOf(tvDayTo.getText()).trim())) {
-                intent.putExtra("CurrentDateToInMillis", convertStringToDate(String.valueOf(tvDayTo.getText())).getTime());
+                intent.putExtra("currentDateToInMillis", convertStringToDate(String.valueOf(tvDayTo.getText())).getTime());
             }
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
