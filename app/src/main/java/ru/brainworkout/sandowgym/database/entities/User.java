@@ -45,25 +45,17 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
 
     @Override
     public void dbSave(SQLiteDatabaseManager db) {
-        User user = (User) this;
-        try {
-            db.getUser(this.getId());
-            db.updateUser(user);
-
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
-            db.addUser(user);
-
+        if (db.containsUser(this.getId())) {
+            db.updateUser(this);
+        } else {
+            db.addUser(this);
         }
     }
 
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
-        try {
-            db.getUser(this.getId());
-            db.deleteUser((User) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
+        if (db.containsUser(this.getId())) {
+            db.deleteUser(this);
         }
     }
 

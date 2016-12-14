@@ -47,25 +47,19 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     @Override
     public void dbSave(SQLiteDatabaseManager db) {
 
-        try {
-            db.getWeightChangeCalendar(this.getId());
-            db.updateWeightChangeCalendar((WeightChangeCalendar) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
-            db.addWeightCalendarChange((WeightChangeCalendar) this);
+        if (db.containsWeightChangeCalendar(this.getId())) {
+            db.updateWeightChangeCalendar(this);
+        } else {
+            db.addWeightChangeCalendar(this);
         }
     }
 
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
 
-        try {
-            db.getWeightChangeCalendar(this.getId());
-            db.deleteWeightChangeCalendar((WeightChangeCalendar) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
+        if (db.containsWeightChangeCalendar(this.getId())) {
+            db.deleteWeightChangeCalendar(this);
         }
-
     }
 
     public static class Builder extends AbstractEntity {

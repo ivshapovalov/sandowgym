@@ -41,26 +41,19 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB, D
 
     @Override
     public void dbSave(SQLiteDatabaseManager db) {
-        try {
-            db.getTraining(this.getId());
-            db.updateTraining((Training) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
-            db.addTraining((Training) this);
+        if (db.containsTraining(this.getId())) {
+            db.updateTraining(this);
+        } else {
+            db.addTraining(this);
         }
     }
 
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
 
-        try {
-            db.getTraining(this.getId());
-            db.deleteTraining((Training) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
-
+        if (db.containsTraining(this.getId())) {
+            db.deleteTraining(this);
         }
-
     }
 
     public static Training getTrainingFromDB(SQLiteDatabaseManager DB, int id) {

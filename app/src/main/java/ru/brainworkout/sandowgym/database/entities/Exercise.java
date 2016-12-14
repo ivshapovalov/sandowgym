@@ -5,21 +5,22 @@ import ru.brainworkout.sandowgym.database.interfaces.SavingIntoDB;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
+public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
 
-    private int is_active=1;
-    private String name="";
-    private String explanation="";
-    private String volume_default="";
-    private String picture="--";
+    private int is_active = 1;
+    private String name = "";
+    private String explanation = "";
+    private String volume_default = "";
+    private String picture = "--";
 
     private Exercise(Builder builder) {
 
         this.id = builder.id;
         this.name = builder.name;
         this.explanation = builder.explanation;
-        this.volume_default=builder.volume_default;
-        this.picture=builder.picture;
+        this.volume_default = builder.volume_default;
+        this.picture = builder.picture;
+        this.is_active=builder.is_active;
 
     }
 
@@ -65,43 +66,34 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
 
     @Override
     public void dbSave(SQLiteDatabaseManager db) {
-
-        try {
-            db.getExercise(this.getId());
-            db.updateExercise((Exercise) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
-            db.addExercise((Exercise) this);
+        if (db.containsExercise(this.getId())) {
+            db.updateExercise(this);
+        } else {
+            db.addExercise(this);
         }
-
     }
 
     @Override
     public void dbDelete(SQLiteDatabaseManager db) {
-
-        try {
-            db.getExercise(this.getId());
-            db.deleteExercise((Exercise) this);
-        } catch (TableDoesNotContainElementException e) {
-            //нет такого
+        if (db.containsExercise(this.getId())) {
+            db.deleteExercise(this);
         }
-
     }
 
     public static class Builder extends AbstractEntity {
 
-        private int is_active=1;
-        private String name="";
-        private String explanation="";
-        private String volume_default="";
-        private String picture="--";
+        private int is_active = 1;
+        private String name = "";
+        private String explanation = "";
+        private String volume_default = "";
+        private String picture = "--";
 
         public Builder(int id) {
             this.id = id;
         }
 
         public Builder(SQLiteDatabaseManager DB) {
-            this.id=DB.getExerciseMaxNumber() + 1;
+            this.id = DB.getExerciseMaxNumber() + 1;
         }
 
         public Builder addIsActive(int is_active) {
@@ -136,7 +128,7 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB,De
 
     }
 
-    public static Exercise getExerciseFromDB (SQLiteDatabaseManager DB, int id) {
+    public static Exercise getExerciseFromDB(SQLiteDatabaseManager DB, int id) {
         return DB.getExercise(id);
     }
 

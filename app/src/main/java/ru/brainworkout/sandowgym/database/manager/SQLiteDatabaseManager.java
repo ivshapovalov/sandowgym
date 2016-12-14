@@ -50,7 +50,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_WEIGHT = "training_weight";
     private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
-    //  WeightCalendarChange
+    //  WeightChangeCalendar
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID = "weight_change_calendar_id";
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_ID_USER = "weight_change_calendar_id_user";
     private static final String KEY_WEIGHT_CHANGE_CALENDAR_DAY = "weight_change_calendar_day";
@@ -206,14 +206,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized void addWeightCalendarChange(WeightChangeCalendar weightCalendarChange) {
+    public synchronized void addWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightCalendarChange.getId());
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightCalendarChange.getUserId());
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightCalendarChange.getDay());
-        values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightCalendarChange.getWeight());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightChangeCalendar.getId());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getUserId());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
+        values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
 
         db.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
         db.close();
@@ -627,7 +627,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
+                Exercise exercise = new Exercise
+                        .Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
                         .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                         .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
