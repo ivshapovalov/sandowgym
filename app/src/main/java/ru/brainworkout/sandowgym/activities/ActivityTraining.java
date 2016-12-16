@@ -97,9 +97,9 @@ public class ActivityTraining extends ActivityAbstract {
         //Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
         //убираю пока скрол вправо, влево. перемещение кнопками внизу
 
-        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
-        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
-        sv.setOnTouchListener(swipeDetectorActivity);
+//        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
+//        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
+//        sv.setOnTouchListener(swipeDetectorActivity);
 
 
         if (mTrainingIsNew) {

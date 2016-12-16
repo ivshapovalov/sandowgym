@@ -93,7 +93,6 @@ public class ActivityTrainingsList extends ActivityAbstract {
             }
         }
 
-
         setTitleOfActivity(this);
     }
 
