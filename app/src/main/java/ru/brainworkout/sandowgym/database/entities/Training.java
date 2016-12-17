@@ -81,7 +81,6 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB, D
             Training training = new Training(this);
             return training;
         }
-
     }
 }
 

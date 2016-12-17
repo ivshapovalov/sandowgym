@@ -93,6 +93,4 @@ public class ActivityTools extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
-
-
 }

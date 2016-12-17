@@ -41,7 +41,6 @@ import ru.brainworkout.sandowgym.database.entities.TrainingContent;
 import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementException;
 
-
 public class ActivityFileExportImport extends ActivityAbstract {
 
     private final String SYMBOL_ID = "#";

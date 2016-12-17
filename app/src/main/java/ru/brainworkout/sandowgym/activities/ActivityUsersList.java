@@ -45,7 +45,6 @@ public class ActivityUsersList extends AppCompatActivity {
     private int mWidth = 0;
     private int mTextSize = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

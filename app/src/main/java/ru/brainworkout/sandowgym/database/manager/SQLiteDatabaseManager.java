@@ -986,7 +986,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 String volume = cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME));
                 if (volume != null && !volume.equals("") && day != 0) {
                     TrainingContent trainingContent = new TrainingContent
-                            .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_ID)))
+                            .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
                             .addVolume(volume)
                             .addWeight(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT))
                             .build();

@@ -31,5 +31,4 @@ public abstract class AbstractEntityMultiUser extends AbstractEntity {
             return -1;
         }
     }
-
 }

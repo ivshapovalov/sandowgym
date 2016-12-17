@@ -132,7 +132,5 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
             TrainingContent trainingContent = new TrainingContent(this);
             return trainingContent;
         }
-
-
     }
 }

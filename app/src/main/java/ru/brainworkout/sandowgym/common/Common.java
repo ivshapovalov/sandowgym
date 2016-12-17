@@ -54,7 +54,6 @@ public class Common{
         }
 
         return sDate;
-
     }
 
     public static void blink(final View v, final Activity activity) {
@@ -70,7 +69,6 @@ public class Common{
         anim.setRepeatCount(1);
         v.startAnimation(anim);
     }
-
 
     public static void setTitleOfActivity(Activity currentActivity) {
         if (Common.dbCurrentUser != null) {
@@ -358,5 +356,4 @@ public class Common{
 
         return exercises;
     }
-
 }

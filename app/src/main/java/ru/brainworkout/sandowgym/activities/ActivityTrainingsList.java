@@ -66,7 +66,6 @@ public class ActivityTrainingsList extends ActivityAbstract {
                     idIntentTraining = trainings.get(0).getId();
                 }
             }
-
         }
         getPreferencesFromFile();
         updateTrainings();

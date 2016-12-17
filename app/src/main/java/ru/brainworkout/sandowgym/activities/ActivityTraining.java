@@ -426,7 +426,7 @@ public class ActivityTraining extends ActivityAbstract {
                 .addVolume("")
                 .addWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar)
                 .build();
-        mCurrentTrainingContent.dbSave(DB);
+        saveTraining();
     }
 
     private void showTrainingContentOnScreen() {
@@ -574,6 +574,16 @@ public class ActivityTraining extends ActivityAbstract {
         }
     }
 
+    public void saveTraining() {
+
+        getPropertiesFromScreen();
+        mCurrentTraining.dbSave(DB);
+        if (mCurrentTrainingContent != null) {
+            mCurrentTrainingContent.dbSave(DB);
+        }
+        mTrainingIsNew = false;
+    }
+
     public void btClose_onClick(final View view) {
 
         blink(view, this);
@@ -631,16 +641,6 @@ public class ActivityTraining extends ActivityAbstract {
     public void btSave_onClick(final View view) {
         blink(view, this);
         saveTraining();
-    }
-
-    public void saveTraining() {
-
-        getPropertiesFromScreen();
-        mCurrentTraining.dbSave(DB);
-        if (mCurrentTrainingContent != null) {
-            mCurrentTrainingContent.dbSave(DB);
-        }
-        mTrainingIsNew = false;
     }
 
     private void saveCurrentTrainingContent(final boolean readFromScreen) {

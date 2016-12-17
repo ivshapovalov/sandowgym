@@ -126,7 +126,6 @@ public class ActivityMain extends ActivityAbstract {
 
         List<Exercise> list = new ArrayList<Exercise>();
         if (dbCurrentUser == null) {
-            //list = DB.getAllActiveExercises();
         } else {
             list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
         }

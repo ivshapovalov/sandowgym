@@ -48,7 +48,6 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         if (mWeightChangeCalendarIsNew) {
 
             mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
-            //Calendar calendar = Calendar.getInstance();
             if ((currentDateInMillis == 0)) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);

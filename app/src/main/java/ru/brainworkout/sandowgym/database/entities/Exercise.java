@@ -125,7 +125,6 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
             Exercise exercise = new Exercise(this);
             return exercise;
         }
-
     }
 
     public static Exercise getExerciseFromDB(SQLiteDatabaseManager DB, int id) {
