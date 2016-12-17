@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,8 +41,8 @@ import ru.brainworkout.sandowgym.database.manager.TableDoesNotContainElementExce
 
 public class ActivityTraining extends ActivityAbstract {
 
-    private static final int NUMBER_OF_VIEWS = 30000;
-    private static final int MAX_NUMBER_OF_TRANSFER_BUTTONS = 7;
+    private final int numberOfViews = 30000;
+    private final int maxNumberOfTransferButtons = 7;
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
@@ -760,7 +759,7 @@ public class ActivityTraining extends ActivityAbstract {
     private void updateButtonsListOfExercises() {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
-        int btWidth = displaymetrics.widthPixels / MAX_NUMBER_OF_TRANSFER_BUTTONS;
+        int btWidth = displaymetrics.widthPixels / maxNumberOfTransferButtons;
         mTextSize = (int) (btWidth / 3.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
@@ -808,7 +807,7 @@ public class ActivityTraining extends ActivityAbstract {
                         btTrainingList_onClick((TextView) v);
                     }
                 });
-                butNumber.setId(NUMBER_OF_VIEWS + mCount);
+                butNumber.setId(numberOfViews + mCount);
                 if (mCount - 1 == mCurrentExerciseNumberInList) {
                     butNumber.setTextColor(Color.RED);
                     butNumber.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -853,7 +852,7 @@ public class ActivityTraining extends ActivityAbstract {
     public void btTrainingList_onClick(TextView view) {
 
         blink(view, this);
-        int newId = view.getId() % NUMBER_OF_VIEWS;
+        int newId = view.getId() % numberOfViews;
         int step = newId - (mCurrentExerciseNumberInList + 1);
         saveAndGoToNewExercise(step);
 

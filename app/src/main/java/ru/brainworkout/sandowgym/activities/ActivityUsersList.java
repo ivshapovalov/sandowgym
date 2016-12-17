@@ -29,9 +29,9 @@ import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 public class ActivityUsersList extends AppCompatActivity {
 
-    private final int MAX_VERTICAL_BUTTON_COUNT = 17;
-    private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
-    private final int NUMBER_OF_VIEWS = 40000;
+    private final int maxVerticalButtonCount = 17;
+    private final int maxHorizontalButtonCount = 2;
+    private final int numberOfViews = 40000;
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
@@ -63,7 +63,7 @@ public class ActivityUsersList extends AppCompatActivity {
         idIntentUser = intent.getIntExtra("currentUserId", 0);
         updateUsers();
 
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentUser);
+        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentUser);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableUsers", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -142,8 +142,8 @@ public class ActivityUsersList extends AppCompatActivity {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        mWidth = displaymetrics.widthPixels/ MAX_HORIZONTAL_BUTTON_COUNT;
+        mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        mWidth = displaymetrics.widthPixels/ maxHorizontalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
@@ -161,7 +161,7 @@ public class ActivityUsersList extends AppCompatActivity {
         for (int num = 0; num < currentPageSize; num++) {
             TableRow mRow = new TableRow(this);
             User user=page.get(num);
-            mRow.setId(NUMBER_OF_VIEWS + user.getId());
+            mRow.setId(numberOfViews + user.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -201,7 +201,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
         blink(view,this);
 
-        int id = view.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % numberOfViews;
 
         Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
         intent.putExtra("currentUserId", id);

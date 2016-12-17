@@ -91,8 +91,6 @@ public class ActivityUser extends AppCompatActivity {
         if (etName != null) {
             etName.setText(mCurrentUser.getName());
         }
-
-
     }
 
     private void getPropertiesFromScreen() {
@@ -102,7 +100,6 @@ public class ActivityUser extends AppCompatActivity {
         if (etName != null) {
             mCurrentUser.setName(String.valueOf(etName.getText()));
         }
-
     }
 
     public void btSave_onClick(final View view) {

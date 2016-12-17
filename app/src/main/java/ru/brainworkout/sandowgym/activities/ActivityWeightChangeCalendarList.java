@@ -32,9 +32,9 @@ import ru.brainworkout.sandowgym.database.manager.SQLiteDatabaseManager;
 
 public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
-    private final int MAX_VERTICAL_BUTTON_COUNT = 17;
-    private final int MAX_HORIZONTAL_BUTTON_COUNT = 3;
-    private final int NUMBER_OF_VIEWS = 10000;
+    private final int maxVerticalButtonCount = 17;
+    private final int maxHorizontalButtonCount = 3;
+    private final int numberOfViews = 10000;
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
@@ -66,7 +66,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         idIntentWeightChangeCalendar = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         updateweightChangeCalendarList();
 
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentWeightChangeCalendar);
+        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentWeightChangeCalendar);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableWeightChangeCalendarList", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -146,8 +146,8 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
+        mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
@@ -166,7 +166,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
             WeightChangeCalendar weightChangeCalendar=page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(NUMBER_OF_VIEWS + weightChangeCalendar.getId());
+            mRow.setId(numberOfViews + weightChangeCalendar.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -212,7 +212,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         blink(view, this);
 
-        int id = view.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % numberOfViews;
 
         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendar.class);
         intent.putExtra("currentWeightChangeCalendarId", id);

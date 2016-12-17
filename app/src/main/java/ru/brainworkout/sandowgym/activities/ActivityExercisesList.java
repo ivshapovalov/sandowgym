@@ -1,6 +1,5 @@
 package ru.brainworkout.sandowgym.activities;
 
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,9 +31,9 @@ import ru.brainworkout.sandowgym.R;
 
 public class ActivityExercisesList extends ActivityAbstract {
 
-    private final int MAX_VERTICAL_BUTTON_COUNT = 15;
-    private final int MAX_HORIZONTAL_BUTTON_COUNT = 2;
-    private final int NUMBER_OF_VIEWS = 10000;
+    private final int maxVerticalButtonCount = 15;
+    private final int maxHorizontalButtonCount = 2;
+    private final int numberOfViews = 10000;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private SharedPreferences mSettings;
@@ -63,7 +62,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         idIntentExercise = intent.getIntExtra("currentExerciseId", 0);
 
         updateExercises();
-        TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentExercise);
+        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentExercise);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
             ScrollView mScrollView = (ScrollView) findViewById(mScrID);
@@ -161,8 +160,8 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTON_COUNT;
+        mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
@@ -179,7 +178,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         for (int num = 0; num < currentPageSize; num++) {
             Exercise exercise=page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(NUMBER_OF_VIEWS + exercise.getId());
+            mRow.setId(numberOfViews + exercise.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -217,7 +216,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         blink(view, this);
 
-        int id = view.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % numberOfViews;
 
         Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
         intent.putExtra("currentExerciseId", id);

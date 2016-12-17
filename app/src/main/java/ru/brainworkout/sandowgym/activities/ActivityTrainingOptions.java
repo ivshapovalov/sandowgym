@@ -29,10 +29,8 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
         getPreferencesFromFile();
         setPreferencesOnScreen();
-
         setTitleOfActivity(this);
     }
-
 
     public void buttonSave_onClick(View view) {
 

@@ -18,7 +18,7 @@ import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityTools extends ActivityAbstract {
 
-    private static final int MAX_VERTICAL_BUTTON_COUNT = 10;
+    private final int maxVerticalButtonCount = 10;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
@@ -34,8 +34,8 @@ public class ActivityTools extends ActivityAbstract {
     private void showElementsOnScreen() {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
-        int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        for (int i = 0; i <= MAX_VERTICAL_BUTTON_COUNT; i++) {
+        int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        for (int i = 0; i <= maxVerticalButtonCount; i++) {
             int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);
             if (btName != null) {

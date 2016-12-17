@@ -30,9 +30,9 @@ import ru.brainworkout.sandowgym.R;
 import ru.brainworkout.sandowgym.database.entities.Training;
 
 public class ActivityTrainingsList extends ActivityAbstract {
-    private static final int MAX_VERTICAL_BUTTONS_COUNT = 15;
-    private static final int MAX_HORIZONTAL_BUTTONS_COUNT = 2;
-    private final int NUMBER_OF_VIEWS = 20000;
+    private final int maxVerticalButtonsCount = 15;
+    private final int maxHorizontalButtonsCount = 2;
+    private final int numberOfViews = 20000;
 
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
@@ -70,7 +70,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         getPreferencesFromFile();
         updateTrainings();
         if (idIntentTraining != 0) {
-            TableRow mRow = (TableRow) findViewById(NUMBER_OF_VIEWS + idIntentTraining);
+            TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentTraining);
             if (mRow != null) {
 
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
@@ -161,8 +161,8 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTONS_COUNT;
-        int mWidth = displaymetrics.widthPixels / MAX_HORIZONTAL_BUTTONS_COUNT;
+        int mHeight = displaymetrics.heightPixels / maxVerticalButtonsCount;
+        int mWidth = displaymetrics.widthPixels / maxHorizontalButtonsCount;
         int mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
         TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
         if (trowButtons != null) {
@@ -180,7 +180,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             Training training = page.get(num);
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            mRow.setId(NUMBER_OF_VIEWS + training.getId());
+            mRow.setId(numberOfViews + training.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -225,7 +225,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
     private void rowTraining_onClick(final TableRow view) {
 
         blink(view, this);
-        int id = view.getId() % NUMBER_OF_VIEWS;
+        int id = view.getId() % numberOfViews;
         Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
         intent.putExtra("currentTrainingId", id);
         intent.putExtra("isNew", false);

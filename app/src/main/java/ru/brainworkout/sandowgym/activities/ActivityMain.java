@@ -31,7 +31,7 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
     public static final String APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE = "training_plus_minus_button_value";
 
-    private static final int MAX_VERTICAL_BUTTON_COUNT = 10;
+    private final int maxVerticalButtonCount = 10;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
@@ -50,8 +50,8 @@ public class ActivityMain extends ActivityAbstract {
     private void showElementsOnScreen() {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
-        int mHeight = displaymetrics.heightPixels / MAX_VERTICAL_BUTTON_COUNT;
-        for (int i = 0; i <= MAX_VERTICAL_BUTTON_COUNT; i++) {
+        int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        for (int i = 0; i <= maxVerticalButtonCount; i++) {
             int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
             Button btName = (Button) findViewById(btID);
             if (btName != null) {
