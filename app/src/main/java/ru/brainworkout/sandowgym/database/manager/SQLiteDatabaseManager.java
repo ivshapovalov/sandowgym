@@ -525,13 +525,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<User> getAllUsers() {
-        List<User> userList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_USERS;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<User> userList=null;
         if (cursor.moveToFirst()) {
+            userList = new ArrayList<>(cursor.getCount());
             do {
                 User user = new User.Builder(cursor.getInt(cursor.getColumnIndex(KEY_USER_ID)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_USER_NAME)))
@@ -594,11 +595,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllExercises() {
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
 
         if (cursor.moveToFirst()) {
             do {
@@ -619,12 +620,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllExercisesOfUser(int user_id) {
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "="
                 + user_id + " ORDER BY " + KEY_EXERCISE_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise
@@ -645,11 +645,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllActiveExercises() {
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1" + " ORDER BY " + KEY_EXERCISE_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
@@ -669,11 +669,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllActiveExercisesOfUser(int user_id) {
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1 AND "
                 + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
@@ -697,7 +697,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         mDateFrom = mDateFrom == 0 ? Long.MIN_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT " +
                 TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " AS " + KEY_TRAINING_CONTENT_ID_EXERCISE + ","
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + " AS " + KEY_EXERCISE_NAME + " ,"
@@ -713,6 +712,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID_EXERCISE)))
@@ -732,7 +732,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         mDateFrom = "".equals(mDateFrom) ? "0000-00-00" : mDateFrom;
         mDateTo = "".equals(mDateTo) ? "9999-99-99" : mDateTo;
-        List<Exercise> exerciseList = new ArrayList<>();
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " AS " + KEY_TRAINING_CONTENT_ID_EXERCISE + ","
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + " AS " + KEY_EXERCISE_NAME + ","
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " AS " + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
@@ -748,6 +747,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID_EXERCISE)))
@@ -764,10 +764,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getAllTrainings() {
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " ORDER BY " + KEY_TRAINING_DAY;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -783,10 +783,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getAllTrainingsOfUser(int user_id) {
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -805,7 +805,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized List<Training> getTrainingsByDates(long mDateFrom, long mDateTo) {
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
@@ -815,6 +814,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ORDER BY " + KEY_TRAINING_DAY;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -832,7 +832,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized List<Training> getTrainingsOfUserByDates(int user_id, long mDateFrom, long mDateTo) {
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
@@ -843,6 +842,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ORDER BY " + KEY_TRAINING_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -859,7 +859,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized List<Training> getLastTrainingsByDates(long mDateTo) {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
@@ -870,6 +869,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -886,7 +886,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized List<Training> getLastTrainingsOfUserByDates(int user_id, long mDateTo) {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
-        List<Training> trainingsList = new ArrayList<>();
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
@@ -898,6 +897,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -917,7 +917,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
 
-        List<TrainingContent> trainingsContentList = new ArrayList<>();
         String selectQuery = "SELECT "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + " AS " + KEY_TRAINING_CONTENT_ID + ","
@@ -937,6 +936,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 long day = cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY));
@@ -961,7 +961,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
 
-        List<TrainingContent> trainingsContentList = new ArrayList<>();
         String selectQuery = "SELECT "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + " AS " + KEY_TRAINING_CONTENT_ID + ","
@@ -980,6 +979,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 long day = cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY));
@@ -1003,7 +1003,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
 
-        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         String selectQuery = "SELECT "
                 + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID + " AS " + KEY_WEIGHT_CHANGE_CALENDAR_ID + ","
                 + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " AS " + KEY_WEIGHT_CHANGE_CALENDAR_DAY + ","
@@ -1016,6 +1015,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 int weight = cursor.getInt(cursor.getColumnIndex(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT));
@@ -1039,13 +1039,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
 
     public synchronized List<TrainingContent> getAllTrainingContentOfTraining(int training_id) {
-        List<TrainingContent> trainingContentList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT + " WHERE " + KEY_TRAINING_CONTENT_ID_TRAINING
                 + "=" + training_id + " ORDER BY " + KEY_TRAINING_CONTENT_ID;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        List<TrainingContent> trainingContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = null;

@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:persistent="true"
         android:theme="@style/AppTheme"
-        android:versionCode="31"
-        android:versionName="3.1">
+        android:versionCode="32"
+        android:versionName="3.2">
         <activity android:name="ru.brainworkout.sandowgym.activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
