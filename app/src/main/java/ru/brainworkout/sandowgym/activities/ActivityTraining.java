@@ -791,11 +791,11 @@ public class ActivityTraining extends ActivityAbstract {
                         }
                     }
             );
-            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "<<<",
+            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "N",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            btTrainingListPrevious_onClick((TextView) v);
+                            btChooseExercise_onClick((TextView) v);
                         }
                     }
             );
@@ -814,11 +814,11 @@ public class ActivityTraining extends ActivityAbstract {
                 }
             }
 
-            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, ">>>",
+            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, "N",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            btTrainingListNext_onClick((TextView) v);
+                            btChooseExercise_onClick((TextView) v);
                         }
                     }
             );
@@ -882,15 +882,18 @@ public class ActivityTraining extends ActivityAbstract {
         showExercise();
     }
 
-    private void btTrainingListPrevious_onClick(final TextView view) {
-        blink(view, this);
-        saveAndGoToNewExercise(-3);
-    }
 
-    private void btTrainingListNext_onClick(final TextView view) {
+    private void btChooseExercise_onClick(final TextView view) {
         blink(view, this);
-        saveAndGoToNewExercise(3);
-
+        getPropertiesFromScreen();
+        mCurrentTrainingContent.dbSave(DB);
+        mCurrentTraining.dbSave(DB);
+        Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
+        intent.putExtra("currentActivity", "ActivityTraining");
+        intent.putExtra("currentTrainingId", mCurrentTraining.getId());
+        intent.putExtra("currentExerciseId", mCurrentExerciseNumberInList);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void btTrainingListFirst_onClick(final TextView view) {

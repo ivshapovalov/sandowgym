@@ -25,72 +25,47 @@ import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExerciseChoice extends ActivityAbstract {
 
+    private int mCallerTrainingID;
+    private int mCallerExerciseID;
+    private String mCallerActivity;
+
+    private final int maxHorizontalButtonCount = 4;
+
+    private int mHeight = 0;
+    private int mWidth = 0;
+    private int mTextSize = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_choice);
 
-        if (!Common.isDebug) {
-            int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
-            Button btEditor = (Button) findViewById(mEditorID);
-            HideEditorButton(btEditor);
-        }
-        getPreferencesFromFile();
-        Intent intent = getIntent();
-        idIntentExercise = intent.getIntExtra("currentExerciseId", 0);
-
-        updateExercises();
-        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentExercise);
-        if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
-            if (mScrollView != null) {
-
-                mScrollView.requestChildFocus(mRow, mRow);
-            }
-        }
+        getIntentParams();
         setTitleOfActivity(this);
+
+        showExercises();
+
     }
 
 
-    private void pageExercises() {
-        currentPage = 1;
-        List<Exercise> exercises = new ArrayList<Exercise>();
-        if (dbCurrentUser == null) {
-            //exercises = DB.getAllExercises();
-        } else {
-            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getId());
-        }
-        pagedExercices.clear();
-        List<Exercise> pageContent = new ArrayList<>();
-        int pageNumber = 1;
-        for (int i = 0; i < exercises.size(); i++) {
-            if (idIntentExercise != 0) {
-                if (exercises.get(i).getId() == idIntentExercise) {
-                    currentPage = pageNumber;
-                }
-            }
-            pageContent.add(exercises.get(i));
-            if (pageContent.size() == rowsNumber) {
-                pagedExercices.put(pageNumber, pageContent);
-                pageContent = new ArrayList<>();
-                pageNumber++;
-            }
-        }
-        if (pageContent.size()!=0) {
-            pagedExercices.put(pageNumber, pageContent);
-        }
-        if (pagedExercices.size()==0) {
-            currentPage=0;
-        }
+    private void getIntentParams() {
+
+        Intent intent = getIntent();
+
+        mCallerActivity = intent.getStringExtra("currentActivity");
+        mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
+        mCallerExerciseID = intent.getIntExtra("currentExerciseId", 0);
+
     }
 
     private void showExercises() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
-        if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedExercices.size());
+        List<Exercise> exercises = new ArrayList<Exercise>();
+        if (dbCurrentUser == null) {
+            exercises = DB.getAllExercises();
+        } else {
+            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getId());
         }
 
         ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
@@ -101,23 +76,16 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
+        mHeight = displaymetrics.heightPixels / (int)Math.ceil(exercises.size()/maxHorizontalButtonCount);
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
-        if (trowButtons != null) {
-            trowButtons.setMinimumHeight(mHeight);
-        }
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
 
-        List<Exercise> page = pagedExercices.get(currentPage);
-        if (page == null) return;
-        int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            Exercise exercise=page.get(num);
+            Exercise exercise = page.get(num);
             TableRow mRow = new TableRow(this);
             mRow.setId(numberOfViews + exercise.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
@@ -168,29 +136,31 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
     public void onBackPressed() {
 
-        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
-
-    public void btClose_onClick(final View view) {
-
-        blink(view,this);
         Class<?> myClass = null;
         try {
             myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(ActivityCalendarView.this, myClass);
-        intent.putExtra("isNew", mCallerIsNew);
-        intent.putExtra("isBeginDate", mIsBeginDate);
+        Intent intent = new Intent(ActivityExerciseChoice.this, myClass);
         intent.putExtra("currentTrainingId", mCallerTrainingID);
         intent.putExtra("currentExerciseId", mCallerExerciseID);
-        intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
-        intent.putExtra("currentDateInMillis", mOldDateFromInMillis);
-        intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public void btClose_onClick(final View view) {
+
+        blink(view, this);
+        Class<?> myClass = null;
+        try {
+            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(ActivityExerciseChoice.this, myClass);
+        intent.putExtra("currentTrainingId", mCallerTrainingID);
+        intent.putExtra("currentExerciseId", mCallerExerciseID);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
