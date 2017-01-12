@@ -108,6 +108,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         } else {
             weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
         }
+        pagedWeightChangeCalendar.clear();
         List<WeightChangeCalendar> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < weightChangeCalendarList.size(); i++) {

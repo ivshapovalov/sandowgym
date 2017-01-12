@@ -62,6 +62,10 @@
             android:name="ru.brainworkout.sandowgym.database.manager.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
+            android:name="ru.brainworkout.sandowgym.activities.ActivityExerciseChoice"
+            android:label="@string/exercise_choice"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="ru.brainworkout.sandowgym.activities.ActivityFileExportImport"
             android:label="@string/export_import_name"
             android:screenOrientation="portrait" />

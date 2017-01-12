@@ -530,9 +530,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<User> userList=null;
+        List<User> userList=new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);;
         if (cursor.moveToFirst()) {
-            userList = new ArrayList<>(cursor.getCount());
             do {
                 User user = new User.Builder(cursor.getInt(cursor.getColumnIndex(KEY_USER_ID)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_USER_NAME)))

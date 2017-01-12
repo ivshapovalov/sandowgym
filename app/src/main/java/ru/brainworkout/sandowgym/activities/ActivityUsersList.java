@@ -103,6 +103,7 @@ public class ActivityUsersList extends AppCompatActivity {
         List<User> users = new ArrayList<User>();
         users = DB.getAllUsers();
         List<User> pageContent = new ArrayList<>();
+        pagedUsers.clear();
         int pageNumber = 1;
         for (int i = 0; i < users.size(); i++) {
             if (idIntentUser != 0) {

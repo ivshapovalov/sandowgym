@@ -106,6 +106,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         } else {
                 trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getId());
         }
+        pagedTrainings.clear();
         List<Training> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < trainings.size(); i++) {
