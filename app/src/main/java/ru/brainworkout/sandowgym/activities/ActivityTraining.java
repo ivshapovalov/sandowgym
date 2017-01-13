@@ -116,10 +116,10 @@ public class ActivityTraining extends ActivityAbstract {
         saveTraining();
         updateButtonsListOfExercises();
 
-        int exID = intent.getIntExtra("currentExerciseId", 0);
+        int exerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
 
-        if (exID != 0) {
-            saveAndGoToNewExercise(exID);
+        if (exerciseIndex != 0) {
+            saveAndGoToNewExercise(exerciseIndex);
         }
 
         if (weightIsNeedToUpdate || (currentDateInMillis != 0 && mCurrentTraining != null && currentDateInMillis != currentDateOldInMillis)) {
@@ -710,7 +710,7 @@ public class ActivityTraining extends ActivityAbstract {
         } else {
             intent.putExtra("currentDateInMillis", mCurrentTraining.getDay());
         }
-        intent.putExtra("currentExerciseId", mCurrentExerciseNumberInList);
+        intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -791,7 +791,7 @@ public class ActivityTraining extends ActivityAbstract {
                         }
                     }
             );
-            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "N",
+            Button butPrevious = createNewExerciseButtonInButtonsList(trow, btWidth, params, "...",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -814,7 +814,7 @@ public class ActivityTraining extends ActivityAbstract {
                 }
             }
 
-            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, "N",
+            Button butNext = createNewExerciseButtonInButtonsList(trow, btWidth, params, "...",
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -891,7 +891,7 @@ public class ActivityTraining extends ActivityAbstract {
         Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
         intent.putExtra("currentActivity", "ActivityTraining");
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
-        intent.putExtra("currentExerciseId", mCurrentExerciseNumberInList);
+        intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

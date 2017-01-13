@@ -26,7 +26,7 @@ import static ru.brainworkout.sandowgym.common.Common.setTitleOfActivity;
 public class ActivityExerciseChoice extends ActivityAbstract {
 
     private int mCallerTrainingID;
-    private int mCallerExerciseID;
+    private int mCallerExerciseIndex;
     private String mCallerActivity;
 
     private final int maxHorizontalButtonCount = 4;
@@ -55,7 +55,7 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
         mCallerActivity = intent.getStringExtra("currentActivity");
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
-        mCallerExerciseID = intent.getIntExtra("currentExerciseId", 0);
+        mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
 
     }
 
@@ -68,68 +68,75 @@ public class ActivityExerciseChoice extends ActivityAbstract {
             exercises = DB.getAllExercisesOfUser(dbCurrentUser.getId());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
+        final int exercisesListSize = exercises.size();
+
+        TableLayout layout = (TableLayout) findViewById(R.id.layoutTableExercises);
         try {
-            sv.removeAllViews();
+            layout.removeAllViews();
+            layout.setStretchAllColumns(true);
+
         } catch (NullPointerException e) {
         }
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
         mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
-        mHeight = displaymetrics.heightPixels / (int)Math.ceil(exercises.size()/maxHorizontalButtonCount);
-        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
+        int maxVerticalButtonCount = (int) Math.ceil((double) exercisesListSize / maxHorizontalButtonCount);
+        mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.8 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
+        TableLayout.LayoutParams params = new TableLayout.LayoutParams();
+        params.weight = 1;
 
-        for (int num = 0; num < currentPageSize; num++) {
-            Exercise exercise = page.get(num);
-            TableRow mRow = new TableRow(this);
-            mRow.setId(numberOfViews + exercise.getId());
-            mRow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rowExercise_onClick((TableRow) v);
+        for (int rowNumber = 0; rowNumber < maxVerticalButtonCount; rowNumber++) {
+            TableRow row = new TableRow(this);
+            //row.setMinimumHeight(mHeight);
+            row.setLayoutParams(params);
+            row.setGravity(Gravity.CENTER);
+            for (int columnNumber = 0; columnNumber < maxHorizontalButtonCount; columnNumber++) {
+                int exerciseIndexInList = rowNumber * maxHorizontalButtonCount + columnNumber;
+                TextView txt = new TextView(this);
+                txt.setId(exerciseIndexInList);
+                txt.setHeight(mHeight);
+                if (exerciseIndexInList < exercisesListSize) {
+                    txt.setText(String.valueOf(exerciseIndexInList + 1));
                 }
-            });
-            mRow.setMinimumHeight(mHeight);
-            mRow.setBackgroundResource(R.drawable.bt_border);
+                txt.setTextSize(mTextSize);
+                txt.setGravity(Gravity.CENTER);
+                txt.setBackgroundResource(R.drawable.textview_border);
+                txt.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                txt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (view.getId() >= exercisesListSize) {
+                            return;
+                        }
+                        txtExercise_onClick((TextView)view);
+                    }
+                });
+                row.addView(txt);
 
-            TextView txt = new TextView(this);
-            txt.setText(String.valueOf(exercise.getId()));
-            txt.setBackgroundResource(R.drawable.bt_border);
-            txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
-            txt.setTextSize(mTextSize);
-            txt.setTextColor(getResources().getColor(R.color.text_color));
-            mRow.addView(txt);
+            }
+            layout.addView(row);
 
-            txt = new TextView(this);
-            txt.setText(String.valueOf(exercise.getName()));
-            txt.setBackgroundResource(R.drawable.bt_border);
-            txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
-            txt.setTextSize(mTextSize);
-            txt.setTextColor(getResources().getColor(R.color.text_color));
-            mRow.addView(txt);
-
-            mRow.setBackgroundResource(R.drawable.bt_border);
-            layout.addView(mRow);
         }
-        sv.addView(layout);
     }
 
-    private void rowExercise_onClick(final TableRow view) {
-
-        blink(view, this);
-
-        int id = view.getId() % numberOfViews;
-
-        Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
-        intent.putExtra("currentExerciseId", id);
-        intent.putExtra("isNew", false);
+    private void txtExercise_onClick(TextView view) {
+        blink(view,this);
+        int index = view.getId();
+        Class<?> myClass = null;
+        try {
+            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(ActivityExerciseChoice.this, myClass);
+        intent.putExtra("currentTrainingId", mCallerTrainingID);
+        intent.putExtra("currentExerciseIndex", index);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
@@ -144,25 +151,9 @@ public class ActivityExerciseChoice extends ActivityAbstract {
         }
         Intent intent = new Intent(ActivityExerciseChoice.this, myClass);
         intent.putExtra("currentTrainingId", mCallerTrainingID);
-        intent.putExtra("currentExerciseId", mCallerExerciseID);
+        intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
-    public void btClose_onClick(final View view) {
-
-        blink(view, this);
-        Class<?> myClass = null;
-        try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Intent intent = new Intent(ActivityExerciseChoice.this, myClass);
-        intent.putExtra("currentTrainingId", mCallerTrainingID);
-        intent.putExtra("currentExerciseId", mCallerExerciseID);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
 }

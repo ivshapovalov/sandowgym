@@ -22,7 +22,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
     private boolean mCallerIsNew;
     private int mCallerTrainingID;
-    private int mCallerExerciseID;
+    private int mCallerExerciseIndex;
     private int mCallerWeightChangeCalendarID;
     private String mCallerActivity;
 
@@ -43,7 +43,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         mCallerIsNew = intent.getBooleanExtra("isNew", false);
         mCallerActivity = intent.getStringExtra("currentActivity");
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
-        mCallerExerciseID = intent.getIntExtra("currentExerciseId",0);
+        mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex",0);
         mCallerWeightChangeCalendarID=intent.getIntExtra("currentWeightChangeCalendarId",0);
 
         try {
@@ -120,7 +120,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         intent.putExtra("isNew", mCallerIsNew);
         intent.putExtra("isBeginDate", mIsBeginDate);
         intent.putExtra("currentTrainingId", mCallerTrainingID);
-        intent.putExtra("currentExerciseId", mCallerExerciseID);
+        intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
         intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
         if (mIsBeginDate) {
             intent.putExtra("currentDateInMillis", mNewDateInMillis);
@@ -147,7 +147,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         intent.putExtra("isNew", mCallerIsNew);
         intent.putExtra("isBeginDate", mIsBeginDate);
         intent.putExtra("currentTrainingId", mCallerTrainingID);
-        intent.putExtra("currentExerciseId", mCallerExerciseID);
+        intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
         intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
         intent.putExtra("currentDateInMillis", mOldDateFromInMillis);
         intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
