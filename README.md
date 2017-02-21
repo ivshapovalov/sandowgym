@@ -1,4 +1,4 @@
-Небольшая программа для учета тренировок по системе Евгения Сандова
+Application to training by Eugene Sandows dumbbell program
 
 Java + Android 4.0 + SqLite + openCSV + Apache POI
 ====================================================================
