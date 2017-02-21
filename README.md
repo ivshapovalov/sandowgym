@@ -1,8 +1,8 @@
 Application to training by Eugene Sandows dumbbell program
-
-Java + Android 4.0 + SqLite + openCSV + Apache POI
 ====================================================================
 
+Java + Android 4.0 + SqLite + openCSV + Apache POI
+===================================================================
 Main page | Users
 ------------------------ | ---------------
 <img src="https://cloud.githubusercontent.com/assets/16797864/23115441/ec765d78-f755-11e6-9f19-b3792f15d6f4.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/23115273/dfe017da-f754-11e6-9c65-5a4e0f4487a0.png" width="240" height="400">
