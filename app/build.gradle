@@ -5,16 +5,15 @@ android {
         sandow {
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId 'ru.brainworkout.sandowgym'
         minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 2
-        versionName '3.2'
+        targetSdkVersion 25
+        versionCode 34
+        versionName '3.4'
     }
-
 
     buildTypes {
         release {
@@ -36,12 +35,22 @@ android {
     }
     productFlavors {
     }
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/MANIFEST.MF'
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.dropbox.core:dropbox-core-sdk:3.0.0'
+    compile group: 'commons-net', name: 'commons-net', version: '3.3'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
     compile files('libs/opencsv-3.7.jar')
     compile 'org.apache.poi:poi:3.15-beta1'
 }
