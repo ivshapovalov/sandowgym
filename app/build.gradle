@@ -49,6 +49,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.dropbox.core:dropbox-core-sdk:3.0.0'
     compile group: 'commons-net', name: 'commons-net', version: '3.6'
+    compile group: 'it.sauronsoftware', name: 'ftp4j', version: '1.6'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile files('libs/opencsv-3.7.jar')

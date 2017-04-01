@@ -39,6 +39,7 @@ public class FtpUploadTask implements BackgroundTask {
         ftpClient = new FTPClient();
         int reply;
         ftpClient.enterLocalPassiveMode();
+        InputStream inputStream=null;
         try {
             ftpClient.connect(mFtpHost);
             reply = ftpClient.getReplyCode();
@@ -47,14 +48,10 @@ public class FtpUploadTask implements BackgroundTask {
             }
             ftpClient.login(mFtpLogin, mFtpPassword);
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-
             String firstRemoteFile = file.getName();
-            InputStream inputStream = new FileInputStream(file);
+            inputStream = new FileInputStream(file);
             ftpClient.enterLocalPassiveMode();
-
-            //FTPFile[] ftpFiles = ftpClient.listFiles();
             boolean done = ftpClient.storeFile(firstRemoteFile, inputStream);
-            ftpClient.enterLocalPassiveMode();
 
             inputStream.close();
             return true;
@@ -62,6 +59,11 @@ public class FtpUploadTask implements BackgroundTask {
             e.printStackTrace();
             return false;
         } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             disconnect();
         }
     }
@@ -96,7 +98,6 @@ public class FtpUploadTask implements BackgroundTask {
         } else {
             mFtpPassword = "";
         }
-
     }
 
     @Override

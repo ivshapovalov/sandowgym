@@ -35,6 +35,7 @@ import ru.ivan.sandowgym.common.Tasks.DropboxDownloadTask;
 import ru.ivan.sandowgym.common.Tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.DropboxUploadTask;
 import ru.ivan.sandowgym.common.Tasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.Tasks.FtpListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.Tasks.ImportFromFileTask;
 
@@ -352,14 +353,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
             DropboxListFilesTask dropboxListFilesTask = new DropboxListFilesTask(client);
-            AsyncTask<Void, Long, List<Metadata>> metadatas = dropboxListFilesTask.execute();
-            List<Metadata> listFiles = metadatas.get();
-            ArrayList<String> fileNames = new ArrayList<>();
-            for (Metadata file : listFiles
-                    ) {
-                fileNames.add(file.getName());
-            }
-            Collections.sort(fileNames);
+            AsyncTask<Void, Long, ArrayList<String>> metadatas = dropboxListFilesTask.execute();
+            ArrayList<String> fileNames = metadatas.get();
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "dropbox");
             intent.putStringArrayListExtra("downloadFiles", fileNames);
@@ -370,7 +365,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
             displayMessage("Tasks failed! " + e.getMessage());
             processingInProgress = false;
         }
-
     }
 
     public void importFileFromDropbox(String fileName) {
@@ -400,6 +394,28 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     public void btImportFromFTP_onClick(View view) {
+        try {
+            blink(view, this);
+            if (isProcessingInProgress(this.getApplicationContext())) {
+                return;
+            }
+            processingInProgress = true;
+            FtpListFilesTask ftpListFilesTask = new FtpListFilesTask(mSettings);
+            AsyncTask<Void, Long, ArrayList<String>> task = ftpListFilesTask.execute();
+            ArrayList<String> fileNames = task.get();
+
+            Collections.sort(fileNames);
+            Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
+            intent.putExtra("downloadType", "ftp");
+            intent.putStringArrayListExtra("downloadFiles", fileNames);
+            startActivity(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            displayMessage("Tasks failed! " + e.getMessage());
+            processingInProgress = false;
+        }
+
     }
 }
 

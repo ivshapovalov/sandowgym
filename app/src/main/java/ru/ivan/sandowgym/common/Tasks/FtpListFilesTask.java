@@ -1,69 +1,79 @@
 package ru.ivan.sandowgym.common.Tasks;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.Metadata;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilters;
+import org.apache.commons.net.ftp.FTPListParseEngine;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import ru.ivan.sandowgym.activities.ActivityMain;
 
-public class FtpDownloadTask implements BackgroundTask {
+import static ru.ivan.sandowgym.common.Common.processingInProgress;
+
+public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
 
     private FTPClient ftpClient;
 
     private SharedPreferences settings;
-    private File file;
 
     private String mFtpHost;
     private String mFtpLogin;
     private String mFtpPassword;
 
-    public FtpDownloadTask(SharedPreferences settings, File file) {
-        this.settings=settings;
-        this.file = file;
+    public FtpListFilesTask(SharedPreferences settings) {
+        this.settings = settings;
     }
 
     @Override
-    public boolean execute() {
+    protected ArrayList<String> doInBackground(Void... params) {
         getPreferencesFromFile();
 
         ftpClient = new FTPClient();
         int reply;
         ftpClient.enterLocalPassiveMode();
-        FileOutputStream output = null;
         try {
             ftpClient.connect(mFtpHost);
             reply = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftpClient.disconnect();
             }
-            boolean login=ftpClient.login(mFtpLogin, mFtpPassword);
+            ftpClient.login(mFtpLogin, mFtpPassword);
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            output = new FileOutputStream(file);
-            ftpClient.retrieveFile(file.getName(), output);
-            return true;
-        } catch (IOException e) {
+            String[] files = ftpClient.listNames();
+            ArrayList<String> fileNames= new ArrayList<>(Arrays.asList(files));
+            Collections.sort(fileNames);
+            return fileNames;
+        } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ArrayList<>();
         } finally {
-            try {
-                output.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             disconnect();
         }
+
     }
+
+    @Override
+    protected void onPostExecute(ArrayList<String> fileNames) {
+        processingInProgress = false;
+    }
+
 
     public void disconnect() {
         if (this.ftpClient.isConnected()) {
@@ -71,7 +81,6 @@ public class FtpDownloadTask implements BackgroundTask {
                 this.ftpClient.logout();
                 this.ftpClient.disconnect();
             } catch (IOException f) {
-                // do nothing as file is already downloaded from FTP server
             }
         }
     }
@@ -94,16 +103,6 @@ public class FtpDownloadTask implements BackgroundTask {
             mFtpPassword = settings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
         } else {
             mFtpPassword = "";
-        }
-
-    }
-
-    @Override
-    public String executeAndMessage() {
-        if (execute()) {
-            return String.format("File '%s' has been successfully uploaded to FTP!", file.getName());
-        } else {
-            return String.format("An error occured while processing the upload file '%s' to FTP", file.getName());
         }
     }
 }
