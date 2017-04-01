@@ -1237,7 +1237,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         alc.add(null);
         try {
             String maxQuery = Query;
-            //execute the query results will be save in Cursor c
+            //export the query results will be save in Cursor c
             Cursor c = db.rawQuery(maxQuery, null);
             //add value to cursor2
             Cursor2.addRow(new Object[]{"Success"});

@@ -8,11 +8,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     defaultConfig {
-        applicationId 'ru.brainworkout.sandowgym'
+        applicationId 'ru.ivan.sandowgym'
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 34
-        versionName '3.4'
+        versionCode 35
+        versionName '3.5'
     }
 
     buildTypes {
@@ -48,7 +48,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.dropbox.core:dropbox-core-sdk:3.0.0'
-    compile group: 'commons-net', name: 'commons-net', version: '3.3'
+    compile group: 'commons-net', name: 'commons-net', version: '3.6'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile files('libs/opencsv-3.7.jar')

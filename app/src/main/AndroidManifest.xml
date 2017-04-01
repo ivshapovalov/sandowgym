@@ -14,8 +14,8 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="34"
-        android:versionName="3.4">
+        android:versionCode="35"
+        android:versionName="3.5">
         <activity android:name="ru.ivan.sandowgym.activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -80,6 +80,10 @@
         <activity
             android:name="ru.ivan.sandowgym.activities.ActivityExerciseChoice"
             android:label="@string/exercise_choice"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="ru.ivan.sandowgym.activities.ActivityFilesList"
+            android:label="@string/file_choice"
             android:screenOrientation="portrait"/>
         <activity
             android:name="ru.ivan.sandowgym.activities.ActivityFileExportImport"

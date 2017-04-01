@@ -8,6 +8,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TableRow;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ public class Common{
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
     public static final boolean isDebug=true;
+    public static volatile boolean processingInProgress;
 
     public static Date convertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
@@ -71,6 +73,15 @@ public class Common{
         v.startAnimation(anim);
     }
 
+    public static boolean isProcessingInProgress(Context context) {
+        if (processingInProgress) {
+            Toast.makeText(context,
+                    "Sorry, other background processing in progress. Please wait!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
     public static void setTitleOfActivity(Activity currentActivity) {
         if (Common.dbCurrentUser != null) {
             CharSequence title = currentActivity.getTitle();
@@ -95,6 +106,12 @@ public class Common{
             params.span = 0;
             btEditor.setLayoutParams(params);
         }
+    }
+
+    public static TableRow.LayoutParams paramsTextViewWithSpanInList(int i) {
+        TableRow.LayoutParams paramsTextView = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        paramsTextView.span=i;
+        return paramsTextView;
     }
 
     public static List<Exercise> createDefaultExercises(SQLiteDatabaseManager DB) {

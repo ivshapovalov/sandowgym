@@ -1,15 +1,25 @@
 package ru.ivan.sandowgym.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +28,17 @@ import ru.ivan.sandowgym.R;
 
 import static ru.ivan.sandowgym.common.Common.*;
 
+import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTaskExecutor;
+import ru.ivan.sandowgym.common.Tasks.DropboxUploadTask;
+import ru.ivan.sandowgym.common.Tasks.ExportToFileTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 public class ActivityMain extends ActivityAbstract {
+
+    private SharedPreferences mSettings;
 
     public static final String APP_PREFERENCES = "mysettings";
     public static final String APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS = "rows_on_page_in_lists";
@@ -37,14 +54,26 @@ public class ActivityMain extends ActivityAbstract {
 
     private final int maxVerticalButtonCount = 10;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private String mDropboxAccessToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getPreferencesFromFile();
         showElementsOnScreen();
         setTitleOfActivity(this);
+    }
+
+    private void getPreferencesFromFile() {
+        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
+            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
+        } else {
+            mDropboxAccessToken = "";
+        }
     }
 
     private Date getLastDateOfWeightChange() {
@@ -154,4 +183,39 @@ public class ActivityMain extends ActivityAbstract {
                     }
                 }).setNegativeButton("No", null).show();
     }
+
+    public void imExportToDropbox_onClick(View view) {
+        if (Common.isProcessingInProgress(this.getApplicationContext())) {
+            return;
+        }
+        processingInProgress = true;
+        try {
+            blink(view, this);
+            File outputDir = getCacheDir();
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            Date date = new Date();
+            String fileName = "sandow-gym-" + dateFormat.format(date)+".xls";
+            File outputFile = new File(outputDir, fileName);
+            //for tests
+//            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+//            File outputFile = new File(exportDir, "trainings.xls");
+            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(),outputFile,0,0);
+
+            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
+            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
+
+            List<BackgroundTask> tasks = new ArrayList<>();
+            tasks.add(exportToFileTask);
+            tasks.add(dropboxUploadTask);
+
+            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
+            AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            processingInProgress = false;
+        }
+    }
+
 }

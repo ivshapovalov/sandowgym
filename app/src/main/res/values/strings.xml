@@ -15,5 +15,6 @@
     <string name="weight_calendar_name">WEIGHT UPDATE</string>
     <string name="about_name">ABOUT</string>
     <string name="exercise_choice">CHOOSE EXERCISE</string>
+    <string name="file_choice">CHOOSE FILE</string>
 
 </resources>

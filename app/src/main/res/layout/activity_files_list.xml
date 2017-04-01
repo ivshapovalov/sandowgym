@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:shrinkColumns="*"
+             android:stretchColumns="*"
+             tools:context=".activities.ActivityFilesList">
+
+    <TableRow
+        android:id="@+id/trowButtons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bt_border">
+
+        <Button
+            android:id="@+id/buttonHome"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="13"
+            android:background="@drawable/bt_border"
+            android:onClick="buttonHome_onClick"
+            android:text="HOME"
+            android:textColor="@color/text_color"/>
+
+        <Button
+            android:id="@+id/btTrainingsClear"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_span="13"
+            android:background="@drawable/bt_border"
+            android:onClick="btClose_onClick"
+            android:text="CLOSE"
+            android:textColor="@color/text_color"/>
+    </TableRow>
+
+    <ScrollView
+        android:id="@+id/svTableFiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="100">
+    </ScrollView>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bt_border">
+
+        <Button
+            android:id="@+id/button23"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="10"
+            android:background="@drawable/bt_border"
+            android:onClick="btPreviousPage_onClick"
+            android:text="PREVIOUS PAGE"
+            android:textColor="@color/text_color"/>
+
+        <Button
+            android:id="@+id/btPageNumber"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_span="6"
+            android:background="@drawable/bt_border"
+            android:clickable="false"
+            android:nestedScrollingEnabled="true"
+            android:textColor="@color/text_color"/>
+
+        <Button
+            android:id="@+id/button26"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_span="10"
+            android:background="@drawable/bt_border"
+            android:onClick="btNextPage_onClick"
+            android:text="NEXT PAGE"
+            android:textColor="@color/text_color"/>
+    </TableRow>
+
+</TableLayout>
+

@@ -1,11 +1,10 @@
-package ru.ivan.sandowgym.common;
+package ru.ivan.sandowgym.common.Tasks;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
@@ -15,27 +14,24 @@ import java.io.InputStream;
 
 import ru.ivan.sandowgym.activities.ActivityMain;
 
-public class FTPManager extends AsyncTask<Void, Void, Void> {
+public class FtpDownloadTask implements BackgroundTask {
 
     private FTPClient ftpClient;
 
     private SharedPreferences settings;
-    private String localPath;
-    private String fileName;
+    private File file;
 
     private String mFtpHost;
     private String mFtpLogin;
     private String mFtpPassword;
 
-    public FTPManager(SharedPreferences settings, String localPath, String fileName) {
+    public FtpDownloadTask(SharedPreferences settings, File file) {
         this.settings=settings;
-        this.localPath = localPath;
-        this.fileName = fileName;
+        this.file = file;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-
+    public boolean execute() {
         getPreferencesFromFile();
 
         ftpClient = new FTPClient();
@@ -47,21 +43,23 @@ public class FTPManager extends AsyncTask<Void, Void, Void> {
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftpClient.disconnect();
             }
-            ftpClient.login(mFtpLogin, mFtpPassword);
+            boolean done1=ftpClient.login(mFtpLogin, mFtpPassword);
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            File firstLocalFile = new File(localPath);
-            String firstRemoteFile = fileName;
-            InputStream inputStream = new FileInputStream(firstLocalFile);
+            String firstRemoteFile = file.getName();
+            InputStream inputStream = new FileInputStream(file);
             boolean done = ftpClient.storeFile(firstRemoteFile, inputStream);
+            FTPFile[] ftpFiles = ftpClient.listFiles();
             inputStream.close();
+            return done;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            disconnect();
         }
-        disconnect();
-        return null;
     }
 
     public void disconnect() {
@@ -97,6 +95,13 @@ public class FTPManager extends AsyncTask<Void, Void, Void> {
 
     }
 
-
+    @Override
+    public String executeAndMessage() {
+        if (execute()) {
+            return String.format("File '%s' has been successfully uploaded to FTP!", file.getName());
+        } else {
+            return String.format("An error occured while processing the upload file '%s' to FTP", file.getName());
+        }
+    }
 }
 

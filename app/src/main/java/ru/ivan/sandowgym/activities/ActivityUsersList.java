@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -15,6 +18,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,13 +159,14 @@ public class ActivityUsersList extends AppCompatActivity {
 
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
+        layout.setShrinkAllColumns(true);
 
         List<User> page = pagedUsers.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            TableRow mRow = new TableRow(this);
             User user=page.get(num);
+            TableRow mRow = new TableRow(this);
             mRow.setId(numberOfViews + user.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -171,24 +176,26 @@ public class ActivityUsersList extends AppCompatActivity {
             });
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
+            TableRow.LayoutParams params=new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT);
+            mRow.setLayoutParams(params);
 
             TextView txt = new TextView(this);
             txt.setText(String.valueOf(user.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(1));
             mRow.addView(txt);
 
             txt = new TextView(this);
-            String name=String.valueOf(user.getName())+((user.isCurrentUser()==1)?" (CURRENT)":"");
+            String name = String.valueOf(user.getName()) + ((user.isCurrentUser() == 1) ? " (CURRENT)" : "");
             txt.setText(name);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(10));
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.bt_border);
