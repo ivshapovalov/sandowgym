@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +28,10 @@ import ru.ivan.sandowgym.R;
 import static ru.ivan.sandowgym.common.Common.*;
 
 import ru.ivan.sandowgym.common.Common;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.Tasks.BackgroundTaskExecutor;
-import ru.ivan.sandowgym.common.Tasks.DropboxUploadTask;
-import ru.ivan.sandowgym.common.Tasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.DropboxUploadTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.ExportToFileTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 

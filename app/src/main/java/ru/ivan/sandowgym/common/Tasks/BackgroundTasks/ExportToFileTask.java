@@ -1,4 +1,4 @@
-package ru.ivan.sandowgym.common.Tasks;
+package ru.ivan.sandowgym.common.Tasks.BackgroundTasks;
 
 import android.content.Context;
 

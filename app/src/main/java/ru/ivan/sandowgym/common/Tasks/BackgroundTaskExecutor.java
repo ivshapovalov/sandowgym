@@ -1,11 +1,12 @@
 package ru.ivan.sandowgym.common.Tasks;
 
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 import java.util.List;
+
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
 
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 

@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.Metadata;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,15 +31,15 @@ import ru.ivan.sandowgym.*;
 
 import static ru.ivan.sandowgym.common.Common.*;
 
-import ru.ivan.sandowgym.common.Tasks.BackgroundTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.Tasks.BackgroundTaskExecutor;
-import ru.ivan.sandowgym.common.Tasks.DropboxDownloadTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.DropboxDownloadTask;
 import ru.ivan.sandowgym.common.Tasks.DropboxListFilesTask;
-import ru.ivan.sandowgym.common.Tasks.DropboxUploadTask;
-import ru.ivan.sandowgym.common.Tasks.ExportToFileTask;
-import ru.ivan.sandowgym.common.Tasks.FtpDownloadTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.DropboxUploadTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.FtpDownloadTask;
 import ru.ivan.sandowgym.common.Tasks.FtpListFilesTask;
-import ru.ivan.sandowgym.common.Tasks.FtpUploadTask;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.Tasks.ImportFromFileTask;
 
 public class ActivityFileExportImport extends ActivityAbstract {
@@ -66,10 +65,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
 
         if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
-
+            if (resultCode == Activity.RESULT_OK) {
                 final Handler handler = new Handler(Looper.getMainLooper());
-
                 final Runnable r = new Runnable() {
                     public void run() {
                         downloadFile = intent.getStringExtra("downloadFile");
@@ -81,11 +78,10 @@ public class ActivityFileExportImport extends ActivityAbstract {
                             displayMessage("Restore from FTP in progress!");
                             importFileFromFtp(downloadFile);
                         }
-                        //handler.postDelayed(this, 1000);
                     }
                 };
                 handler.postDelayed(r, 1000);
-      }
+            }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
@@ -260,6 +256,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
+            displayMessage("Export to FTP started!");
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -277,6 +274,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
+            displayMessage("Export to FTP finished!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,6 +289,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
+            displayMessage("Export to Dropbox started!");
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -312,6 +311,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
             AsyncTask<Void, Long, Boolean> doneUpload = backgroundTaskExecutor.execute();
+            displayMessage("Export to Dropbox finished!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -387,7 +387,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "dropbox");
             intent.putStringArrayListExtra("downloadFiles", fileNames);
-            startActivityForResult(intent,1);
+            startActivityForResult(intent, 1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -437,7 +437,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "ftp");
             intent.putStringArrayListExtra("downloadFiles", fileNames);
-            startActivityForResult(intent,1);
+            startActivityForResult(intent, 1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -450,7 +450,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         try {
             File outputDir = getCacheDir();
             File outputFile = new File(outputDir, fileName);
-            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(mSettings,outputFile);
+            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(mSettings, outputFile);
             ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
 
             List<BackgroundTask> tasks = new ArrayList<>();

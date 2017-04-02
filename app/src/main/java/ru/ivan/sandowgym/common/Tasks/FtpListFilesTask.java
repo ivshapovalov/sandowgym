@@ -1,20 +1,18 @@
 package ru.ivan.sandowgym.common.Tasks;
 
+import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-
 import 	it.sauronsoftware.ftp4j.FTPClient;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPFile;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import ru.ivan.sandowgym.activities.ActivityMain;
-
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
 
 public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
 
@@ -44,7 +42,12 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
                     ) {
                 fileNames.add(file.getName());
             }
-            Collections.sort(fileNames);
+            Collections.sort(fileNames, new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o2.compareTo(o1);
+                }
+            });
             return fileNames;
         } catch (Exception e) {
             e.printStackTrace();

@@ -11,8 +11,8 @@ android {
         applicationId 'ru.ivan.sandowgym'
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 35
-        versionName '3.5'
+        versionCode 36
+        versionName '3.6'
     }
 
     buildTypes {

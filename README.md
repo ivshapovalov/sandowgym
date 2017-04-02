@@ -1,8 +1,8 @@
 Application to training by Eugene Sandows dumbbell program
 ====================================================================
 
-Java + Android 4.0 + SqLite + openCSV + Apache POI
-===================================================================
+Java + Android 4.0 + SqLite + openCSV + Apache POI + ftp4j + Dropbox API
+========================================================================
 Main page | Users
 ------------------------ | ---------------
 <img src="https://cloud.githubusercontent.com/assets/16797864/23115441/ec765d78-f755-11e6-9f19-b3792f15d6f4.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/23115273/dfe017da-f754-11e6-9c65-5a4e0f4487a0.png" width="240" height="400">
@@ -20,7 +20,7 @@ Exercise | Exercise
 
 Tools | Options
 ------------------------ | ---------------
-<img src="https://cloud.githubusercontent.com/assets/16797864/23115269/dfc9dc5e-f754-11e6-85e1-f9a626cb6280.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/23115268/dfc6d860-f754-11e6-82b9-c5dfc76350b6.png" width="240" height="400">
+<img src="https://cloud.githubusercontent.com/assets/16797864/24585917/7e561fea-179e-11e7-98df-1452c525abdd.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/23115268/dfc6d860-f754-11e6-82b9-c5dfc76350b6.png" width="240" height="400">
 
 
 Training | Training options
@@ -30,5 +30,5 @@ Training | Training options
 
 Weight change | Import/Export
 ------------------------ | ---------------
-<img src="https://cloud.githubusercontent.com/assets/16797864/23115274/dfe2435c-f754-11e6-8de0-71cb87fc7031.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/23115272/dfde707e-f754-11e6-9191-f2fb14f9f60d.png" width="240" height="400">
+<img src="https://cloud.githubusercontent.com/assets/16797864/23115274/dfe2435c-f754-11e6-8de0-71cb87fc7031.png" width="240" height="400"> | <img src="https://cloud.githubusercontent.com/assets/16797864/24585918/7e563dfe-179e-11e7-8258-e124fe02ecc7.png" width="240" height="400">
 
