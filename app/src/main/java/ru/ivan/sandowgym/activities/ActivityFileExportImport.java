@@ -1,11 +1,14 @@
 package ru.ivan.sandowgym.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ import ru.ivan.sandowgym.common.Tasks.DropboxDownloadTask;
 import ru.ivan.sandowgym.common.Tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.DropboxUploadTask;
 import ru.ivan.sandowgym.common.Tasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.Tasks.FtpDownloadTask;
 import ru.ivan.sandowgym.common.Tasks.FtpListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.Tasks.ImportFromFileTask;
@@ -56,17 +60,43 @@ public class ActivityFileExportImport extends ActivityAbstract {
         getPreferencesFromFile();
         updateScreen();
         setTitleOfActivity(this);
-        if (downloadType != null && downloadType.equals("dropbox") && downloadFile != null && !"".equals(downloadFile)) {
-            importFileFromDropbox(downloadFile);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        downloadFile = intent.getStringExtra("downloadFile");
+                        downloadType = intent.getStringExtra("downloadType");
+                        if (downloadType != null && downloadType.equals("dropbox") && downloadFile != null && !"".equals(downloadFile)) {
+                            displayMessage("Restore from Dropbox in progress!");
+                            importFileFromDropbox(downloadFile);
+                        } else if (downloadType != null && downloadType.equals("ftp") && downloadFile != null && !"".equals(downloadFile)) {
+                            displayMessage("Restore from FTP in progress!");
+                            importFileFromFtp(downloadFile);
+                        }
+                        //handler.postDelayed(this, 1000);
+                    }
+                };
+                handler.postDelayed(r, 1000);
+      }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
         }
     }
+
 
     private void getIntentParams() {
         Intent intent = getIntent();
         long mCurrentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
         long mCurrentDateToInMillis = intent.getLongExtra("currentDateToInMillis", 0);
-        downloadFile = intent.getStringExtra("downloadFile");
-        downloadType = intent.getStringExtra("downloadType");
         mDateFrom = mCurrentDateInMillis;
         mDateTo = mCurrentDateToInMillis;
     }
@@ -247,7 +277,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
-            displayMessage("FTP upload successfully!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -358,7 +387,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "dropbox");
             intent.putStringArrayListExtra("downloadFiles", fileNames);
-            startActivity(intent);
+            startActivityForResult(intent,1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -380,8 +409,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(dropboxDownloadTask);
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
-            AsyncTask<Void, Long, Boolean> doneUpload = backgroundTaskExecutor.execute();
-            doneUpload.get();
+            AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
+            doneDownload.get();
 
             String message = importFromFileTask.executeAndMessage();
             displayMessage(message);
@@ -408,14 +437,36 @@ public class ActivityFileExportImport extends ActivityAbstract {
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "ftp");
             intent.putStringArrayListExtra("downloadFiles", fileNames);
-            startActivity(intent);
+            startActivityForResult(intent,1);
 
         } catch (Exception e) {
             e.printStackTrace();
             displayMessage("Tasks failed! " + e.getMessage());
             processingInProgress = false;
         }
+    }
 
+    public void importFileFromFtp(String fileName) {
+        try {
+            File outputDir = getCacheDir();
+            File outputFile = new File(outputDir, fileName);
+            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(mSettings,outputFile);
+            ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
+
+            List<BackgroundTask> tasks = new ArrayList<>();
+            tasks.add(ftpDownloadTask);
+            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
+            AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
+            doneDownload.get();
+
+            String message = importFromFileTask.executeAndMessage();
+            displayMessage(message);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            displayMessage("Tasks failed! " + e.getMessage());
+            processingInProgress = false;
+        }
     }
 }
 

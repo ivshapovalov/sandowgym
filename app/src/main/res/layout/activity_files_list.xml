@@ -12,25 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bt_border">
-
-        <Button
-            android:id="@+id/buttonHome"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_span="13"
-            android:background="@drawable/bt_border"
-            android:onClick="buttonHome_onClick"
-            android:text="HOME"
-            android:textColor="@color/text_color"/>
-
         <Button
             android:id="@+id/btTrainingsClear"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_span="13"
+            android:layout_span="26"
             android:background="@drawable/bt_border"
             android:onClick="btClose_onClick"
             android:text="CLOSE"

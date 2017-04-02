@@ -3,25 +3,15 @@ package ru.ivan.sandowgym.common.Tasks;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.Metadata;
+import 	it.sauronsoftware.ftp4j.FTPClient;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPFileFilters;
-import org.apache.commons.net.ftp.FTPListParseEngine;
-import org.apache.commons.net.ftp.FTPReply;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
+import it.sauronsoftware.ftp4j.FTPException;
+import it.sauronsoftware.ftp4j.FTPFile;
+import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import ru.ivan.sandowgym.activities.ActivityMain;
 
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
@@ -43,21 +33,17 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
     @Override
     protected ArrayList<String> doInBackground(Void... params) {
         getPreferencesFromFile();
-
         ftpClient = new FTPClient();
-        int reply;
-        ftpClient.enterLocalPassiveMode();
         try {
             ftpClient.connect(mFtpHost);
-            reply = ftpClient.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                ftpClient.disconnect();
-            }
             ftpClient.login(mFtpLogin, mFtpPassword);
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            ftpClient.enterLocalPassiveMode();
-            String[] files = ftpClient.listNames();
-            ArrayList<String> fileNames= new ArrayList<>(Arrays.asList(files));
+            ftpClient.setType(FTPClient.TYPE_BINARY);
+            FTPFile[] files = ftpClient.list("*.xls");
+            ArrayList<String> fileNames = new ArrayList<>();
+            for (FTPFile file : files
+                    ) {
+                fileNames.add(file.getName());
+            }
             Collections.sort(fileNames);
             return fileNames;
         } catch (Exception e) {
@@ -66,7 +52,6 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
         } finally {
             disconnect();
         }
-
     }
 
     @Override
@@ -74,13 +59,17 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
         processingInProgress = false;
     }
 
-
     public void disconnect() {
-        if (this.ftpClient.isConnected()) {
+        if (ftpClient.isConnected()) {
             try {
-                this.ftpClient.logout();
-                this.ftpClient.disconnect();
-            } catch (IOException f) {
+                ftpClient.logout();
+                ftpClient.disconnect(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FTPIllegalReplyException e) {
+                e.printStackTrace();
+            } catch (FTPException e) {
+                e.printStackTrace();
             }
         }
     }

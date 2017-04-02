@@ -1,5 +1,6 @@
 package ru.ivan.sandowgym.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -171,32 +172,22 @@ public class ActivityFilesList extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
         intent.putExtra("downloadFile", file);
         intent.putExtra("downloadType", downloadType);
-        startActivity(intent);
-
-    }
-
-    public void buttonHome_onClick(final View view) {
-        processingInProgress=false;
-
-        blink(view, this);
-        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
 
     }
 
     public void onBackPressed() {
         processingInProgress=false;
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
     }
     public void btClose_onClick(final View view) {
         processingInProgress=false;
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
 
     }
 
