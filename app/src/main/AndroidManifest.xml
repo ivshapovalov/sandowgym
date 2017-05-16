@@ -14,8 +14,8 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="36"
-        android:versionName="3.6">
+        android:versionCode="37"
+        android:versionName="3.7">
         <activity android:name="ru.ivan.sandowgym.activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

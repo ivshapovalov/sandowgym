@@ -73,12 +73,57 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/lineUseCalendarForWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linePlusMinusButtonValue" >
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="40"
+            android:text="USE CALENDAR FOR WEIGHTS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_color" />
+
+        <RadioGroup
+            android:id="@+id/rgUseCalendarForWeight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="60"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/rbUseCalendarForWeightYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="30"
+                android:checked="true"
+                android:text="YES"
+                android:textColor="@color/text_color" />
+
+            <RadioButton
+                android:id="@+id/rbUseCalendarForWeightNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="30"
+                android:text="NO"
+                android:textColor="@color/text_color" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/lineShowPicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/linePlusMinusButtonValue"
+        android:layout_below="@+id/lineUseCalendarForWeight"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 

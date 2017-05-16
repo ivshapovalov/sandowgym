@@ -47,6 +47,7 @@ public class ActivityTraining extends ActivityAbstract {
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
     private int mPlusMinusButtonValue;
+    private boolean mUseCalendarForWeight;
     private boolean mShowPicture;
     private boolean mShowExplanation;
     private boolean mShowVolumeDefaultButton;
@@ -419,11 +420,19 @@ public class ActivityTraining extends ActivityAbstract {
                 mExerciseWeightLastDay = 0;
             }
         }
+
+        int weight=0;
+        if (mUseCalendarForWeight) {
+            weight=mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar;
+        } else {
+            weight=mExerciseWeightLastDay;
+
+        }
         mCurrentTrainingContent = new TrainingContent.Builder(DB)
                 .addExercise(mCurrentExercise)
                 .addTraining(mCurrentTraining)
                 .addVolume("")
-                .addWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar)
+                .addWeight(weight)
                 .build();
         saveTraining();
     }
@@ -721,7 +730,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     }
 
-      public void btVolumeLeft_onClick(final View view) {
+    public void btVolumeLeft_onClick(final View view) {
 
         blink(view, this);
         VolumeChange(-1);
@@ -922,6 +931,11 @@ public class ActivityTraining extends ActivityAbstract {
             mPlusMinusButtonValue = 10;
         }
 
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT)) {
+            mUseCalendarForWeight = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
+        } else {
+            mUseCalendarForWeight = false;
+        }
         if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
             mShowExplanation = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
         } else {
@@ -1008,6 +1022,7 @@ public class ActivityTraining extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
     private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {
         private Activity activity;
         static final int MIN_DISTANCE = 200;
@@ -1041,6 +1056,7 @@ public class ActivityTraining extends ActivityAbstract {
             //Toast.makeText(ActivityTraining.this, "Bottom to Top swipe [Up]", Toast.LENGTH_SHORT).show ();
 
         }
+
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
