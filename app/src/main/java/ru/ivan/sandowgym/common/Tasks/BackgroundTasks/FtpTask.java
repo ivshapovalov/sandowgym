@@ -1,8 +1,10 @@
 package ru.ivan.sandowgym.common.Tasks.BackgroundTasks;
 
 import android.content.SharedPreferences;
+
 import java.io.File;
 import java.io.IOException;
+
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;

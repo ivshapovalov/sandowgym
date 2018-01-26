@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,8 +25,7 @@ public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String
         try {
             List<Metadata> metadatas= client.files().listFolder("").getEntries();
             ArrayList<String> fileNames = new ArrayList<>();
-            for (Metadata file : metadatas
-                    ) {
+            for (Metadata file : metadatas) {
                 fileNames.add(file.getName());
             }
             Collections.sort(fileNames, new Comparator<String>() {

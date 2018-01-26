@@ -1,7 +1,9 @@
 package ru.ivan.sandowgym.common.Tasks.BackgroundTasks;
 
 import android.content.SharedPreferences;
+
 import java.io.File;
+
 import it.sauronsoftware.ftp4j.FTPClient;
 
 public class FtpUploadTask  extends FtpTask implements BackgroundTask {
