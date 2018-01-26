@@ -32,7 +32,7 @@ public class ActivityOptions extends ActivityAbstract {
     public void buttonSave_onClick(View view) {
 
         int mRowsOnPageID = getResources().getIdentifier("etRowsOnPageInLists", "id", getPackageName());
-        EditText txtRowsOnPage = (EditText) findViewById(mRowsOnPageID);
+        EditText txtRowsOnPage = findViewById(mRowsOnPageID);
         if (txtRowsOnPage != null) {
             try {
                 mRowsOnPageInLists = Integer.valueOf(txtRowsOnPage.getText().toString());
@@ -42,7 +42,7 @@ public class ActivityOptions extends ActivityAbstract {
         }
 
         int mFtpHostID = getResources().getIdentifier("etFtpHost", "id", getPackageName());
-        EditText txtFtpHost = (EditText) findViewById(mFtpHostID);
+        EditText txtFtpHost = findViewById(mFtpHostID);
         if (txtFtpHost != null) {
             try {
                 mFtpHost = txtFtpHost.getText().toString();
@@ -52,7 +52,7 @@ public class ActivityOptions extends ActivityAbstract {
         }
 
         int mFtpLoginID = getResources().getIdentifier("etFtpLogin", "id", getPackageName());
-        EditText txtFtpLogin = (EditText) findViewById(mFtpLoginID);
+        EditText txtFtpLogin = findViewById(mFtpLoginID);
         if (txtFtpLogin != null) {
             try {
                 mFtpLogin = txtFtpLogin.getText().toString();
@@ -62,7 +62,7 @@ public class ActivityOptions extends ActivityAbstract {
         }
 
         int mFtpPasswordID = getResources().getIdentifier("etFtpPassword", "id", getPackageName());
-        EditText txtFtpPassword = (EditText) findViewById(mFtpPasswordID);
+        EditText txtFtpPassword = findViewById(mFtpPasswordID);
         if (txtFtpPassword != null) {
             try {
                 mFtpPassword = txtFtpPassword.getText().toString();
@@ -72,7 +72,7 @@ public class ActivityOptions extends ActivityAbstract {
         }
 
         int mDropboxAccessTokenID = getResources().getIdentifier("etDropboxAccessToken", "id", getPackageName());
-        EditText txtDropboxAccessToken = (EditText) findViewById(mDropboxAccessTokenID);
+        EditText txtDropboxAccessToken = findViewById(mDropboxAccessTokenID);
         if (txtDropboxAccessToken != null) {
             try {
                 mDropboxAccessToken = txtDropboxAccessToken.getText().toString();
@@ -80,7 +80,6 @@ public class ActivityOptions extends ActivityAbstract {
 
             }
         }
-
 
         blink(view, this);
         SharedPreferences.Editor editor = mSettings.edit();
@@ -92,7 +91,6 @@ public class ActivityOptions extends ActivityAbstract {
         editor.apply();
 
         this.finish();
-
     }
 
     public void buttonCancel_onClick(final View view) {
@@ -139,35 +137,33 @@ public class ActivityOptions extends ActivityAbstract {
     private void setPreferencesOnScreen() {
 
         int mRowsOnPageID = getResources().getIdentifier("etRowsOnPageInLists", "id", getPackageName());
-        EditText txtRowsOnPAge = (EditText) findViewById(mRowsOnPageID);
+        EditText txtRowsOnPAge = findViewById(mRowsOnPageID);
         if (txtRowsOnPAge != null) {
             txtRowsOnPAge.setText(String.valueOf(mRowsOnPageInLists));
         }
 
         int mFtpHostID = getResources().getIdentifier("etFtpHost", "id", getPackageName());
-        EditText txtFtpHost = (EditText) findViewById(mFtpHostID);
+        EditText txtFtpHost = findViewById(mFtpHostID);
         if (txtFtpHost != null) {
             txtFtpHost.setText(mFtpHost);
         }
 
         int mFtpLoginID = getResources().getIdentifier("etFtpLogin", "id", getPackageName());
-        EditText txtFtpLogin = (EditText) findViewById(mFtpLoginID);
+        EditText txtFtpLogin = findViewById(mFtpLoginID);
         if (txtFtpLogin != null) {
             txtFtpLogin.setText(mFtpLogin);
         }
 
         int mFtpPasswordID = getResources().getIdentifier("etFtpPassword", "id", getPackageName());
-        EditText txtFtpPassword = (EditText) findViewById(mFtpPasswordID);
+        EditText txtFtpPassword = findViewById(mFtpPasswordID);
         if (txtFtpPassword != null) {
             txtFtpPassword.setText(mFtpPassword);
         }
 
         int mDropboxAccessTokenID = getResources().getIdentifier("etDropboxAccessToken", "id", getPackageName());
-        EditText txtDropboxAccessToken = (EditText) findViewById(mDropboxAccessTokenID);
+        EditText txtDropboxAccessToken = findViewById(mDropboxAccessTokenID);
         if (txtDropboxAccessToken != null) {
             txtDropboxAccessToken.setText(mDropboxAccessToken);
         }
     }
-
-
 }

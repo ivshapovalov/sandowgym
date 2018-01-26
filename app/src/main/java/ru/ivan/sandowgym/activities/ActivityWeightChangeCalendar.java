@@ -12,12 +12,13 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import ru.ivan.sandowgym.R;
-
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
+
+import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
@@ -119,14 +120,14 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
     private void showWeightChangeCalendarOnScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
 
             tvID.setText(String.valueOf(mCurrentWeightChangeCalendar.getId()));
         }
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView tvDay = (TextView) findViewById(mDayID);
+        TextView tvDay = findViewById(mDayID);
         if (tvDay != null) {
             if (mCurrentWeightChangeCalendar.getDay() == 0) {
                 tvDay.setText("");
@@ -136,7 +137,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         }
 
         int mWeightID = getResources().getIdentifier("etWeight", "id", getPackageName());
-        EditText etWeight = (EditText) findViewById(mWeightID);
+        EditText etWeight = findViewById(mWeightID);
         if (etWeight != null) {
             etWeight.setText(String.valueOf(mCurrentWeightChangeCalendar.getWeight()));
         }
@@ -146,19 +147,19 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
     private void fillWeightChangeCalendarFromScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
             mCurrentWeightChangeCalendar.setID(Integer.parseInt(String.valueOf(tvID.getText())));
         }
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView tvDay = (TextView) findViewById(mDayID);
+        TextView tvDay = findViewById(mDayID);
         if (tvDay != null) {
             mCurrentWeightChangeCalendar.setDayString(String.valueOf(tvDay.getText()));
         }
 
         int WeightID = getResources().getIdentifier("etWeight", "id", getPackageName());
-        EditText etWeight = (EditText) findViewById(WeightID);
+        EditText etWeight = findViewById(WeightID);
         if (etWeight != null) {
             mCurrentWeightChangeCalendar.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
         }
@@ -198,7 +199,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mCurrentWeightChangeCalendar.dbDelete(DB);
-                       Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
+                        Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }

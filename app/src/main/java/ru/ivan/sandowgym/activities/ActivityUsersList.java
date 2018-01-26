@@ -3,14 +3,11 @@ package ru.ivan.sandowgym.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -18,18 +15,20 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import ru.ivan.sandowgym.R;
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+
+import static ru.ivan.sandowgym.common.Common.HideEditorButton;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityUsersList extends AppCompatActivity {
 
@@ -57,7 +56,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btUsersDBEditor", "id", getPackageName());
-            Button btEditor = (Button) findViewById(mEditorID);
+            Button btEditor = findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
 
@@ -67,10 +66,10 @@ public class ActivityUsersList extends AppCompatActivity {
         idIntentUser = intent.getIntExtra("currentUserId", 0);
         updateUsers();
 
-        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentUser);
+        TableRow mRow = findViewById(numberOfViews + idIntentUser);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableUsers", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+            ScrollView mScrollView = findViewById(mScrID);
             if (mScrollView != null) {
                 mScrollView.requestChildFocus(mRow, mRow);
             }
@@ -96,7 +95,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void btUsersAdd_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityUser.class);
         intent.putExtra("isNew", true);
         startActivity(intent);
@@ -104,7 +103,7 @@ public class ActivityUsersList extends AppCompatActivity {
     }
 
     private void pageUsers() {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         users = DB.getAllUsers();
         List<User> pageContent = new ArrayList<>();
         pagedUsers.clear();
@@ -122,22 +121,22 @@ public class ActivityUsersList extends AppCompatActivity {
                 pageNumber++;
             }
         }
-        if (pageContent.size()!=0) {
+        if (pageContent.size() != 0) {
             pagedUsers.put(pageNumber, pageContent);
         }
-        if (pagedUsers.size()==0) {
-            currentPage=0;
+        if (pagedUsers.size() == 0) {
+            currentPage = 0;
         }
     }
 
     private void showUsers() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedUsers.size());
+            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedUsers.size());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableUsers);
+        ScrollView sv = findViewById(R.id.svTableUsers);
         try {
 
             sv.removeAllViews();
@@ -148,10 +147,10 @@ public class ActivityUsersList extends AppCompatActivity {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
         mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
-        mWidth = displaymetrics.widthPixels/ maxHorizontalButtonCount;
+        mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+        TableRow trowButtons = findViewById(R.id.trowButtons);
 
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
@@ -165,7 +164,7 @@ public class ActivityUsersList extends AppCompatActivity {
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            User user=page.get(num);
+            User user = page.get(num);
             TableRow mRow = new TableRow(this);
             mRow.setId(numberOfViews + user.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +175,7 @@ public class ActivityUsersList extends AppCompatActivity {
             });
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
-            TableRow.LayoutParams params=new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT);
+            TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             mRow.setLayoutParams(params);
 
             TextView txt = new TextView(this);
@@ -207,7 +206,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     private void rowUser_onClick(final TableRow view) {
 
-        blink(view,this);
+        blink(view, this);
 
         int id = view.getId() % numberOfViews;
 
@@ -219,7 +218,7 @@ public class ActivityUsersList extends AppCompatActivity {
     }
 
     public void bt_Edit_onClick(final View view) {
-        blink(view,this);
+        blink(view, this);
 
         Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(intent);
@@ -227,7 +226,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     public void buttonHome_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

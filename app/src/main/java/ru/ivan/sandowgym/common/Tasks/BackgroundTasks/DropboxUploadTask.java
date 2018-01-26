@@ -15,9 +15,7 @@ public class DropboxUploadTask implements BackgroundTask {
     private File file;
     private DbxClientV2 client;
 
-    public DropboxUploadTask(File file,
-                             DbxClientV2 client
-    ) {
+    public DropboxUploadTask(File file, DbxClientV2 client) {
         this.file = file;
         this.client = client;
     }
@@ -28,8 +26,8 @@ public class DropboxUploadTask implements BackgroundTask {
         try {
             in = new FileInputStream(file.getPath());
 
-            FileMetadata metadata = client.files().uploadBuilder("/" + file.getName())
-                    .uploadAndFinish(in);
+            FileMetadata metadata = client.files().uploadBuilder("/"
+                    + file.getName()).uploadAndFinish(in);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

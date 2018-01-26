@@ -37,7 +37,7 @@ public class ActivityTools extends ActivityAbstract {
         int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         for (int i = 0; i <= maxVerticalButtonCount; i++) {
             int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
-            Button btName = (Button) findViewById(btID);
+            Button btName = findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
             }

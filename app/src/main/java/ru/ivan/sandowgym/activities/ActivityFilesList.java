@@ -23,7 +23,6 @@ import java.util.Map;
 import ru.ivan.sandowgym.R;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
@@ -97,12 +96,12 @@ public class ActivityFilesList extends AppCompatActivity {
 
     private void showFiles() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
             pageNumber.setText(String.valueOf(currentPage) + "/" + pagedFiles.size());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableFiles);
+        ScrollView sv = findViewById(R.id.svTableFiles);
         try {
             sv.removeAllViews();
         } catch (NullPointerException e) {
@@ -114,7 +113,7 @@ public class ActivityFilesList extends AppCompatActivity {
         mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+        TableRow trowButtons = findViewById(R.id.trowButtons);
 
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
@@ -124,10 +123,10 @@ public class ActivityFilesList extends AppCompatActivity {
         layout.setStretchAllColumns(true);
         layout.setShrinkAllColumns(true);
 
-        TableRow.LayoutParams params =new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT);
-        params.weight=100;
-        params.leftMargin=10;
-        params.rightMargin=10;
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        params.weight = 100;
+        params.leftMargin = 10;
+        params.rightMargin = 10;
 
         List<String> page = pagedFiles.get(currentPage);
         if (page == null) return;
@@ -167,7 +166,7 @@ public class ActivityFilesList extends AppCompatActivity {
         blink(view, this);
 
         int id = view.getId() % numberOfViews;
-        String file=pagedFiles.get(currentPage).get(id);
+        String file = pagedFiles.get(currentPage).get(id);
 
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
         intent.putExtra("downloadFile", file);
@@ -178,13 +177,14 @@ public class ActivityFilesList extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        processingInProgress=false;
+        processingInProgress = false;
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
         setResult(Activity.RESULT_CANCELED, intent);
         finish();
     }
+
     public void btClose_onClick(final View view) {
-        processingInProgress=false;
+        processingInProgress = false;
         Intent intent = new Intent(getApplicationContext(), ActivityFileExportImport.class);
         setResult(Activity.RESULT_CANCELED, intent);
         finish();

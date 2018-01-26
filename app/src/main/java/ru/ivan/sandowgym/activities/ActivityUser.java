@@ -15,11 +15,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
+
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityUser extends AppCompatActivity {
 
@@ -56,7 +58,7 @@ public class ActivityUser extends AppCompatActivity {
     private void showUserOnScreen() {
 
         int isCurrentID = getResources().getIdentifier("cbIsCurrent", "id", getPackageName());
-        CheckBox cbIsCurrent = (CheckBox) findViewById(isCurrentID);
+        CheckBox cbIsCurrent = findViewById(isCurrentID);
         if (cbIsCurrent != null) {
             if (mCurrentUser.isCurrentUser() != 0) {
                 cbIsCurrent.setChecked(true);
@@ -81,13 +83,13 @@ public class ActivityUser extends AppCompatActivity {
         });
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
             tvID.setText(String.valueOf(mCurrentUser.getId()));
         }
 
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
+        EditText etName = findViewById(mNameID);
         if (etName != null) {
             etName.setText(mCurrentUser.getName());
         }
@@ -96,7 +98,7 @@ public class ActivityUser extends AppCompatActivity {
     private void getPropertiesFromScreen() {
 
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
+        EditText etName = findViewById(mNameID);
         if (etName != null) {
             mCurrentUser.setName(String.valueOf(etName.getText()));
         }
@@ -104,7 +106,7 @@ public class ActivityUser extends AppCompatActivity {
 
     public void btSave_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         getPropertiesFromScreen();
         mCurrentUser.dbSave(DB);
         setDBCurrentUser();
@@ -114,7 +116,7 @@ public class ActivityUser extends AppCompatActivity {
 
     public void btClose_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         closeActivity();
 
     }
@@ -129,27 +131,27 @@ public class ActivityUser extends AppCompatActivity {
     private void setDBCurrentUser() {
 
         if (mCurrentUser.isCurrentUser() == 1) {
-            dbCurrentUser =mCurrentUser;
+            dbCurrentUser = mCurrentUser;
             List<User> userList = DB.getAllUsers();
 
             for (User user : userList) {
 
-                if (user.getId()!=mCurrentUser.getId()) {
+                if (user.getId() != mCurrentUser.getId()) {
                     user.setIsCurrentUser(0);
                     user.dbSave(DB);
                 }
 
             }
         } else {
-            if (dbCurrentUser!=null && dbCurrentUser.equals(mCurrentUser)) {
-                dbCurrentUser=null;
+            if (dbCurrentUser != null && dbCurrentUser.equals(mCurrentUser)) {
+                dbCurrentUser = null;
             }
         }
     }
 
     public void btDelete_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         new AlertDialog.Builder(this)
                 .setMessage("Do you want to delete current user, his trainings and other?")
                 .setCancelable(false)
@@ -159,13 +161,12 @@ public class ActivityUser extends AppCompatActivity {
                         if (mCurrentUser.equals(dbCurrentUser)) {
                             List<User> userList = DB.getAllUsers();
                             if (userList.size() == 1) {
-                                User currentUser=userList.get(0);
+                                User currentUser = userList.get(0);
                                 dbCurrentUser = currentUser;
                                 currentUser.setIsCurrentUser(1);
                                 currentUser.dbSave(DB);
-                            }
-                            else {
-                                dbCurrentUser=null;
+                            } else {
+                                dbCurrentUser = null;
                             }
                         }
 

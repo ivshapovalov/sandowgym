@@ -9,8 +9,10 @@ import android.widget.CalendarView;
 
 import java.util.Calendar;
 
-import static ru.ivan.sandowgym.common.Common.*;
 import ru.ivan.sandowgym.R;
+
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityCalendarView extends AppCompatActivity {
 
@@ -62,7 +64,7 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
 
-        if (mIsBeginDate || mCallerActivity == "ActivityTraining") {
+        if (mIsBeginDate || mCallerActivity.equals("ActivityTraining")) {
             if (mOldDateFromInMillis !=0) {
                 calendar.setTimeInMillis(mOldDateFromInMillis);
                 mNewDateInMillis = mOldDateFromInMillis;
@@ -84,14 +86,13 @@ public class ActivityCalendarView extends AppCompatActivity {
             mNewDateInMillis =calendar.getTimeInMillis();
 
         }
-        CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
+        CalendarView calendarView = findViewById(R.id.calendarView);
         calendarView.setDate(mNewDateInMillis, false, true);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year,
                                             int month, int dayOfMonth) {
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.clear(Calendar.MILLISECOND);
                 calendar.set(year,month,dayOfMonth,0,0,0);
@@ -102,9 +103,6 @@ public class ActivityCalendarView extends AppCompatActivity {
 
         setTitleOfActivity(this);
     }
-
-
-
 
     public void btSave_onClick(final View view) {
 

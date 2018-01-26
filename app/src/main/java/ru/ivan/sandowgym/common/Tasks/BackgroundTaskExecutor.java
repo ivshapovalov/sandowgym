@@ -38,11 +38,13 @@ public class BackgroundTaskExecutor extends AsyncTask<Void, Long, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        Toast.makeText(context,"Background task begin!",Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Background tasks begin!", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         processingInProgress = false;
+        Toast.makeText(context, "Background tasks finished!", Toast.LENGTH_LONG).show();
+
     }
 }

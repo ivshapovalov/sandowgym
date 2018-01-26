@@ -1,9 +1,11 @@
 package ru.ivan.sandowgym.database.entities;
 
-import static ru.ivan.sandowgym.common.Common.*;
 import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
 import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+
+import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
+import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 
 public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
     private long day;
@@ -85,8 +87,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
         }
 
         public WeightChangeCalendar build() {
-            WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar(this);
-            return weightChangeCalendar;
+            return new WeightChangeCalendar(this);
         }
 
     }

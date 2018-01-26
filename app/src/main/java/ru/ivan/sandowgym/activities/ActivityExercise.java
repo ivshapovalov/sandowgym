@@ -12,12 +12,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static ru.ivan.sandowgym.common.Common.*;
-
-import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
+
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExercise extends ActivityAbstract {
 
@@ -51,7 +52,7 @@ public class ActivityExercise extends ActivityAbstract {
     private void showExerciseOnScreen() {
 
         int mIsActiveID = getResources().getIdentifier("cbIsActive", "id", getPackageName());
-        CheckBox cbIsActive = (CheckBox) findViewById(mIsActiveID);
+        CheckBox cbIsActive = findViewById(mIsActiveID);
         if (cbIsActive != null) {
             if (mCurrentExercise.getIsActive() != 0) {
                 cbIsActive.setChecked(true);
@@ -73,36 +74,36 @@ public class ActivityExercise extends ActivityAbstract {
         });
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
             tvID.setText(String.valueOf(mCurrentExercise.getId()));
         }
 
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
+        EditText etName = findViewById(mNameID);
         if (etName != null) {
             etName.setText(mCurrentExercise.getName());
         }
 
         int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
-        EditText etExplanation = (EditText) findViewById(mExplanationID);
+        EditText etExplanation = findViewById(mExplanationID);
         if (etExplanation != null) {
             etExplanation.setText(mCurrentExercise.getExplanation());
         }
 
         int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
-        EditText etPicture = (EditText) findViewById(mPictureID);
+        EditText etPicture = findViewById(mPictureID);
         if (etPicture != null) {
             etPicture.setText(mCurrentExercise.getPicture());
         }
 
         int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
-        EditText etVolume = (EditText) findViewById(mVolumeID);
+        EditText etVolume = findViewById(mVolumeID);
         if (etVolume != null) {
             etVolume.setText(mCurrentExercise.getVolumeDefault());
         }
 
-        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        ImageView ivPicture = findViewById(R.id.ivPicture);
         if (ivPicture != null) {
             if (mCurrentExercise.getPicture() != null && !"".equals(mCurrentExercise.getPicture())) {
 
@@ -111,37 +112,36 @@ public class ActivityExercise extends ActivityAbstract {
         }
     }
 
-
     private void fillExerciseFromScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
             mCurrentExercise.setID(Integer.parseInt(String.valueOf(tvID.getText())));
         }
 
         int mNameID = getResources().getIdentifier("etName", "id", getPackageName());
-        EditText etName = (EditText) findViewById(mNameID);
+        EditText etName = findViewById(mNameID);
         if (etName != null) {
 
             mCurrentExercise.setName(String.valueOf(etName.getText()));
         }
 
         int mExplanationID = getResources().getIdentifier("etExplanation", "id", getPackageName());
-        EditText etExplanation = (EditText) findViewById(mExplanationID);
+        EditText etExplanation = findViewById(mExplanationID);
         if (etExplanation != null) {
             mCurrentExercise.setExplanation(String.valueOf(etExplanation.getText()));
         }
 
         int mPictureID = getResources().getIdentifier("etPicture", "id", getPackageName());
-        EditText etPicture = (EditText) findViewById(mPictureID);
+        EditText etPicture = findViewById(mPictureID);
         if (etPicture != null) {
 
             mCurrentExercise.setPicture(String.valueOf(etPicture.getText()));
         }
 
         int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
-        EditText etVolume = (EditText) findViewById(mVolumeID);
+        EditText etVolume = findViewById(mVolumeID);
         if (etVolume != null) {
             mCurrentExercise.setVolumeDefault(String.valueOf(etVolume.getText()));
         }

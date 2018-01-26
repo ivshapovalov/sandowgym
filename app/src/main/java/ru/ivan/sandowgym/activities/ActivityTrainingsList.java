@@ -21,13 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.ivan.sandowgym.common.Common.*;
-
+import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
-import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.database.entities.Training;
+
+import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
+import static ru.ivan.sandowgym.common.Common.HideEditorButton;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityTrainingsList extends ActivityAbstract {
     private final int maxVerticalButtonsCount = 15;
@@ -51,13 +55,13 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btTrainingsDBEditor", "id", getPackageName());
-            Button btEditor = (Button) findViewById(mEditorID);
+            Button btEditor = findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
 
         Intent intent = getIntent();
         mCurrentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
-        idIntentTraining= intent.getIntExtra("id", 0);
+        idIntentTraining = intent.getIntExtra("id", 0);
 
         if (idIntentTraining == 0) {
             if (mCurrentDateInMillis != 0) {
@@ -70,11 +74,11 @@ public class ActivityTrainingsList extends ActivityAbstract {
         getPreferencesFromFile();
         updateTrainings();
         if (idIntentTraining != 0) {
-            TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentTraining);
+            TableRow mRow = findViewById(numberOfViews + idIntentTraining);
             if (mRow != null) {
 
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
-                ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+                ScrollView mScrollView = findViewById(mScrID);
                 if (mScrollView != null) {
 
                     mScrollView.requestChildFocus(mRow, mRow);
@@ -83,7 +87,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         }
 
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
-        Button btDay = (Button) findViewById(mDayID);
+        Button btDay = findViewById(mDayID);
         if (btDay != null) {
             if (mCurrentDateInMillis == 0) {
                 btDay.setText("");
@@ -104,7 +108,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         List<Training> trainings = new ArrayList<>();
         if (dbCurrentUser == null) {
         } else {
-                trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getId());
+            trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getId());
         }
         pagedTrainings.clear();
         List<Training> pageContent = new ArrayList<>();
@@ -125,8 +129,8 @@ public class ActivityTrainingsList extends ActivityAbstract {
         if (pageContent.size() != 0) {
             pagedTrainings.put(pageNumber, pageContent);
         }
-        if (pagedTrainings.size()==0) {
-            currentPage=0;
+        if (pagedTrainings.size() == 0) {
+            currentPage = 0;
         }
     }
 
@@ -149,12 +153,12 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
     private void showTrainings() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedTrainings.size());
+            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedTrainings.size());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableTrainings);
+        ScrollView sv = findViewById(R.id.svTableTrainings);
         try {
             sv.removeAllViews();
         } catch (Exception e) {
@@ -165,7 +169,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         int mHeight = displaymetrics.heightPixels / maxVerticalButtonsCount;
         int mWidth = displaymetrics.widthPixels / maxHorizontalButtonsCount;
         int mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+        TableRow trowButtons = findViewById(R.id.trowButtons);
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
@@ -294,7 +298,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         blink(view, this);
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
-        Button btDay = (Button) findViewById(mDayID);
+        Button btDay = findViewById(mDayID);
         if (btDay != null) {
 
             btDay.setText("");

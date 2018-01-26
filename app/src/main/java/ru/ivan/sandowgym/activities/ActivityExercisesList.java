@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -21,13 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.ivan.sandowgym.common.Common.*;
-
+import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
-import ru.ivan.sandowgym.database.entities.Exercise;
-import ru.ivan.sandowgym.R;
+
+import static ru.ivan.sandowgym.common.Common.HideEditorButton;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExercisesList extends ActivityAbstract {
 
@@ -54,7 +56,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
-            Button btEditor = (Button) findViewById(mEditorID);
+            Button btEditor = findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
         getPreferencesFromFile();
@@ -62,10 +64,10 @@ public class ActivityExercisesList extends ActivityAbstract {
         idIntentExercise = intent.getIntExtra("currentExerciseId", 0);
 
         updateExercises();
-        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentExercise);
+        TableRow mRow = findViewById(numberOfViews + idIntentExercise);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+            ScrollView mScrollView = findViewById(mScrID);
             if (mScrollView != null) {
 
                 mScrollView.requestChildFocus(mRow, mRow);
@@ -116,7 +118,7 @@ public class ActivityExercisesList extends ActivityAbstract {
 
     private void pageExercises() {
         currentPage = 1;
-        List<Exercise> exercises = new ArrayList<Exercise>();
+        List<Exercise> exercises = new ArrayList<>();
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
@@ -138,22 +140,22 @@ public class ActivityExercisesList extends ActivityAbstract {
                 pageNumber++;
             }
         }
-        if (pageContent.size()!=0) {
+        if (pageContent.size() != 0) {
             pagedExercices.put(pageNumber, pageContent);
         }
-        if (pagedExercices.size()==0) {
-            currentPage=0;
+        if (pagedExercices.size() == 0) {
+            currentPage = 0;
         }
     }
 
     private void showExercises() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedExercices.size());
+            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedExercices.size());
         }
 
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableExercises);
+        ScrollView sv = findViewById(R.id.svTableExercises);
         try {
             sv.removeAllViews();
         } catch (NullPointerException e) {
@@ -166,7 +168,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+        TableRow trowButtons = findViewById(R.id.trowButtons);
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
@@ -177,7 +179,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            Exercise exercise=page.get(num);
+            Exercise exercise = page.get(num);
             TableRow mRow = new TableRow(this);
             mRow.setId(numberOfViews + exercise.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +265,7 @@ public class ActivityExercisesList extends ActivityAbstract {
                 }).setNegativeButton("No", null).show();
     }
 
-       public void btNextPage_onClick(View view) {
+    public void btNextPage_onClick(View view) {
         blink(view, this);
 
         if (currentPage != pagedExercices.size()) {

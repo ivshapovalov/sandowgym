@@ -22,13 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 import ru.ivan.sandowgym.R;
-
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+
+import static ru.ivan.sandowgym.common.Common.HideEditorButton;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
@@ -56,7 +58,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("bWeightChangeCalendarListDBEditor", "id", getPackageName());
-            Button btEditor = (Button) findViewById(mEditorID);
+            Button btEditor = findViewById(mEditorID);
             HideEditorButton(btEditor);
         }
 
@@ -66,10 +68,10 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         idIntentWeightChangeCalendar = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         updateweightChangeCalendarList();
 
-        TableRow mRow = (TableRow) findViewById(numberOfViews + idIntentWeightChangeCalendar);
+        TableRow mRow = findViewById(numberOfViews + idIntentWeightChangeCalendar);
         if (mRow != null) {
             int mScrID = getResources().getIdentifier("svTableWeightChangeCalendarList", "id", getPackageName());
-            ScrollView mScrollView = (ScrollView) findViewById(mScrID);
+            ScrollView mScrollView = findViewById(mScrID);
             if (mScrollView != null) {
 
                 mScrollView.requestChildFocus(mRow, mRow);
@@ -102,7 +104,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
     }
 
     private void pageWeightChangeCalendarList() {
-        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<WeightChangeCalendar>();
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
@@ -134,11 +136,11 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
     private void showWeightChangeCalendarList() {
 
-        Button pageNumber = (Button) findViewById(R.id.btPageNumber);
+        Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
             pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedWeightChangeCalendar.size());
         }
-        ScrollView sv = (ScrollView) findViewById(R.id.svTableWeightChangeCalendarList);
+        ScrollView sv = findViewById(R.id.svTableWeightChangeCalendarList);
         try {
             sv.removeAllViews();
 
@@ -152,7 +154,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trowButtons = (TableRow) findViewById(R.id.trowButtons);
+        TableRow trowButtons = findViewById(R.id.trowButtons);
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
@@ -178,15 +180,6 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
             mRow.setBackgroundResource(R.drawable.bt_border);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(weightChangeCalendar.getId()));
-            txt.setBackgroundResource(R.drawable.bt_border);
-            txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
-            txt.setTextSize(mTextSize);
-            txt.setTextColor(getResources().getColor(R.color.text_color));
-            mRow.addView(txt);
-
-            txt = new TextView(this);
             txt.setText(String.valueOf(weightChangeCalendar.getDayString()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);

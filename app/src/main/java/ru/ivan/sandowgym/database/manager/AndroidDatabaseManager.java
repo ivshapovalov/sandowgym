@@ -1,8 +1,6 @@
 package ru.ivan.sandowgym.database.manager;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,13 +22,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class AndroidDatabaseManager extends Activity implements OnItemClickListener {
 
@@ -263,7 +264,7 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 		String msg = Message.getString(0);
 		Log.d("Message from sql = ",msg);
 
-		ArrayList<String> tablenames = new ArrayList<String>();
+		ArrayList<String> tablenames = new ArrayList<>();
 		
 		if(c!=null)
 		{
@@ -347,13 +348,13 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 
 	            	 //removes any data if present in the table layout
                        tableLayout.removeAllViews();
-	            	ArrayList<String> spinnertablevalues = new ArrayList<String>();
-	            	spinnertablevalues.add("Click here to change this table");
+						ArrayList<String> spinnertablevalues = new ArrayList<>();
+						spinnertablevalues.add("Click here to change this table");
 	                spinnertablevalues.add("Add row to this table");
 	                spinnertablevalues.add("Delete this table");
 	                spinnertablevalues.add("Drop this table");
-	                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnertablevalues);
-	                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+						ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnertablevalues);
+						spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
 
 			// a array adapter which add values to the spinner which helps in user making changes to the table
 	                ArrayAdapter<String> adapter = new ArrayAdapter<String>(AndroidDatabaseManager.this,
@@ -508,9 +509,9 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 	                    	{
 	                    		//we create a layout which has textviews with column names of the table and edittexts where
 	                    		//user can enter value which will be inserted into the datbase.
-	                    		final LinkedList<TextView> addnewrownames = new LinkedList<TextView>();
-	                        	  final LinkedList<EditText> addnewrowvalues = new LinkedList<EditText>();
-	                        	  final ScrollView addrowsv =new ScrollView(AndroidDatabaseManager.this);
+								final LinkedList<TextView> addnewrownames = new LinkedList<>();
+								final LinkedList<EditText> addnewrowvalues = new LinkedList<>();
+								final ScrollView addrowsv =new ScrollView(AndroidDatabaseManager.this);
 	                        	  Cursor c4 = indexInfo.maincursor;
 	                        	  if(indexInfo.isEmpty)
 	                        	  {
@@ -742,9 +743,9 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
     	if(c5!=null)
     	{
     	indexInfo.isEmpty=true;
-    	
-    	ArrayList<String> emptytablecolumnnames= new ArrayList<String>();
-    	c5.moveToFirst();
+
+			ArrayList<String> emptytablecolumnnames = new ArrayList<>();
+			c5.moveToFirst();
     	do
     	{
     		emptytablecolumnnames.add(c5.getString(1));
@@ -760,18 +761,18 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 	{
 		Cursor c2=indexInfo.maincursor;
 	// a spinner which gives options to update or delete the row which user has selected
-  	  ArrayList<String> spinnerArray = new ArrayList<String>();
-  	    spinnerArray.add("Click Here to Change this row");
+		ArrayList<String> spinnerArray = new ArrayList<>();
+		spinnerArray.add("Click Here to Change this row");
   	    spinnerArray.add("Update this row");
   	    spinnerArray.add("Delete this row");
 
 	//create a layout with text values which has the column names and 
 	//edit texts which has the values of the row which user has selected
       	final ArrayList<String> value_string = indexInfo.value_string;
-  	  final LinkedList<TextView> columnames = new LinkedList<TextView>();
-  	  final LinkedList<EditText> columvalues = new LinkedList<EditText>();
-  	  
-  	  for(int i=0;i<c2.getColumnCount();i++)
+		final LinkedList<TextView> columnames = new LinkedList<>();
+		final LinkedList<EditText> columvalues = new LinkedList<>();
+
+		for(int i=0;i<c2.getColumnCount();i++)
   	  {
   	  String cname = c2.getColumnName(i);
   	  TextView tv = new TextView(getApplicationContext());
@@ -1158,9 +1159,9 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
              //from where user can update or delete the row 
              tableRow.setOnClickListener(new OnClickListener(){
                  public void onClick(View v) {
-               	  
-               	  final ArrayList<String> value_string = new ArrayList<String>();
-               	  for(int i=0;i<c3.getColumnCount();i++)
+
+					 final ArrayList<String> value_string = new ArrayList<>();
+					 for(int i=0;i<c3.getColumnCount();i++)
                	  {
                		LinearLayout llcolumn = (LinearLayout) tableRow.getChildAt(i);
                	  TextView tc =(TextView)llcolumn.getChildAt(0);

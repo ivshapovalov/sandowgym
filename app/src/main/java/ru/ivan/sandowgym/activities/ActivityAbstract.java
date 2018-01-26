@@ -33,8 +33,7 @@ public abstract class ActivityAbstract extends AppCompatActivity {
                 currentUser.dbSave(DB);
             } else {
                 //ищем активного
-                for (User user : userList
-                        ) {
+                for (User user : userList) {
                     if (user.isCurrentUser() == 1) {
                         dbCurrentUser = user;
                         break;

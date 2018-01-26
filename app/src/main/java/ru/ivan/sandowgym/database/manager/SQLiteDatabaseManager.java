@@ -958,7 +958,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized List<TrainingContent> getLastExerciseNotNullVolumeAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
 
-        mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
+        mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
@@ -1000,7 +1000,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized List<WeightChangeCalendar> getWeightOfUserFromWeightCalendar(int user_id, long mDateTo) {
 
-        mDateTo = "".equals(0) ? Long.MAX_VALUE : mDateTo;
+        mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
                 + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_ID + " AS " + KEY_WEIGHT_CHANGE_CALENDAR_ID + ","

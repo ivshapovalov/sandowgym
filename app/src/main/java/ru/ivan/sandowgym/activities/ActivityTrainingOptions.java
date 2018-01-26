@@ -9,7 +9,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ru.ivan.sandowgym.R;
-import static ru.ivan.sandowgym.common.Common.*;
+
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 
 public class ActivityTrainingOptions extends ActivityAbstract {
@@ -35,7 +37,7 @@ public class ActivityTrainingOptions extends ActivityAbstract {
     public void buttonSave_onClick(View view) {
 
         int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
-        EditText txt = (EditText) findViewById(mPlusMinusButtonID);
+        EditText txt = findViewById(mPlusMinusButtonID);
         if (txt != null) {
             try {
                 mPlusMinusButtonValue = Integer.valueOf(txt.getText().toString());
@@ -43,7 +45,7 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
             }
         }
-        blink(view,this);
+        blink(view, this);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, mUseCalendarForWeight);
@@ -59,7 +61,7 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
     public void buttonCancel_onClick(final View view) {
 
-        blink(view,this);
+        blink(view, this);
         this.finish();
 
     }
@@ -73,51 +75,31 @@ public class ActivityTrainingOptions extends ActivityAbstract {
             mPlusMinusButtonValue = 10;
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT)) {
-            mUseCalendarForWeight = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
-        } else {
-            mUseCalendarForWeight = false;
-        }
+        mUseCalendarForWeight = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
-            mShowExplanation = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
-        } else {
-            mShowExplanation = false;
-        }
+        mShowExplanation = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE)) {
-            mShowPicture = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
-        } else {
-            mShowPicture = false;
-        }
+        mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON)) {
-            mShowVolumeDefaultButton = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
-        } else {
-            mShowVolumeDefaultButton = false;
-        }
+        mShowVolumeDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON)) {
-            mShowVolumeLastDayButton = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
-        } else {
-            mShowVolumeLastDayButton = false;
-        }
+        mShowVolumeLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {
 
         int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
-        EditText txt = (EditText) findViewById(mPlusMinusButtonID);
+        EditText txt = findViewById(mPlusMinusButtonID);
         if (txt != null) {
             txt.setText(String.valueOf(mPlusMinusButtonValue));
         }
 
         int mUseCalendarID = getResources().getIdentifier("rbUseCalendarForWeight" + (mUseCalendarForWeight ? "Yes" : "No"), "id", getPackageName());
-        RadioButton but = (RadioButton) findViewById(mUseCalendarID);
+        RadioButton but = findViewById(mUseCalendarID);
         if (but != null) {
             but.setChecked(true);
         }
-        RadioGroup radiogroup = (RadioGroup) findViewById(R.id.rgUseCalendarForWeight);
+        RadioGroup radiogroup = findViewById(R.id.rgUseCalendarForWeight);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -142,11 +124,11 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         }
 
         int mPictureID = getResources().getIdentifier("rbShowPicture" + (mShowPicture ? "Yes" : "No"), "id", getPackageName());
-        but = (RadioButton) findViewById(mPictureID);
+        but = findViewById(mPictureID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = (RadioGroup) findViewById(R.id.rgShowPicture);
+        radiogroup = findViewById(R.id.rgShowPicture);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -171,11 +153,11 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         }
 
         int mExpID = getResources().getIdentifier("rbShowExplanation" + (mShowExplanation ? "Yes" : "No"), "id", getPackageName());
-        but = (RadioButton) findViewById(mExpID);
+        but = findViewById(mExpID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = (RadioGroup) findViewById(R.id.rgShowExplanation);
+        radiogroup = findViewById(R.id.rgShowExplanation);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -201,11 +183,11 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
 
         int mVolumeDefaultID = getResources().getIdentifier("rbShowVolumeDefaultButton" + (mShowVolumeDefaultButton ? "Yes" : "No"), "id", getPackageName());
-        but = (RadioButton) findViewById(mVolumeDefaultID);
+        but = findViewById(mVolumeDefaultID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = (RadioGroup) findViewById(R.id.rgShowVolumeDefaultButton);
+        radiogroup = findViewById(R.id.rgShowVolumeDefaultButton);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -230,11 +212,11 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         }
 
         int mVolumeLastDayID = getResources().getIdentifier("rbShowVolumeLastDayButton" + (mShowVolumeLastDayButton ? "Yes" : "No"), "id", getPackageName());
-        but = (RadioButton) findViewById(mVolumeLastDayID);
+        but = findViewById(mVolumeLastDayID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = (RadioGroup) findViewById(R.id.rgShowVolumeLastDayButton);
+        radiogroup = findViewById(R.id.rgShowVolumeLastDayButton);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
