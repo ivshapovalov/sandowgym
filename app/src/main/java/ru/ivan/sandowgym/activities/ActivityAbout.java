@@ -15,25 +15,21 @@ public class ActivityAbout extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
         setTitleOfActivity(this);
 
         int tvMessageId = getResources().getIdentifier("tvMessage", "id", getPackageName());
-        TextView tvMessage= (TextView) findViewById(tvMessageId);
+        TextView tvMessage = findViewById(tvMessageId);
         if (tvMessage != null) {
-            PackageInfo pInfo = null;
+            PackageInfo pInfo;
             try {
                 pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                 String version = pInfo.versionName;
-//                int versionCode = BuildConfig.VERSION_CODE;
-//                String versionName = BuildConfig.VERSION_NAME;
-                StringBuilder message=new StringBuilder("This program will help you to train Sandows gymnastics");
-                message.append("\n").append("Version ").append(version).append("\n")
-                        .append("2016.12.14");
-                tvMessage.setText(message.toString());
+                String message = "This program will help you to train Sandows gymnastics" + "\n" + "Version " + version + "\n" +
+                        "2018.01.24";
+                tvMessage.setText(message);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }

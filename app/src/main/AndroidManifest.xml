@@ -14,9 +14,9 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="37"
-        android:versionName="3.7">
-        <activity android:name="ru.ivan.sandowgym.activities.ActivityMain">
+        android:versionCode="40"
+        android:versionName="4.0">
+        <activity android:name=".activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,70 +24,70 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityExercisesList"
+            android:name=".activities.ActivityExercisesList"
             android:label="@string/exercises_list_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityAbout"
+            android:name=".activities.ActivityAbout"
             android:label="@string/about_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityTools"
+            android:name=".activities.ActivityTools"
             android:label="@string/tools"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityExercise"
+            android:name=".activities.ActivityExercise"
             android:label="@string/exercise_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityTrainingsList"
+            android:name=".activities.ActivityTrainingsList"
             android:label="@string/trainings_list_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityTraining"
+            android:name=".activities.ActivityTraining"
             android:label="@string/training_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityOptions"
+            android:name=".activities.ActivityOptions"
             android:label="@string/options"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityTrainingOptions"
+            android:name=".activities.ActivityTrainingOptions"
             android:label="@string/training_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityCalendarView"
+            android:name=".activities.ActivityCalendarView"
             android:label="@string/calendar_view_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.database.manager.AndroidDatabaseManager"
+            android:name=".database.manager.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityExerciseChoice"
+            android:name=".activities.ActivityExerciseChoice"
             android:label="@string/exercise_choice"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityFilesList"
+            android:name=".activities.ActivityFilesList"
             android:label="@string/file_choice"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityFileExportImport"
+            android:name=".activities.ActivityFileExportImport"
             android:label="@string/export_import_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityUsersList"
+            android:name=".activities.ActivityUsersList"
             android:label="@string/users_list_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityUser"
+            android:name=".activities.ActivityUser"
             android:label="@string/user_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityWeightChangeCalendarList"
+            android:name=".activities.ActivityWeightChangeCalendarList"
             android:label="@string/weight_calendar_change_list_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="ru.ivan.sandowgym.activities.ActivityWeightChangeCalendar"
+            android:name=".activities.ActivityWeightChangeCalendar"
             android:label="@string/weight_calendar_name"
             android:screenOrientation="portrait"/>
     </application>
