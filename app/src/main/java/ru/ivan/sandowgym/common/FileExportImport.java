@@ -2,19 +2,15 @@ package ru.ivan.sandowgym.common;
 
 import android.content.Context;
 import android.os.Environment;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,7 +86,6 @@ public class FileExportImport {
         dataSheets.put(TypeOfView.SHORT, createDataArray(TypeOfView.SHORT));
         dataSheets.put(TypeOfView.FULL, createDataArray(TypeOfView.FULL));
         dataSheets.put(TypeOfView.SHORT_WITH_WEIGHTS, createDataArray(TypeOfView.SHORT_WITH_WEIGHTS));
-
         dataSheets.put(TypeOfView.WEIGHT_CALENDAR, createWeightChangeCalendarArray());
 
         return writeToFile(file, dataSheets);
@@ -100,7 +95,7 @@ public class FileExportImport {
 
         messageTrainingList = new StringBuilder();
         int countTrainings = 1;
-        List<String[]> data = new ArrayList<String[]>();
+        List<String[]> data = new ArrayList<>();
         StringBuilder mNewString = new StringBuilder();
         switch (type) {
             case FULL:
@@ -111,11 +106,13 @@ public class FileExportImport {
                 break;
         }
 
-        for (Training mCurrentTraining : trainingsList
-                ) {
+        for (Training mCurrentTraining : trainingsList) {
             switch (type) {
                 case FULL:
-                    mNewString.append(mCurrentTraining.getDayString()).append("(" + SYMBOL_ID).append(mCurrentTraining.getId())
+                    mNewString
+                            .append(mCurrentTraining.getDayString())
+                            .append("(" + SYMBOL_ID)
+                            .append(mCurrentTraining.getId())
                             .append(")").append(SYMBOL_SPLIT);
                     break;
                 default:
@@ -127,25 +124,32 @@ public class FileExportImport {
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
 
-        for (Exercise mCurrentExercise : exercisesList
-                ) {
+        for (Exercise mCurrentExercise : exercisesList) {
             mNewString = new StringBuilder();
-
             switch (type) {
                 case FULL:
-                    mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_ID).
-                            append(String.valueOf(mCurrentExercise.getId())).append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
-                            .append(")").append(SYMBOL_SPLIT);
+                    mNewString
+                            .append(mCurrentExercise.getName())
+                            .append("(").append(SYMBOL_ID)
+                            .append(String.valueOf(mCurrentExercise.getId()))
+                            .append(SYMBOL_DEF_VOLUME)
+                            .append(mCurrentExercise.getVolumeDefault())
+                            .append(")")
+                            .append(SYMBOL_SPLIT);
                     break;
                 default:
-                    mNewString.append(mCurrentExercise.getName()).append("(").append(SYMBOL_DEF_VOLUME).append(mCurrentExercise.getVolumeDefault())
-                            .append(")").append(SYMBOL_SPLIT);
+                    mNewString
+                            .append(mCurrentExercise.getName())
+                            .append("(")
+                            .append(SYMBOL_DEF_VOLUME)
+                            .append(mCurrentExercise.getVolumeDefault())
+                            .append(")")
+                            .append(SYMBOL_SPLIT);
                     break;
 
             }
 
-            for (Training mCurrentTraining : trainingsList
-                    ) {
+            for (Training mCurrentTraining : trainingsList) {
                 try {
                     TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getId(), mCurrentTraining.getId());
                     String curVolume = mCurrentTrainingContent.getVolume();
@@ -157,7 +161,7 @@ public class FileExportImport {
                     switch (type) {
                         case FULL:
                             int curWeight = mCurrentTrainingContent.getWeight();
-                            mNewString.append("(").append(SYMBOL_WEIGHT).append(mCurrentTrainingContent.getWeight()).append(")");
+                            mNewString.append("(").append(SYMBOL_WEIGHT).append(curWeight).append(")");
                             break;
                         case SHORT_WITH_WEIGHTS:
                             mNewString.append("(").append(mCurrentTrainingContent.getWeight()).append(")");
@@ -185,7 +189,7 @@ public class FileExportImport {
 
     private List<String[]> createWeightChangeCalendarArray() {
 
-        List<String[]> data = new ArrayList<String[]>();
+        List<String[]> data = new ArrayList<>();
         StringBuilder mNewString = new StringBuilder();
 
         mNewString
@@ -211,14 +215,13 @@ public class FileExportImport {
 
     private File writeToFile(File file, Map<TypeOfView, List<String[]>> dataSheets) throws IOException {
 
-        Workbook book = new HSSFWorkbook();
+        Workbook book = new XSSFWorkbook();
         for (Map.Entry<TypeOfView, List<String[]>> dataSheet : dataSheets.entrySet()) {
             addSheetWithData(dataSheet.getValue(), book, dataSheet.getKey().getName());
         }
-        Sheet sheet2 = book.createSheet("legend");
-        FillLegendSheet(sheet2);
+        Sheet sheetLegend = book.createSheet("legend");
+        FillLegendSheet(sheetLegend);
         book.write(new FileOutputStream(file));
-        book.close();
 
         return file;
 
@@ -276,8 +279,6 @@ public class FileExportImport {
         Cell cName;
         Font font = book.getFontAt((short) 0);
         CellStyle boldStyle = book.createCellStyle();
-        boldStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-        boldStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         boldStyle.setFont(font);
 
         cName = row.createCell(0);
@@ -290,9 +291,6 @@ public class FileExportImport {
         usualStyle.setFont(font);
         CellStyle dateStyle = book.createCellStyle();
 
-        dateStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-        dateStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        DataFormat format = book.createDataFormat();
         dateStyle.setFont(font);
 
         for (int j = 1; j < data.get(0).length; j++) {
@@ -323,7 +321,6 @@ public class FileExportImport {
                     cName.setCellStyle(usualStyle);
                 }
             }
-
         }
         book.getSheetAt(0).setPrintGridlines(true);
     }
@@ -357,10 +354,10 @@ public class FileExportImport {
         for (int i = 1; i < data.get(0).length; i++) {
             String s = data.get(0)[i];
             String day;
-            if (s.indexOf("(") != -1) {
+            if (s.contains("(")) {
                 day = s.substring(0, s.indexOf("("));
             } else {
-                day = s.substring(0);
+                day = s;
             }
 
             String id;
@@ -394,7 +391,6 @@ public class FileExportImport {
                         .build();
             }
             trainingsList.add(training);
-
         }
 
         int exercisesCount = 1;
@@ -436,8 +432,7 @@ public class FileExportImport {
 
         messageTrainingList = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
-        for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++
-                ) {
+        for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++) {
             Training curTraining = trainingsList.get(curTrainingIndex);
             messageTrainingList.append(curTraining.getDayString()).append('\n');
             if (DB.containsTraining(curTraining.getId())) {
@@ -446,8 +441,7 @@ public class FileExportImport {
                 DB.addTraining(curTraining);
             }
 
-            for (int curExerciseIndex = 0; curExerciseIndex < exercisesList.size(); curExerciseIndex++
-                    ) {
+            for (int curExerciseIndex = 0; curExerciseIndex < exercisesList.size(); curExerciseIndex++) {
                 Exercise curExercise = exercisesList.get(curExerciseIndex);
                 Exercise dbExercise;
                 if (DB.containsExercise(curExercise.getId())) {
@@ -478,9 +472,7 @@ public class FileExportImport {
                 String weight;
                 int indexSymbolWeight = cellValue.indexOf(SYMBOL_WEIGHT);
                 if (indexSymbolWeight != -1) {
-
                     weight = textBeforeNextSpecialSymbol(cellValue, indexSymbolWeight);
-
                 } else {
                     //check common weight of training
                     weight = trainingWeights.get(curTrainingIndex);
@@ -490,10 +482,13 @@ public class FileExportImport {
                 try {
                     iWeight = Integer.parseInt(weight);
                 } catch (NumberFormatException e) {
+                    //if weight is incorrect - maybe training not contain this exercise
+                    if (volume==null || volume.isEmpty() || volume.equals("0")) {
+                        continue;
+                    }
                     iWeight = 0;
                 }
                 trainingContent.setWeight(iWeight);
-
                 trainingContent.setVolume(volume);
 
                 TrainingContent dbTrainingContent;
@@ -508,16 +503,15 @@ public class FileExportImport {
             }
         }
 
-        messageTrainingList.insert(0, "From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xls" + '\n'
-                + " successfully loaded trainings:" + "\n");
+        messageTrainingList
+                .insert(0, "From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xlsx" + '\n'
+                        + " successfully loaded trainings:" + "\n");
         return messageTrainingList.toString();
-
     }
 
-    private List<WeightChangeCalendar> ReadWeightsFromSheet(HSSFSheet excelWeightsSheet) {
+    private List<WeightChangeCalendar> ReadWeightsFromSheet(Sheet excelWeightsSheet) {
 
-        List<String[]> data = new ArrayList<>();
-        HSSFRow currentRow = excelWeightsSheet.getRow(1);
+        Row currentRow;
 
         int mRow = 1;
         int mRowCount = 0;
@@ -535,7 +529,6 @@ public class FileExportImport {
                 mRowCount = mRow;
                 break;
             }
-
         }
         int columnID = 0;
         int columnDate = 1;
@@ -552,22 +545,19 @@ public class FileExportImport {
                         .addWeight(weight).build());
             } catch (Exception e) {
             }
-
         }
-
         return weightChangeCalendarList;
     }
 
-    private List<String[]> ReadDataFromSheet(HSSFSheet myExcelSheet) {
+    private List<String[]> ReadDataFromSheet(Sheet myExcelSheet) {
 
         List<String[]> data = new ArrayList<>();
-        HSSFRow currentRow = myExcelSheet.getRow(0);
+        Row currentRow = myExcelSheet.getRow(0);
 
         int mColumn = 0;
         int mColumnCount = 0;
 
         while (true) {
-
             try {
                 String name = currentRow.getCell(mColumn).getStringCellValue();
                 if ("".equals(name)) {
@@ -579,7 +569,6 @@ public class FileExportImport {
                 mColumnCount = mColumn;
                 break;
             }
-
         }
         int mRow = 0;
         int mRowCount = 0;
@@ -593,13 +582,11 @@ public class FileExportImport {
                     mRowCount = mRow;
                     break;
                 }
-
                 mRow++;
             } catch (Exception e) {
                 mRowCount = mRow;
                 break;
             }
-
         }
         StringBuilder mNewString = new StringBuilder();
         for (mRow = 0; mRow < mRowCount; mRow++) {
@@ -611,12 +598,12 @@ public class FileExportImport {
             }
             for (mColumn = 0; mColumn < mColumnCount; mColumn++) {
                 try {
-                    if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+                    if (currentRow.getCell(mColumn).getCellTypeEnum() == CellType.BLANK) {
                         mNewString.append("").append(SYMBOL_SPLIT);
-                    } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                    } else if (currentRow.getCell(mColumn).getCellTypeEnum() == CellType.NUMERIC) {
                         int num = (int) currentRow.getCell(mColumn).getNumericCellValue();
                         mNewString.append(num).append(SYMBOL_SPLIT);
-                    } else if (currentRow.getCell(mColumn).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+                    } else if (currentRow.getCell(mColumn).getCellTypeEnum() == CellType.STRING) {
                         String name = currentRow.getCell(mColumn).getStringCellValue();
                         mNewString.append(name).append(SYMBOL_SPLIT);
                     }
@@ -634,8 +621,8 @@ public class FileExportImport {
         List<String[]> data;
         StringBuilder errorMessage = new StringBuilder();
         try {
-            HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
-            HSSFSheet myExcelSheet = myExcelBook.getSheet("trainings_full");
+            XSSFWorkbook myExcelBook = new XSSFWorkbook(new FileInputStream(file));
+            Sheet myExcelSheet = myExcelBook.getSheet("trainings_full");
 
             if (myExcelSheet == null) {
 
@@ -643,8 +630,12 @@ public class FileExportImport {
                         .append("Try to load data from sheet \"trainings\"").append("\n");
                 myExcelSheet = myExcelBook.getSheet("trainings");
                 if (myExcelSheet == null) {
-                    errorMessage.append("Missed sheet - \"trainings\"").append("\n")
-                            .append("Trainings didn't load from " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls")
+                    errorMessage.append("Missed sheet - \"trainings\"")
+                            .append("\n")
+                            .append("Trainings didn't load from ")
+                            .append(Environment.getExternalStorageDirectory()
+                                    .toString())
+                            .append("/trainings.xlsx")
                             .append("\n");
                 }
             }
@@ -652,23 +643,27 @@ public class FileExportImport {
             errorMessage.append(writeDataToDB(data));
 
             List<WeightChangeCalendar> weights = new ArrayList<>();
-            HSSFSheet myExcelSheetWeights = myExcelBook.getSheet("weight_calendar");
+            Sheet myExcelSheetWeights = myExcelBook.getSheet("weight_calendar");
             if (myExcelSheetWeights != null) {
                 weights = ReadWeightsFromSheet(myExcelSheetWeights);
                 for (WeightChangeCalendar weight : weights) {
                     weight.dbSave(DB);
                 }
             } else {
-                errorMessage.append("Missed sheet - \"trainings\"").append("\n")
-                        .append("Trainings didn't load from " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls")
+                errorMessage
+                        .append("Missed sheet - \"trainings\"")
+                        .append("\n").append("Trainings didn't load from ")
+                        .append(Environment.getExternalStorageDirectory().toString())
+                        .append("/trainings.xlsx")
                         .append("\n");
-
             }
             myExcelBook.close();
         } catch (Exception e) {
-            errorMessage.append("Trainings didn't load from " + Environment.getExternalStorageDirectory().toString() + "/trainings.xls");
+            errorMessage
+                    .append("Trainings didn't load from ")
+                    .append(Environment.getExternalStorageDirectory().toString())
+                    .append("/trainings.xlsx");
         }
         return errorMessage.toString();
     }
-
 }

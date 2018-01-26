@@ -36,7 +36,7 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             ftpClient.connect(mFtpHost);
             ftpClient.login(mFtpLogin, mFtpPassword);
             ftpClient.setType(FTPClient.TYPE_BINARY);
-            FTPFile[] files = ftpClient.list("*.xls");
+            FTPFile[] files = ftpClient.list();
             ArrayList<String> fileNames = new ArrayList<>();
             for (FTPFile file : files
                     ) {

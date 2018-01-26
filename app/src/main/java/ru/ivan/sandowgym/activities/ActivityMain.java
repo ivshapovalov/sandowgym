@@ -24,16 +24,18 @@ import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.common.Common;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.Tasks.BackgroundTaskExecutor;
+import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.DropboxUploadTask;
 import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.ExportToFileTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.processingInProgress;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityMain extends ActivityAbstract {
 
@@ -44,7 +46,7 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_BACKUP_FTP_HOST = "backup_ftp_host";
     public static final String APP_PREFERENCES_BACKUP_FTP_LOGIN = "backup_ftp_login";
     public static final String APP_PREFERENCES_BACKUP_FTP_PASSWORD = "backup_ftp_password";
-    public static final String APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN= "backup_dropbox_access_token";
+    public static final String APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN = "backup_dropbox_access_token";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
@@ -61,6 +63,7 @@ public class ActivityMain extends ActivityAbstract {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         getPreferencesFromFile();
         showElementsOnScreen();
         setTitleOfActivity(this);
@@ -86,7 +89,7 @@ public class ActivityMain extends ActivityAbstract {
         int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         for (int i = 0; i <= maxVerticalButtonCount; i++) {
             int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
-            Button btName = (Button) findViewById(btID);
+            Button btName = findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
             }
@@ -94,7 +97,7 @@ public class ActivityMain extends ActivityAbstract {
 
         Date lastDateOfWeightUpdate = getLastDateOfWeightChange();
         int tvMessageID = getResources().getIdentifier("tvMessage", "id", getPackageName());
-        TextView tvMessage = (TextView) findViewById(tvMessageID);
+        TextView tvMessage = findViewById(tvMessageID);
         if (tvMessage != null) {
             tvMessage.setText(" ");
         }
@@ -157,7 +160,7 @@ public class ActivityMain extends ActivityAbstract {
 
     private boolean isDBNotEmpty() {
 
-        List<Exercise> list = new ArrayList<Exercise>();
+        List<Exercise> list = new ArrayList<>();
         if (dbCurrentUser == null) {
         } else {
             list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
@@ -194,12 +197,12 @@ public class ActivityMain extends ActivityAbstract {
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
             Date date = new Date();
-            String fileName = "sandow-gym-" + dateFormat.format(date)+".xls";
+            String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
             File outputFile = new File(outputDir, fileName);
             //for tests
 //            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
 //            File outputFile = new File(exportDir, "trainings.xls");
-            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(),outputFile,0,0);
+            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, 0, 0);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
@@ -217,5 +220,4 @@ public class ActivityMain extends ActivityAbstract {
             processingInProgress = false;
         }
     }
-
 }

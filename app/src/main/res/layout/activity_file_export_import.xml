@@ -221,7 +221,23 @@
                             android:layout_span="40"
                             android:background="@drawable/rounded_corners2"
                             android:onClick="btBackupBD_onClick"
-                            android:text="COPY DB FILE TO SD CARD"
+                            android:text="BACKUP DB FILE TO PHONE"
+                            android:textColor="@color/text_color"/>
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <Button
+                            android:id="@+id/btMain12"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_span="40"
+                            android:background="@drawable/rounded_corners2"
+                            android:onClick="btRestoreBD_onClick"
+                            android:text="RESTORE DB FILE FROM PHONE"
                             android:textColor="@color/text_color"/>
                     </TableRow>
 
@@ -231,7 +247,7 @@
                         android:layout_marginTop="10dp">
 
                         <TextView
-                            android:id="@+id/tvPathToFiles"
+                            android:id="@+id/tvMessages"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_span="40"
