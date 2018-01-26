@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,16 +29,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-import static ru.ivan.sandowgym.common.Common.*;
-
-import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
-import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
+import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
+import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
+
+import static ru.ivan.sandowgym.common.Common.ConvertDateToString;
+import static ru.ivan.sandowgym.common.Common.ConvertMillisToDate;
+import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.convertStringToDate;
+import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityTraining extends ActivityAbstract {
 
@@ -76,7 +83,7 @@ public class ActivityTraining extends ActivityAbstract {
 
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         mHeight = displaymetrics.heightPixels / 2;
-        mWidth = displaymetrics.widthPixels / 1;
+        mWidth = displaymetrics.widthPixels;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         Intent intent = getIntent();
@@ -94,13 +101,9 @@ public class ActivityTraining extends ActivityAbstract {
         defineCurrentTraining(id, currentDateInMillis);
         showTrainingOnScreen();
 
-        //Почему то на Philips W732 не работает прокрутка вниз. на всех остальных устройствах работает.
-        //убираю пока скрол вправо, влево. перемещение кнопками внизу
-
-//        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
-//        ScrollView sv = (ScrollView) this.findViewById(R.id.svMain);
-//        sv.setOnTouchListener(swipeDetectorActivity);
-
+        SwipeDetectorActivity swipeDetectorActivity = new SwipeDetectorActivity(ActivityTraining.this);
+        ScrollView sv = this.findViewById(R.id.svMain);
+        sv.setOnTouchListener(swipeDetectorActivity);
 
         if (mTrainingIsNew) {
             getAllActiveExercises();
@@ -136,7 +139,7 @@ public class ActivityTraining extends ActivityAbstract {
     private void updateDayOnScreen(long currentDateInMillis) {
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView etDay = (TextView) findViewById(mDayID);
+        TextView etDay = findViewById(mDayID);
         if (etDay != null) {
             etDay.setText(ConvertDateToString(ConvertMillisToDate(currentDateInMillis)));
         }
@@ -183,7 +186,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
 
             int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
-            TextView etWeight = (TextView) findViewById(mWeight);
+            TextView etWeight = findViewById(mWeight);
             if (etWeight != null) {
 
                 if (mCurrentTrainingContent != null) {
@@ -228,7 +231,7 @@ public class ActivityTraining extends ActivityAbstract {
         if (mCurrentExercise != null) {
             if (!"".equals(mCurrentExercise.getVolumeDefault())) {
                 int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-                TextView etVolume = (TextView) findViewById(mVolumeID);
+                TextView etVolume = findViewById(mVolumeID);
                 if (etVolume != null) {
                     etVolume.setText(mCurrentExercise.getVolumeDefault());
                 }
@@ -239,7 +242,7 @@ public class ActivityTraining extends ActivityAbstract {
     public void btVolumeLastDay_onClick(final View view) {
         blink(view, this);
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-        TextView etVolume = (TextView) findViewById(mVolumeID);
+        TextView etVolume = findViewById(mVolumeID);
         if (etVolume != null) {
             if ("".equals(mExerciseVolumeLastDay)) {
                 etVolume.setText("0");
@@ -272,7 +275,7 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     private void showExercise() {
-        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        ImageView ivPicture = findViewById(R.id.ivPicture);
         if (ivPicture != null) {
             if (mCurrentExercise.getPicture() != null && !"".equals(mCurrentExercise.getPicture())) {
                 ivPicture.setImageResource(getResources().getIdentifier(mCurrentExercise.getPicture(), "drawable", getPackageName()));
@@ -281,7 +284,7 @@ public class ActivityTraining extends ActivityAbstract {
                 ivPicture.setBackgroundColor(Color.WHITE);
             }
         }
-        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+        TextView tvExplanation = findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
 
             tvExplanation.setText(mCurrentExercise.getExplanation());
@@ -321,12 +324,10 @@ public class ActivityTraining extends ActivityAbstract {
         mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
         mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getId());
 
-        for (TrainingContent tr : mTrainingContentList
-                ) {
+        for (TrainingContent tr : mTrainingContentList) {
             boolean isFound = false;
             int idExercise = tr.getExerciseId();
-            for (Exercise ex : mActiveExercises
-                    ) {
+            for (Exercise ex : mActiveExercises) {
                 if (ex.getId() == idExercise) {
                     isFound = true;
                     break;
@@ -356,19 +357,16 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentExerciseNumberInList = 0;
             mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
 
-
             if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getExerciseId() == mCurrentExercise.getId()) {
                 mCurrentTrainingContent = mTrainingContentList.get(0);
             } else {
                 createNewTrainingContent();
             }
             showTrainingContentOnScreen();
-
         }
     }
 
     private void getAllActiveExercises() {
-
         //при инициализации тренировки создадим сразу контент
         if (dbCurrentUser != null) {
             mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
@@ -421,11 +419,11 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        int weight=0;
+        int weight = 0;
         if (mUseCalendarForWeight) {
-            weight=mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar;
+            weight = mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar;
         } else {
-            weight=mExerciseWeightLastDay;
+            weight = mExerciseWeightLastDay;
 
         }
         mCurrentTrainingContent = new TrainingContent.Builder(DB)
@@ -439,7 +437,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void showTrainingContentOnScreen() {
 
-        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        ImageView ivPicture = findViewById(R.id.ivPicture);
         if (ivPicture != null) {
 
             if (mCurrentExercise.getPicture() != null && !"".equals(mCurrentExercise.getPicture())) {
@@ -449,29 +447,29 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+        TextView tvExplanation = findViewById(R.id.tvExplanation);
         if (tvExplanation != null) {
 
             tvExplanation.setText(mCurrentExercise.getExplanation());
         }
-        TextView tvExerciseName = (TextView) findViewById(R.id.tvExerciseName);
+        TextView tvExerciseName = findViewById(R.id.tvExerciseName);
         if (tvExerciseName != null) {
 
             tvExerciseName.setText("Exercise: " + mCurrentExercise.getName());
         }
 
-        EditText etComment = (EditText) findViewById(R.id.etComment);
+        EditText etComment = findViewById(R.id.etComment);
         if (etComment != null) {
             if (mCurrentTrainingContent != null) {
                 etComment.setText(mCurrentTrainingContent.getComment());
             }
         }
         int mVolumeID = getResources().getIdentifier("etVolume", "id", getPackageName());
-        TextView etVolume = (TextView) findViewById(mVolumeID);
+        TextView etVolume = findViewById(mVolumeID);
         if (etVolume != null) {
             if (mCurrentTrainingContent != null) {
                 String vol = mCurrentTrainingContent.getVolume();
-                if (vol != null && vol != "") {
+                if (vol != null && !Objects.equals(vol, "")) {
                     etVolume.setText(vol);
                 } else {
                     etVolume.setText("");
@@ -479,16 +477,16 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        Button btDefaultVolume = (Button) findViewById(R.id.btVolumeDefault);
+        Button btDefaultVolume = findViewById(R.id.btVolumeDefault);
         if (btDefaultVolume != null) {
 
             String mVolumeDefault = mCurrentExercise.getVolumeDefault();
             btDefaultVolume.setText("DEFAULT VOL: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
         }
 
-        Button btYesterdayVolume = (Button) findViewById(R.id.btVolumeLastDay);
+        Button btYesterdayVolume = findViewById(R.id.btVolumeLastDay);
         if (btYesterdayVolume != null) {
-            List<TrainingContent> mTrainingsContentList = new ArrayList<TrainingContent>();
+            List<TrainingContent> mTrainingsContentList = new ArrayList<>();
 
             if (dbCurrentUser != null) {
                 mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
@@ -506,7 +504,7 @@ public class ActivityTraining extends ActivityAbstract {
         }
 
         int mWeight = getResources().getIdentifier("etWeight", "id", getPackageName());
-        TextView etWeight = (TextView) findViewById(mWeight);
+        TextView etWeight = findViewById(mWeight);
         if (etWeight != null) {
             String etWeightText = "";
             if (mCurrentTrainingContent != null) {
@@ -565,14 +563,14 @@ public class ActivityTraining extends ActivityAbstract {
     private void showTrainingOnScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
 
             tvID.setText(String.valueOf(mCurrentTraining.getId()));
         }
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView etDay = (TextView) findViewById(mDayID);
+        TextView etDay = findViewById(mDayID);
         if (etDay != null) {
             if (mCurrentTraining.getDay() == 0) {
                 etDay.setText("");
@@ -610,13 +608,13 @@ public class ActivityTraining extends ActivityAbstract {
     private void getPropertiesFromScreen() {
 
         int mID = getResources().getIdentifier("tvID", "id", getPackageName());
-        TextView tvID = (TextView) findViewById(mID);
+        TextView tvID = findViewById(mID);
         if (tvID != null) {
             mCurrentTraining.setID(Integer.parseInt(String.valueOf(tvID.getText())));
         }
 
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
-        TextView tvDay = (TextView) findViewById(mDayID);
+        TextView tvDay = findViewById(mDayID);
         if (tvDay != null) {
             Date d = convertStringToDate(String.valueOf(tvDay.getText()));
             if (d != null) {
@@ -624,7 +622,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        EditText etVolume = findViewById(R.id.etVolume);
         if (etVolume != null) {
             try {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
@@ -633,7 +631,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        EditText etWeight = (EditText) findViewById(R.id.etWeight);
+        EditText etWeight = findViewById(R.id.etWeight);
         if (etWeight != null) {
             try {
                 mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(etWeight.getText())));
@@ -642,7 +640,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        EditText etComment = (EditText) findViewById(R.id.etComment);
+        EditText etComment = findViewById(R.id.etComment);
         if (etComment != null) {
             try {
                 mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
@@ -659,17 +657,17 @@ public class ActivityTraining extends ActivityAbstract {
     private void saveCurrentTrainingContent(final boolean readFromScreen) {
 
         if (readFromScreen) {
-            EditText etVolume = (EditText) findViewById(R.id.etVolume);
+            EditText etVolume = findViewById(R.id.etVolume);
             if (etVolume != null) {
                 mCurrentTrainingContent.setVolume(String.valueOf(etVolume.getText()));
             }
 
-            EditText etComment = (EditText) findViewById(R.id.etComment);
+            EditText etComment = findViewById(R.id.etComment);
             if (etComment != null) {
                 mCurrentTrainingContent.setComment(String.valueOf(etComment.getText()));
             }
 
-            EditText etWeight = (EditText) findViewById(R.id.etWeight);
+            EditText etWeight = findViewById(R.id.etWeight);
             if (etWeight != null) {
                 String weight = String.valueOf(etWeight.getText());
                 if (weight.trim().equals("")) {
@@ -756,7 +754,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void VolumeChange(final int dx) {
 
-        EditText etVolume = (EditText) findViewById(R.id.etVolume);
+        EditText etVolume = findViewById(R.id.etVolume);
         if (etVolume != null) {
             int mVolume = 0;
             try {
@@ -776,7 +774,7 @@ public class ActivityTraining extends ActivityAbstract {
         int btWidth = displaymetrics.widthPixels / maxNumberOfTransferButtons;
         mTextSize = (int) (btWidth / 3.5 / getApplicationContext().getResources().getDisplayMetrics().density);
 
-        TableRow trow = (TableRow) findViewById(R.id.trowTrainingList);
+        TableRow trow = findViewById(R.id.trowTrainingList);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         params.span = 4;
@@ -896,7 +894,6 @@ public class ActivityTraining extends ActivityAbstract {
         showExercise();
     }
 
-
     private void btChooseExercise_onClick(final TextView view) {
         blink(view, this);
         getPropertiesFromScreen();
@@ -906,6 +903,7 @@ public class ActivityTraining extends ActivityAbstract {
         intent.putExtra("currentActivity", "ActivityTraining");
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
+        intent.putExtra("currentExerciseListSize",mActiveExercises.size());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -916,6 +914,7 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     private void btTrainingListLast_onClick(final TextView view) {
+
         blink(view, this);
         saveAndGoToNewExercise(mActiveExercises.size() - mCurrentExerciseNumberInList);
 
@@ -931,51 +930,31 @@ public class ActivityTraining extends ActivityAbstract {
             mPlusMinusButtonValue = 10;
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT)) {
-            mUseCalendarForWeight = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
-        } else {
-            mUseCalendarForWeight = false;
-        }
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION)) {
-            mShowExplanation = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
-        } else {
-            mShowExplanation = false;
-        }
+        mUseCalendarForWeight = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
+        mShowExplanation = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE)) {
-            mShowPicture = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
-        } else {
-            mShowPicture = false;
-        }
+        mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON)) {
-            mShowVolumeDefaultButton = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
-        } else {
-            mShowVolumeDefaultButton = false;
-        }
+        mShowVolumeDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON)) {
-            mShowVolumeLastDayButton = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
-        } else {
-            mShowVolumeLastDayButton = false;
-        }
+        mShowVolumeLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {
 
-        Button btVolumePlus = (Button) findViewById(R.id.btVolumePlus);
+        Button btVolumePlus = findViewById(R.id.btVolumePlus);
 
         if (btVolumePlus != null) {
             btVolumePlus.setText(String.valueOf(mPlusMinusButtonValue));
         }
 
-        Button btVolumeMinus = (Button) findViewById(R.id.btVolumeMinus);
+        Button btVolumeMinus = findViewById(R.id.btVolumeMinus);
 
         if (btVolumeMinus != null) {
             btVolumeMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
         }
 
-        ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        ImageView ivPicture = findViewById(R.id.ivPicture);
 
         if (ivPicture != null) {
             if (mShowPicture) {
@@ -985,7 +964,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        TextView tvExplanation = (TextView) findViewById(R.id.tvExplanation);
+        TextView tvExplanation = findViewById(R.id.tvExplanation);
 
         if (tvExplanation != null) {
             if (mShowExplanation) {
@@ -995,7 +974,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        Button btVolumeDefault = (Button) findViewById(R.id.btVolumeDefault);
+        Button btVolumeDefault = findViewById(R.id.btVolumeDefault);
 
         if (btVolumeDefault != null) {
             if (mShowVolumeDefaultButton) {
@@ -1005,7 +984,7 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        Button btVolumeLastDay = (Button) findViewById(R.id.btVolumeLastDay);
+        Button btVolumeLastDay = findViewById(R.id.btVolumeLastDay);
 
         if (btVolumeLastDay != null) {
             if (mShowVolumeLastDayButton) {
@@ -1115,6 +1094,4 @@ public class ActivityTraining extends ActivityAbstract {
             return false;
         }
     }
-
-
 }

@@ -9,23 +9,20 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.database.entities.Exercise;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExerciseChoice extends ActivityAbstract {
 
+    private final int maxHorizontalButtonCount = 4;
+
     private int mCallerTrainingID;
     private int mCallerExerciseIndex;
-    private String mCallerActivity;
+    private int mCallerExerciseListSize;
 
-    private final int maxHorizontalButtonCount = 4;
+    private String mCallerActivity;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -44,7 +41,6 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
     }
 
-
     private void getIntentParams() {
 
         Intent intent = getIntent();
@@ -52,21 +48,13 @@ public class ActivityExerciseChoice extends ActivityAbstract {
         mCallerActivity = intent.getStringExtra("currentActivity");
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
         mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
+        mCallerExerciseListSize = intent.getIntExtra("currentExerciseListSize", 0);
 
     }
 
     private void showExercises() {
 
-        List<Exercise> exercises = new ArrayList<Exercise>();
-        if (dbCurrentUser == null) {
-            exercises = DB.getAllExercises();
-        } else {
-            exercises = DB.getAllExercisesOfUser(dbCurrentUser.getId());
-        }
-
-        final int exercisesListSize = exercises.size();
-
-        TableLayout layout = (TableLayout) findViewById(R.id.layoutTableExercises);
+        TableLayout layout = findViewById(R.id.layoutTableExercises);
         try {
             layout.removeAllViews();
             layout.setStretchAllColumns(true);
@@ -77,7 +65,7 @@ public class ActivityExerciseChoice extends ActivityAbstract {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
         mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
-        int maxVerticalButtonCount = (int) Math.ceil((double) exercisesListSize / maxHorizontalButtonCount);
+        int maxVerticalButtonCount = (int) Math.ceil((double) mCallerExerciseListSize / maxHorizontalButtonCount);
         mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         mTextSize = (int) (Math.min(mWidth, mHeight) / 1.8 /
                 getApplicationContext().getResources().getDisplayMetrics().density);
@@ -88,7 +76,6 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
         for (int rowNumber = 0; rowNumber < maxVerticalButtonCount; rowNumber++) {
             TableRow row = new TableRow(this);
-            //row.setMinimumHeight(mHeight);
             row.setLayoutParams(params);
             row.setGravity(Gravity.CENTER);
             for (int columnNumber = 0; columnNumber < maxHorizontalButtonCount; columnNumber++) {
@@ -96,7 +83,7 @@ public class ActivityExerciseChoice extends ActivityAbstract {
                 TextView txt = new TextView(this);
                 txt.setId(exerciseIndexInList);
                 txt.setHeight(mHeight);
-                if (exerciseIndexInList < exercisesListSize) {
+                if (exerciseIndexInList < mCallerExerciseListSize) {
                     txt.setText(String.valueOf(exerciseIndexInList + 1));
                 }
                 txt.setTextSize(mTextSize);
@@ -106,22 +93,20 @@ public class ActivityExerciseChoice extends ActivityAbstract {
                 txt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (view.getId() >= exercisesListSize) {
+                        if (view.getId() >= mCallerExerciseListSize) {
                             return;
                         }
-                        txtExercise_onClick((TextView)view);
+                        ActivityExerciseChoice.this.txtExercise_onClick((TextView) view);
                     }
                 });
                 row.addView(txt);
-
             }
             layout.addView(row);
-
         }
     }
 
     private void txtExercise_onClick(TextView view) {
-        blink(view,this);
+        blink(view, this);
         int index = view.getId();
         Class<?> myClass = null;
         try {
@@ -151,5 +136,4 @@ public class ActivityExerciseChoice extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
-
 }
