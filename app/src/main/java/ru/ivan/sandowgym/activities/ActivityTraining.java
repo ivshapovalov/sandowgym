@@ -97,6 +97,7 @@ public class ActivityTraining extends ActivityAbstract {
         }
 
         int id = intent.getIntExtra("currentTrainingId", 0);
+        int originalIdForCopy = intent.getIntExtra("trainingIdForCopy", 0);
 
         defineCurrentTraining(id, currentDateInMillis);
         showTrainingOnScreen();
@@ -106,7 +107,11 @@ public class ActivityTraining extends ActivityAbstract {
         sv.setOnTouchListener(swipeDetectorActivity);
 
         if (mTrainingIsNew) {
-            getAllActiveExercises();
+            if (originalIdForCopy != 0) {
+                fillTrainingFromAnotherTraining(originalIdForCopy);
+            } else {
+                getAllActiveExercises();
+            }
         } else {
             getAllExercisesOfTraining();
         }
@@ -135,6 +140,7 @@ public class ActivityTraining extends ActivityAbstract {
 
         setTitleOfActivity(this);
     }
+
 
     private void updateDayOnScreen(long currentDateInMillis) {
 
@@ -366,13 +372,70 @@ public class ActivityTraining extends ActivityAbstract {
         }
     }
 
+    private void fillTrainingFromAnotherTraining(int originalIdForCopy) {
+        mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
+        List<TrainingContent> originalTrainingContentList = DB.getAllTrainingContentOfTraining(originalIdForCopy);
+
+        for (TrainingContent originalTrainingContent : originalTrainingContentList) {
+            boolean isFound = false;
+            int idExercise = originalTrainingContent.getExerciseId();
+            for (Exercise ex : mActiveExercises) {
+                if (ex.getId() == idExercise) {
+                    isFound = true;
+                    break;
+                }
+            }
+            //если в текущих активных не нашли - добавляем новое
+            if (!isFound) {
+                //добавим в список упражнений упражнение старое
+                Exercise ex = null;
+                try {
+                    ex = Exercise.getExerciseFromDB(DB, idExercise);
+                } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                    tableDoesNotContainElementException.printStackTrace();
+                }
+                mActiveExercises.add(ex);
+            }
+        }
+
+        Collections.sort(mActiveExercises, new Comparator() {
+            public int compare(Object ex1, Object ex2) {
+                return ((Exercise) (ex1)).getId() - ((Exercise) (ex2)).getId();
+            }
+        });
+
+        mTrainingContentList = new ArrayList<>();
+        for (TrainingContent originalTrainingContent : originalTrainingContentList) {
+            TrainingContent trainingContent = new TrainingContent.Builder(DB)
+                    .addExercise(originalTrainingContent.getExercise())
+                    .addTraining(mCurrentTraining)
+                    .addVolume(originalTrainingContent.getVolume())
+                    .addWeight(originalTrainingContent.getWeight())
+                    .build();
+            mTrainingContentList.add(trainingContent);
+        }
+
+        if (mActiveExercises.size() != 0) {
+            mCurrentExerciseNumberInList = 0;
+            mCurrentExercise = mActiveExercises.get(mCurrentExerciseNumberInList);
+
+            if (mTrainingContentList.size() != 0 && mTrainingContentList.get(0).getExerciseId() == mCurrentExercise.getId()) {
+                mCurrentTrainingContent = mTrainingContentList.get(0);
+            } else {
+                createNewTrainingContent();
+            }
+            showTrainingContentOnScreen();
+        }
+        //saveTraining();
+
+    }
+
     private void getAllActiveExercises() {
         //при инициализации тренировки создадим сразу контент
         if (dbCurrentUser != null) {
             mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
             mTrainingContentList = new ArrayList<>();
-            for (Exercise ex : mActiveExercises
-                    ) {
+            for (Exercise ex : mActiveExercises) {
                 mCurrentExercise = ex;
                 createNewTrainingContent();
                 if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
@@ -591,6 +654,10 @@ public class ActivityTraining extends ActivityAbstract {
         mCurrentTraining.dbSave(DB);
         if (mCurrentTrainingContent != null) {
             mCurrentTrainingContent.dbSave(DB);
+        }
+
+        for (TrainingContent trainingContent : mTrainingContentList) {
+            trainingContent.dbSave(DB);
         }
         mTrainingIsNew = false;
     }
@@ -897,13 +964,12 @@ public class ActivityTraining extends ActivityAbstract {
     private void btChooseExercise_onClick(final TextView view) {
         blink(view, this);
         getPropertiesFromScreen();
-        mCurrentTrainingContent.dbSave(DB);
-        mCurrentTraining.dbSave(DB);
+        saveTraining();
         Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
         intent.putExtra("currentActivity", "ActivityTraining");
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
-        intent.putExtra("currentExerciseListSize",mActiveExercises.size());
+        intent.putExtra("currentExerciseListSize", mActiveExercises.size());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

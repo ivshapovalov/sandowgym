@@ -12,6 +12,10 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     private String volume = "";
     private int weight = 0; //кг
 
+    public void setTraining(Training training) {
+        this.training = training;
+    }
+
     private TrainingContent(Builder builder) {
 
         this.id = builder.id;
