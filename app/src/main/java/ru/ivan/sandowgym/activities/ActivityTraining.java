@@ -147,7 +147,61 @@ public class ActivityTraining extends ActivityAbstract {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         setTitleOfActivity(this);
+
+//        int mOptionsID = getResources().getIdentifier("btOptions", "id", getPackageName());
+//        Button btOptions = findViewById(mOptionsID);
+//        if (btOptions != null) {
+//            btOptions.setOnClickListener(viewClickListener);
+//        }
     }
+
+//    View.OnClickListener viewClickListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            showPopupMenu(v);
+//        }
+//    };
+//
+//    private void showPopupMenu(View v) {
+//        PopupMenu popupMenu = new PopupMenu(this, v);
+//        popupMenu.inflate(R.menu.popupmenu);
+//
+//        popupMenu
+//                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.menu1:
+//                                Toast.makeText(getApplicationContext(),
+//                                        "Вы выбрали PopupMenu 1",
+//                                        Toast.LENGTH_SHORT).show();
+//                                return true;
+//                            case R.id.menu2:
+//                                Toast.makeText(getApplicationContext(),
+//                                        "Вы выбрали PopupMenu 2",
+//                                        Toast.LENGTH_SHORT).show();
+//                                return true;
+//                            case R.id.menu3:
+//                                Toast.makeText(getApplicationContext(),
+//                                        "Вы выбрали PopupMenu 3",
+//                                        Toast.LENGTH_SHORT).show();
+//                                return true;
+//                            default:
+//                                return false;
+//                        }
+//                    }
+//                });
+//
+//        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+//            @Override
+//            public void onDismiss(PopupMenu menu) {
+//                Toast.makeText(getApplicationContext(), "onDismiss",
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        popupMenu.show();
+//    }
+//}
 
     private void updateDayOnScreen(long currentDateInMillis) {
 
@@ -264,6 +318,12 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     public void btOptions_onClick(final View view) {
+
+//            PopupMenu popupMenu = new PopupMenu(this, view);
+//            // popupMenu.inflate(R.menu.popupmenu); // если добавлять к существующему меню
+//            popupMenu.getMenu().add(1, R.id.menu1, 1, "slot1");
+//            popupMenu.getMenu().add(1, R.id.menu2, 2, "slot2");
+//            popupMenu.show();
 
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityTrainingOptions.class);
