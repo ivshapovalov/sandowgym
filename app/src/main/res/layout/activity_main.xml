@@ -41,6 +41,21 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="TEST"
+                    android:id="@+id/dbMain00"
+                    android:onClick="btMainTest_onClick"
+                    android:layout_span="30"
+                    android:background="@drawable/bt_border"
+                    android:textColor="@color/text_color"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/users_list_name"
                     android:id="@+id/dbMain0"
                     android:onClick="btUsers_onClick"

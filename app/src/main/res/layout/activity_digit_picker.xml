@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:stretchColumns="*">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/button23"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="54"
+            android:background="@drawable/bt_border"
+            android:onClick="btClose_onClick"
+            android:text="CLOSE"
+            android:textColor="@color/text_color"/>
+
+        <Button
+            android:id="@+id/button24"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="54"
+            android:background="@drawable/bt_border"
+            android:onClick="btSave_onClick"
+            android:text="SAVE"
+            android:textColor="@color/text_color"/>
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:gravity="top|left">
+
+        <Button
+            android:id="@+id/btNewDigit"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_span="108"
+            android:background="@android:drawable/checkbox_off_background"
+            android:enabled="true"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textStyle="bold"/>
+    </TableRow>
+
+
+    <TableRow
+        android:id="@+id/rowDigits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="30dp"
+        android:gravity="top|left">
+
+        <Button
+            android:id="@+id/btChange-10"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-10"/>
+
+        <Button
+            android:id="@+id/btChange-5"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-5"/>
+
+        <Button
+            android:id="@+id/btChange-3"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-3"/>
+
+        <Button
+            android:id="@+id/btChange-1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-1"/>
+
+        <Button
+            android:id="@+id/btDigits0"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btNull_onClick"
+            android:text="0"/>
+
+        <Button
+            android:id="@+id/btChange1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+1"/>
+
+        <Button
+            android:id="@+id/btChange3"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+3"/>
+
+        <Button
+            android:id="@+id/btChange5"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+5"/>
+
+        <Button
+            android:id="@+id/btChange10"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+10"/>
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/rowDecades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="30dp"
+        android:gravity="top|left">
+
+        <Button
+            android:id="@+id/btMinus100"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-100"/>
+
+        <Button
+            android:id="@+id/btsMinus5"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-50"/>
+
+        <Button
+            android:id="@+id/btsMinus30"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-30"/>
+
+        <Button
+            android:id="@+id/btMinus10"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="-10"/>
+
+        <Button
+            android:id="@+id/btDecades0"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btNull_onClick"
+            android:text="0"/>
+
+        <Button
+            android:id="@+id/btPlus10"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+10"/>
+
+        <Button
+            android:id="@+id/btPlus30"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+30"/>
+
+        <Button
+            android:id="@+id/btPlus50"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+50"/>
+
+        <Button
+            android:id="@+id/btPlus100"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="12"
+            android:background="@android:drawable/checkbox_off_background"
+            android:onClick="btChange_onClick"
+            android:text="+100"/>
+
+    </TableRow>
+
+</TableLayout>

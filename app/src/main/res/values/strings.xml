@@ -8,6 +8,7 @@
     <string name="training_name">TRAINING"</string>
     <string name="options">OPTIONS"</string>
     <string name="calendar_view_name">DATE CHOICE</string>
+    <string name="digits_view_name">DIGITS CHOICE</string>
     <string name="export_import_name">EXPORT-IMPORT</string>
     <string name="users_list_name">USERS</string>
     <string name="user_name">USER</string>

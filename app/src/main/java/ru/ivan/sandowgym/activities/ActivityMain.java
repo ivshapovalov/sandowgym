@@ -220,4 +220,18 @@ public class ActivityMain extends ActivityAbstract {
             processingInProgress = false;
         }
     }
+
+    public void btMainTest_onClick(View view) {
+
+        blink(view, this);
+        Intent intent = new Intent(ActivityMain.this, ActivityDigitPickerDialog.class);
+        intent.putExtra("isNew", false);
+        intent.putExtra("currentNumberTitle", "Weight");
+        intent.putExtra("currentTrainingId", 1);
+        intent.putExtra("currentExerciseIndex", 1);
+        intent.putExtra("currentDigit", 10);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
 }
