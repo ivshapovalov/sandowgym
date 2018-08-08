@@ -49,8 +49,8 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN = "backup_dropbox_access_token";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
-    public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON = "training_show_volume_default_button";
-    public static final String APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON = "training_show_volume_last_day_button";
+    public static final String APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON = "training_show_amount_default_button";
+    public static final String APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON = "training_show_amount_last_day_button";
     public static final String APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE = "training_plus_minus_button_value";
     public static final String APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT = "training_use_calendar_for_weight";
 
@@ -219,19 +219,5 @@ public class ActivityMain extends ActivityAbstract {
             e.printStackTrace();
             processingInProgress = false;
         }
-    }
-
-    public void btMainTest_onClick(View view) {
-
-        blink(view, this);
-        Intent intent = new Intent(ActivityMain.this, ActivityDigitPickerDialog.class);
-        intent.putExtra("isNew", false);
-        intent.putExtra("currentNumberTitle", "Weight");
-        intent.putExtra("currentTrainingId", 1);
-        intent.putExtra("currentExerciseIndex", 1);
-        intent.putExtra("currentDigit", 10);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
     }
 }

@@ -9,8 +9,8 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     private Exercise exercise;
     private Training training;
     private String comment = "";
-    private String volume = "";
-    private int weight = 0; //кг
+    private int amount;
+    private int weight; //кг
 
     private TrainingContent(Builder builder) {
 
@@ -18,12 +18,12 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
         this.exercise = builder.exercise;
         this.training = builder.training;
         this.comment = builder.comment;
-        this.volume = builder.volume;
+        this.amount = builder.amount;
         this.weight = builder.weight;
     }
 
-    public String getVolume() {
-        return volume;
+    public int getAmount() {
+        return amount;
     }
 
     public String getComment() {
@@ -34,8 +34,8 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
         this.comment = comment;
     }
 
-    public void setVolume(String volume) {
-        this.volume = volume;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public Exercise getExercise() {
@@ -91,8 +91,8 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
         private Exercise exercise;
         private Training training;
         private String comment = "";
-        private String volume = "";
-        private int weight = 0; //кг
+        private int amount;
+        private int weight; //кг
 
         public Builder(int id) {
             this.id = id;
@@ -117,8 +117,8 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
             return this;
         }
 
-        public Builder addVolume(String volume) {
-            this.volume = volume;
+        public Builder addAmount(int amount) {
+            this.amount = amount;
             return this;
         }
 

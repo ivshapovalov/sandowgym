@@ -34,6 +34,9 @@ public class ActivityDigitPickerDialog extends AppCompatActivity {
         Button button = (Button) view;
         String value = String.valueOf(button.getText());
         newDigit += Integer.parseInt(value);
+        if (newDigit < 0) {
+            newDigit = 0;
+        }
         updateScreen();
     }
 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Tasks.Digit;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
@@ -38,6 +39,13 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         long currentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
         int id = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         defineCurrentWeightChangeCalendar(id, currentDateInMillis);
+
+        int currentDigit = intent.getIntExtra("currentDigit", 0);
+        String currentDigitTitle = intent.getStringExtra("currentDigitTitle");
+
+        if (Digit.WEIGHT.equals(currentDigitTitle)) {
+            mCurrentWeightChangeCalendar.setWeight(currentDigit);
+        }
 
         showWeightChangeCalendarOnScreen();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -96,7 +104,6 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         }
 
         Intent intent = new Intent(ActivityWeightChangeCalendar.this, ActivityCalendarView.class);
-
         intent.putExtra("isNew", mWeightChangeCalendarIsNew);
         intent.putExtra("currentActivity", "ActivityWeightChangeCalendar");
         if (!mWeightChangeCalendarIsNew) {
@@ -110,6 +117,27 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
         startActivity(intent);
 
+    }
+
+    public void btWeight_onClick(View view) {
+        blink(view, this);
+
+        fillWeightChangeCalendarFromScreen();
+        if (mCurrentWeightChangeCalendar.getWeight() != 0) {
+            saveCurrentWeightChangeCalendarToDB();
+        }
+
+        Intent intent = new Intent(ActivityWeightChangeCalendar.this, ActivityDigitPickerDialog.class);
+        intent.putExtra("isNew", mWeightChangeCalendarIsNew);
+        intent.putExtra("currentDigitTitle", "Weight");
+        intent.putExtra("currentActivity", "ActivityWeightChangeCalendar");
+
+        if (!mWeightChangeCalendarIsNew) {
+            intent.putExtra("currentWeightChangeCalendar", mCurrentWeightChangeCalendar.getId());
+        }
+        intent.putExtra("currentDigit", mCurrentWeightChangeCalendar.getWeight());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void saveCurrentWeightChangeCalendarToDB() {

@@ -20,8 +20,8 @@ public class ActivityTrainingOptions extends ActivityAbstract {
     private boolean mUseCalendarForWeight;
     private boolean mShowPicture;
     private boolean mShowExplanation;
-    private boolean mShowVolumeDefaultButton;
-    private boolean mShowVolumeLastDayButton;
+    private boolean mShowAmountDefaultButton;
+    private boolean mShowAmountLastDayButton;
     private int mPlusMinusButtonValue;
 
     @Override
@@ -51,8 +51,8 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, mUseCalendarForWeight);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, mShowPicture);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, mShowVolumeDefaultButton);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, mShowVolumeLastDayButton);
+        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, mShowAmountDefaultButton);
+        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, mShowAmountLastDayButton);
         editor.apply();
 
         this.finish();
@@ -81,9 +81,9 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
         mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        mShowVolumeDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
+        mShowAmountDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
 
-        mShowVolumeLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
+        mShowAmountLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {
@@ -182,12 +182,12 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         }
 
 
-        int mVolumeDefaultID = getResources().getIdentifier("rbShowVolumeDefaultButton" + (mShowVolumeDefaultButton ? "Yes" : "No"), "id", getPackageName());
-        but = findViewById(mVolumeDefaultID);
+        int mAmountDefaultID = getResources().getIdentifier("rbShowAmountDefaultButton" + (mShowAmountDefaultButton ? "Yes" : "No"), "id", getPackageName());
+        but = findViewById(mAmountDefaultID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = findViewById(R.id.rgShowVolumeDefaultButton);
+        radiogroup = findViewById(R.id.rgShowAmountDefaultButton);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -197,26 +197,26 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                     switch (checkedId) {
                         case -1:
                             break;
-                        case R.id.rbShowVolumeDefaultButtonYes:
-                            mShowVolumeDefaultButton = true;
+                        case R.id.rbShowAmountDefaultButtonYes:
+                            mShowAmountDefaultButton = true;
                             break;
-                        case R.id.rbShowVolumeDefaultButtonNo:
-                            mShowVolumeDefaultButton = false;
+                        case R.id.rbShowAmountDefaultButtonNo:
+                            mShowAmountDefaultButton = false;
                             break;
                         default:
-                            mShowVolumeDefaultButton = false;
+                            mShowAmountDefaultButton = false;
                             break;
                     }
                 }
             });
         }
 
-        int mVolumeLastDayID = getResources().getIdentifier("rbShowVolumeLastDayButton" + (mShowVolumeLastDayButton ? "Yes" : "No"), "id", getPackageName());
-        but = findViewById(mVolumeLastDayID);
+        int mAmountLastDayID = getResources().getIdentifier("rbShowAmountLastDayButton" + (mShowAmountLastDayButton ? "Yes" : "No"), "id", getPackageName());
+        but = findViewById(mAmountLastDayID);
         if (but != null) {
             but.setChecked(true);
         }
-        radiogroup = findViewById(R.id.rgShowVolumeLastDayButton);
+        radiogroup = findViewById(R.id.rgShowAmountLastDayButton);
 
         if (radiogroup != null) {
             radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -226,14 +226,14 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                     switch (checkedId) {
                         case -1:
                             break;
-                        case R.id.rbShowVolumeLastDayButtonYes:
-                            mShowVolumeLastDayButton = true;
+                        case R.id.rbShowAmountLastDayButtonYes:
+                            mShowAmountLastDayButton = true;
                             break;
-                        case R.id.rbShowVolumeLastDayButtonNo:
-                            mShowVolumeLastDayButton = false;
+                        case R.id.rbShowAmountLastDayButtonNo:
+                            mShowAmountLastDayButton = false;
                             break;
                         default:
-                            mShowVolumeLastDayButton = false;
+                            mShowAmountLastDayButton = false;
                             break;
                     }
                 }

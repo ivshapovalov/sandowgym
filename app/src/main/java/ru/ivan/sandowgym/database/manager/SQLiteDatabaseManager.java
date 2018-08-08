@@ -33,7 +33,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_EXERCISE_IS_ACTIVE = "exercise_is_active";
     private static final String KEY_EXERCISE_NAME = "exercise_name";
     private static final String KEY_EXERCISE_EXPLANATION = "exercise_explanation";
-    private static final String KEY_EXERCISE_VOLUME_DEFAULT = "exercise_volume_default";
+    private static final String KEY_EXERCISE_AMOUNT_DEFAULT = "exercise_amount_default";
     private static final String KEY_EXERCISE_PICTURE_NAME = "exercise_picture_name";
 
     //  Training
@@ -46,8 +46,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_TRAINING_CONTENT_ID_USER = "training_content_id_user";
     private static final String KEY_TRAINING_CONTENT_ID_EXERCISE = "training_content_id_exercise";
     private static final String KEY_TRAINING_CONTENT_ID_TRAINING = "training_content_id_training";
-    private static final String KEY_TRAINING_CONTENT_VOLUME = "training_volume";
-    private static final String KEY_TRAINING_CONTENT_WEIGHT = "training_weight";
+    private static final String KEY_TRAINING_CONTENT_AMOUNT = "training_content_amount";
+    private static final String KEY_TRAINING_CONTENT_WEIGHT = "training_content_weight";
     private static final String KEY_TRAINING_CONTENT_COMMENT = "training_content_comment";
 
     //  WeightChangeCalendar
@@ -99,7 +99,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_EXERCISE_ID_USER + " INTEGER, "
                 + KEY_EXERCISE_IS_ACTIVE + " INTEGER, "
                 + KEY_EXERCISE_NAME + " TEXT," + KEY_EXERCISE_EXPLANATION + " TEXT,"
-                + KEY_EXERCISE_VOLUME_DEFAULT + " TEXT," + KEY_EXERCISE_PICTURE_NAME + " TEXT, "
+                + KEY_EXERCISE_AMOUNT_DEFAULT + " INTEGER," + KEY_EXERCISE_PICTURE_NAME + " TEXT, "
                 + " FOREIGN KEY(" + KEY_EXERCISE_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")" +
                 " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
@@ -136,7 +136,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_TRAINING_CONTENT_ID_USER + " INTEGER, "
                 + KEY_TRAINING_CONTENT_ID_EXERCISE + " INTEGER,"
                 + KEY_TRAINING_CONTENT_ID_TRAINING + " INTEGER,"
-                + KEY_TRAINING_CONTENT_VOLUME + " TEXT,"
+                + KEY_TRAINING_CONTENT_AMOUNT + " INTEGER,"
                 + KEY_TRAINING_CONTENT_WEIGHT + " INTEGER, "
                 + KEY_TRAINING_CONTENT_COMMENT + " TEXT,"
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_TRAINING + ") REFERENCES " + TABLE_TRAININGS
@@ -229,7 +229,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_EXERCISE_IS_ACTIVE, exercise.getIsActive());
         values.put(KEY_EXERCISE_NAME, exercise.getName());
         values.put(KEY_EXERCISE_EXPLANATION, exercise.getExplanation());
-        values.put(KEY_EXERCISE_VOLUME_DEFAULT, exercise.getVolumeDefault());
+        values.put(KEY_EXERCISE_AMOUNT_DEFAULT, exercise.getAmountDefault());
         values.put(KEY_EXERCISE_PICTURE_NAME, exercise.getPicture());
 
         db.insert(TABLE_EXERCISES, null, values);
@@ -255,7 +255,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_ID_USER, trainingContent.getUserId());
         values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getExerciseId());
         values.put(KEY_TRAINING_CONTENT_ID_TRAINING, trainingContent.getTrainingId());
-        values.put(KEY_TRAINING_CONTENT_VOLUME, trainingContent.getVolume());
+        values.put(KEY_TRAINING_CONTENT_AMOUNT, trainingContent.getAmount());
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
 
@@ -343,7 +343,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized Exercise getExercise(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_EXERCISES, new String[]{KEY_EXERCISE_ID, KEY_EXERCISE_ID_USER, KEY_EXERCISE_IS_ACTIVE, KEY_EXERCISE_NAME,
-                        KEY_EXERCISE_EXPLANATION, KEY_EXERCISE_VOLUME_DEFAULT, KEY_EXERCISE_PICTURE_NAME}, KEY_EXERCISE_ID + "=?",
+                        KEY_EXERCISE_EXPLANATION, KEY_EXERCISE_AMOUNT_DEFAULT, KEY_EXERCISE_PICTURE_NAME}, KEY_EXERCISE_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -356,7 +356,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                     .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                     .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
-                    .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                    .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                     .addPicture(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_PICTURE_NAME)))
                     .build();
 
@@ -398,7 +398,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized TrainingContent getTrainingContent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_VOLUME, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
+        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -420,7 +420,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
                     .addExercise(exercise)
                     .addTraining(training)
-                    .addVolume(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME)))
+                    .addAmount(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT)))
                     .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
                     .addComment(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_COMMENT)))
                     .build();
@@ -435,7 +435,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,
-                        KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_VOLUME,
+                        KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT,
                         KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT},
                 KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " +
                         KEY_TRAINING_CONTENT_ID_TRAINING + "=?",
@@ -461,7 +461,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
                     .addExercise(exercise)
                     .addTraining(training)
-                    .addVolume(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME)))
+                    .addAmount(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT)))
                     .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
                     .addComment(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_COMMENT)))
                     .build();
@@ -530,7 +530,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<User> userList=new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);;
+        List<User> userList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
+        ;
         if (cursor.moveToFirst()) {
             do {
                 User user = new User.Builder(cursor.getInt(cursor.getColumnIndex(KEY_USER_ID)))
@@ -598,7 +599,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
 
         if (cursor.moveToFirst()) {
             do {
@@ -606,7 +607,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                         .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .addPicture(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_PICTURE_NAME)))
                         .build();
                 exerciseList.add(exercise);
@@ -623,7 +624,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + user_id + " ORDER BY " + KEY_EXERCISE_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise
@@ -631,7 +632,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                         .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .addPicture(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_PICTURE_NAME)))
                         .build();
                 exerciseList.add(exercise);
@@ -648,14 +649,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
                         .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                         .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .addPicture(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_PICTURE_NAME)))
                         .build();
                 exerciseList.add(exercise);
@@ -672,14 +673,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
                         .addIsActive(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_IS_ACTIVE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
                         .addExplanation(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_EXPLANATION)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .addPicture(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_PICTURE_NAME)))
                         .build();
                 exerciseList.add(exercise);
@@ -699,7 +700,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String selectQuery = "SELECT " +
                 TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " AS " + KEY_TRAINING_CONTENT_ID_EXERCISE + ","
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + " AS " + KEY_EXERCISE_NAME + " ,"
-                + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " AS " + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
+                + TABLE_EXERCISES + "." + KEY_EXERCISE_AMOUNT_DEFAULT + " AS " + KEY_EXERCISE_AMOUNT_DEFAULT + " FROM "
                 + TABLE_TRAININGS + "," + TABLE_EXERCISES + "," + TABLE_TRAINING_CONTENT
                 + " WHERE " + TABLE_EXERCISES + "." + KEY_EXERCISE_ID
                 + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE
@@ -711,12 +712,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID_EXERCISE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .build();
                 exerciseList.add(exercise);
 
@@ -733,7 +734,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " AS " + KEY_TRAINING_CONTENT_ID_EXERCISE + ","
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_NAME + " AS " + KEY_EXERCISE_NAME + ","
-                + TABLE_EXERCISES + "." + KEY_EXERCISE_VOLUME_DEFAULT + " AS " + KEY_EXERCISE_VOLUME_DEFAULT + " FROM "
+                + TABLE_EXERCISES + "." + KEY_EXERCISE_AMOUNT_DEFAULT + " AS " + KEY_EXERCISE_AMOUNT_DEFAULT + " FROM "
                 + TABLE_TRAININGS + "," + TABLE_EXERCISES + "," + TABLE_TRAINING_CONTENT
                 + " WHERE " + KEY_EXERCISE_ID_USER + "=" + user_id + " AND "
                 + TABLE_EXERCISES + "." + KEY_EXERCISE_ID
@@ -746,12 +747,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID_EXERCISE)))
                         .addName(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_NAME)))
-                        .addVolumeDefault(cursor.getString(cursor.getColumnIndex(KEY_EXERCISE_VOLUME_DEFAULT)))
+                        .addAmountDefault(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_AMOUNT_DEFAULT)))
                         .build();
                 exerciseList.add(exercise);
             } while (cursor.moveToNext());
@@ -766,7 +767,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " ORDER BY " + KEY_TRAINING_DAY;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -785,7 +786,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -805,15 +806,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
+                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY
                 + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom
                 + " AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_TRAINING_DAY;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -832,8 +833,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
+                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY
                 + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id + " AND "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND "
@@ -841,7 +842,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ORDER BY " + KEY_TRAINING_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -859,8 +860,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized List<Training> getLastTrainingsByDates(long mDateTo) {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
+                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY
                 + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +
                 " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
@@ -868,7 +869,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -886,8 +887,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized List<Training> getLastTrainingsOfUserByDates(int user_id, long mDateTo) {
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
-                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS "+KEY_TRAINING_ID+","
-                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY +" AS "+KEY_TRAINING_DAY
+                + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY
                 + " FROM " + TABLE_TRAININGS + " WHERE "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
@@ -896,7 +897,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Training training = new Training
@@ -912,20 +913,20 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsList;
     }
 
-    public synchronized List<TrainingContent> getLastExerciseNotNullVolume(long mDateTo, int exercise_id) {
+    public synchronized List<TrainingContent> getLastExerciseNotNullAmount(long mDateTo, int exercise_id) {
 
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + " AS " + KEY_TRAINING_CONTENT_ID + ","
-                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " AS " + KEY_TRAINING_CONTENT_VOLUME + ","
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " AS " + KEY_TRAINING_CONTENT_AMOUNT + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " AS " + KEY_TRAINING_CONTENT_WEIGHT
                 + " FROM (SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID
-                + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " FROM "
-                + TABLE_TRAINING_CONTENT + " WHERE " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " <>\"\" AND "
-                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " <>\"0\" AND "
+                + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " FROM "
+                + TABLE_TRAINING_CONTENT + " WHERE " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " <>\"\" AND "
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " <>\"0\" AND "
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " = " + exercise_id + ") AS " + TABLE_TRAINING_CONTENT
                 + " LEFT JOIN (SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " FROM "
                 + TABLE_TRAININGS + " ) AS " + TABLE_TRAININGS
@@ -935,15 +936,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 long day = cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY));
-                String volume = cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME));
-                if (volume != null && !volume.equals("") && day != 0) {
+                int amount = cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT));
+                if (amount != 0 && day != 0) {
                     TrainingContent trainingContent = new TrainingContent
                             .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_ID)))
-                            .addVolume(volume)
+                            .addAmount(amount)
                             .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
                             .build();
 
@@ -956,19 +957,19 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsContentList;
     }
 
-    public synchronized List<TrainingContent> getLastExerciseNotNullVolumeAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
+    public synchronized List<TrainingContent> getLastExerciseNotNullAmountAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
 
         mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + " AS " + KEY_TRAINING_CONTENT_ID + ","
-                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " AS " + KEY_TRAINING_CONTENT_VOLUME + ","
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " AS " + KEY_TRAINING_CONTENT_AMOUNT + ","
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " AS " + KEY_TRAINING_CONTENT_WEIGHT
                 + " FROM (SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID
-                + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " FROM "
-                + TABLE_TRAINING_CONTENT + " WHERE " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " <>\"\" AND "
-                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_VOLUME + " <>\"0\" AND "
+                + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " FROM "
+                + TABLE_TRAINING_CONTENT + " WHERE " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " <>\"\" AND "
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " <>\"0\" AND "
                 + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " = " + exercise_id + ") AS " + TABLE_TRAINING_CONTENT
                 + " LEFT JOIN (SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " FROM "
                 + TABLE_TRAININGS + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id + ") AS " + TABLE_TRAININGS
@@ -978,15 +979,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 long day = cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY));
-                String volume = cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME));
-                if (volume != null && !volume.equals("") && day != 0) {
+                int amount = cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT));
+                if (amount != 0 && day != 0) {
                     TrainingContent trainingContent = new TrainingContent
                             .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
-                            .addVolume(volume)
+                            .addAmount(amount)
                             .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
                             .build();
                     trainingsContentList.add(trainingContent);
@@ -1014,7 +1015,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 int weight = cursor.getInt(cursor.getColumnIndex(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT));
@@ -1044,7 +1045,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<TrainingContent> trainingContentList = new ArrayList<>(cursor.moveToFirst()?cursor.getCount():0);
+        List<TrainingContent> trainingContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = null;
@@ -1061,7 +1062,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
                         .addExercise(exercise)
                         .addTraining(training)
-                        .addVolume(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_VOLUME)))
+                        .addAmount(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT)))
                         .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
                         .addComment(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_COMMENT)))
                         .build();
@@ -1143,7 +1144,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_EXERCISE_ID_USER, exercise.getUserId());
         values.put(KEY_EXERCISE_NAME, exercise.getName());
         values.put(KEY_EXERCISE_EXPLANATION, exercise.getExplanation());
-        values.put(KEY_EXERCISE_VOLUME_DEFAULT, exercise.getVolumeDefault());
+        values.put(KEY_EXERCISE_AMOUNT_DEFAULT, exercise.getAmountDefault());
         values.put(KEY_EXERCISE_PICTURE_NAME, exercise.getPicture());
 
         int rows = db.update(TABLE_EXERCISES, values, KEY_EXERCISE_ID + " = ?",
@@ -1173,7 +1174,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_ID_USER, trainingContent.getUserId());
         values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getExerciseId());
         values.put(KEY_TRAINING_CONTENT_ID_TRAINING, trainingContent.getTrainingId());
-        values.put(KEY_TRAINING_CONTENT_VOLUME, trainingContent.getVolume());
+        values.put(KEY_TRAINING_CONTENT_AMOUNT, trainingContent.getAmount());
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
 

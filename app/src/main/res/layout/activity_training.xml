@@ -159,22 +159,22 @@
                         android:layout_height="match_parent"
                         android:layout_weight="100">
                         <Button
-                            android:id="@+id/btVolumeDefault"
+                            android:id="@+id/btAmountDefault"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
-                            android:onClick="btVolumeDefault_onClick"
+                            android:onClick="btAmountDefault_onClick"
                             android:text="DEFAULT"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
                         <Button
-                            android:id="@+id/btVolumeLastDay"
+                            android:id="@+id/btAmountLastDay"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
-                            android:onClick="btVolumeLastDay_onClick"
+                            android:onClick="btAmountLastDay_onClick"
                             android:text="LAST"
                             android:textColor="@color/text_color"/>
                     </TableRow>
@@ -185,26 +185,77 @@
                         android:paddingTop="10dp"
                         android:visibility="visible">
                         <Button
-                            android:id="@+id/btVolumeTitle"
+                            android:id="@+id/btAmountTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="10"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
-                            android:text="VOLUME"
+                            android:text="AMOUNT"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
                         <Button
-                            android:id="@+id/btVolume"
+                            style="?android:attr/buttonStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_span="40"
+                            android:onClick="btAmountChange_onClick"
+                            android:text="-10"
+                            android:id="@+id/btAmountMinus"
+                            android:textSize="15sp"
+                            android:gravity="center"
+                            android:layout_span="10"
+                            android:background="@drawable/bt_border"
+                            android:textColor="@color/text_color"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_span="5"
+                            android:background="@drawable/bt_border"
+                            android:gravity="center"
+                            android:onClick="btAmountChange_onClick"
+                            android:text="-1"
+                            android:textColor="@color/text_color"
+                            android:textSize="15sp"/>
+
+                        <Button
+                            android:id="@+id/btAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_span="20"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
                             android:hint="Click to enter"
-                            android:onClick="btVolume_onClick"
+                            android:onClick="btAmount_onClick"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_span="5"
+                            android:background="@drawable/bt_border"
+                            android:gravity="center"
+                            android:onClick="btAmountChange_onClick"
+                            android:text="+1"
+                            android:textColor="@color/text_color"
+                            android:textSize="15sp"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:onClick="btAmountChange_onClick"
+                            android:text="+10"
+                            android:id="@+id/btAmountPlus"
+                            android:textSize="15sp"
+                            android:gravity="center"
+                            android:layout_span="10"
+                            android:layout_weight="11"
+                            android:background="@drawable/bt_border"
+                            android:textColor="@color/text_color"/>
                     </TableRow>
 
                     <TableRow
@@ -219,21 +270,100 @@
                             android:layout_span="10"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
-                            android:text="WEIGHT"
+                            android:text="Weight"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:onClick="btWeightChange_onClick"
+                            android:text="-10"
+                            android:id="@+id/btWeightMinus"
+                            android:textSize="15sp"
+                            android:gravity="center"
+                            android:layout_span="10"
+                            android:background="@drawable/bt_border"
+                            android:textColor="@color/text_color"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_span="5"
+                            android:background="@drawable/bt_border"
+                            android:gravity="center"
+                            android:onClick="btWeightChange_onClick"
+                            android:text="-1"
+                            android:textColor="@color/text_color"
+                            android:textSize="15sp"/>
                         <Button
                             android:id="@+id/btWeight"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_span="40"
+                            android:layout_span="20"
                             android:layout_weight="1"
                             android:background="@drawable/bt_border"
                             android:hint="Click to enter"
                             android:onClick="btWeight_onClick"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_span="5"
+                            android:background="@drawable/bt_border"
+                            android:gravity="center"
+                            android:onClick="btWeightChange_onClick"
+                            android:text="+1"
+                            android:textColor="@color/text_color"
+                            android:textSize="15sp"/>
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:onClick="btWeightChange_onClick"
+                            android:text="+10"
+                            android:id="@+id/btWeightPlus"
+                            android:textSize="15sp"
+                            android:gravity="center"
+                            android:layout_span="10"
+                            android:layout_weight="11"
+                            android:background="@drawable/bt_border"
+                            android:textColor="@color/text_color"/>
                     </TableRow>
+
+                    <!--<TableRow-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:paddingTop="10dp"-->
+                    <!--android:visibility="visible">-->
+                    <!--<Button-->
+                    <!--android:id="@+id/btWeightTitle"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_span="10"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="@drawable/bt_border"-->
+                    <!--android:text="WEIGHT"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:visibility="visible"/>-->
+                    <!--<Button-->
+                    <!--android:id="@+id/btWeight"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_span="40"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="@drawable/bt_border"-->
+                    <!--android:hint="Click to enter"-->
+                    <!--android:onClick="btWeight_onClick"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:visibility="visible"/>-->
+                    <!--</TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"

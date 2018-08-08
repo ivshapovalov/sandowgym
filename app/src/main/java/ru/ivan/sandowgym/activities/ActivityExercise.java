@@ -97,10 +97,10 @@ public class ActivityExercise extends ActivityAbstract {
             etPicture.setText(mCurrentExercise.getPicture());
         }
 
-        int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
-        EditText etVolume = findViewById(mVolumeID);
-        if (etVolume != null) {
-            etVolume.setText(mCurrentExercise.getVolumeDefault());
+        int mAmountID = getResources().getIdentifier("etAmountDefault", "id", getPackageName());
+        EditText etAmount = findViewById(mAmountID);
+        if (etAmount != null) {
+            etAmount.setText(String.valueOf(mCurrentExercise.getAmountDefault()));
         }
 
         ImageView ivPicture = findViewById(R.id.ivPicture);
@@ -140,10 +140,10 @@ public class ActivityExercise extends ActivityAbstract {
             mCurrentExercise.setPicture(String.valueOf(etPicture.getText()));
         }
 
-        int mVolumeID = getResources().getIdentifier("etVolumeDefault", "id", getPackageName());
-        EditText etVolume = findViewById(mVolumeID);
-        if (etVolume != null) {
-            mCurrentExercise.setVolumeDefault(String.valueOf(etVolume.getText()));
+        int mAmountID = getResources().getIdentifier("etAmountDefault", "id", getPackageName());
+        EditText etAmount = findViewById(mAmountID);
+        if (etAmount != null) {
+            mCurrentExercise.setAmountDefault(Integer.parseInt(String.valueOf(etAmount.getText())));
         }
     }
 

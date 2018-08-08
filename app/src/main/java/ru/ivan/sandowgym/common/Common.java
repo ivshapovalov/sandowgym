@@ -20,11 +20,11 @@ import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-public class Common{
+public class Common {
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
-    public static final boolean isDebug=true;
+    public static final boolean isDebug = true;
     public static volatile boolean processingInProgress;
 
     public static Date convertStringToDate(final String date) {
@@ -59,10 +59,23 @@ public class Common{
         return sDate;
     }
 
+    public static int convertTextToDigit(String text) {
+
+        if (text == null || text.trim().equals("")) {
+            return 0;
+        } else {
+            try {
+                return Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+    }
+
     public static void blink(final View v, final Activity activity) {
 
         long mills = 50L;
-        Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(mills);
 
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
@@ -110,7 +123,7 @@ public class Common{
 
     public static TableRow.LayoutParams paramsTextViewWithSpanInList(int i) {
         TableRow.LayoutParams paramsTextView = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        paramsTextView.span=i;
+        paramsTextView.span = i;
         return paramsTextView;
     }
 
@@ -128,7 +141,7 @@ public class Common{
                                 "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
                                 "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы)."
                 )
-                .addVolumeDefault("120")
+                .addAmountDefault(120)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //2
@@ -140,7 +153,7 @@ public class Common{
                                 "Попеременно сгибайте и разгибайте руки в локтевых суставах. Локти должны быть неподвижными." +
                                 "Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча (бицепсы)."
                 )
-                .addVolumeDefault("53")
+                .addAmountDefault(53)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //3
@@ -153,7 +166,7 @@ public class Common{
                                 " Дыхание равномерное, произвольное. Упражнение развивает двуглавые мышцы плеча и " +
                                 "трехглавые мышцы плеча(трицепсы)."
                 )
-                .addVolumeDefault("24")
+                .addAmountDefault(24)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //4
@@ -165,7 +178,7 @@ public class Common{
                                 "сгибайте и разгибайте руки в локтевых суставах. Сгибая руки, делайте вдох, разгибая — выдох. Упражнение" +
                                 " развивает бицепсы и трицепсы."
                 )
-                .addVolumeDefault("14")
+                .addAmountDefault(14)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //5
@@ -177,7 +190,7 @@ public class Common{
                                 "Разведите прямые руки в стороны и сделайте вдох, быстро вернитесь в исходное положение — выдох." +
                                 "Упражнение развивает грудные мышцы, мышцы спины и плечевого пояса."
                 )
-                .addVolumeDefault("12")
+                .addAmountDefault(12)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //6
@@ -189,7 +202,7 @@ public class Common{
                                 " Попеременно поднимайте и опускайте руки. Дыхание равномерное. " +
                                 "Упражнение развивает трехглавые мышцы плеча, дельтовидные и трапециевидные мышцы."
                 )
-                .addVolumeDefault("22")
+                .addAmountDefault(22)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -203,7 +216,7 @@ public class Common{
                                 "Поднимая правую руку, делайте вдох, поднимая левую — выдох." +
                                 "Упражнение развивает дельтовидные мышцы."
                 )
-                .addVolumeDefault("17")
+                .addAmountDefault(17)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -216,7 +229,7 @@ public class Common{
                                 " поворачивайте кисти вверх и вниз, затем вперед и назад. Дыхание равномерное. Упражнение выполнять до наступления усталости. " +
                                 "Развивает мышцы предплечья и укрепляет лучезапястные суставы."
                 )
-                .addVolumeDefault("--")
+                .addAmountDefault(0)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -229,7 +242,7 @@ public class Common{
                                 "Не сгибая рук, вращайте кисти вперед и назад. Дыхание равномерное. Упражнение выполняйте до утомления." +
                                 "Упражнение развивает мышцы предплечья и укрепляет лучезапястные суставы."
                 )
-                .addVolumeDefault("--")
+                .addAmountDefault(0)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -242,7 +255,7 @@ public class Common{
                                 " вперед и коснитесь руками пола — выдох. Вернитесь в исходное положение — вдох. Первое время упражнение выполняйте без гантелей." +
                                 "Упражнение развивает мышцы спины."
                 )
-                .addVolumeDefault("17")
+                .addAmountDefault(17)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //11
@@ -255,7 +268,7 @@ public class Common{
                                 " Затем сделайте выпад правой ногой, а левую руку поднимите вперед. Упражнение развивает дельтовидные мышцы и мышцы ног" +
                                 "."
                 )
-                .addVolumeDefault("17")
+                .addAmountDefault(17)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -268,7 +281,7 @@ public class Common{
                                 "стороны вверх — вдох. Опустите в исходное положение — выдох. " +
                                 "Упражнение развивает дельтовидные и трапециевидные мышцы."
                 )
-                .addVolumeDefault("17")
+                .addAmountDefault(17)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -281,7 +294,7 @@ public class Common{
                                 " Сгибая руки, делайте вдох, разгибая — выдох. Сгибая руки, касайтесь грудью пола. Упражнение развивает трехглавые мышцы плеча, " +
                                 "грудные мышцы и мышцы плечевого пояса."
                 )
-                .addVolumeDefault("7")
+                .addAmountDefault(7)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -295,7 +308,7 @@ public class Common{
                                 "делайте выдох, возвращаясь в исходное положение — вдох. Упражнение развивает боковые мышцы живота, бицепсы, трапециевидные и" +
                                 " дельтовидные мышцы."
                 )
-                .addVolumeDefault("53")
+                .addAmountDefault(53)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -309,7 +322,7 @@ public class Common{
                                 " в исходное положение — вдох. Первое время упражнение можно выполнять без гантелей. Упражнение развивает мышцы " +
                                 "брюшного пресса."
                 )
-                .addVolumeDefault("10")
+                .addAmountDefault(10)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -322,7 +335,7 @@ public class Common{
                                 " Поднимите прямые ноги вверх — выдох. Медленно опустите ноги в исходное положение — вдох. Упражнение развивает мышцы" +
                                 " брюшного пресса и четырехглавые мышцы бедра"
                 )
-                .addVolumeDefault("7")
+                .addAmountDefault(7)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -335,7 +348,7 @@ public class Common{
                                 "опущены вдоль туловища. Медленно поднимитесь на носки — вдох, затем, опускаясь на пятки, присядьте — выдох. " +
                                 "Упражнение развивает икроножные мышцы и четырехглавые мышцы бедра."
                 )
-                .addVolumeDefault("53")
+                .addAmountDefault(53)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
         //18
@@ -347,7 +360,7 @@ public class Common{
                                 " Сгибайте и разгибайте кисти в лучезапястных суставах. Упражнение развивает мышцы" +
                                 " предплечья и укрепляет лучезапястные суставы."
                 )
-                .addVolumeDefault("53")
+                .addAmountDefault(53)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -358,7 +371,7 @@ public class Common{
                 .addExplanation(
                         "Подтягивания на перекладине любым хватом."
                 )
-                .addVolumeDefault("--")
+                .addAmountDefault(0)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 
@@ -368,7 +381,7 @@ public class Common{
                 .addExplanation(
                         "Планка"
                 )
-                .addVolumeDefault("--")
+                .addAmountDefault(0)
                 .addPicture("ic_ex_" + String.valueOf(i))
                 .build());
 

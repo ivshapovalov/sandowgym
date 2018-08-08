@@ -29,9 +29,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Tasks.Digit;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
@@ -57,13 +57,13 @@ public class ActivityTraining extends ActivityAbstract {
     private boolean mUseCalendarForWeight;
     private boolean mShowPicture;
     private boolean mShowExplanation;
-    private boolean mShowVolumeDefaultButton;
-    private boolean mShowVolumeLastDayButton;
+    private boolean mShowAmountDefaultButton;
+    private boolean mShowAmountLastDayButton;
 
     private Training mCurrentTraining;
     private TrainingContent mCurrentTrainingContent;
     private Exercise mCurrentExercise;
-    private String mExerciseVolumeLastDay = "";
+    private int mExerciseAmountLastDay;
     private boolean mTrainingIsNew;
     private int mHeight;
     private int mWidth;
@@ -131,10 +131,10 @@ public class ActivityTraining extends ActivityAbstract {
         int currentDigit = intent.getIntExtra("currentDigit", 0);
         String currentDigitTitle = intent.getStringExtra("currentDigitTitle");
 
-        if ("Weight".equals(currentDigitTitle)) {
+        if (Digit.WEIGHT.equalValue(currentDigitTitle)) {
             mCurrentTrainingContent.setWeight(currentDigit);
-        } else if ("Volume".equals(currentDigitTitle)) {
-            mCurrentTrainingContent.setVolume(String.valueOf(currentDigit));
+        } else if (Digit.AMOUNT.equalValue(currentDigitTitle)) {
+            mCurrentTrainingContent.setAmount(currentDigit);
         }
 
         if (weightIsNeedToUpdate || (currentDateInMillis != 0 && mCurrentTraining != null && currentDateInMillis != currentDateOldInMillis)) {
@@ -216,17 +216,17 @@ public class ActivityTraining extends ActivityAbstract {
 
         int mExerciseWeightLastDay = 0;
         int mWeightInCalendar = 0;
-        List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
+        List<TrainingContent> mTrainingContentNotNullAmount = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+            mTrainingContentNotNullAmount = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                     mCurrentTraining.getDay(), mCurrentExercise.getId());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
         }
-        if (mTrainingContentNotNullVolume.size() == 1) {
+        if (mTrainingContentNotNullAmount.size() == 1) {
             try {
-                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
+                mExerciseWeightLastDay = mTrainingContentNotNullAmount.get(0).getWeight();
             } catch (Exception e) {
                 mExerciseWeightLastDay = 0;
             }
@@ -291,28 +291,28 @@ public class ActivityTraining extends ActivityAbstract {
         setPreferencesOnScreen();
     }
 
-    public void btVolumeDefault_onClick(final View view) {
+    public void btAmountDefault_onClick(final View view) {
         blink(view, this);
         if (mCurrentExercise != null) {
-            if (!"".equals(mCurrentExercise.getVolumeDefault())) {
-                int mVolumeID = getResources().getIdentifier("btVolume", "id", getPackageName());
-                Button btVolume = findViewById(mVolumeID);
-                if (btVolume != null) {
-                    btVolume.setText(mCurrentExercise.getVolumeDefault());
+            if (!"".equals(mCurrentExercise.getAmountDefault())) {
+                int mAmountID = getResources().getIdentifier("btAmount", "id", getPackageName());
+                Button btAmount = findViewById(mAmountID);
+                if (btAmount != null) {
+                    btAmount.setText(String.valueOf(mCurrentExercise.getAmountDefault()));
                 }
             }
         }
     }
 
-    public void btVolumeLastDay_onClick(final View view) {
+    public void btAmountLastDay_onClick(final View view) {
         blink(view, this);
-        int mVolumeID = getResources().getIdentifier("btVolume", "id", getPackageName());
-        Button btVolume = findViewById(mVolumeID);
-        if (btVolume != null) {
-            if ("".equals(mExerciseVolumeLastDay)) {
-                btVolume.setText("0");
+        int mAmountID = getResources().getIdentifier("btAmount", "id", getPackageName());
+        Button btAmount = findViewById(mAmountID);
+        if (btAmount != null) {
+            if ("".equals(mExerciseAmountLastDay)) {
+                btAmount.setText("0");
             } else {
-                btVolume.setText(mExerciseVolumeLastDay);
+                btAmount.setText(String.valueOf(mExerciseAmountLastDay));
             }
         }
     }
@@ -464,10 +464,10 @@ public class ActivityTraining extends ActivityAbstract {
     private void createNewTrainingContent() {
         int mExerciseWeightLastDay = 0;
         int mWeightInCalendar = 0;
-        List<TrainingContent> mTrainingContentNotNullVolume = new ArrayList<>();
+        List<TrainingContent> mTrainingContentNotNullAmount = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullVolume = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+            mTrainingContentNotNullAmount = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                     mCurrentTraining.getDay(), mCurrentExercise.getId());
             mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
@@ -481,9 +481,9 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
         mExerciseWeightLastDay = 0;
-        if (mTrainingContentNotNullVolume.size() == 1) {
+        if (mTrainingContentNotNullAmount.size() == 1) {
             try {
-                mExerciseWeightLastDay = mTrainingContentNotNullVolume.get(0).getWeight();
+                mExerciseWeightLastDay = mTrainingContentNotNullAmount.get(0).getWeight();
             } catch (Exception e) {
                 mExerciseWeightLastDay = 0;
             }
@@ -499,7 +499,6 @@ public class ActivityTraining extends ActivityAbstract {
         mCurrentTrainingContent = new TrainingContent.Builder(DB)
                 .addExercise(mCurrentExercise)
                 .addTraining(mCurrentTraining)
-                .addVolume("")
                 .addWeight(weight)
                 .build();
         saveTraining();
@@ -534,42 +533,42 @@ public class ActivityTraining extends ActivityAbstract {
                 etComment.setText(mCurrentTrainingContent.getComment());
             }
         }
-        int mVolumeID = getResources().getIdentifier("btVolume", "id", getPackageName());
-        Button btVolume = findViewById(mVolumeID);
-        if (btVolume != null) {
+        int mAmountID = getResources().getIdentifier("btAmount", "id", getPackageName());
+        Button btAmount = findViewById(mAmountID);
+        if (btAmount != null) {
             if (mCurrentTrainingContent != null) {
-                String vol = mCurrentTrainingContent.getVolume();
-                if (vol != null && !Objects.equals(vol, "")) {
-                    btVolume.setText(vol);
+                int amount = mCurrentTrainingContent.getAmount();
+                if (amount != 0) {
+                    btAmount.setText(String.valueOf(amount));
                 } else {
-                    btVolume.setText("");
+                    btAmount.setText("");
                 }
             }
         }
 
-        Button btDefaultVolume = findViewById(R.id.btVolumeDefault);
-        if (btDefaultVolume != null) {
-            String mVolumeDefault = mCurrentExercise.getVolumeDefault();
-            btDefaultVolume.setText("DEFAULT VOL: " + String.valueOf("".equals(mVolumeDefault) ? "--" : mVolumeDefault));
+        Button btDefaultAmount = findViewById(R.id.btAmountDefault);
+        if (btDefaultAmount != null) {
+            int mAmountDefault = mCurrentExercise.getAmountDefault();
+            btDefaultAmount.setText("DEFAULT VOL: " + String.valueOf(mAmountDefault == 0 ? "--" : mAmountDefault));
         }
 
-        Button btYesterdayVolume = findViewById(R.id.btVolumeLastDay);
-        if (btYesterdayVolume != null) {
+        Button btYesterdayAmount = findViewById(R.id.btAmountLastDay);
+        if (btYesterdayAmount != null) {
             List<TrainingContent> mTrainingsContentList = new ArrayList<>();
 
             if (dbCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullVolumeAndWeightOfUser(dbCurrentUser.getId(),
+                mTrainingsContentList = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                         mCurrentTraining.getDay(), mCurrentExercise.getId());
             }
-            mExerciseVolumeLastDay = "";
+            mExerciseAmountLastDay = 0;
             if (mTrainingsContentList.size() == 1) {
                 try {
-                    mExerciseVolumeLastDay = mTrainingsContentList.get(0).getVolume();
+                    mExerciseAmountLastDay = mTrainingsContentList.get(0).getAmount();
                 } catch (Exception e) {
-                    mExerciseVolumeLastDay = "";
+                    mExerciseAmountLastDay = 0;
                 }
             }
-            btYesterdayVolume.setText("LAST VOL: " + String.valueOf("".equals(mExerciseVolumeLastDay) ? "--" : mExerciseVolumeLastDay));
+            btYesterdayAmount.setText("LAST VOL: " + String.valueOf("".equals(mExerciseAmountLastDay) ? "--" : mExerciseAmountLastDay));
         }
 
         int mWeight = getResources().getIdentifier("btWeight", "id", getPackageName());
@@ -689,22 +688,14 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        Button btVolume = findViewById(R.id.btVolume);
-        if (btVolume != null) {
-            try {
-                mCurrentTrainingContent.setVolume(String.valueOf(btVolume.getText()));
-            } catch (Exception e) {
-                mCurrentTrainingContent.setVolume(String.valueOf(0));
-            }
+        Button btAmount = findViewById(R.id.btAmount);
+        if (btAmount != null) {
+            mCurrentTrainingContent.setAmount(convertButtonTextToDigit(String.valueOf(btAmount.getText())));
         }
 
         Button btWeight = findViewById(R.id.btWeight);
         if (btWeight != null) {
-            try {
-                mCurrentTrainingContent.setWeight(Integer.parseInt(String.valueOf(btWeight.getText())));
-            } catch (Exception e) {
-                mCurrentTrainingContent.setWeight(0);
-            }
+            mCurrentTrainingContent.setWeight(convertButtonTextToDigit(String.valueOf(btWeight.getText())));
         }
 
         EditText etComment = findViewById(R.id.etComment);
@@ -724,9 +715,9 @@ public class ActivityTraining extends ActivityAbstract {
     private void saveCurrentTrainingContent(final boolean readFromScreen) {
 
         if (readFromScreen) {
-            Button btVolume = findViewById(R.id.btVolume);
-            if (btVolume != null) {
-                mCurrentTrainingContent.setVolume(String.valueOf(btVolume.getText()));
+            Button btAmount = findViewById(R.id.btAmount);
+            if (btAmount != null) {
+                mCurrentTrainingContent.setAmount(convertButtonTextToDigit(String.valueOf(btAmount.getText())));
             }
 
             EditText etComment = findViewById(R.id.etComment);
@@ -736,17 +727,21 @@ public class ActivityTraining extends ActivityAbstract {
 
             Button btWeight = findViewById(R.id.btWeight);
             if (btWeight != null) {
-                String weight = String.valueOf(btWeight.getText());
-                if (weight.trim().equals("")) {
-                    mCurrentTrainingContent.setWeight(0);
-                } else {
-                    mCurrentTrainingContent.setWeight(Integer.parseInt(weight));
-                }
+                mCurrentTrainingContent.setWeight(convertButtonTextToDigit(String.valueOf(btWeight.getText())));
             }
         }
         mCurrentTrainingContent.dbSave(DB);
         if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
             mTrainingContentList.add(mCurrentTrainingContent);
+        }
+    }
+
+    private int convertButtonTextToDigit(String textAmount) {
+
+        if (textAmount == null || textAmount.trim().equals("")) {
+            return 0;
+        } else {
+            return Integer.parseInt(textAmount);
         }
     }
 
@@ -795,43 +790,35 @@ public class ActivityTraining extends ActivityAbstract {
 
     }
 
-    public void btVolumeLeft_onClick(final View view) {
+    public void btAmountChange_onClick(final View view) {
 
-        blink(view, this);
-        VolumeChange(-1);
+        Button button = (Button) view;
+        String value = String.valueOf(button.getText());
+        DigitChange(Integer.parseInt(value), R.id.btAmount);
+
     }
 
-    public void btVolumeLeft10_onClick(final View view) {
+    public void btWeightChange_onClick(final View view) {
 
-        blink(view, this);
-        VolumeChange(-1 * mPlusMinusButtonValue);
+        Button button = (Button) view;
+        String value = String.valueOf(button.getText());
+        DigitChange(Integer.parseInt(value), R.id.btWeight);
+
     }
 
-    public void btVolumeRight_onClick(final View view) {
+    private void DigitChange(final int dx, final int buttonId) {
 
-        blink(view, this);
-        VolumeChange(1);
-    }
-
-    public void btVolumeRight10_onClick(final View view) {
-
-        blink(view, this);
-        VolumeChange(mPlusMinusButtonValue);
-    }
-
-    private void VolumeChange(final int dx) {
-
-        Button btVolume = findViewById(R.id.btVolume);
-        if (btVolume != null) {
-            int mVolume = 0;
+        Button bt = findViewById(buttonId);
+        if (bt != null) {
+            int digit = 0;
             try {
-                mVolume = Integer.parseInt(String.valueOf(btVolume.getText()));
+                digit = Integer.parseInt(String.valueOf(bt.getText()));
             } catch (Exception e) {
-                mVolume = 0;
+                digit = 0;
             }
-            mVolume = mVolume + dx;
-            mVolume = mVolume < 0 ? 0 : mVolume;
-            btVolume.setText(String.valueOf(mVolume));
+            digit = digit + dx;
+            digit = digit < 0 ? 0 : digit;
+            bt.setText(String.valueOf(digit));
         }
     }
 
@@ -928,7 +915,7 @@ public class ActivityTraining extends ActivityAbstract {
         return but;
     }
 
-    public void btVolume_onClick(View view) {
+    public void btAmount_onClick(View view) {
         getPropertiesFromScreen();
         mCurrentTrainingContent.dbSave(DB);
         mCurrentTraining.dbSave(DB);
@@ -936,21 +923,21 @@ public class ActivityTraining extends ActivityAbstract {
         try {
             Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
             intent.putExtra("isNew", mTrainingIsNew);
-            intent.putExtra("currentDigitTitle", "Volume");
+            intent.putExtra("currentDigitTitle", Digit.AMOUNT.name());
             intent.putExtra("currentActivity", "ActivityTraining");
             if (!mTrainingIsNew) {
                 intent.putExtra("currentTrainingId", mCurrentTraining.getId());
             }
             intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
-            int volume = 0;
-            if (mCurrentTrainingContent.getVolume().trim() != "") {
-                volume = Integer.valueOf(mCurrentTrainingContent.getVolume());
+            int amount = 0;
+            if (mCurrentTrainingContent.getAmount() != 0) {
+                amount = mCurrentTrainingContent.getAmount();
             }
-            intent.putExtra("currentDigit", volume);
+            intent.putExtra("currentDigit", amount);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } catch (NumberFormatException e) {
-            // volume is String. Can be text or smth
+            // Amount is String. Can be text or smth
 
         }
     }
@@ -962,7 +949,7 @@ public class ActivityTraining extends ActivityAbstract {
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
         intent.putExtra("isNew", mTrainingIsNew);
-        intent.putExtra("currentDigitTitle", "Weight");
+        intent.putExtra("currentDigitTitle", Digit.WEIGHT.name());
         intent.putExtra("currentActivity", "ActivityTraining");
 
         if (!mTrainingIsNew) {
@@ -1047,12 +1034,36 @@ public class ActivityTraining extends ActivityAbstract {
 
         mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        mShowVolumeDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_DEFAULT_BUTTON, false);
+        mShowAmountDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
 
-        mShowVolumeLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_VOLUME_LAST_DAY_BUTTON, false);
+        mShowAmountLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {
+
+        Button btAmountPlus = findViewById(R.id.btAmountPlus);
+
+        if (btAmountPlus != null) {
+            btAmountPlus.setText(String.valueOf(mPlusMinusButtonValue));
+        }
+
+        Button btVolumeMinus = findViewById(R.id.btAmountMinus);
+
+        if (btVolumeMinus != null) {
+            btVolumeMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
+        }
+
+        Button btWeightPlus = findViewById(R.id.btWeightPlus);
+
+        if (btWeightPlus != null) {
+            btWeightPlus.setText(String.valueOf(mPlusMinusButtonValue));
+        }
+
+        Button btWeightMinus = findViewById(R.id.btWeightMinus);
+
+        if (btWeightMinus != null) {
+            btWeightMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
+        }
 
         ImageView ivPicture = findViewById(R.id.ivPicture);
 
@@ -1074,23 +1085,23 @@ public class ActivityTraining extends ActivityAbstract {
             }
         }
 
-        Button btVolumeDefault = findViewById(R.id.btVolumeDefault);
+        Button btAmountDefault = findViewById(R.id.btAmountDefault);
 
-        if (btVolumeDefault != null) {
-            if (mShowVolumeDefaultButton) {
-                btVolumeDefault.setVisibility(View.VISIBLE);
+        if (btAmountDefault != null) {
+            if (mShowAmountDefaultButton) {
+                btAmountDefault.setVisibility(View.VISIBLE);
             } else {
-                btVolumeDefault.setVisibility(View.GONE);
+                btAmountDefault.setVisibility(View.GONE);
             }
         }
 
-        Button btVolumeLastDay = findViewById(R.id.btVolumeLastDay);
+        Button btAmountLastDay = findViewById(R.id.btAmountLastDay);
 
-        if (btVolumeLastDay != null) {
-            if (mShowVolumeLastDayButton) {
-                btVolumeLastDay.setVisibility(View.VISIBLE);
+        if (btAmountLastDay != null) {
+            if (mShowAmountLastDayButton) {
+                btAmountLastDay.setVisibility(View.VISIBLE);
             } else {
-                btVolumeLastDay.setVisibility(View.GONE);
+                btAmountLastDay.setVisibility(View.GONE);
             }
         }
     }
