@@ -117,15 +117,17 @@
                             style="@android:style/TextAppearance.Small"
                             android:textColor="@color/text_color" />
 
-                        <EditText
+                        <Button
+                            android:id="@+id/btWeight"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
-                            android:id="@+id/etWeight"
+                            android:layout_height="match_parent"
                             android:layout_span="20"
-                            style="@android:style/TextAppearance.Small"
-                            android:layout_gravity="bottom"
-                            android:textColor="@color/text_color" />
+                            android:layout_weight="1"
+                            android:background="@drawable/bt_border"
+                            android:hint="Click to enter"
+                            android:onClick="btWeight_onClick"
+                            android:textColor="@color/text_color"
+                            android:visibility="visible"/>
                     </TableRow>
 
                 </TableLayout>

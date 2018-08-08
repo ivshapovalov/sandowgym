@@ -96,7 +96,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CLEAR FILTER"
+                android:text="EMPTY FILTER"
                 android:id="@+id/button"
                 android:layout_span="17"
                 android:gravity="center"

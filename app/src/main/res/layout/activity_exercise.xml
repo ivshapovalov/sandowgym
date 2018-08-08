@@ -173,7 +173,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="VOLUME"
+                            android:text="AMOUNT"
                             android:id="@+id/textView5"
                             android:layout_span="10"
                             style="@android:style/TextAppearance.Small"
@@ -182,7 +182,7 @@
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/etVolumeDefault"
+                            android:id="@+id/etAmountDefault"
                             android:layout_span="20"
                             style="@android:style/TextAppearance.Small"
                             android:textColor="@color/text_color" />

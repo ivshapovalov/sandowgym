@@ -30,6 +30,7 @@ import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
+import static ru.ivan.sandowgym.common.Common.convertTextToDigit;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 
 public class FileExportImport {
@@ -46,13 +47,13 @@ public class FileExportImport {
     private List<String> specialSymbols = new ArrayList<>();
     private final String SYMBOL_ID = "#";
     private final String SYMBOL_WEIGHT = "$";
-    private final String SYMBOL_DEF_VOLUME = "%";
+    private final String SYMBOL_DEF_AMOUNT = "%";
     private final String SYMBOL_SPLIT = ";";
 
     {
         specialSymbols.add(SYMBOL_ID);
         specialSymbols.add(SYMBOL_WEIGHT);
-        specialSymbols.add(SYMBOL_DEF_VOLUME);
+        specialSymbols.add(SYMBOL_DEF_AMOUNT);
         specialSymbols.add(SYMBOL_SPLIT);
         specialSymbols.add(")");
     }
@@ -99,10 +100,10 @@ public class FileExportImport {
         StringBuilder mNewString = new StringBuilder();
         switch (type) {
             case FULL:
-                mNewString.append("EXERCISE(" + SYMBOL_ID + "ID" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE(" + SYMBOL_ID + "ID" + ");");
+                mNewString.append("EXERCISE(" + SYMBOL_ID + "ID" + SYMBOL_DEF_AMOUNT + "DEF_AMOUNT" + ")/DATE(" + SYMBOL_ID + "ID" + ");");
                 break;
             default:
-                mNewString.append("EXERCISE(" + SYMBOL_DEF_VOLUME + "DEF_VOL" + ")/DATE;");
+                mNewString.append("EXERCISE(" + SYMBOL_DEF_AMOUNT + "DEF_AMOUNT" + ")/DATE;");
                 break;
         }
 
@@ -132,8 +133,8 @@ public class FileExportImport {
                             .append(mCurrentExercise.getName())
                             .append("(").append(SYMBOL_ID)
                             .append(String.valueOf(mCurrentExercise.getId()))
-                            .append(SYMBOL_DEF_VOLUME)
-                            .append(mCurrentExercise.getVolumeDefault())
+                            .append(SYMBOL_DEF_AMOUNT)
+                            .append(mCurrentExercise.getAmountDefault())
                             .append(")")
                             .append(SYMBOL_SPLIT);
                     break;
@@ -141,8 +142,8 @@ public class FileExportImport {
                     mNewString
                             .append(mCurrentExercise.getName())
                             .append("(")
-                            .append(SYMBOL_DEF_VOLUME)
-                            .append(mCurrentExercise.getVolumeDefault())
+                            .append(SYMBOL_DEF_AMOUNT)
+                            .append(mCurrentExercise.getAmountDefault())
                             .append(")")
                             .append(SYMBOL_SPLIT);
                     break;
@@ -152,11 +153,11 @@ public class FileExportImport {
             for (Training mCurrentTraining : trainingsList) {
                 try {
                     TrainingContent mCurrentTrainingContent = DB.getTrainingContent(mCurrentExercise.getId(), mCurrentTraining.getId());
-                    String curVolume = mCurrentTrainingContent.getVolume();
-                    if (curVolume == null || "".equals(curVolume.trim())) {
+                    int curAmount = mCurrentTrainingContent.getAmount();
+                    if (curAmount == 0) {
                         mNewString.append("0");
                     } else {
-                        mNewString.append(curVolume);
+                        mNewString.append(curAmount);
                     }
                     switch (type) {
                         case FULL:
@@ -406,25 +407,25 @@ public class FileExportImport {
                 id = "";
             }
 
-            String def_volume;
-            int indexSymbolDefaultVolume = s.indexOf(SYMBOL_DEF_VOLUME);
-            if (indexSymbolDefaultVolume != -1) {
-                def_volume = textBeforeNextSpecialSymbol(s, indexSymbolDefaultVolume);
+            String def_amount;
+            int indexSymbolDefaultAmount = s.indexOf(SYMBOL_DEF_AMOUNT);
+            if (indexSymbolDefaultAmount != -1) {
+                def_amount = textBeforeNextSpecialSymbol(s, indexSymbolDefaultAmount);
             } else {
-                def_volume = "";
+                def_amount = "";
             }
 
             Exercise exercise;
             if (!"".equals(id)) {
                 exercise = new Exercise.Builder(Integer.valueOf(id))
                         .addName(name)
-                        .addVolumeDefault(def_volume)
+                        .addAmountDefault(convertTextToDigit(def_amount))
                         .build();
 
             } else {
                 exercise = new Exercise.Builder(DB.getExerciseMaxNumber() + exercisesCount++)
                         .addName(name)
-                        .addVolumeDefault(def_volume)
+                        .addAmountDefault(convertTextToDigit(def_amount))
                         .build();
             }
             exercisesList.add(exercise);
@@ -461,12 +462,12 @@ public class FileExportImport {
 
                 String cellValue = data.get(curExerciseIndex + 1)[curTrainingIndex + 1];
 
-                String volume;
+                String amount;
                 int indexSymbolBrackets = cellValue.indexOf("(");
                 if (indexSymbolBrackets != -1) {
-                    volume = cellValue.substring(0, indexSymbolBrackets);
+                    amount = cellValue.substring(0, indexSymbolBrackets);
                 } else {
-                    volume = cellValue.substring(0);
+                    amount = cellValue.substring(0);
                 }
 
                 String weight;
@@ -478,23 +479,13 @@ public class FileExportImport {
                     weight = trainingWeights.get(curTrainingIndex);
                 }
 
-                int iWeight;
-                try {
-                    iWeight = Integer.parseInt(weight);
-                } catch (NumberFormatException e) {
-                    //if weight is incorrect - maybe training not contain this exercise
-                    if (volume==null || volume.isEmpty() || volume.equals("0")) {
-                        continue;
-                    }
-                    iWeight = 0;
-                }
-                trainingContent.setWeight(iWeight);
-                trainingContent.setVolume(volume);
+                trainingContent.setWeight(convertTextToDigit(weight));
+                trainingContent.setAmount(convertTextToDigit(amount));
 
                 TrainingContent dbTrainingContent;
                 try {
                     dbTrainingContent = DB.getTrainingContent(curExercise.getId(), curTraining.getId());
-                    dbTrainingContent.setVolume(trainingContent.getVolume());
+                    dbTrainingContent.setAmount(trainingContent.getAmount());
                     dbTrainingContent.setWeight(trainingContent.getWeight());
                     DB.updateTrainingContent(dbTrainingContent);
                 } catch (TableDoesNotContainElementException e) {

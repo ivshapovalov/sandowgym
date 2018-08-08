@@ -9,7 +9,7 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
     private int is_active = 1;
     private String name = "";
     private String explanation = "";
-    private String volume_default = "";
+    private int amount_default;
     private String picture = "--";
 
     private Exercise(Builder builder) {
@@ -17,7 +17,7 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
         this.id = builder.id;
         this.name = builder.name;
         this.explanation = builder.explanation;
-        this.volume_default = builder.volume_default;
+        this.amount_default = builder.amount_default;
         this.picture = builder.picture;
         this.is_active=builder.is_active;
 
@@ -55,12 +55,12 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
         this.explanation = explanation;
     }
 
-    public String getVolumeDefault() {
-        return volume_default;
+    public int getAmountDefault() {
+        return amount_default;
     }
 
-    public void setVolumeDefault(String volume_default) {
-        this.volume_default = volume_default;
+    public void setAmountDefault(int amount_default) {
+        this.amount_default = amount_default;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
         private int is_active = 1;
         private String name = "";
         private String explanation = "";
-        private String volume_default = "";
+        private int amount_default = 0;
         private String picture = "--";
 
         public Builder(int id) {
@@ -110,8 +110,8 @@ public class Exercise extends AbstractEntityMultiUser implements SavingIntoDB, D
             return this;
         }
 
-        public Builder addVolumeDefault(String volumeDefault) {
-            this.volume_default = volumeDefault;
+        public Builder addAmountDefault(int amountDefault) {
+            this.amount_default = amountDefault;
             return this;
         }
 

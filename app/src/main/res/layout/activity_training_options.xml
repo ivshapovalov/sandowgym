@@ -212,7 +212,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/lineShowVolumeDefaultButton"
+        android:id="@+id/lineShowAmountDefaultButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -226,20 +226,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="SHOW DEF VOLUME"
+            android:text="SHOW DEF AMOUNT"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/text_color" />
 
         <RadioGroup
-            android:id="@+id/rgShowVolumeDefaultButton"
+            android:id="@+id/rgShowAmountDefaultButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
             <RadioButton
-                android:id="@+id/rbShowVolumeDefaultButtonYes"
+                android:id="@+id/rbShowAmountDefaultButtonYes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
@@ -248,7 +248,7 @@
                 android:textColor="@color/text_color" />
 
             <RadioButton
-                android:id="@+id/rbShowVolumeDefaultButtonNo"
+                android:id="@+id/rbShowAmountDefaultButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
@@ -258,12 +258,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/lineShowVolumeLastDayButton"
+        android:id="@+id/lineShowAmountLastDayButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineShowVolumeDefaultButton" >
+        android:layout_below="@+id/lineShowAmountDefaultButton">
 
         <TextView
             android:id="@+id/textView16"
@@ -271,20 +271,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="SHOW LAST VOLUME"
+            android:text="SHOW LAST AMOUNT"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/text_color" />
 
         <RadioGroup
-            android:id="@+id/rgShowVolumeLastDayButton"
+            android:id="@+id/rgShowAmountLastDayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="60"
             android:orientation="horizontal" >
 
             <RadioButton
-                android:id="@+id/rbShowVolumeLastDayButtonYes"
+                android:id="@+id/rbShowAmountLastDayButtonYes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
@@ -293,7 +293,7 @@
                 android:textColor="@color/text_color" />
 
             <RadioButton
-                android:id="@+id/rbShowVolumeLastDayButtonNo"
+                android:id="@+id/rbShowAmountLastDayButtonNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="30"
