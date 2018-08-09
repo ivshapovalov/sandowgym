@@ -2,7 +2,8 @@ package ru.ivan.sandowgym.common.Tasks;
 
 public enum Digit {
     AMOUNT("Amount"),
-    WEIGHT("Weight");
+    WEIGHT("Weight"),
+    INTEGER("Integer");
 
     private final String text;
 

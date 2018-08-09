@@ -16,6 +16,8 @@ public class ActivityDigitPickerDialog extends AppCompatActivity {
     private boolean mCallerIsNew;
     private String mCallerActivity;
     private int mCallerTrainingID;
+    private int mCallerWeightChangeCalendarID;
+
     private String mCallerDigitTitle;
     private int mCallerExerciseIndex;
 
@@ -50,6 +52,7 @@ public class ActivityDigitPickerDialog extends AppCompatActivity {
         mCallerIsNew = intent.getBooleanExtra("isNew", false);
         mCallerActivity = intent.getStringExtra("currentActivity");
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
+        mCallerWeightChangeCalendarID = intent.getIntExtra("currentWeightChangeCalendarId", 0);
         mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
         mCallerDigitTitle = intent.getStringExtra("currentDigitTitle");
         mCallerDigit = intent.getIntExtra("currentDigit", 0);
@@ -69,7 +72,8 @@ public class ActivityDigitPickerDialog extends AppCompatActivity {
         blink(view, this);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
+//            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -87,13 +91,15 @@ public class ActivityDigitPickerDialog extends AppCompatActivity {
         blink(view, this);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
+//            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         Intent intent = new Intent(ActivityDigitPickerDialog.this, myClass);
         intent.putExtra("isNew", mCallerIsNew);
+        intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
         intent.putExtra("currentTrainingId", mCallerTrainingID);
         intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
         intent.putExtra("currentDigitTitle", mCallerDigitTitle);

@@ -775,7 +775,7 @@ public class ActivityTraining extends ActivityAbstract {
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
         intent.putExtra("isNew", mTrainingIsNew);
-        intent.putExtra("currentActivity", "ActivityTraining");
+        intent.putExtra("currentActivity", getClass().getName());
         if (!mTrainingIsNew) {
             intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         }
@@ -924,7 +924,7 @@ public class ActivityTraining extends ActivityAbstract {
             Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
             intent.putExtra("isNew", mTrainingIsNew);
             intent.putExtra("currentDigitTitle", Digit.AMOUNT.name());
-            intent.putExtra("currentActivity", "ActivityTraining");
+            intent.putExtra("currentActivity", getClass().getName());
             if (!mTrainingIsNew) {
                 intent.putExtra("currentTrainingId", mCurrentTraining.getId());
             }
@@ -950,7 +950,7 @@ public class ActivityTraining extends ActivityAbstract {
         Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
         intent.putExtra("isNew", mTrainingIsNew);
         intent.putExtra("currentDigitTitle", Digit.WEIGHT.name());
-        intent.putExtra("currentActivity", "ActivityTraining");
+        intent.putExtra("currentActivity", getClass().getName());
 
         if (!mTrainingIsNew) {
             intent.putExtra("currentTrainingId", mCurrentTraining.getId());
@@ -999,7 +999,7 @@ public class ActivityTraining extends ActivityAbstract {
         mCurrentTrainingContent.dbSave(DB);
         mCurrentTraining.dbSave(DB);
         Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
-        intent.putExtra("currentActivity", "ActivityTraining");
+        intent.putExtra("currentActivity", getClass().getName());
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
         intent.putExtra("currentExerciseListSize", mActiveExercises.size());

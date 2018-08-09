@@ -220,26 +220,26 @@ public class ActivityTrainingsList extends ActivityAbstract {
             }
             mRow.addView(txt);
 
-            txt = new TextView(this);
-            txt.setText(">>");
-            txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
-            txt.setTextSize(mTextSize);
-            txt.setBackgroundResource(R.drawable.bt_border);
-            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis == currentDay) {
-                txt.setTextColor(Color.RED);
-            } else {
-                txt.setTextColor(getResources().getColor(R.color.text_color));
-            }
-            txt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TableRow row = (TableRow) v.getParent();
-                    txtTrainingCopy_onClick(row);
-                }
-            });
-
-            mRow.addView(txt);
+//            txt = new TextView(this);
+//            txt.setText(">>");
+//            txt.setGravity(Gravity.CENTER);
+//            txt.setHeight(mHeight);
+//            txt.setTextSize(mTextSize);
+//            txt.setBackgroundResource(R.drawable.bt_border);
+//            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis == currentDay) {
+//                txt.setTextColor(Color.RED);
+//            } else {
+//                txt.setTextColor(getResources().getColor(R.color.text_color));
+//            }
+//            txt.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    TableRow row = (TableRow) v.getParent();
+//                    txtTrainingCopy_onClick(row);
+//                }
+//            });
+//
+//            mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.bt_border);
             layout.addView(mRow);
@@ -262,14 +262,14 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
     private void txtTrainingCopy_onClick(final TableRow view) {
 
-        //blink(view, this);
-        int id = view.getId() % numberOfViews;
-        Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
-        intent.putExtra("currentTrainingId", 0);
-        intent.putExtra("isNew", true);
-        intent.putExtra("trainingIdForCopy", id);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+//        //blink(view, this);
+//        int id = view.getId() % numberOfViews;
+//        Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
+//        intent.putExtra("currentTrainingId", 0);
+//        intent.putExtra("isNew", true);
+//        intent.putExtra("trainingIdForCopy", id);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(intent);
 
     }
 

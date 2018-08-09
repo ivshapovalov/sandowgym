@@ -1,14 +1,17 @@
 package ru.ivan.sandowgym.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Tasks.Digit;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
@@ -30,12 +33,28 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         setContentView(R.layout.activity_training_options);
 
         getPreferencesFromFile();
+
+        Intent intent = getIntent();
+        int currentDigit = intent.getIntExtra("currentDigit", 0);
+        String currentDigitTitle = intent.getStringExtra("currentDigitTitle");
+
+        if (Digit.INTEGER.equalValue(currentDigitTitle)) {
+            mPlusMinusButtonValue = currentDigit;
+        }
+
         setPreferencesOnScreen();
         setTitleOfActivity(this);
     }
 
     public void buttonSave_onClick(View view) {
 
+        blink(view, this);
+        saveOptionsFromScreen(view);
+        this.finish();
+
+    }
+
+    private void saveOptionsFromScreen(View view) {
         int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
         EditText txt = findViewById(mPlusMinusButtonID);
         if (txt != null) {
@@ -45,7 +64,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
             }
         }
-        blink(view, this);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, mUseCalendarForWeight);
@@ -54,9 +72,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, mShowAmountDefaultButton);
         editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, mShowAmountLastDayButton);
         editor.apply();
-
-        this.finish();
-
     }
 
     public void buttonCancel_onClick(final View view) {
@@ -88,10 +103,10 @@ public class ActivityTrainingOptions extends ActivityAbstract {
 
     private void setPreferencesOnScreen() {
 
-        int mPlusMinusButtonID = getResources().getIdentifier("etPlusMinusButtonValue", "id", getPackageName());
-        EditText txt = findViewById(mPlusMinusButtonID);
-        if (txt != null) {
-            txt.setText(String.valueOf(mPlusMinusButtonValue));
+        int mPlusMinusButtonID = getResources().getIdentifier("btPlusMinusButtonValue", "id", getPackageName());
+        Button btPlusMinus = findViewById(mPlusMinusButtonID);
+        if (btPlusMinus != null) {
+            btPlusMinus.setText(String.valueOf(mPlusMinusButtonValue));
         }
 
         int mUseCalendarID = getResources().getIdentifier("rbUseCalendarForWeight" + (mUseCalendarForWeight ? "Yes" : "No"), "id", getPackageName());
@@ -239,5 +254,18 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                 }
             });
         }
+    }
+
+    public void btDigitPlusMinus_onClick(View view) {
+        blink(view, this);
+
+        saveOptionsFromScreen(view);
+
+        Intent intent = new Intent(ActivityTrainingOptions.this, ActivityDigitPickerDialog.class);
+        intent.putExtra("currentDigitTitle", Digit.INTEGER.name());
+        intent.putExtra("currentActivity", getClass().getName());
+        intent.putExtra("currentDigit", mPlusMinusButtonValue);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

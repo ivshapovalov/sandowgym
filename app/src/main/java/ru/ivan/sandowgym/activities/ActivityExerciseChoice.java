@@ -44,7 +44,6 @@ public class ActivityExerciseChoice extends ActivityAbstract {
     private void getIntentParams() {
 
         Intent intent = getIntent();
-
         mCallerActivity = intent.getStringExtra("currentActivity");
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
         mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
@@ -110,7 +109,8 @@ public class ActivityExerciseChoice extends ActivityAbstract {
         int index = view.getId();
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
+//            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -126,7 +126,8 @@ public class ActivityExerciseChoice extends ActivityAbstract {
 
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+//            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

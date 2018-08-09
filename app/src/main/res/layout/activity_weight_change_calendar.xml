@@ -1,137 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.ActivityWeightChangeCalendar">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".activities.ActivityWeightChangeCalendar">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:stretchColumns="*">
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CLOSE"
                 android:id="@+id/button4"
+                style="@android:style/TextAppearance.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="10"
+                android:background="@drawable/bt_border"
                 android:onClick="btClose_onClick"
-                android:layout_span="10"
-                style="@android:style/TextAppearance.Small"
-                android:background="@drawable/bt_border"
-                android:textColor="@color/text_color" />
+                android:text="CLOSE"
+                android:textColor="@color/text_color"/>
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SAVE"
                 android:id="@+id/button3"
-                android:onClick="btSave_onClick"
-                android:layout_span="10"
                 style="@android:style/TextAppearance.Small"
-                android:background="@drawable/bt_border"
-                android:textColor="@color/text_color" />
-
-            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DELETE"
-                android:id="@+id/button5"
-                android:onClick="btDelete_onClick"
                 android:layout_span="10"
-                style="@android:style/TextAppearance.Small"
                 android:background="@drawable/bt_border"
-                android:textColor="@color/text_color" />
+                android:onClick="btSave_onClick"
+                android:text="SAVE"
+                android:textColor="@color/text_color"/>
+
+            <Button
+                android:id="@+id/button5"
+                style="@android:style/TextAppearance.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="10"
+                android:background="@drawable/bt_border"
+                android:onClick="btDelete_onClick"
+                android:text="DELETE"
+                android:textColor="@color/text_color"/>
 
         </TableRow>
 
-            <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView"
-                android:layout_weight="30">
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="30">
 
-                <TableLayout
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="*">
+                    android:layout_height="match_parent">
 
-                    <TableRow
+                    <TextView
+                        android:id="@+id/textView"
+                        style="@android:style/TextAppearance.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="10"
+                        android:text="ID"
+                        android:textColor="@color/text_color"/>
+
+                    <TextView
+                        android:id="@+id/tvID"
+                        style="@android:style/TextAppearance.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="5"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        style="@android:style/TextAppearance.Small"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_span="10"
+                        android:text="DAY"
+                        android:textColor="@color/text_color"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ID"
-                            android:id="@+id/textView"
-                            android:layout_span="10"
-                            style="@android:style/TextAppearance.Small"
-                            android:textColor="@color/text_color" />
+                    <TextView
+                        android:id="@+id/tvDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="20"
+                        android:onClick="tvDay_onClick"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tvID"
-                            android:layout_span="5"
-                            style="@android:style/TextAppearance.Small"/>
+                </TableRow>
 
-                    </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/textView3"
+                        style="@android:style/TextAppearance.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_span="10"
+                        android:gravity="center_vertical"
+                        android:text="WEIGHT"
+                        android:textColor="@color/text_color"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="DAY"
-                            android:id="@+id/textView2"
-                            android:layout_span="10"
-                            style="@android:style/TextAppearance.Small"
-                            android:textColor="@color/text_color" />
+                    <Button
+                        android:id="@+id/btWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_span="20"
+                        android:layout_weight="1"
+                        android:background="@drawable/bt_border"
+                        android:hint="Click to enter"
+                        android:onClick="btWeight_onClick"
+                        android:textColor="@color/text_color"
+                        android:textSize="15sp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tvDay"
-                            android:onClick="tvDay_onClick"
-                            android:layout_span="20"/>
+                </TableRow>
 
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="WEIGHT"
-                            android:id="@+id/textView3"
-                            android:layout_span="10"
-                            style="@android:style/TextAppearance.Small"
-                            android:textColor="@color/text_color" />
-
-                        <Button
-                            android:id="@+id/btWeight"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_span="20"
-                            android:layout_weight="1"
-                            android:background="@drawable/bt_border"
-                            android:hint="Click to enter"
-                            android:onClick="btWeight_onClick"
-                            android:textColor="@color/text_color"
-                            android:visibility="visible"/>
-                    </TableRow>
-
-                </TableLayout>
-            </ScrollView>
+            </TableLayout>
+        </ScrollView>
     </TableLayout>
 </RelativeLayout>
 

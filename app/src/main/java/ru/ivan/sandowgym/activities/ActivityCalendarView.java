@@ -109,7 +109,8 @@ public class ActivityCalendarView extends AppCompatActivity {
         blink(view,this);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
+            //myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -137,7 +138,8 @@ public class ActivityCalendarView extends AppCompatActivity {
         blink(view,this);
         Class<?> myClass = null;
         try {
-            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            myClass = Class.forName(mCallerActivity);
+//            myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

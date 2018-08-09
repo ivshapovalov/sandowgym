@@ -62,13 +62,17 @@
             android:textStyle="bold"
             android:textColor="@color/text_color"/>
 
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:ems="10"
-            android:id="@+id/etPlusMinusButtonValue"
-            android:layout_weight="50"/>
+        <Button
+            android:id="@+id/btPlusMinusButtonValue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_span="20"
+            android:layout_weight="50"
+            android:background="@drawable/bt_border"
+            android:hint="Click to enter"
+            android:onClick="btDigitPlusMinus_onClick"
+            android:textColor="@color/text_color"
+            android:textSize="15sp"/>
 
     </LinearLayout>
 

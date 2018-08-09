@@ -14,8 +14,8 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="43"
-        android:versionName="4.3">
+        android:versionCode="44"
+        android:versionName="4.4">
         <activity android:name=".activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
