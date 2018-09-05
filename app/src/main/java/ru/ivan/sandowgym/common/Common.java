@@ -39,15 +39,15 @@ public class Common {
         return d;
     }
 
-    public static Date ConvertMillisToDate(final long Millis) {
+    public static Date convertMillisToDate(final long Millis) {
         return new Date(Millis);
     }
 
-    public static String ConvertMillisToString(final long Millis) {
-        return ConvertDateToString(new Date(Millis));
+    public static String convertMillisToString(final long Millis) {
+        return convertDateToString(new Date(Millis));
     }
 
-    public static String ConvertDateToString(final Date date) {
+    public static String convertDateToString(final Date date) {
 
         SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
         String sDate = "";
@@ -112,7 +112,7 @@ public class Common {
         }
     }
 
-    public static void HideEditorButton(Button btEditor) {
+    public static void hideEditorButton(Button btEditor) {
 
         if (btEditor != null) {
             TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);

@@ -42,8 +42,8 @@ import ru.ivan.sandowgym.common.Tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.FtpListFilesTask;
 import ru.ivan.sandowgym.common.Tasks.ImportFromFileTask;
 
-import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
@@ -211,7 +211,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (mDateFrom == 0) {
                 etDayFrom.setText("");
             } else {
-                etDayFrom.setText(ConvertMillisToString(mDateFrom));
+                etDayFrom.setText(convertMillisToString(mDateFrom));
             }
         }
 
@@ -221,7 +221,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (mDateTo == 0) {
                 etDayTo.setText("");
             } else {
-                etDayTo.setText(ConvertMillisToString(mDateTo));
+                etDayTo.setText(convertMillisToString(mDateTo));
             }
         }
     }

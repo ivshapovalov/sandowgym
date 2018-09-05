@@ -25,8 +25,8 @@ import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.HideEditorButton;
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
@@ -57,7 +57,7 @@ public class ActivityUsersList extends AppCompatActivity {
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btUsersDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
-            HideEditorButton(btEditor);
+            hideEditorButton(btEditor);
         }
 
         getPreferencesFromFile();

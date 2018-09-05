@@ -4,7 +4,7 @@ import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
 import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 
 public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
@@ -32,7 +32,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
 
     public String getDayString() {
 
-        return ConvertMillisToString(day);
+        return convertMillisToString(day);
     }
 
     public void setDay(long day) {

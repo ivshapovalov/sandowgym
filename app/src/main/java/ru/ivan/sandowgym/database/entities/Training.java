@@ -1,10 +1,11 @@
 package ru.ivan.sandowgym.database.entities;
 
-import static ru.ivan.sandowgym.common.Common.*;
-
 import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
 import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
+import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 
 public class Training extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
 
@@ -23,7 +24,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB, D
 
     public String getDayString() {
 
-        return ConvertMillisToString(day);
+        return convertMillisToString(day);
 
     }
 

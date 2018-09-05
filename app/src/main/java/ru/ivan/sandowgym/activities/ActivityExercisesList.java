@@ -26,9 +26,9 @@ import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.HideEditorButton;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExercisesList extends ActivityAbstract {
@@ -57,7 +57,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
-            HideEditorButton(btEditor);
+            hideEditorButton(btEditor);
         }
         getPreferencesFromFile();
         Intent intent = getIntent();

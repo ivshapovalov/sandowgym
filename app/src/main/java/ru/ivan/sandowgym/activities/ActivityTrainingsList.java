@@ -27,10 +27,10 @@ import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
-import static ru.ivan.sandowgym.common.Common.HideEditorButton;
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityTrainingsList extends ActivityAbstract {
@@ -56,7 +56,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("btTrainingsDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
-            HideEditorButton(btEditor);
+            hideEditorButton(btEditor);
         }
 
         Intent intent = getIntent();
@@ -92,7 +92,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             if (mCurrentDateInMillis == 0) {
                 btDay.setText("");
             } else {
-                btDay.setText(ConvertMillisToString(mCurrentDateInMillis));
+                btDay.setText(convertMillisToString(mCurrentDateInMillis));
             }
         }
 
@@ -208,7 +208,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(ConvertMillisToString(currentDay));
+            txt.setText(convertMillisToString(currentDay));
             txt.setGravity(Gravity.CENTER);
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);

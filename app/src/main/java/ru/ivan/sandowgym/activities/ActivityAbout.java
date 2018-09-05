@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import ru.ivan.sandowgym.R;
 
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityAbout extends AppCompatActivity {
@@ -27,8 +28,9 @@ public class ActivityAbout extends AppCompatActivity {
             try {
                 pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                 String version = pInfo.versionName;
-                String message = "This program will help you to train Sandows gymnastics" + "\n" + "Version " + version + "\n" +
-                        "2018.01.24";
+                String date = convertMillisToString(pInfo.lastUpdateTime);
+                String message = "This program will help you to train Sandows gymnastics" + "\n" + "Version " + version
+                        + "\n Date " + date;
                 tvMessage.setText(message);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();

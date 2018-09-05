@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:versionCode="44"
-        android:versionName="4.4">
+        android:versionName="4.4"
+        android:lastUpdateTime="2018.09.05"
+        android:re="4.4">
         <activity android:name=".activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

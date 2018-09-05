@@ -39,9 +39,9 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
-import static ru.ivan.sandowgym.common.Common.ConvertDateToString;
-import static ru.ivan.sandowgym.common.Common.ConvertMillisToDate;
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.convertDateToString;
+import static ru.ivan.sandowgym.common.Common.convertMillisToDate;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
@@ -208,7 +208,7 @@ public class ActivityTraining extends ActivityAbstract {
         int mDayID = getResources().getIdentifier("tvDay", "id", getPackageName());
         TextView etDay = findViewById(mDayID);
         if (etDay != null) {
-            etDay.setText(ConvertDateToString(ConvertMillisToDate(currentDateInMillis)));
+            etDay.setText(convertDateToString(convertMillisToDate(currentDateInMillis)));
         }
     }
 

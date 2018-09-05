@@ -27,9 +27,9 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.HideEditorButton;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityWeightChangeCalendarList extends ActivityAbstract {
@@ -59,7 +59,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         if (!Common.isDebug) {
             int mEditorID = getResources().getIdentifier("bWeightChangeCalendarListDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
-            HideEditorButton(btEditor);
+            hideEditorButton(btEditor);
         }
 
         getPreferencesFromFile();

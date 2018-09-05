@@ -18,8 +18,8 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
-import static ru.ivan.sandowgym.common.Common.ConvertMillisToString;
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityWeightChangeCalendar extends ActivityAbstract {
@@ -158,7 +158,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
             if (mCurrentWeightChangeCalendar.getDay() == 0) {
                 tvDay.setText("");
             } else {
-                tvDay.setText(ConvertMillisToString(mCurrentWeightChangeCalendar.getDay()));
+                tvDay.setText(convertMillisToString(mCurrentWeightChangeCalendar.getDay()));
             }
         }
 
