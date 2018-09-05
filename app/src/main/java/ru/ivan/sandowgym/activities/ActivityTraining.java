@@ -792,6 +792,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btAmountChange_onClick(final View view) {
 
+        blink(view, this);
         Button button = (Button) view;
         String value = String.valueOf(button.getText());
         DigitChange(Integer.parseInt(value), R.id.btAmount);
@@ -800,6 +801,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btWeightChange_onClick(final View view) {
 
+        blink(view, this);
         Button button = (Button) view;
         String value = String.valueOf(button.getText());
         DigitChange(Integer.parseInt(value), R.id.btWeight);
