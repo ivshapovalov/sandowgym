@@ -1,5 +1,6 @@
 package ru.ivan.sandowgym.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -90,6 +91,7 @@ public class ActivityExerciseChoice extends ActivityAbstract {
                 txt.setBackgroundResource(R.drawable.textview_border);
                 txt.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 txt.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("ResourceType")
                     @Override
                     public void onClick(View view) {
                         if (view.getId() >= mCallerExerciseListSize) {

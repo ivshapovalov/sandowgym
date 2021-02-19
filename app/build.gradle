@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
+    lintOptions {
+        abortOnError false
+    }
 
     signingConfigs {
         sandow {
@@ -12,11 +18,10 @@ android {
         applicationId 'ru.ivan.sandowgym'
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 44
-        versionName '4.4'
+        versionCode 46
+        versionName '4.6'
         multiDexEnabled true
     }
-
 
     buildTypes {
         release {

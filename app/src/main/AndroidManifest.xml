@@ -14,12 +14,11 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="44"
-        android:versionName="4.4">
+        android:versionCode="46"
+        android:versionName="4.6">
         <activity android:name=".activities.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -59,9 +58,7 @@
             android:name=".activities.ActivityCalendarView"
             android:label="@string/calendar_view_name"
             android:screenOrientation="fullSensor" />
-        <activity
-            android:name=".database.manager.AndroidDatabaseManager"
-            android:theme="@style/Theme.AppCompat.Light"/>
+        <activity android:name=".database.manager.AndroidDatabaseManager" />
         <activity
             android:name=".activities.ActivityExerciseChoice"
             android:label="@string/exercise_choice"
