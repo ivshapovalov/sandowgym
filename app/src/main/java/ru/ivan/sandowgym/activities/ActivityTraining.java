@@ -11,12 +11,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -295,7 +297,7 @@ public class ActivityTraining extends ActivityAbstract {
     public void btAmountDefault_onClick(final View view) {
         blink(view, this);
         if (mCurrentExercise != null) {
-            if (!"".equals(mCurrentExercise.getAmountDefault())) {
+            if (mCurrentExercise.getAmountDefault() != 0) {
                 int mAmountID = getResources().getIdentifier("btAmount", "id", getPackageName());
                 Button btAmount = findViewById(mAmountID);
                 if (btAmount != null) {
@@ -443,7 +445,7 @@ public class ActivityTraining extends ActivityAbstract {
             mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
             mTrainingContentList = new ArrayList<>();
             for (Exercise ex : mActiveExercises
-                    ) {
+            ) {
                 mCurrentExercise = ex;
                 createNewTrainingContent();
                 if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
@@ -1114,6 +1116,78 @@ public class ActivityTraining extends ActivityAbstract {
         intent.putExtra("id", mCurrentTraining.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    public void btFill_onClick(View view) {
+        Button buttonFill = (Button) findViewById(R.id.buttonFill);
+        PopupMenu popup = new PopupMenu(ActivityTraining.this, buttonFill);
+        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        popup.show();
+    }
+
+    public void btFillTrainingByLast_onClick(MenuItem item) {
+        if (mActiveExercises.size() != 0) {
+            Exercise mCurrentExerciseBefore = mCurrentExercise;
+            TrainingContent mCurrentTrainingContentBefore = mCurrentTrainingContent;
+            for (int i = 0; i < mActiveExercises.size(); i++) {
+                mCurrentExercise = mActiveExercises.get(i);
+                if (isTrainingContentNew()) {
+                    createNewTrainingContent();
+                }
+                List<TrainingContent> mTrainingsContentList = new ArrayList<>();
+
+                if (dbCurrentUser != null) {
+                    mTrainingsContentList = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+                            mCurrentTraining.getDay(), mCurrentExercise.getId());
+                }
+                int exerciseAmountLastDay = 0;
+                int exerciseWeightLastDay = 0;
+                if (mTrainingsContentList.size() == 1) {
+                    try {
+                        exerciseAmountLastDay = mTrainingsContentList.get(0).getAmount();
+                        exerciseWeightLastDay = mTrainingsContentList.get(0).getWeight();
+                    } catch (Exception e) {
+                        exerciseAmountLastDay = 0;
+                        exerciseWeightLastDay = 0;
+                    }
+                }
+                mCurrentTrainingContent.setAmount(exerciseAmountLastDay);
+                mCurrentTrainingContent.setWeight(exerciseWeightLastDay);
+                saveTraining();
+            }
+            mCurrentExercise = mCurrentExerciseBefore;
+            mCurrentTrainingContent = mCurrentTrainingContentBefore;
+            showExercise();
+        }
+        Toast.makeText(
+                ActivityTraining.this,
+                "You filled training weight and amount by last training values ",
+                Toast.LENGTH_LONG
+        ).show();
+    }
+
+    public void btFillTrainingByDefault_onClick(MenuItem item) {
+        if (mActiveExercises.size() != 0) {
+            Exercise mCurrentExerciseBefore = mCurrentExercise;
+            TrainingContent mCurrentTrainingContentBefore = mCurrentTrainingContent;
+            for (int i = 0; i < mActiveExercises.size(); i++) {
+                mCurrentExercise = mActiveExercises.get(i);
+                if (isTrainingContentNew()) {
+                    createNewTrainingContent();
+                }
+                mCurrentTrainingContent.setAmount(mCurrentExercise.getAmountDefault());
+                mCurrentTrainingContent.setWeight(0);
+                saveTraining();
+            }
+            mCurrentExercise = mCurrentExerciseBefore;
+            mCurrentTrainingContent = mCurrentTrainingContentBefore;
+            showExercise();
+            Toast.makeText(
+                    ActivityTraining.this,
+                    "You filled training amount by default exercise values",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
     }
 
     private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {

@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fillTrainingByLast"
+        android:onClick="btFillTrainingByLast_onClick"
+        android:title="By last" />
+    <item
+        android:id="@+id/fillTrainingByDefault"
+        android:onClick="btFillTrainingByDefault_onClick"
+        android:title="By default" />
+</menu>

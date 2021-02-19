@@ -7,7 +7,6 @@
                 android:orientation="vertical"
                 tools:context=".activities.ActivityTraining">
 
-
     <TableLayout
         android:id="@+id/mTableMain"
         android:layout_width="match_parent"
@@ -47,7 +46,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_span="8"
+                android:layout_span="6"
                 android:background="@drawable/bt_border"
                 android:gravity="center"
                 android:onClick="btDelete_onClick"
@@ -59,12 +58,24 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_span="8"
+                android:layout_span="6"
                 android:background="@drawable/bt_border"
                 android:gravity="center"
                 android:onClick="btOptions_onClick"
                 android:text="OPTIONS"
                 android:textColor="@color/text_color"/>
+
+            <Button
+                android:id="@+id/buttonFill"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="4"
+                android:background="@drawable/bt_border"
+                android:gravity="center"
+                android:onClick="btFill_onClick"
+                android:text="FILL"
+                android:textColor="@color/text_color" />
         </TableRow>
 
         <TableRow
