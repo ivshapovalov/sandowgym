@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -22,6 +21,8 @@ import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1046,25 +1047,25 @@ public class ActivityTraining extends ActivityAbstract {
         Button btAmountPlus = findViewById(R.id.btAmountPlus);
 
         if (btAmountPlus != null) {
-            btAmountPlus.setText(String.valueOf(mPlusMinusButtonValue));
+            btAmountPlus.setText(String.valueOf("+" + mPlusMinusButtonValue));
         }
 
-        Button btVolumeMinus = findViewById(R.id.btAmountMinus);
+        Button btAmountMinus = findViewById(R.id.btAmountMinus);
 
-        if (btVolumeMinus != null) {
-            btVolumeMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
+        if (btAmountMinus != null) {
+            btAmountMinus.setText(String.valueOf("-" + mPlusMinusButtonValue));
         }
 
         Button btWeightPlus = findViewById(R.id.btWeightPlus);
 
         if (btWeightPlus != null) {
-            btWeightPlus.setText(String.valueOf(mPlusMinusButtonValue));
+            btWeightPlus.setText(String.valueOf("+" + mPlusMinusButtonValue));
         }
 
         Button btWeightMinus = findViewById(R.id.btWeightMinus);
 
         if (btWeightMinus != null) {
-            btWeightMinus.setText(String.valueOf(-1 * mPlusMinusButtonValue));
+            btWeightMinus.setText(String.valueOf("-" + mPlusMinusButtonValue));
         }
 
         ImageView ivPicture = findViewById(R.id.ivPicture);
