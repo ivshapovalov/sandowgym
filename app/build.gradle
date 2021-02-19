@@ -53,8 +53,9 @@ android {
         testImplementation 'junit:junit:4.12'
         implementation 'com.android.support:appcompat-v7:28.0.3'
         implementation files('libs/opencsv-3.7.jar')
-        implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
-        implementation group: 'com.fasterxml', name: 'aalto-xml', version: '1.0.0'
+        //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+        implementation files('libs/poishadow-all.jar')
+        //implementation group: 'com.fasterxml', name: 'aalto-xml', version: '1.0.0'
         implementation files('libs/ftp4j-1.7.2/ftp4j-1.7.2.jar')
     }
 }

@@ -26,74 +26,73 @@
         <activity
             android:name=".activities.ActivityExercisesList"
             android:label="@string/exercises_list_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityAbout"
             android:label="@string/about_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityTools"
             android:label="@string/tools"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityExercise"
             android:label="@string/exercise_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityTrainingsList"
             android:label="@string/trainings_list_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityTraining"
             android:label="@string/training_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityOptions"
             android:label="@string/options_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityTrainingOptions"
             android:label="@string/training_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityCalendarView"
             android:label="@string/calendar_view_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".database.manager.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".activities.ActivityExerciseChoice"
             android:label="@string/exercise_choice"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityFilesList"
             android:label="@string/file_choice"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityFileExportImport"
             android:label="@string/export_import_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityUsersList"
             android:label="@string/users_list_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityUser"
             android:label="@string/user_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityWeightChangeCalendarList"
             android:label="@string/weight_calendar_change_list_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityWeightChangeCalendar"
             android:label="@string/weight_calendar_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityDigitPickerDialog"
             android:label="@string/digits_view_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor" />
     </application>
-
 </manifest>
