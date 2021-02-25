@@ -216,6 +216,13 @@ public class FileExportImport {
 
     private File writeToFile(File file, Map<TypeOfView, List<String[]>> dataSheets) throws IOException {
 
+        System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+
         Workbook book = new XSSFWorkbook();
         for (Map.Entry<TypeOfView, List<String[]>> dataSheet : dataSheets.entrySet()) {
             addSheetWithData(dataSheet.getValue(), book, dataSheet.getKey().getName());

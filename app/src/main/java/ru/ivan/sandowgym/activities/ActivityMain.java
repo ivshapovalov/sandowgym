@@ -58,10 +58,12 @@ public class ActivityMain extends ActivityAbstract {
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private String mDropboxAccessToken;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         getPreferencesFromFile();

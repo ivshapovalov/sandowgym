@@ -291,7 +291,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
             File outputFile = new File(outputDir, fileName);
 //            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-//            File outputFile = new File(exportDir, "trainings.xls");
+//            outputFile = new File(exportDir, "trainings.xlsx");
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
 
             FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
@@ -336,7 +336,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             File outputFile = new File(outputDir, fileName);
             //for tests
 //            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-//            File outputFile = new File(exportDir, "trainings.xlsx");
+//            outputFile = new File(exportDir, "trainings.xlsx");
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
