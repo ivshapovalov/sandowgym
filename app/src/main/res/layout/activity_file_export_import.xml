@@ -244,17 +244,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:id="@+id/tvMessages"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_span="40"
-                            android:background="@drawable/abc_list_selector_background_transition_holo_light"
-                            android:gravity="bottom"
-                            />
-                    </TableRow>
+                        android:layout_marginTop="10dp" />
                 </TableLayout>
             </ScrollView>
 

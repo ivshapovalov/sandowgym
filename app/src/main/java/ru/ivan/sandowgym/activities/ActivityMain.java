@@ -1,6 +1,7 @@
 package ru.ivan.sandowgym.activities;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityMain extends ActivityAbstract {
 
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     private SharedPreferences mSettings;
 
     public static final String APP_PREFERENCES = "mysettings";
@@ -152,6 +154,61 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     public void btTools_onClick(final View view) {
+//
+//        Toast toast = Toast.makeText(ActivityMain.this, "Asadfasfa", Toast.LENGTH_SHORT);
+//        toast.show();
+//
+//        Intent resultIntent = new Intent(this, ActivityFileExportImport.class);
+//        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Time today = new Time(Time.getCurrentTimezone());
+//        today.setToNow();
+//        String date=today.format("%k:%M:%S");
+//
+//        NotificationCompat.Builder builder =
+//                new NotificationCompat.Builder(this)
+//                        .setSmallIcon(R.drawable.ic_sandow)
+//                        .setContentTitle("Backup")
+//                        .setContentText(date+": "+"Backup started")
+//                        .setContentIntent(resultPendingIntent)
+//                        .setAutoCancel(true);
+//
+//        Notification notification = builder.build();
+//        NotificationManager notificationManager =
+//                (NotificationManager) ActivityMain.this.getSystemService(NOTIFICATION_SERVICE);
+//        notificationManager.notify(1, notification);
+//
+//        try {
+//            sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        StringBuilder notifications=new StringBuilder();
+//        NotificationManager notificationManager1 =
+//                (NotificationManager) ActivityMain.this.getSystemService(NOTIFICATION_SERVICE);
+//        // We can read notification while posted.
+//        for (StatusBarNotification sbm : notificationManager1.getActiveNotifications()) {
+//            String text = sbm.getNotification().extras.getString("android.text");
+//            notifications.append(text).append(System.lineSeparator());
+//        }
+//
+//        today.setToNow();
+//        date=today.format("%k:%M:%S");
+//        notifications.append(date+": "+"Backup finished").append(System.lineSeparator());
+//
+//        builder =
+//                new NotificationCompat.Builder(this)
+//                        .setSmallIcon(R.drawable.ic_sandow)
+//                        .setContentTitle("Backup")
+//                        .setContentIntent(resultPendingIntent)
+//                        .setStyle(new NotificationCompat.BigTextStyle().bigText(notifications))
+//                        .setAutoCancel(true);
+//
+//        notification = builder.build();
+//        notificationManager1.notify(1, notification);
+//
 
         blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
@@ -214,7 +271,9 @@ public class ActivityMain extends ActivityAbstract {
             tasks.add(exportToFileTask);
             tasks.add(dropboxUploadTask);
 
-            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(this.getApplicationContext(), tasks);
+            NotificationManager notificationManager =
+                    (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityMain.this, ActivityMain.class, notificationManager, tasks);
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
 
         } catch (Exception e) {

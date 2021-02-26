@@ -1,8 +1,12 @@
 package ru.ivan.sandowgym.common;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Vibrator;
+import android.service.notification.StatusBarNotification;
+import android.text.format.Time;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -10,12 +14,15 @@ import android.widget.Button;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -84,6 +91,41 @@ public class Common {
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(1);
         v.startAnimation(anim);
+    }
+
+    public static void displayMessage(Activity activity, Class clazz, NotificationManager notificationManager, String title, String message) {
+        Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
+        toast.show();
+
+//        Intent resultIntent = new Intent(activity, clazz);
+//        PendingIntent resultPendingIntent = PendingIntent.getActivity(activity, 0, resultIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        StringBuilder notifications = new StringBuilder();
+
+        for (StatusBarNotification sbm : notificationManager.getActiveNotifications()) {
+            String text = sbm.getNotification().extras.getString("android.text");
+            if (text != null) {
+                notifications.append(text).append(System.lineSeparator());
+            }
+        }
+
+        Time today = new Time(Time.getCurrentTimezone());
+        today.setToNow();
+        String now = today.format("%k:%M:%S");
+        notifications.append(now + ": " + message).append(System.lineSeparator());
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(activity, "1")
+                        .setSmallIcon(R.drawable.ic_sandow)
+                        .setContentTitle(title)
+//                        .setContentIntent(resultPendingIntent)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(notifications))
+                        .setAutoCancel(true);
+
+        Notification notification = builder.build();
+        notificationManager.notify(1, notification);
+
     }
 
     public static boolean isProcessingInProgress(Context context) {
