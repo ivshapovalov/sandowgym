@@ -1,18 +1,21 @@
 package ru.ivan.sandowgym.activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -25,16 +28,18 @@ import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.Common;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTaskExecutor;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.BackgroundTask;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.DropboxUploadTask;
-import ru.ivan.sandowgym.common.Tasks.BackgroundTasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxUploadTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.displayMessage;
+import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
@@ -60,18 +65,70 @@ public class ActivityMain extends ActivityAbstract {
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private String mDropboxAccessToken;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
         getPreferencesFromFile();
         showElementsOnScreen();
         setTitleOfActivity(this);
+        setPermissions();
     }
+
+    private void setPermissions() {
+        ActivityCompat.requestPermissions(ActivityMain.this,
+                new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                1);
+        ActivityCompat.requestPermissions(ActivityMain.this,
+                new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                },
+                2);
+    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case 1: {
+//
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    // permission was granted, yay! Do the
+//                    // contacts-related task you need to do.
+//                } else {
+//
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    Toast.makeText(ActivityMain.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//            }
+//            case 2: {
+//
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    // permission was granted, yay! Do the
+//                    // contacts-related task you need to do.
+//                } else {
+//
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    Toast.makeText(ActivityMain.this, "Permission denied to write your External storage", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//            }
+//
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
+//    }
 
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -154,61 +211,6 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     public void btTools_onClick(final View view) {
-//
-//        Toast toast = Toast.makeText(ActivityMain.this, "Asadfasfa", Toast.LENGTH_SHORT);
-//        toast.show();
-//
-//        Intent resultIntent = new Intent(this, ActivityFileExportImport.class);
-//        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        Time today = new Time(Time.getCurrentTimezone());
-//        today.setToNow();
-//        String date=today.format("%k:%M:%S");
-//
-//        NotificationCompat.Builder builder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.drawable.ic_sandow)
-//                        .setContentTitle("Backup")
-//                        .setContentText(date+": "+"Backup started")
-//                        .setContentIntent(resultPendingIntent)
-//                        .setAutoCancel(true);
-//
-//        Notification notification = builder.build();
-//        NotificationManager notificationManager =
-//                (NotificationManager) ActivityMain.this.getSystemService(NOTIFICATION_SERVICE);
-//        notificationManager.notify(1, notification);
-//
-//        try {
-//            sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        StringBuilder notifications=new StringBuilder();
-//        NotificationManager notificationManager1 =
-//                (NotificationManager) ActivityMain.this.getSystemService(NOTIFICATION_SERVICE);
-//        // We can read notification while posted.
-//        for (StatusBarNotification sbm : notificationManager1.getActiveNotifications()) {
-//            String text = sbm.getNotification().extras.getString("android.text");
-//            notifications.append(text).append(System.lineSeparator());
-//        }
-//
-//        today.setToNow();
-//        date=today.format("%k:%M:%S");
-//        notifications.append(date+": "+"Backup finished").append(System.lineSeparator());
-//
-//        builder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.drawable.ic_sandow)
-//                        .setContentTitle("Backup")
-//                        .setContentIntent(resultPendingIntent)
-//                        .setStyle(new NotificationCompat.BigTextStyle().bigText(notifications))
-//                        .setAutoCancel(true);
-//
-//        notification = builder.build();
-//        notificationManager1.notify(1, notification);
-//
 
         blink(view, this);
         Intent intent = new Intent(ActivityMain.this, ActivityTools.class);
@@ -246,38 +248,45 @@ public class ActivityMain extends ActivityAbstract {
                 }).setNegativeButton("No", null).show();
     }
 
-    public void imExportToDropbox_onClick(View view) {
-        if (Common.isProcessingInProgress(this.getApplicationContext())) {
+    public void rowComplexExport_onClick(View view) {
+        blink(view, this);
+        if (isProcessingInProgress(this.getApplicationContext())) {
             return;
         }
+        displayMessage(ActivityMain.this, "Complex backup started");
         processingInProgress = true;
+        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        Date date = new Date();
+        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
+        File outputFile = new File(outputDir, fileName);
+        //for tests
+//                File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+//                outputFile = new File(exportDir, "trainings.xlsx");
         try {
-            blink(view, this);
-            File outputDir = getCacheDir();
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            Date date = new Date();
-            String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-            File outputFile = new File(outputDir, fileName);
-            //for tests
-//            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-//            File outputFile = new File(exportDir, "trainings.xls");
+            if (outputFile.createNewFile()) {
+            } else {
+            }
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, 0, 0);
 
-            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+            FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
+
+            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
             DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
 
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
+            tasks.add(ftpUploadTask);
             tasks.add(dropboxUploadTask);
 
-            NotificationManager notificationManager =
-                    (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
-            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityMain.this, ActivityMain.class, notificationManager, tasks);
+            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityMain.this, tasks);
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
-
         } catch (Exception e) {
-            e.printStackTrace();
+            displayMessage(ActivityMain.this, "Complex backup failed");
             processingInProgress = false;
         }
     }

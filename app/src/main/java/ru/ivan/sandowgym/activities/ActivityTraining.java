@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.Tasks.Digit;
+import ru.ivan.sandowgym.common.tasks.Digit;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
@@ -47,6 +47,7 @@ import static ru.ivan.sandowgym.common.Common.convertDateToString;
 import static ru.ivan.sandowgym.common.Common.convertMillisToDate;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityTraining extends ActivityAbstract {
@@ -1159,11 +1160,7 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentTrainingContent = mCurrentTrainingContentBefore;
             showExercise();
         }
-        Toast.makeText(
-                ActivityTraining.this,
-                "You filled training weight and amount by last training values ",
-                Toast.LENGTH_LONG
-        ).show();
+        displayMessage(ActivityTraining.this, "You filled training weight and amount by last training values ");
     }
 
     public void btFillTrainingByDefault_onClick(MenuItem item) {
@@ -1182,11 +1179,7 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentExercise = mCurrentExerciseBefore;
             mCurrentTrainingContent = mCurrentTrainingContentBefore;
             showExercise();
-            Toast.makeText(
-                    ActivityTraining.this,
-                    "You filled training amount by default exercise values",
-                    Toast.LENGTH_LONG
-            ).show();
+            displayMessage(ActivityTraining.this, "You filled training amount by default exercise values");
         }
     }
 
@@ -1278,7 +1271,6 @@ public class ActivityTraining extends ActivityAbstract {
                     return true;
                 }
             }
-            //Toast.makeText(ActivityTraining.this, "ЖОПА", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

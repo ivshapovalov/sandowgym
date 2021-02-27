@@ -11,7 +11,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.Tasks.Digit;
+import ru.ivan.sandowgym.common.tasks.Digit;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;

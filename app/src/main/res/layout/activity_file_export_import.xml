@@ -213,6 +213,29 @@
                         android:layout_height="match_parent">
 
                         <Button
+                            android:id="@+id/btMain15"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_span="40"
+                            android:background="@drawable/rounded_corners2"
+                            android:onClick="btComplexBackup_onClick"
+                            android:text="Complex Backup (local, ftp, dropbox)"
+                            android:textColor="@color/text_color" />
+                    </TableRow>
+
+                    <View
+                        android:id="@+id/divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:background="?android:attr/listDivider" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <Button
                             android:id="@+id/btMain10"
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="match_parent"
@@ -221,7 +244,7 @@
                             android:layout_span="40"
                             android:background="@drawable/rounded_corners2"
                             android:onClick="btBackupBD_onClick"
-                            android:text="BACKUP DB FILE TO PHONE"
+                            android:text="SAVE DB FILE TO PHONE"
                             android:textColor="@color/text_color"/>
                     </TableRow>
                     <TableRow

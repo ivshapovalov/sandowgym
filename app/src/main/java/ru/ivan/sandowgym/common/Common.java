@@ -3,7 +3,11 @@ package ru.ivan.sandowgym.common;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.service.notification.StatusBarNotification;
 import android.text.format.Time;
@@ -27,12 +31,15 @@ import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 public class Common {
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
     public static final boolean isDebug = true;
     public static volatile boolean processingInProgress;
+    private static final int MAX_NOTIFICATION_CHARSEQUENCE_LENGTH = 5 * 1024;
 
     public static Date convertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
@@ -93,39 +100,69 @@ public class Common {
         v.startAnimation(anim);
     }
 
-    public static void displayMessage(Activity activity, Class clazz, NotificationManager notificationManager, String title, String message) {
-        Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
+    public static void displayMessage(Context context, String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.show();
 
-//        Intent resultIntent = new Intent(activity, clazz);
-//        PendingIntent resultPendingIntent = PendingIntent.getActivity(activity, 0, resultIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent resultIntent = new Intent(context, context.getClass());
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
         StringBuilder notifications = new StringBuilder();
-
-        for (StatusBarNotification sbm : notificationManager.getActiveNotifications()) {
-            String text = sbm.getNotification().extras.getString("android.text");
-            if (text != null) {
-                notifications.append(text).append(System.lineSeparator());
-            }
-        }
 
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
         String now = today.format("%k:%M:%S");
         notifications.append(now + ": " + message).append(System.lineSeparator());
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(activity, "1")
-                        .setSmallIcon(R.drawable.ic_sandow)
-                        .setContentTitle(title)
-//                        .setContentIntent(resultPendingIntent)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(notifications))
-                        .setAutoCancel(true);
+        for (StatusBarNotification sbm : notificationManager.getActiveNotifications()) {
+            Bundle extras = sbm.getNotification().extras;
+            Object text = extras.get(Notification.EXTRA_BIG_TEXT);
+            if (text != null) {
+                notifications.append(text.toString());
+            }
+        }
+        notificationManager.cancelAll();
 
-        Notification notification = builder.build();
-        notificationManager.notify(1, notification);
+        List<CharSequence> newNotifications = new ArrayList<>();
+        CharSequence cs = notifications.toString();
+        while (true) {
+            if (cs.length() > MAX_NOTIFICATION_CHARSEQUENCE_LENGTH) {
+                CharSequence csOld = cs.subSequence(0, MAX_NOTIFICATION_CHARSEQUENCE_LENGTH);
+                cs = cs.subSequence(MAX_NOTIFICATION_CHARSEQUENCE_LENGTH, cs.length());
+                newNotifications.add(csOld);
+            } else {
+                newNotifications.add(cs);
+                break;
+            }
+        }
+        for (int i = newNotifications.size() - 1; i >= 0; i--) {
+            cs = newNotifications.get(i);
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context, "1")
+                            .setSmallIcon(R.drawable.ic_sandow)
+                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_sandow_big))
+                            .setContentIntent(resultPendingIntent)
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(cs))
+                            .setAutoCancel(true);
 
+            Notification notification = builder.build();
+            notificationManager.notify(i + 1, notification);
+        }
+
+        //tests
+//        notifications = new StringBuilder();
+//        for (StatusBarNotification sbm : notificationManager.getActiveNotifications()) {
+//            Bundle extras = sbm.getNotification().extras;
+//            Object text = extras.get(Notification.EXTRA_BIG_TEXT);
+//            if (text != null) {
+//                notifications.append(text.toString());
+//            }
+//        }
+//        System.out.println(notifications);
     }
 
     public static boolean isProcessingInProgress(Context context) {

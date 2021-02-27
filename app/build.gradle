@@ -18,8 +18,8 @@ android {
         applicationId 'ru.ivan.sandowgym'
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 46
-        versionName '4.6'
+        versionCode 47
+        versionName '4.7'
         multiDexEnabled true
     }
 
@@ -51,6 +51,10 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/MANIFEST.MF'
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
     dependencies {
         implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -58,10 +62,10 @@ android {
         testImplementation 'junit:junit:4.12'
         implementation 'com.android.support:appcompat-v7:28.0.3'
         implementation files('libs/opencsv-3.7.jar')
-        //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
         implementation files('libs/poishadow-all.jar')
-        //implementation group: 'com.fasterxml', name: 'aalto-xml', version: '1.0.0'
         implementation files('libs/ftp4j-1.7.2/ftp4j-1.7.2.jar')
+        //implementation group: 'com.fasterxml', name: 'aalto-xml', version: '1.0.0'
+        //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
     }
 }
 
