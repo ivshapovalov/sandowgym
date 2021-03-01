@@ -43,12 +43,4 @@ public class ExportToFileTask implements BackgroundTask {
         return true;
     }
 
-    @Override
-    public String executeAndMessage() {
-        if (execute()) {
-            return String.format("Trainings has been successfully exported to file '%s'", file.getName());
-        } else {
-            return String.format("An error occured while processing the exported to file '%s'", file.getName());
-        }
-    }
 }

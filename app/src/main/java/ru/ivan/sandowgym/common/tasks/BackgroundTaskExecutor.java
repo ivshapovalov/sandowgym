@@ -48,7 +48,7 @@ public class BackgroundTaskExecutor extends AsyncTask<Void, Long, Boolean> {
                 message = currentTask.getName() + " started";
                 break;
             case 0:
-                message = currentTask.getName() + " finished";
+                message = currentTask.getName() + " finished successfully";
                 break;
             case -1:
                 message = currentTask.getName() + " failed";

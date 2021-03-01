@@ -51,12 +51,4 @@ public class DropboxUploadTask implements BackgroundTask {
         return "Dropbox upload task";
     }
 
-    @Override
-    public String executeAndMessage() {
-        if (execute()) {
-            return String.format("File '%s' has been successfully uploaded to Dropbox", file.getName());
-        } else {
-            return String.format("An error occured while processing the upload file '%s' to Dropbox", file.getName());
-        }
-    }
 }

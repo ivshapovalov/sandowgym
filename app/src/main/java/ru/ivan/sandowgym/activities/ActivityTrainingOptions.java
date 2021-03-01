@@ -268,4 +268,5 @@ public class ActivityTrainingOptions extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
 }

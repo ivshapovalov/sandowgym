@@ -130,32 +130,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:onClick="rowComplexExport_onClick"
                 android:paddingTop="20dp">
 
-                <ImageView
-                    android:id="@+id/imageViewLocal"
-                    android:layout_width="20dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right"
-                    android:background="@mipmap/ic_folder"
-                    android:visibility="visible" />
+                <LinearLayout android:onClick="rowComplexExport_onClick">
 
-                <ImageView
-                    android:id="@+id/imageViewFTP"
-                    android:layout_width="20dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right"
-                    android:background="@mipmap/ic_ftp"
-                    android:visibility="visible" />
+                    <ImageView
+                        android:id="@+id/imageViewLocal"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right"
+                        android:background="@mipmap/ic_folder"
+                        android:visibility="visible" />
 
-                <ImageView
-                    android:id="@+id/imageViewDropbox"
-                    android:layout_width="20dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right"
-                    android:background="@mipmap/ic_dropbox"
-                    android:visibility="visible" />
+                    <ImageView
+                        android:id="@+id/imageViewFTP"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right"
+                        android:background="@mipmap/ic_ftp"
+                        android:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/imageViewDropbox"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right"
+                        android:background="@mipmap/ic_dropbox"
+                        android:visibility="visible" />
+                </LinearLayout>
             </TableRow>
         </TableLayout>
     </ScrollView>

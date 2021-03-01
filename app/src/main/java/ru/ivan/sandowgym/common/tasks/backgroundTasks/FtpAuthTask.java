@@ -4,17 +4,20 @@ import android.content.SharedPreferences;
 
 import java.io.File;
 
-public class FtpUploadTask extends FtpTask implements BackgroundTask {
+public class FtpAuthTask extends FtpTask implements BackgroundTask {
 
-    public FtpUploadTask(SharedPreferences settings, File file) {
+    public FtpAuthTask(SharedPreferences settings, File file) {
         super(settings, file);
+    }
+
+    public FtpAuthTask(SharedPreferences settings) {
+        super(settings);
     }
 
     @Override
     public boolean execute() {
         try {
             if (connect()) {
-                ftpClient.upload(file);
                 return true;
             } else return false;
         } catch (Exception e) {
@@ -27,8 +30,7 @@ public class FtpUploadTask extends FtpTask implements BackgroundTask {
 
     @Override
     public String getName() {
-        return "FTP upload task";
+        return "FTP auth task";
     }
-
 }
 

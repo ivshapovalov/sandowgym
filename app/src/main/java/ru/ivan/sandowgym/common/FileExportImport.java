@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -216,12 +217,12 @@ public class FileExportImport {
 
     private File writeToFile(File file, Map<TypeOfView, List<String[]>> dataSheets) throws IOException {
 
-        System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
-        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
-        System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+//        System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+//        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+//        System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
 
         Workbook book = new XSSFWorkbook();
         for (Map.Entry<TypeOfView, List<String[]>> dataSheet : dataSheets.entrySet()) {
@@ -616,19 +617,27 @@ public class FileExportImport {
     }
 
     public String importFromFile() {
+        //        System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+//        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+//        System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+//        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+
         List<String[]> data;
-        StringBuilder errorMessage = new StringBuilder();
+        StringBuilder message = new StringBuilder();
         try {
-            XSSFWorkbook myExcelBook = new XSSFWorkbook(new FileInputStream(file));
+//            XSSFWorkbook myExcelBook = new XSSFWorkbook(new FileInputStream(file));
+            XSSFWorkbook myExcelBook = (XSSFWorkbook) WorkbookFactory.create(new FileInputStream(file));
             Sheet myExcelSheet = myExcelBook.getSheet("trainings_full");
 
             if (myExcelSheet == null) {
 
-                errorMessage.append("Missed sheet - \"trainings_full\"").append("\n")
+                message.append("Missed sheet - \"trainings_full\"").append("\n")
                         .append("Try to load data from sheet \"trainings\"").append("\n");
                 myExcelSheet = myExcelBook.getSheet("trainings");
                 if (myExcelSheet == null) {
-                    errorMessage.append("Missed sheet - \"trainings\"")
+                    message.append("Missed sheet - \"trainings\"")
                             .append("\n")
                             .append("Trainings didn't load from ")
                             .append(Environment.getExternalStorageDirectory()
@@ -638,7 +647,7 @@ public class FileExportImport {
                 }
             }
             data = ReadDataFromSheet(myExcelSheet);
-            errorMessage.append(writeDataToDB(data));
+            message.append(writeDataToDB(data));
 
             List<WeightChangeCalendar> weights = new ArrayList<>();
             Sheet myExcelSheetWeights = myExcelBook.getSheet("weight_calendar");
@@ -648,7 +657,7 @@ public class FileExportImport {
                     weight.dbSave(DB);
                 }
             } else {
-                errorMessage
+                message
                         .append("Missed sheet - \"trainings\"")
                         .append("\n").append("Trainings didn't load from ")
                         .append(Environment.getExternalStorageDirectory().toString())
@@ -657,11 +666,11 @@ public class FileExportImport {
             }
             myExcelBook.close();
         } catch (Exception e) {
-            errorMessage
+            message
                     .append("Trainings didn't load from ")
                     .append(Environment.getExternalStorageDirectory().toString())
                     .append("/trainings.xlsx");
         }
-        return errorMessage.toString();
+        return message.toString();
     }
 }

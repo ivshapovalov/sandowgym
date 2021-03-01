@@ -48,12 +48,4 @@ public class DropboxDownloadTask implements BackgroundTask {
         return true;
     }
 
-    @Override
-    public String executeAndMessage() {
-        if (execute()) {
-            return String.format("File '%s' has been successfully download from Dropbox!", file.getName());
-        } else {
-            return String.format("An error occured while processing the download file '%s' from Dropbox", file.getName());
-        }
-    }
 }

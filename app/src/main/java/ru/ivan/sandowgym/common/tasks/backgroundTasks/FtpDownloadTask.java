@@ -34,13 +34,6 @@ public class FtpDownloadTask extends FtpTask implements BackgroundTask {
     public String getName() {
         return "FTP download task";
     }
-    @Override
-    public String executeAndMessage() {
-        if (execute()) {
-            return String.format("File '%s' has been successfully downloaded from FTP!", file.getName());
-        } else {
-            return String.format("An error occured while processing the download file '%s' from FTP", file.getName());
-        }
-    }
+
 }
 

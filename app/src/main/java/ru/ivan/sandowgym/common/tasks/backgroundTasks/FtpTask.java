@@ -19,11 +19,42 @@ public abstract class FtpTask {
     protected String mFtpPassword;
 
     protected FtpTask(SharedPreferences settings, File file) {
-        this.settings=settings;
+        this();
+        this.settings = settings;
         this.file = file;
     }
 
+    public FtpTask(SharedPreferences settings) {
+        this();
+        this.settings = settings;
+    }
+
     public FtpTask() {
+        ftpClient = new FTPClient();
+    }
+
+    public boolean connect() {
+        getPreferencesFromFile();
+        try {
+            ftpClient.connect(mFtpHost);
+            ftpClient.login(mFtpLogin, mFtpPassword);
+            return true;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean connect(FTPClient ftpClient) {
+        getPreferencesFromFile();
+        try {
+            ftpClient.connect(mFtpHost);
+            ftpClient.login(mFtpLogin, mFtpPassword);
+            return true;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return false;
+        }
     }
 
     protected void disconnect() {
@@ -57,5 +88,4 @@ public abstract class FtpTask {
             mFtpPassword = "";
         }
     }
-
 }

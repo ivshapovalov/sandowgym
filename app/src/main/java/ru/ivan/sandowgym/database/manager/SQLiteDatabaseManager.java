@@ -839,7 +839,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id + " AND "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
-                + " ORDER BY " + KEY_TRAINING_ID;
+                + " ORDER BY " + KEY_TRAINING_ID;// +" LIMIT 10";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);

@@ -99,7 +99,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         final Handler handler = new Handler(Looper.getMainLooper());
         final String fileName = downloadFile;
         if (downloadType.equals("dropbox")) {
-            displayMessage(ActivityFileExportImport.this, "Import from Dropbox in progress!");
+            displayMessage(ActivityFileExportImport.this, "Import from Dropbox in progress");
             Runnable r = new Runnable() {
                 public void run() {
                     importFileFromDropbox(fileName);
@@ -107,7 +107,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             };
             handler.postDelayed(r, 1000);
         } else if (downloadType.equals("ftp")) {
-            displayMessage(ActivityFileExportImport.this, "Import from FTP in progress!");
+            displayMessage(ActivityFileExportImport.this, "Import from FTP in progress");
             Runnable r = new Runnable() {
                 public void run() {
                     importFileFromFtp(fileName);
@@ -296,7 +296,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         if (isProcessingInProgress(this.getApplicationContext())) {
             return;
         }
-        displayMessage(ActivityFileExportImport.this, "Export to File started!");
+        displayMessage(ActivityFileExportImport.this, "Export to File started");
         processingInProgress = true;
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
         if (!exportDir.exists()) {
@@ -335,7 +335,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
-            displayMessage(ActivityFileExportImport.this, "Export to FTP started!");
+            displayMessage(ActivityFileExportImport.this, "Export to FTP started");
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -377,7 +377,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
-            displayMessage(ActivityFileExportImport.this, "Export to Dropbox started!");
+            displayMessage(ActivityFileExportImport.this, "Export to Dropbox started");
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -641,7 +641,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-
     private void getPreferencesFromFile() {
         mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -651,7 +650,5 @@ public class ActivityFileExportImport extends ActivityAbstract {
             mDropboxAccessToken = "";
         }
     }
-
-
 }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -152,19 +153,27 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="50"
+            android:layout_weight="40"
             android:text="PASSWORD"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/text_color"
             android:paddingLeft="20dp"/>
+
         <EditText
+            android:id="@+id/etFtpPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:layout_weight="55"
             android:ems="10"
-            android:id="@+id/etFtpPassword"
-            android:layout_weight="50"/>
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/ibFTPTestConnectionButton"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_weight="5"
+            app:srcCompat="@mipmap/ic_ftp_foreground" />
     </LinearLayout>
 
     <LinearLayout
@@ -197,19 +206,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="50"
+            android:layout_weight="40"
             android:text="ACCESS TOKEN"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/text_color"
             android:paddingLeft="20dp"/>
+
         <EditText
+            android:id="@+id/etDropboxAccessToken"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:layout_weight="55"
             android:ems="10"
-            android:id="@+id/etDropboxAccessToken"
-            android:layout_weight="50"/>
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/ibDropboxTestConnectionButton"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_weight="5"
+            app:srcCompat="@mipmap/ic_dropbox_foreground" />
     </LinearLayout>
+
 
 </RelativeLayout>
