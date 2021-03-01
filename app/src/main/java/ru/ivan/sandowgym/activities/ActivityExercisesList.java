@@ -110,7 +110,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         blink(view, this);
         List<Exercise> exercises = Common.createDefaultExercises(DB);
         for (Exercise ex : exercises) {
-            ex.dbSave(DB);
+            ex.save(DB);
         }
         updateExercises();
 

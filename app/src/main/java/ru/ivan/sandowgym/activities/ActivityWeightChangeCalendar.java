@@ -139,7 +139,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
     }
 
     private void saveCurrentWeightChangeCalendarToDB() {
-        mCurrentWeightChangeCalendar.dbSave(DB);
+        mCurrentWeightChangeCalendar.save(DB);
         mWeightChangeCalendarIsNew = false;
     }
 
@@ -195,7 +195,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         blink(view, this);
         fillWeightChangeCalendarFromScreen();
 
-        mCurrentWeightChangeCalendar.dbSave(DB);
+        mCurrentWeightChangeCalendar.save(DB);
 
         closeActivity();
 
@@ -223,7 +223,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentWeightChangeCalendar.dbDelete(DB);
+                        mCurrentWeightChangeCalendar.delete(DB);
                         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);

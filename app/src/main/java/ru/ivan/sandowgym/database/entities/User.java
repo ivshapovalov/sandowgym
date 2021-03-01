@@ -1,10 +1,10 @@
 package ru.ivan.sandowgym.database.entities;
 
-import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
-import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
+import ru.ivan.sandowgym.database.interfaces.Deletable;
+import ru.ivan.sandowgym.database.interfaces.Saveble;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb {
+public class User extends AbstractEntity implements Saveble, Deletable {
 
     private int id;
     private String name;
@@ -43,7 +43,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     }
 
     @Override
-    public void dbSave(SQLiteDatabaseManager db) {
+    public void save(SQLiteDatabaseManager db) {
         if (db.containsUser(this.getId())) {
             db.updateUser(this);
         } else {
@@ -52,7 +52,7 @@ public class User extends AbstractEntity implements SavingIntoDB,DeletingFromDb 
     }
 
     @Override
-    public void dbDelete(SQLiteDatabaseManager db) {
+    public void delete(SQLiteDatabaseManager db) {
         if (db.containsUser(this.getId())) {
             db.deleteUser(this);
         }

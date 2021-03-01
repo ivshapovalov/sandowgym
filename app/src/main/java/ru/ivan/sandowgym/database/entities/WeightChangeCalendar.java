@@ -1,13 +1,13 @@
 package ru.ivan.sandowgym.database.entities;
 
-import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
-import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
+import ru.ivan.sandowgym.database.interfaces.Deletable;
+import ru.ivan.sandowgym.database.interfaces.Saveble;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 
-public class WeightChangeCalendar extends AbstractEntityMultiUser implements SavingIntoDB,DeletingFromDb {
+public class WeightChangeCalendar extends AbstractEntityMultiUser implements Saveble, Deletable {
     private long day;
     private int weight;
 
@@ -46,7 +46,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     }
 
     @Override
-    public void dbSave(SQLiteDatabaseManager db) {
+    public void save(SQLiteDatabaseManager db) {
 
         if (db.containsWeightChangeCalendar(this.getId())) {
             db.updateWeightChangeCalendar(this);
@@ -56,7 +56,7 @@ public class WeightChangeCalendar extends AbstractEntityMultiUser implements Sav
     }
 
     @Override
-    public void dbDelete(SQLiteDatabaseManager db) {
+    public void delete(SQLiteDatabaseManager db) {
 
         if (db.containsWeightChangeCalendar(this.getId())) {
             db.deleteWeightChangeCalendar(this);

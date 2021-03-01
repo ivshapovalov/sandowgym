@@ -1,13 +1,13 @@
 package ru.ivan.sandowgym.database.entities;
 
-import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
-import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
+import ru.ivan.sandowgym.database.interfaces.Deletable;
+import ru.ivan.sandowgym.database.interfaces.Saveble;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 
-public class Training extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
+public class Training extends AbstractEntityMultiUser implements Saveble, Deletable {
 
     private long day;
 
@@ -40,7 +40,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB, D
     }
 
     @Override
-    public void dbSave(SQLiteDatabaseManager db) {
+    public void save(SQLiteDatabaseManager db) {
         if (db.containsTraining(this.getId())) {
             db.updateTraining(this);
         } else {
@@ -49,7 +49,7 @@ public class Training extends AbstractEntityMultiUser implements SavingIntoDB, D
     }
 
     @Override
-    public void dbDelete(SQLiteDatabaseManager db) {
+    public void delete(SQLiteDatabaseManager db) {
 
         if (db.containsTraining(this.getId())) {
             db.deleteTraining(this);

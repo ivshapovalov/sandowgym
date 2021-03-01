@@ -151,7 +151,7 @@ public class ActivityExercise extends ActivityAbstract {
 
         blink(view, this);
         fillExerciseFromScreen();
-        mCurrentExercise.dbSave(DB);
+        mCurrentExercise.save(DB);
         closeActivity();
     }
 
@@ -174,7 +174,7 @@ public class ActivityExercise extends ActivityAbstract {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentExercise.dbDelete(DB);
+                        mCurrentExercise.delete(DB);
                         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);

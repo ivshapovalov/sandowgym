@@ -1,10 +1,10 @@
 package ru.ivan.sandowgym.database.entities;
 
-import ru.ivan.sandowgym.database.interfaces.DeletingFromDb;
-import ru.ivan.sandowgym.database.interfaces.SavingIntoDB;
+import ru.ivan.sandowgym.database.interfaces.Deletable;
+import ru.ivan.sandowgym.database.interfaces.Saveble;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-public class TrainingContent extends AbstractEntityMultiUser implements SavingIntoDB, DeletingFromDb {
+public class TrainingContent extends AbstractEntityMultiUser implements Saveble, Deletable {
 
     private Exercise exercise;
     private Training training;
@@ -74,7 +74,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     }
 
     @Override
-    public void dbSave(SQLiteDatabaseManager db) {
+    public void save(SQLiteDatabaseManager db) {
 
         if (db.containsTrainingContent(this.getId())) {
             db.updateTrainingContent(this);
@@ -84,7 +84,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements SavingIn
     }
 
     @Override
-    public void dbDelete(SQLiteDatabaseManager db) {
+    public void delete(SQLiteDatabaseManager db) {
         if (db.containsTrainingContent(this.getId())) {
             db.deleteTrainingContent(this);
         }

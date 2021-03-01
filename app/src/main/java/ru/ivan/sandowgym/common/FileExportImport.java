@@ -654,7 +654,7 @@ public class FileExportImport {
             if (myExcelSheetWeights != null) {
                 weights = ReadWeightsFromSheet(myExcelSheetWeights);
                 for (WeightChangeCalendar weight : weights) {
-                    weight.dbSave(DB);
+                    weight.save(DB);
                 }
             } else {
                 message

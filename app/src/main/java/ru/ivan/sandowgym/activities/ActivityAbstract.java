@@ -31,7 +31,7 @@ public abstract class ActivityAbstract extends AppCompatActivity {
                 User currentUser = userList.get(0);
                 dbCurrentUser = currentUser;
                 currentUser.setIsCurrentUser(1);
-                currentUser.dbSave(DB);
+                currentUser.save(DB);
             } else {
                 //ищем активного
                 for (User user : userList) {

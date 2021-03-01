@@ -109,7 +109,7 @@ public class ActivityUser extends AppCompatActivity {
 
         blink(view, this);
         getPropertiesFromScreen();
-        mCurrentUser.dbSave(DB);
+        mCurrentUser.save(DB);
         setDBCurrentUser();
         closeActivity();
 
@@ -139,7 +139,7 @@ public class ActivityUser extends AppCompatActivity {
 
                 if (user.getId() != mCurrentUser.getId()) {
                     user.setIsCurrentUser(0);
-                    user.dbSave(DB);
+                    user.save(DB);
                 }
 
             }
@@ -158,14 +158,14 @@ public class ActivityUser extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentUser.dbDelete(DB);
+                        mCurrentUser.delete(DB);
                         if (mCurrentUser.equals(dbCurrentUser)) {
                             List<User> userList = DB.getAllUsers();
                             if (userList.size() == 1) {
                                 User currentUser = userList.get(0);
                                 dbCurrentUser = currentUser;
                                 currentUser.setIsCurrentUser(1);
-                                currentUser.dbSave(DB);
+                                currentUser.save(DB);
                             } else {
                                 dbCurrentUser = null;
                             }

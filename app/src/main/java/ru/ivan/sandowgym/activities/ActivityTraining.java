@@ -251,7 +251,7 @@ public class ActivityTraining extends ActivityAbstract {
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
                     }
-                    trainingContent.dbSave(DB);
+                    trainingContent.save(DB);
                 }
             }
 
@@ -660,9 +660,9 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void saveTraining() {
 
-        mCurrentTraining.dbSave(DB);
+        mCurrentTraining.save(DB);
         if (mCurrentTrainingContent != null) {
-            mCurrentTrainingContent.dbSave(DB);
+            mCurrentTrainingContent.save(DB);
         }
         mTrainingIsNew = false;
     }
@@ -734,7 +734,7 @@ public class ActivityTraining extends ActivityAbstract {
                 mCurrentTrainingContent.setWeight(convertButtonTextToDigit(String.valueOf(btWeight.getText())));
             }
         }
-        mCurrentTrainingContent.dbSave(DB);
+        mCurrentTrainingContent.save(DB);
         if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
             mTrainingContentList.add(mCurrentTrainingContent);
         }
@@ -759,7 +759,7 @@ public class ActivityTraining extends ActivityAbstract {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             List<Training> trainings = DB.getLastTrainingsByDates(mCurrentTraining.getDay());
-                            mCurrentTraining.dbDelete(DB);
+                            mCurrentTraining.delete(DB);
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
                             if (!trainings.isEmpty()) {
                                 intent.putExtra("id", trainings.get(0).getId());
@@ -774,8 +774,8 @@ public class ActivityTraining extends ActivityAbstract {
     public void tvDay_onClick(final View view) {
 
         getPropertiesFromScreen();
-        mCurrentTrainingContent.dbSave(DB);
-        mCurrentTraining.dbSave(DB);
+        mCurrentTrainingContent.save(DB);
+        mCurrentTraining.save(DB);
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
         intent.putExtra("isNew", mTrainingIsNew);
@@ -923,8 +923,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btAmount_onClick(View view) {
         getPropertiesFromScreen();
-        mCurrentTrainingContent.dbSave(DB);
-        mCurrentTraining.dbSave(DB);
+        mCurrentTrainingContent.save(DB);
+        mCurrentTraining.save(DB);
         blink(view, this);
         try {
             Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
@@ -950,8 +950,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btWeight_onClick(View view) {
         getPropertiesFromScreen();
-        mCurrentTrainingContent.dbSave(DB);
-        mCurrentTraining.dbSave(DB);
+        mCurrentTrainingContent.save(DB);
+        mCurrentTraining.save(DB);
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
         intent.putExtra("isNew", mTrainingIsNew);
@@ -1002,8 +1002,8 @@ public class ActivityTraining extends ActivityAbstract {
     private void btChooseExercise_onClick(final TextView view) {
         blink(view, this);
         getPropertiesFromScreen();
-        mCurrentTrainingContent.dbSave(DB);
-        mCurrentTraining.dbSave(DB);
+        mCurrentTrainingContent.save(DB);
+        mCurrentTraining.save(DB);
         Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
         intent.putExtra("currentActivity", getClass().getName());
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
