@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import me.rosuh.filepicker.config.FilePickerManager;
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 import ru.ivan.sandowgym.common.tasks.DropboxListFilesTask;
@@ -84,10 +85,22 @@ public class ActivityFileExportImport extends ActivityAbstract {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
 
-        if (requestCode == 1) {
+        if (requestCode == FilePickerManager.INSTANCE.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                List<String> files = FilePickerManager.INSTANCE.obtainData();
+                if (files != null && files.size() == 1) {
+                    String fileName = files.get(0);
+                    importDataFromLocalFile(fileName);
+                }
+            } else {
+                processingInProgress = false;
+            }
+
+        } else if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
                 downloadFile = intent.getStringExtra("downloadFile");
                 downloadType = intent.getStringExtra("downloadType");
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -296,6 +309,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         if (isProcessingInProgress(this.getApplicationContext())) {
             return;
         }
+
         displayMessage(ActivityFileExportImport.this, "Export to File started");
         processingInProgress = true;
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
@@ -486,37 +500,41 @@ public class ActivityFileExportImport extends ActivityAbstract {
         processingInProgress = false;
     }
 
-    public void btImportFromFile_onClick(final View view) {
+    public void btImportFromLocalFile_onClick(final View view) {
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to import data from 'xlsx' file?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        importFromFile_onYesClick(view);
+                        importFromLocalFile_onYesClick(view);
                     }
                 }).setNegativeButton("No", null).show();
     }
 
-    private void importFromFile_onYesClick(View view) {
+    private void importFromLocalFile_onYesClick(View view) {
         blink(view, this);
         if (isProcessingInProgress(this.getApplicationContext())) {
             return;
         }
         processingInProgress = true;
+
+        FilePickerManager.INSTANCE
+                .from(this).enableSingleChoice()
+                .forResult(FilePickerManager.REQUEST_CODE);
+    }
+
+    private void importDataFromLocalFile(String fileName) {
         try {
-            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-            if (exportDir.exists()) {
-                File file = new File(exportDir, "trainings.xlsx");
-                if (file.exists()) {
-                    try {
-                        ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), file);
-                        String message = importFromFileTask.executeAndMessage();
-                        displayMessage(ActivityFileExportImport.this, message);
-                    } catch (Exception e) {
-                        displayMessage(ActivityFileExportImport.this, "File didn't imported  " + file.getPath());
-                    } finally {
-                        processingInProgress = false;
-                    }
+            File file = new File(fileName);
+            if (file.exists()) {
+                try {
+                    ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), file);
+                    String message = importFromFileTask.executeAndMessage();
+                    displayMessage(ActivityFileExportImport.this, message);
+                } catch (Exception e) {
+                    displayMessage(ActivityFileExportImport.this, "File didn't imported  " + file.getPath());
+                } finally {
+                    processingInProgress = false;
                 }
             }
         } catch (Exception e) {

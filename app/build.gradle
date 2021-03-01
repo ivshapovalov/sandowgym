@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
 //    dexOptions {
@@ -68,11 +70,14 @@ android {
         implementation 'javax.xml.stream:stax-api:1.0'
         implementation 'com.fasterxml:aalto-xml:1.2.2'
 
+        implementation 'me.rosuh:AndroidFilePicker:0.7.0'
         //implementation files('libs/poishadow-all.jar')
         //implementation group: 'com.fasterxml', name: 'aalto-xml', version: '1.0.0'
         //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
     }
 }
 
-
-
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:+'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

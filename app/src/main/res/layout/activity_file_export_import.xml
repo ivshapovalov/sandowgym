@@ -69,7 +69,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_span="20"
                             android:background="@drawable/rounded_corners2"
-                            android:onClick="btImportFromFile_onClick"
+                            android:onClick="btImportFromLocalFile_onClick"
                             android:text="READ FROM LOCAL FILE"
                             android:textColor="@color/text_color"/>
                     </TableRow>
