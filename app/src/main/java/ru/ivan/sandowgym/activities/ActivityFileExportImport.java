@@ -292,18 +292,18 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-    public void btExportToFile_onClick(final View view) {
+    public void btExportToLocalFile_onClick(final View view) {
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to export data to 'xlsx' file?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        exportToFile_onYesClick(view);
+                        exportToLocalFile_onYesClick(view);
                     }
                 }).setNegativeButton("No", null).show();
     }
 
-    private void exportToFile_onYesClick(View view) {
+    private void exportToLocalFile_onYesClick(View view) {
 
         blink(view, this);
         if (isProcessingInProgress(this.getApplicationContext())) {
@@ -312,22 +312,26 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
         displayMessage(ActivityFileExportImport.this, "Export to File started");
         processingInProgress = true;
-        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (!exportDir.exists()) {
-            exportDir.mkdirs();
+
+        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
         }
-        File file = new File(exportDir, "trainings.xlsx");
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        Date date = new Date();
+        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
+        File outputFile = new File(outputDir, fileName);
         try {
-            if (file.createNewFile()) {
+            if (outputFile.createNewFile()) {
             } else {
             }
-            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), file, mDateFrom, mDateTo);
+            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
         } catch (Exception e) {
-            displayMessage(ActivityFileExportImport.this, "File didn't created  " + file.getPath());
+            displayMessage(ActivityFileExportImport.this, "File didn't created  " + outputFile.getPath());
             processingInProgress = false;
         }
     }
@@ -542,18 +546,18 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-    public void btImportFromDropbox_onClick(final View view) {
+    public void btImportFileFromDropbox_onClick(final View view) {
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to import data from Dropbox?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        importFromDropbox_onYesClick(view);
+                        importFileFromDropbox_onYesClick(view);
                     }
                 }).setNegativeButton("No", null).show();
     }
 
-    private void importFromDropbox_onYesClick(View view) {
+    private void importFileFromDropbox_onYesClick(View view) {
         try {
             blink(view, this);
             if (isProcessingInProgress(this.getApplicationContext())) {
@@ -602,18 +606,18 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-    public void btImportFromFTP_onClick(final View view) {
+    public void btImportFileFromFTP_onClick(final View view) {
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to import data from FTP?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        importFromFTP_onYesClick(view);
+                        importFileFromFTP_onYesClick(view);
                     }
                 }).setNegativeButton("No", null).show();
     }
 
-    private void importFromFTP_onYesClick(View view) {
+    private void importFileFromFTP_onYesClick(View view) {
         try {
             blink(view, this);
             if (isProcessingInProgress(this.getApplicationContext())) {

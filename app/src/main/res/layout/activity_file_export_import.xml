@@ -47,32 +47,7 @@
                     android:shrinkColumns="*"
                     android:stretchColumns="*">
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
 
-                        <Button
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="10dp"
-                            android:layout_span="20"
-                            android:background="@drawable/rounded_corners2"
-                            android:onClick="btExportToFile_onClick"
-                            android:text="WRITE TO LOCAL FILE"
-                            android:textColor="@color/text_color"/>
-
-                        <Button
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="10dp"
-                            android:layout_span="20"
-                            android:background="@drawable/rounded_corners2"
-                            android:onClick="btImportFromLocalFile_onClick"
-                            android:text="READ FROM LOCAL FILE"
-                            android:textColor="@color/text_color"/>
-                    </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -164,6 +139,32 @@
                             android:layout_marginTop="10dp"
                             android:layout_span="20"
                             android:background="@drawable/rounded_corners2"
+                            android:onClick="btExportToLocalFile_onClick"
+                            android:text="BACKUP TO LOCAL FILE"
+                            android:textColor="@color/text_color" />
+
+                        <Button
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_span="20"
+                            android:background="@drawable/rounded_corners2"
+                            android:onClick="btImportFromLocalFile_onClick"
+                            android:text="RESTORE FROM LOCAL FILE"
+                            android:textColor="@color/text_color" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <Button
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_span="20"
+                            android:background="@drawable/rounded_corners2"
                             android:onClick="btExportToFTP_onClick"
                             android:text="BACKUP TO FTP"
                             android:textColor="@color/text_color"/>
@@ -175,7 +176,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_span="20"
                             android:background="@drawable/rounded_corners2"
-                            android:onClick="btImportFromFTP_onClick"
+                            android:onClick="btImportFileFromFTP_onClick"
                             android:text="RESTORE FROM FTP"
                             android:textColor="@color/text_color"/>
                     </TableRow>
@@ -203,7 +204,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_span="20"
                             android:background="@drawable/rounded_corners2"
-                            android:onClick="btImportFromDropbox_onClick"
+                            android:onClick="btImportFileFromDropbox_onClick"
                             android:text="RESTORE FROM DROPBOX"
                             android:textColor="@color/text_color"/>
                     </TableRow>
@@ -228,7 +229,7 @@
                     <View
                         android:id="@+id/divider"
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="50dp"
                         android:background="?android:attr/listDivider" />
 
                     <TableRow
