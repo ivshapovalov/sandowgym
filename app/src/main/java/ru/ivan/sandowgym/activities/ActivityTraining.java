@@ -1160,7 +1160,7 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentTrainingContent = mCurrentTrainingContentBefore;
             showExercise();
         }
-        displayMessage(ActivityTraining.this, "You filled training weight and amount by last training values ");
+        displayMessage(ActivityTraining.this, "You filled training weight and amount by last training values ", false);
     }
 
     public void btFillTrainingByDefault_onClick(MenuItem item) {
@@ -1179,7 +1179,7 @@ public class ActivityTraining extends ActivityAbstract {
             mCurrentExercise = mCurrentExerciseBefore;
             mCurrentTrainingContent = mCurrentTrainingContentBefore;
             showExercise();
-            displayMessage(ActivityTraining.this, "You filled training amount by default exercise values");
+            displayMessage(ActivityTraining.this, "You filled training amount by default exercise values", false);
         }
     }
 

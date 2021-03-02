@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -17,30 +15,17 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.v2.DbxClientV2;
-
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxUploadTask;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.ComplexBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
-import static ru.ivan.sandowgym.common.Common.displayMessage;
-import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityMain extends ActivityAbstract {
@@ -54,6 +39,9 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_BACKUP_FTP_LOGIN = "backup_ftp_login";
     public static final String APP_PREFERENCES_BACKUP_FTP_PASSWORD = "backup_ftp_password";
     public static final String APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN = "backup_dropbox_access_token";
+    public static final String APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED = "backup_schedule_enabled";
+    public static final String APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR = "backup_schedule_time_hour";
+    public static final String APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES = "backup_schedule_time_minutes";
     public static final String APP_PREFERENCES_TRAINING_SHOW_PICTURE = "training_show_picture";
     public static final String APP_PREFERENCES_TRAINING_SHOW_EXPLANATION = "training_show_explanation";
     public static final String APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON = "training_show_amount_default_button";
@@ -249,45 +237,11 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     public void rowComplexExport_onClick(View view) {
-        blink(view, this);
-        if (isProcessingInProgress(this.getApplicationContext())) {
-            return;
-        }
-        displayMessage(ActivityMain.this, "Complex backup started");
-        processingInProgress = true;
-        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        Date date = new Date();
-        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-        File outputFile = new File(outputDir, fileName);
-        //for tests
-//                File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-//                outputFile = new File(exportDir, "trainings.xlsx");
         try {
-            if (outputFile.createNewFile()) {
-            } else {
-            }
-            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, 0, 0);
-
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
-
-            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
-
-            List<BackgroundTask> tasks = new ArrayList<>();
-            tasks.add(exportToFileTask);
-            tasks.add(ftpUploadTask);
-            tasks.add(dropboxUploadTask);
-
-            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityMain.this, tasks);
-            AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
+            ComplexBackupTask complexBackupTask = new ComplexBackupTask(this, true);
+            complexBackupTask.execute();
         } catch (Exception e) {
-            displayMessage(ActivityMain.this, "Complex backup failed");
-            processingInProgress = false;
+            e.printStackTrace();
         }
     }
 }

@@ -36,6 +36,7 @@ import ru.ivan.sandowgym.common.tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.tasks.FtpListFilesTask;
 import ru.ivan.sandowgym.common.tasks.ImportFromFileTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.ComplexBackupTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxDownloadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxUploadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
@@ -110,15 +111,15 @@ public class ActivityFileExportImport extends ActivityAbstract {
         final Handler handler = new Handler(Looper.getMainLooper());
         final String fileName = downloadFile;
         if (downloadType.equals("local")) {
-            displayMessage(ActivityFileExportImport.this, "Import from local file started");
+            displayMessage(ActivityFileExportImport.this, "Import from local file started", true);
             Runnable r = () -> importDataFromLocalFile(fileName);
             handler.postDelayed(r, 1000);
         } else if (downloadType.equals("dropbox")) {
-            displayMessage(ActivityFileExportImport.this, "Import from Dropbox started");
+            displayMessage(ActivityFileExportImport.this, "Import from Dropbox started", true);
             Runnable r = () -> importDataFromDropboxFile(fileName);
             handler.postDelayed(r, 1000);
         } else if (downloadType.equals("ftp")) {
-            displayMessage(ActivityFileExportImport.this, "Import from FTP started");
+            displayMessage(ActivityFileExportImport.this, "Import from FTP started", true);
             Runnable r = () -> importDataFromFtpFile(fileName);
             handler.postDelayed(r, 1000);
         }
@@ -250,44 +251,11 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     private void complexBackupToFile_onYesClick(View view) {
-        blink(view, this);
-        if (isProcessingInProgress(this.getApplicationContext())) {
-            return;
-        }
-        displayMessage(ActivityFileExportImport.this, "Complex backup started");
-        processingInProgress = true;
-        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        Date date = new Date();
-        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-        File outputFile = new File(outputDir, fileName);
-        //for tests
-        //        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-        //        outputFile = new File(exportDir, "trainings.xlsx");
         try {
-            if (outputFile.createNewFile()) {
-            }
-            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, 0, 0);
-
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
-
-            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
-
-            List<BackgroundTask> tasks = new ArrayList<>();
-            tasks.add(exportToFileTask);
-            tasks.add(ftpUploadTask);
-            tasks.add(dropboxUploadTask);
-
-            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
-            backgroundTaskExecutor.execute();
+            ComplexBackupTask complexBackupTask = new ComplexBackupTask(this, true);
+            complexBackupTask.execute();
         } catch (Exception e) {
-            displayMessage(ActivityFileExportImport.this, "Complex backup failed");
-            processingInProgress = false;
+            e.printStackTrace();
         }
     }
 
@@ -309,7 +277,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             return;
         }
 
-        displayMessage(ActivityFileExportImport.this, "Export to File started");
+        displayMessage(ActivityFileExportImport.this, "Export to File started", false);
         processingInProgress = true;
 
         File outputDir = new File(Environment.getExternalStorageDirectory(), "");
@@ -329,7 +297,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
             backgroundTaskExecutor.execute();
         } catch (Exception e) {
-            displayMessage(ActivityFileExportImport.this, "File didn't created  " + outputFile.getPath());
+            displayMessage(ActivityFileExportImport.this, "File didn't created  " + outputFile.getPath(), false);
             processingInProgress = false;
         }
     }
@@ -351,7 +319,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
-            displayMessage(ActivityFileExportImport.this, "Export to FTP started");
+            displayMessage(ActivityFileExportImport.this, "Export to FTP started", false);
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -371,7 +339,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             backgroundTaskExecutor.execute();
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "FTP upload failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "FTP upload failed! " + e.getMessage(), false);
             processingInProgress = false;
         }
     }
@@ -393,7 +361,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (isProcessingInProgress(this.getApplicationContext())) {
                 return;
             }
-            displayMessage(ActivityFileExportImport.this, "Export to Dropbox started");
+            displayMessage(ActivityFileExportImport.this, "Export to Dropbox started", false);
             processingInProgress = true;
             File outputDir = getCacheDir();
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -412,12 +380,11 @@ public class ActivityFileExportImport extends ActivityAbstract {
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
             tasks.add(dropboxUploadTask);
-
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
             backgroundTaskExecutor.execute();
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "Export to Dropbox failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "Export to Dropbox failed! " + e.getMessage(), false);
             processingInProgress = false;
         }
     }
@@ -453,10 +420,10 @@ public class ActivityFileExportImport extends ActivityAbstract {
             output.close();
             fis.close();
             String message = "The database is successfully backed up to " + outFileName;
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             String message = "Database backup failed!";
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         }
         processingInProgress = false;
     }
@@ -493,10 +460,10 @@ public class ActivityFileExportImport extends ActivityAbstract {
             output.close();
             input.close();
             String message = "The database is successfully restored from " + inFileName + "\n Reboot application";
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             String message = "Database restoring failed!";
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         }
         processingInProgress = false;
     }
@@ -531,9 +498,9 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 try {
                     ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), file);
                     String message = importFromFileTask.executeAndMessage();
-                    displayMessage(ActivityFileExportImport.this, message);
+                    displayMessage(ActivityFileExportImport.this, message, true);
                 } catch (Exception e) {
-                    displayMessage(ActivityFileExportImport.this, "File didn't imported  " + file.getPath());
+                    displayMessage(ActivityFileExportImport.this, "File didn't imported  " + file.getPath(), true);
                 } finally {
                     processingInProgress = false;
                 }
@@ -572,7 +539,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             startActivityForResult(intent, 1);
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "Import from Dropbox tasks failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "Import from Dropbox tasks failed! " + e.getMessage(), true);
             processingInProgress = false;
         }
     }
@@ -593,10 +560,10 @@ public class ActivityFileExportImport extends ActivityAbstract {
             AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
             doneDownload.get();
             String message = importFromFileTask.executeAndMessage();
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "Import from Dropbox task failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "Import from Dropbox task failed! " + e.getMessage(), true);
         } finally {
             processingInProgress = false;
         }
@@ -631,7 +598,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             startActivityForResult(intent, 1);
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "Import From FTP task failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "Import From FTP task failed! " + e.getMessage(), true);
             processingInProgress = false;
         }
     }
@@ -649,10 +616,10 @@ public class ActivityFileExportImport extends ActivityAbstract {
             AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
             doneDownload.get();
             String message = importFromFileTask.executeAndMessage();
-            displayMessage(ActivityFileExportImport.this, message);
+            displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityFileExportImport.this, "Tasks failed! " + e.getMessage());
+            displayMessage(ActivityFileExportImport.this, "Tasks failed! " + e.getMessage(), true);
         } finally {
             processingInProgress = false;
         }

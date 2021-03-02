@@ -1,12 +1,19 @@
 package ru.ivan.sandowgym.activities;
 
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -15,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxAuthTask;
@@ -22,22 +31,29 @@ import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpAuthTask;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
+import static ru.ivan.sandowgym.common.Common.mBackupScheduleEnabled;
+import static ru.ivan.sandowgym.common.Common.mBackupScheduleTimeHour;
+import static ru.ivan.sandowgym.common.Common.mBackupScheduleTimeMinutes;
+import static ru.ivan.sandowgym.common.Common.mDropboxAccessToken;
+import static ru.ivan.sandowgym.common.Common.mFtpHost;
+import static ru.ivan.sandowgym.common.Common.mFtpLogin;
+import static ru.ivan.sandowgym.common.Common.mFtpPassword;
+import static ru.ivan.sandowgym.common.Common.mRowsOnPageInLists;
+import static ru.ivan.sandowgym.common.Common.mSettings;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityOptions extends ActivityAbstract {
 
-    public SharedPreferences mSettings;
-    private int mRowsOnPageInLists;
-    private String mFtpHost;
-    private String mFtpLogin;
-    private String mFtpPassword;
-    private String mDropboxAccessToken;
+    static final int TIME_DIALOG_ID = 999;
+
+    private TimePicker mTimePicker;
+    private TextView timeDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
-        getPreferencesFromFile();
+        Common.getPreferences(this);
 
         ImageButton ibFTPTestConnectionButton = (ImageButton) findViewById(R.id.ibFTPTestConnectionButton);
 
@@ -61,6 +77,43 @@ public class ActivityOptions extends ActivityAbstract {
         setTitleOfActivity(this);
     }
 
+    public void tvBackupScheduleTime_onClick(View view) {
+        showDialog(TIME_DIALOG_ID);
+    }
+
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case TIME_DIALOG_ID:
+                return new TimePickerDialog(this,
+                        timePickerListener, mBackupScheduleTimeHour, mBackupScheduleTimeMinutes, DateFormat.is24HourFormat(this));
+        }
+        return null;
+    }
+
+    private TimePickerDialog.OnTimeSetListener timePickerListener =
+            (view, selectedHour, selectedMinute) -> {
+                mBackupScheduleTimeHour = selectedHour;
+                mBackupScheduleTimeMinutes = selectedMinute;
+
+                timeDisplay.setText(new StringBuilder().append(pad(mBackupScheduleTimeHour))
+                        .append(":").append(pad(mBackupScheduleTimeMinutes)));
+
+                mTimePicker.setHour(mBackupScheduleTimeHour);
+                mTimePicker.setMinute(mBackupScheduleTimeMinutes);
+
+            };
+
+    //Для показания минут настраиваем отображение 0 впереди чисел со значением меньше 10:
+    private static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + String.valueOf(c);
+    }
+
+
     public void buttonSave_onClick(View view) {
 
         blink(view, this);
@@ -74,7 +127,7 @@ public class ActivityOptions extends ActivityAbstract {
         EditText txtRowsOnPage = findViewById(mRowsOnPageID);
         if (txtRowsOnPage != null) {
             try {
-                mRowsOnPageInLists = Integer.valueOf(txtRowsOnPage.getText().toString());
+                Common.mRowsOnPageInLists = Integer.valueOf(txtRowsOnPage.getText().toString());
             } catch (ClassCastException e) {
 
             }
@@ -126,7 +179,16 @@ public class ActivityOptions extends ActivityAbstract {
         editor.putString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN, mFtpLogin);
         editor.putString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, mFtpPassword);
         editor.putString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, mDropboxAccessToken);
+        editor.putBoolean(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED, mBackupScheduleEnabled);
+        editor.putInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR, mBackupScheduleTimeHour);
+        editor.putInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES, mBackupScheduleTimeMinutes);
         editor.apply();
+
+        Scheduler.cancelAllWorkers(this);
+
+        if (mBackupScheduleEnabled) {
+            Scheduler.scheduleBackupTask(this);
+        }
     }
 
     public void buttonCancel_onClick(final View view) {
@@ -136,39 +198,6 @@ public class ActivityOptions extends ActivityAbstract {
 
     }
 
-    private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            mRowsOnPageInLists = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
-        } else {
-            mRowsOnPageInLists = 17;
-        }
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST)) {
-            mFtpHost = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST, "");
-        } else {
-            mFtpHost = "";
-        }
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN)) {
-            mFtpLogin = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN, "");
-        } else {
-            mFtpLogin = "";
-        }
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD)) {
-            mFtpPassword = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
-        } else {
-            mFtpPassword = "";
-        }
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
-            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
-        } else {
-            mDropboxAccessToken = "";
-        }
-
-    }
 
     private void setPreferencesOnScreen() {
 
@@ -201,22 +230,71 @@ public class ActivityOptions extends ActivityAbstract {
         if (txtDropboxAccessToken != null) {
             txtDropboxAccessToken.setText(mDropboxAccessToken);
         }
+
+        timeDisplay = findViewById(R.id.tvBackupScheduleTime);
+
+        timeDisplay.setText(
+                new StringBuilder().append(pad(mBackupScheduleTimeHour))
+                        .append(":").append(pad(mBackupScheduleTimeMinutes)));
+        timeDisplay.setVisibility(mBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
+
+        mTimePicker = findViewById(R.id.timePicker);
+        mTimePicker.setHour(mBackupScheduleTimeHour);
+        mTimePicker.setMinute(mBackupScheduleTimeMinutes);
+
+        int mBackupID = getResources().getIdentifier("rbScheduledBackup" + (mBackupScheduleEnabled ? "Yes" : "No"), "id", getPackageName());
+        RadioButton but = findViewById(mBackupID);
+        if (but != null) {
+            but.setChecked(true);
+        }
+
+        RadioGroup radiogroup = findViewById(R.id.rgScheduledBackup);
+
+        if (radiogroup != null) {
+            radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                        case -1:
+                            break;
+                        case R.id.rbScheduledBackupYes:
+                            mBackupScheduleEnabled = true;
+                            break;
+                        case R.id.rbScheduledBackupNo:
+                            mBackupScheduleEnabled = false;
+                            break;
+                        default:
+                            mBackupScheduleEnabled = false;
+                            break;
+                    }
+                    setBackupTimeVisible();
+                }
+            });
+        }
+    }
+
+    void setBackupTimeVisible() {
+        timeDisplay = findViewById(R.id.tvBackupScheduleTime);
+        timeDisplay.setVisibility(mBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
+
     }
 
     public void ibFTPTestConnection_onClick(View view) {
         savePreferences();
         try {
             blink(view, this);
-            displayMessage(ActivityOptions.this, "Test FTP connection started");
+            displayMessage(ActivityOptions.this, "Test FTP connection started", true);
             FtpAuthTask ftpAuthTask = new FtpAuthTask(mSettings);
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(ftpAuthTask);
-
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityOptions.this, tasks);
-            AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
+            AsyncTask<Void, Long, Boolean> checkResult = backgroundTaskExecutor.execute();
+            checkResult.get();
+            displayMessage(ActivityOptions.this, "Test FTP connection finished successfully", true);
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityOptions.this, "Test FTP connection failed " + e.getMessage());
+            displayMessage(ActivityOptions.this, "Test FTP connection failed " + e.getMessage(), true);
         }
     }
 
@@ -224,25 +302,26 @@ public class ActivityOptions extends ActivityAbstract {
         savePreferences();
         try {
             blink(view, this);
-            displayMessage(ActivityOptions.this, "Test Dropbox credentials started");
-
+            displayMessage(ActivityOptions.this, "Test Dropbox connection started", false);
             mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-dropboxClient").build();
             DbxClientV2 dropboxClient = new DbxClientV2(config, mDropboxAccessToken);
             if (dropboxClient != null) {
                 DropboxAuthTask dropboxAuthTask = new DropboxAuthTask(dropboxClient);
-
                 List<BackgroundTask> tasks = new ArrayList<>();
                 tasks.add(dropboxAuthTask);
                 BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityOptions.this, tasks);
-                AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
+                AsyncTask<Void, Long, Boolean> checkResult = backgroundTaskExecutor.execute();
+                checkResult.get();
+                displayMessage(ActivityOptions.this, "Test Dropbox connection finished successfully", true);
             } else {
-                displayMessage(ActivityOptions.this, "Test Dropbox credentials failed ");
+                displayMessage(ActivityOptions.this, "Test Dropbox connection failed ", true);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            displayMessage(ActivityOptions.this, "Test Dropbox credentials failed " + e.getMessage());
+            displayMessage(ActivityOptions.this, "Test Dropbox connection failed ", true);
         }
     }
+
 }

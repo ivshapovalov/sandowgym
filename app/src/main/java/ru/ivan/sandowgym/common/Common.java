@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.activities.ActivityMain;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -34,6 +36,15 @@ import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class Common {
+    public static SharedPreferences mSettings;
+    public static int mRowsOnPageInLists;
+    public static String mFtpHost;
+    public static String mFtpLogin;
+    public static String mFtpPassword;
+    public static String mDropboxAccessToken;
+    public static boolean mBackupScheduleEnabled;
+    public static int mBackupScheduleTimeHour;
+    public static int mBackupScheduleTimeMinutes;
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
     public static User dbCurrentUser;
@@ -51,6 +62,57 @@ public class Common {
 
         }
         return d;
+    }
+
+    public static void getPreferences(Context context) {
+        mSettings = context.getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            mRowsOnPageInLists = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        } else {
+            mRowsOnPageInLists = 17;
+        }
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST)) {
+            mFtpHost = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST, "");
+        } else {
+            mFtpHost = "";
+        }
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN)) {
+            mFtpLogin = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN, "");
+        } else {
+            mFtpLogin = "";
+        }
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD)) {
+            mFtpPassword = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
+        } else {
+            mFtpPassword = "";
+        }
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
+            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
+        } else {
+            mDropboxAccessToken = "";
+        }
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED)) {
+            mBackupScheduleEnabled = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED, false);
+        } else {
+            mBackupScheduleEnabled = false;
+        }
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR)) {
+            mBackupScheduleTimeHour = mSettings.getInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR, 0);
+        } else {
+            mBackupScheduleTimeHour = 0;
+        }
+
+        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES)) {
+            mBackupScheduleTimeMinutes = mSettings.getInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES, 0);
+        } else {
+            mBackupScheduleTimeMinutes = 0;
+        }
+
     }
 
     public static Date convertMillisToDate(final long Millis) {
@@ -100,10 +162,11 @@ public class Common {
         v.startAnimation(anim);
     }
 
-    public static void displayMessage(Context context, String message) {
-        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
-
+    public static void displayMessage(Context context, String message, boolean makeToast) {
+        if (makeToast) {
+            Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+            toast.show();
+        }
         Intent resultIntent = new Intent(context, context.getClass());
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);

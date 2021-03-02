@@ -54,17 +54,17 @@ public class BackgroundTaskExecutor extends AsyncTask<Void, Long, Boolean> {
                 message = currentTask.getName() + " failed";
                 break;
         }
-        displayMessage(context, message);
+        displayMessage(context, message, false);
     }
 
     @Override
     protected void onPreExecute() {
-        displayMessage(context, "Background tasks started");
+        displayMessage(context, "Background tasks started", false);
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         processingInProgress = false;
-        displayMessage(context, "Background tasks finished");
+        displayMessage(context, "Background tasks finished", false);
     }
 }
