@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -18,8 +19,10 @@ import android.widget.TimePicker;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
@@ -184,7 +187,7 @@ public class ActivityOptions extends ActivityAbstract {
         editor.putInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES, mBackupScheduleTimeMinutes);
         editor.apply();
 
-        Scheduler.cancelAllWorkers(this);
+        Scheduler.cancelAllWorks(this);
 
         if (mBackupScheduleEnabled) {
             Scheduler.scheduleBackupTask(this);
@@ -236,7 +239,7 @@ public class ActivityOptions extends ActivityAbstract {
         timeDisplay.setText(
                 new StringBuilder().append(pad(mBackupScheduleTimeHour))
                         .append(":").append(pad(mBackupScheduleTimeMinutes)));
-        timeDisplay.setVisibility(mBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
+        changeBackupScheduleButtonsVisibility();
 
         mTimePicker = findViewById(R.id.timePicker);
         mTimePicker.setHour(mBackupScheduleTimeHour);
@@ -268,17 +271,19 @@ public class ActivityOptions extends ActivityAbstract {
                             mBackupScheduleEnabled = false;
                             break;
                     }
-                    setBackupTimeVisible();
+                    changeBackupScheduleButtonsVisibility();
                 }
             });
         }
     }
 
-    void setBackupTimeVisible() {
+    void changeBackupScheduleButtonsVisibility() {
         timeDisplay = findViewById(R.id.tvBackupScheduleTime);
         timeDisplay.setVisibility(mBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
-
+        Button btBackupsSchedule = findViewById(R.id.btBackupScheduleTimeShow);
+        btBackupsSchedule.setVisibility(mBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
     }
+
 
     public void ibFTPTestConnection_onClick(View view) {
         savePreferences();
@@ -324,4 +329,23 @@ public class ActivityOptions extends ActivityAbstract {
         }
     }
 
+    public void btBackupScheduleTimeShow_onClick(View view) {
+        if (mBackupScheduleEnabled) {
+            try {
+                List<String> backups = Scheduler.getActiveWorks(this);
+                if (backups.size() > 0) {
+                    //            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
+                    String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
+                            backups.stream().map(Object::toString)
+                                    .collect(Collectors.joining(System.getProperty("line.separator")));
+                    // srt= "SCHEDULED BACKUPS: "+backups.toString().replaceAll("\\[|\\]|,",System.getProperty("line.separator"));
+                    displayMessage(this, srt, true);
+                } else {
+                    Scheduler.scheduleBackupTask(this);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

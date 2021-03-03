@@ -2,10 +2,8 @@ package ru.ivan.sandowgym.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -14,24 +12,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.ComplexBackupTask;
+import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.scheduler.Scheduler;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Common.stringToCalendar;
 
 public class ActivityMain extends ActivityAbstract {
-
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    private SharedPreferences mSettings;
 
     public static final String APP_PREFERENCES = "mysettings";
     public static final String APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS = "rows_on_page_in_lists";
@@ -51,15 +56,14 @@ public class ActivityMain extends ActivityAbstract {
 
     private final int maxVerticalButtonCount = 10;
     private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
-    private String mDropboxAccessToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getPreferencesFromFile();
         showElementsOnScreen();
+        Common.getPreferences(this);
         setTitleOfActivity(this);
         setPermissions();
     }
@@ -74,58 +78,6 @@ public class ActivityMain extends ActivityAbstract {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                 },
                 2);
-    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case 1: {
-//
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    // permission was granted, yay! Do the
-//                    // contacts-related task you need to do.
-//                } else {
-//
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    Toast.makeText(ActivityMain.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
-//                }
-//                return;
-//            }
-//            case 2: {
-//
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    // permission was granted, yay! Do the
-//                    // contacts-related task you need to do.
-//                } else {
-//
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    Toast.makeText(ActivityMain.this, "Permission denied to write your External storage", Toast.LENGTH_SHORT).show();
-//                }
-//                return;
-//            }
-//
-//            // other 'case' lines to check for other
-//            // permissions this app might request
-//        }
-//    }
-
-    private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
-            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
-        } else {
-            mDropboxAccessToken = "";
-        }
     }
 
     private Date getLastDateOfWeightChange() {
@@ -236,12 +188,96 @@ public class ActivityMain extends ActivityAbstract {
                 }).setNegativeButton("No", null).show();
     }
 
-    public void rowComplexExport_onClick(View view) {
+    public void rowFullBackup_onClick(View view) {
         try {
-            ComplexBackupTask complexBackupTask = new ComplexBackupTask(this, true);
-            complexBackupTask.execute();
+            FullBackupTask fullBackupTask = new FullBackupTask(this, true);
+            fullBackupTask.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public void btTest_onClick(View view) throws ParseException {
+//        if (Scheduler.activeWorkExists(this).size()>0) { // check if your work is not already scheduled
+////            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
+//            displayMessage(this, "SCHEDULED", true);
+//        } else {
+        Scheduler.scheduleBackupTask(this, 2);
+//        }
+//        WorkManager workManager = WorkManager.getInstance(this);
+//        ListenableFuture<List<WorkInfo>> backupWorkInfos = workManager.getWorkInfosByTag(Scheduler.TAG_BACKUP);
+        //workManager.cancelAllWorkByTag("backupWorkInfos");
+        //System.out.println(backupWorkInfos);
+        //Scheduler.cancelAllWorkers(this);
+
+//        if (mBackupScheduleEnabled) {
+//            Scheduler.scheduleBackupTask(this);
+//        }
+
+    }
+
+    public void btTestClear_onClick(View view) {
+        Scheduler.cancelAllWorks(this);
+//        if (mBackupScheduleEnabled) {
+//            try {
+//                List<String> backups = Scheduler.activeWorkExists(this);
+//                if (backups.size()>0) {
+//                    //            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
+//                    String srt="SCHEDULED BACKUPS: "+System.getProperty("line.separator")+
+//                            backups.stream().map(Object::toString)
+//                            .collect(Collectors.joining(System.getProperty("line.separator")));
+//                    // srt= "SCHEDULED BACKUPS: "+backups.toString().replaceAll("\\[|\\]|,",System.getProperty("line.separator"));
+//                    displayMessage(this,srt , true);
+//                } else {
+//                    Scheduler.scheduleBackupTask(this);
+//                }
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+    }
+
+    private boolean isWorkScheduled() throws ParseException {
+        boolean hasScheduledWork = false;
+        WorkManager instance = WorkManager.getInstance();
+        ListenableFuture<List<WorkInfo>> statuses = instance.getWorkInfosByTag(Scheduler.TAG_BACKUP);
+        try {
+            boolean running = false;
+            List<WorkInfo> workInfoList = statuses.get();
+            outer:
+            for (WorkInfo workInfo : workInfoList) {
+                WorkInfo.State state = workInfo.getState();
+                running = state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED;
+                if (running) {
+                    //get time
+                    String time = "";
+                    for (String tag : workInfo.getTags()) {
+                        if (tag.startsWith(Scheduler.TAG_BACKUP_AT)) {
+                            time = tag.substring(tag.indexOf(":") + 1).trim();
+                            System.out.println(time);
+                            Calendar workDateTime = stringToCalendar(time, "yyyy-MM-dd HH:mm:ss");
+                            Calendar currentDateTime = Calendar.getInstance();
+                            if (workDateTime.after(currentDateTime)) {
+                                //backupTime.add(Calendar.HOUR_OF_DAY, 24);
+                                hasScheduledWork = true;
+                                break outer;
+                            } else {
+                                instance.getWorkInfosByTag(tag).cancel(true);
+                            }
+                        }
+                    }
+                }
+            }
+            return hasScheduledWork;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

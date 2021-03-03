@@ -96,20 +96,20 @@
                     android:textColor="@color/text_color" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <!--            <TableRow-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent">-->
 
-                <Button
-                    android:id="@+id/btMain4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_span="30"
-                    android:background="@drawable/bt_border"
-                    android:onClick="btNewTraining_onClick"
-                    android:text="NEW TRAINING"
-                    android:textColor="@color/text_color" />
-            </TableRow>
+            <!--                <Button-->
+            <!--                    android:id="@+id/btMain4"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_span="30"-->
+            <!--                    android:background="@drawable/bt_border"-->
+            <!--                    android:onClick="btNewTraining_onClick"-->
+            <!--                    android:text="NEW TRAINING"-->
+            <!--                    android:textColor="@color/text_color" />-->
+            <!--            </TableRow>-->
 
             <TableRow
                 android:layout_width="match_parent"
@@ -125,6 +125,34 @@
                     android:text="@string/tools"
                     android:textColor="@color/text_color" />
             </TableRow>
+            <!--            <TableRow-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent">-->
+
+            <!--                <Button-->
+            <!--                    android:id="@+id/buttonTest"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_span="30"-->
+            <!--                    android:background="@drawable/bt_border"-->
+            <!--                    android:onClick="btTest_onClick"-->
+            <!--                    android:text="TEST"-->
+            <!--                    android:textColor="@color/text_color" />-->
+            <!--            </TableRow>-->
+            <!--            <TableRow-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent">-->
+
+            <!--                <Button-->
+            <!--                    android:id="@+id/buttonTestClear"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_span="30"-->
+            <!--                    android:background="@drawable/bt_border"-->
+            <!--                    android:onClick="btTestClear_onClick"-->
+            <!--                    android:text="CLEAR"-->
+            <!--                    android:textColor="@color/text_color" />-->
+            <!--            </TableRow>-->
 
             <TableRow
                 android:layout_width="wrap_content"
@@ -132,7 +160,7 @@
                 android:gravity="right"
                 android:paddingTop="20dp">
 
-                <LinearLayout android:onClick="rowComplexExport_onClick">
+                <LinearLayout android:onClick="rowFullBackup_onClick">
 
                     <ImageView
                         android:id="@+id/imageViewLocal"

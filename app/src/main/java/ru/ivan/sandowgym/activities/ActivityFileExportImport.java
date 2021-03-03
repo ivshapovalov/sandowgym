@@ -36,12 +36,12 @@ import ru.ivan.sandowgym.common.tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.tasks.FtpListFilesTask;
 import ru.ivan.sandowgym.common.tasks.ImportFromFileTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
-import ru.ivan.sandowgym.common.tasks.backgroundTasks.ComplexBackupTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxDownloadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxUploadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpDownloadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
@@ -239,21 +239,21 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-    public void btComplexBackup_onClick(final View view) {
+    public void btFullBackup_onClick(final View view) {
         new AlertDialog.Builder(this)
-                .setMessage("Do you wish to complex backup data to 'xlsx' file (local, ftp, dropbox)?")
+                .setMessage("Do you wish to full backup data to 'xlsx' file (local, ftp, dropbox)?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        complexBackupToFile_onYesClick(view);
+                        fullBackupToFile_onYesClick(view);
                     }
                 }).setNegativeButton("No", null).show();
     }
 
-    private void complexBackupToFile_onYesClick(View view) {
+    private void fullBackupToFile_onYesClick(View view) {
         try {
-            ComplexBackupTask complexBackupTask = new ComplexBackupTask(this, true);
-            complexBackupTask.execute();
+            FullBackupTask fullBackupTask = new FullBackupTask(this, true);
+            fullBackupTask.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }

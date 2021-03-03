@@ -22,13 +22,13 @@ import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 
-public class ComplexBackupTask implements BackgroundTask {
+public class FullBackupTask implements BackgroundTask {
     private Context context;
     private SharedPreferences mSettings;
     private String mDropboxAccessToken;
     private boolean doInBackground;
 
-    public ComplexBackupTask(Context context, boolean doInBackground) {
+    public FullBackupTask(Context context, boolean doInBackground) {
         this.context = context;
         this.doInBackground = doInBackground;
         getPreferencesFromFile();
@@ -50,7 +50,7 @@ public class ComplexBackupTask implements BackgroundTask {
         if (isProcessingInProgress(context)) {
             return false;
         }
-        displayMessage(context, "Complex backup started", false);
+        displayMessage(context, "Full backup started", false);
         processingInProgress = true;
         File outputDir = new File(Environment.getExternalStorageDirectory(), "");
         if (!outputDir.exists()) {
@@ -84,10 +84,10 @@ public class ComplexBackupTask implements BackgroundTask {
             AsyncTask<Void, Long, Boolean> done = backgroundTaskExecutor.execute();
             if (!doInBackground) {
                 done.get();
-                displayMessage(context, "Complex backup finished successfully ", false);
+                displayMessage(context, "Full backup finished successfully ", false);
             }
         } catch (Exception e) {
-            displayMessage(context, "Complex backup failed", false);
+            displayMessage(context, "Full backup failed", false);
             processingInProgress = false;
             return false;
         }
@@ -96,6 +96,6 @@ public class ComplexBackupTask implements BackgroundTask {
 
     @Override
     public String getName() {
-        return "Complex backup task";
+        return "Full backup task";
     }
 }

@@ -23,11 +23,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="50"
+            android:background="@android:drawable/spinner_dropdown_background"
             android:onClick="buttonCancel_onClick"
             android:text="CANCEL"
-            android:textSize="12sp"
-            android:background="@drawable/bt_border"
-            android:textColor="@color/text_color" />
+            android:textColor="@color/text_color"
+            android:textSize="12sp" />
 
         <Button
 
@@ -36,11 +36,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="50"
+            android:background="@android:drawable/spinner_dropdown_background"
             android:onClick="buttonSave_onClick"
             android:text="SAVE"
-            android:textSize="12sp"
-            android:background="@drawable/bt_border"
-            android:textColor="@color/text_color" />
+            android:textColor="@color/text_color"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -242,7 +242,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="40"
-            android:text="DAILY COMPLEX BACKUP"
+            android:text="DAILY FULL BACKUP"
             android:textColor="@color/text_color"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -285,8 +285,9 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_gravity="right"
+            android:layout_marginTop="10dp"
             android:layout_weight="100"
-            android:background="#F1CECE"
+            android:background="@android:drawable/checkbox_off_background"
             android:editable="false"
             android:gravity="center"
             android:onClick="tvBackupScheduleTime_onClick"
@@ -294,6 +295,24 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lineScheduleBackupShow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lineScheduleBackupTime"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btBackupScheduleTimeShow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="@android:drawable/spinner_dropdown_background"
+            android:onClick="btBackupScheduleTimeShow_onClick"
+            android:text="SHOW SCHEDULE"
+            android:textColor="@color/text_color" />
     </LinearLayout>
 
     <TimePicker

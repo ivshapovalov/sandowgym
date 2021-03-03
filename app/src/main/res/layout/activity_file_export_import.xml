@@ -221,8 +221,8 @@
                             android:layout_marginTop="10dp"
                             android:layout_span="40"
                             android:background="@drawable/rounded_corners2"
-                            android:onClick="btComplexBackup_onClick"
-                            android:text="Complex Backup (local, ftp, dropbox)"
+                            android:onClick="btFullBackup_onClick"
+                            android:text="Full Backup (local, ftp, dropbox)"
                             android:textColor="@color/text_color" />
                     </TableRow>
 

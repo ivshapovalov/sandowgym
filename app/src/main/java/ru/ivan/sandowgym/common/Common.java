@@ -24,8 +24,10 @@ import androidx.core.app.NotificationCompat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.activities.ActivityMain;
@@ -235,6 +237,17 @@ public class Common {
             return true;
         }
         return false;
+    }
+
+    public static Calendar stringToCalendar(String date, String pattern) throws ParseException {
+        String DEFAULT_LOCALE_NAME = "ru";
+        String DEFAULT_COUNTRY = "RU";
+        Locale DEFAULT_LOCALE = new Locale(DEFAULT_LOCALE_NAME, DEFAULT_COUNTRY);
+        SimpleDateFormat format = new SimpleDateFormat(pattern, DEFAULT_LOCALE);
+        Date d = format.parse(date);
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        return c;
     }
 
     public static void setTitleOfActivity(Activity currentActivity) {
