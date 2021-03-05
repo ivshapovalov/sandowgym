@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.service.notification.StatusBarNotification;
 import android.text.format.Time;
@@ -53,6 +54,8 @@ public class Common {
     public static final boolean isDebug = true;
     public static volatile boolean processingInProgress;
     private static final int MAX_NOTIFICATION_CHARSEQUENCE_LENGTH = 5 * 1024;
+
+    public static final String BACKUP_FOLDER = Environment.getExternalStorageDirectory() + "/sandow_backup/";
 
     public static Date convertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);

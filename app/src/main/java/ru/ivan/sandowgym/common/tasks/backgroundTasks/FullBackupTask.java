@@ -3,7 +3,6 @@ package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -18,6 +17,7 @@ import java.util.List;
 import ru.ivan.sandowgym.activities.ActivityMain;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 
+import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
@@ -52,7 +52,7 @@ public class FullBackupTask implements BackgroundTask {
         }
         displayMessage(context, "Full backup started", false);
         processingInProgress = true;
-        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
+        File outputDir = new File(BACKUP_FOLDER);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }

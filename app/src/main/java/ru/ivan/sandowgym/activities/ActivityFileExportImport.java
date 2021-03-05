@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -43,6 +42,7 @@ import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpDownloadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 
+import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
@@ -280,7 +280,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         displayMessage(ActivityFileExportImport.this, "Export to File started", false);
         processingInProgress = true;
 
-        File outputDir = new File(Environment.getExternalStorageDirectory(), "");
+        File outputDir = new File(BACKUP_FOLDER);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
@@ -408,8 +408,13 @@ public class ActivityFileExportImport extends ActivityAbstract {
             processingInProgress = true;
             File dbFile = getApplicationContext().getDatabasePath("trainingCalendar");
             FileInputStream fis = new FileInputStream(dbFile);
-            String outFileName = Environment.getExternalStorageDirectory() + "/trainingCalendar_copy.db";
-            OutputStream output = new FileOutputStream(outFileName);
+            File outputDir = new File(BACKUP_FOLDER);
+            if (!outputDir.exists()) {
+                outputDir.mkdirs();
+            }
+            File outputFile = new File(outputDir, "trainingCalendar_copy.db");
+
+            OutputStream output = new FileOutputStream(outputFile);
 
             byte[] buffer = new byte[1024];
             int length;
@@ -419,7 +424,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             output.flush();
             output.close();
             fis.close();
-            String message = "The database is successfully backed up to " + outFileName;
+            String message = "The database is successfully backed up to " + outputFile.getAbsolutePath();
             displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             String message = "Database backup failed!";
@@ -448,8 +453,13 @@ public class ActivityFileExportImport extends ActivityAbstract {
             File dbFile = getApplicationContext().getDatabasePath("trainingCalendar");
             FileOutputStream output = new FileOutputStream(dbFile);
 
-            String inFileName = Environment.getExternalStorageDirectory() + "/trainingCalendar_copy.db";
-            InputStream input = new FileInputStream(inFileName);
+            File backupDir = new File(BACKUP_FOLDER);
+            if (!backupDir.exists()) {
+                backupDir.mkdirs();
+            }
+            File backupFile = new File(backupDir, "trainingCalendar_copy.db");
+
+            InputStream input = new FileInputStream(backupFile);
 
             byte[] buffer = new byte[1024];
             int length;
@@ -459,7 +469,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             output.flush();
             output.close();
             input.close();
-            String message = "The database is successfully restored from " + inFileName + "\n Reboot application";
+            String message = "The database is successfully restored from " + backupFile.getAbsolutePath() + "\n Reboot application";
             displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             String message = "Database restoring failed!";

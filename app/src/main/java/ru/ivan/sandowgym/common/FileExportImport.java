@@ -1,7 +1,6 @@
 package ru.ivan.sandowgym.common;
 
 import android.content.Context;
-import android.os.Environment;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -30,6 +29,7 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
+import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.convertTextToDigit;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
@@ -503,7 +503,7 @@ public class FileExportImport {
         }
 
         messageTrainingList
-                .insert(0, "From file  \n" + Environment.getExternalStorageDirectory().toString() + "/trainings.xlsx" + '\n'
+                .insert(0, "From file  \n" + BACKUP_FOLDER + "/trainings.xlsx" + '\n'
                         + " successfully loaded trainings:" + "\n");
         return messageTrainingList.toString();
     }
@@ -640,8 +640,7 @@ public class FileExportImport {
                     message.append("Missed sheet - \"trainings\"")
                             .append("\n")
                             .append("Trainings didn't load from ")
-                            .append(Environment.getExternalStorageDirectory()
-                                    .toString())
+                            .append(BACKUP_FOLDER)
                             .append("/trainings.xlsx")
                             .append("\n");
                 }
@@ -660,7 +659,7 @@ public class FileExportImport {
                 message
                         .append("Missed sheet - \"trainings\"")
                         .append("\n").append("Trainings didn't load from ")
-                        .append(Environment.getExternalStorageDirectory().toString())
+                        .append(BACKUP_FOLDER)
                         .append("/trainings.xlsx")
                         .append("\n");
             }
@@ -668,7 +667,7 @@ public class FileExportImport {
         } catch (Exception e) {
             message
                     .append("Trainings didn't load from ")
-                    .append(Environment.getExternalStorageDirectory().toString())
+                    .append(BACKUP_FOLDER)
                     .append("/trainings.xlsx");
         }
         return message.toString();
