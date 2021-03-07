@@ -59,6 +59,7 @@ public class FullBackupTask implements BackgroundTask {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
         Date date = new Date();
         String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
+        fileName = "sandow-gym-20210305-172135.xlsx";
         File outputFile = new File(outputDir, fileName);
         //for tests
 //                File exportDir = new File(Environment.getExternalStorageDirectory(), "");

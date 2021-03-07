@@ -12,17 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
@@ -34,7 +28,6 @@ import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
-import static ru.ivan.sandowgym.common.Common.stringToCalendar;
 
 public class ActivityMain extends ActivityAbstract {
 
@@ -236,47 +229,6 @@ public class ActivityMain extends ActivityAbstract {
 //            }
 //        }
 
-    }
-
-    private boolean isWorkScheduled() throws ParseException {
-        boolean hasScheduledWork = false;
-        WorkManager instance = WorkManager.getInstance();
-        ListenableFuture<List<WorkInfo>> statuses = instance.getWorkInfosByTag(Scheduler.TAG_BACKUP);
-        try {
-            boolean running = false;
-            List<WorkInfo> workInfoList = statuses.get();
-            outer:
-            for (WorkInfo workInfo : workInfoList) {
-                WorkInfo.State state = workInfo.getState();
-                running = state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED;
-                if (running) {
-                    //get time
-                    String time = "";
-                    for (String tag : workInfo.getTags()) {
-                        if (tag.startsWith(Scheduler.TAG_BACKUP_AT)) {
-                            time = tag.substring(tag.indexOf(":") + 1).trim();
-                            System.out.println(time);
-                            Calendar workDateTime = stringToCalendar(time, "yyyy-MM-dd HH:mm:ss");
-                            Calendar currentDateTime = Calendar.getInstance();
-                            if (workDateTime.after(currentDateTime)) {
-                                //backupTime.add(Calendar.HOUR_OF_DAY, 24);
-                                hasScheduledWork = true;
-                                break outer;
-                            } else {
-                                instance.getWorkInfosByTag(tag).cancel(true);
-                            }
-                        }
-                    }
-                }
-            }
-            return hasScheduledWork;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
 
