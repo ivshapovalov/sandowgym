@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.File;
 
+import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.FileExportImport;
 
 public class ImportFromFileTask  {
@@ -23,6 +24,7 @@ public class ImportFromFileTask  {
         try {
             message.append(new FileExportImport(context, file, 0, 0).importFromFile());
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return false;
         }

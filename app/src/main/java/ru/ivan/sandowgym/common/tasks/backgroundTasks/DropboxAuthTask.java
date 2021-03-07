@@ -1,11 +1,17 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
+import android.content.Context;
+
 import com.dropbox.core.v2.DbxClientV2;
 
+import ru.ivan.sandowgym.common.Common;
+
 public class DropboxAuthTask implements BackgroundTask {
+    Context context;
     private DbxClientV2 client;
 
-    public DropboxAuthTask(DbxClientV2 client) {
+    public DropboxAuthTask(Context context, DbxClientV2 client) {
+        this.context = context;
         this.client = client;
     }
 
@@ -15,6 +21,7 @@ public class DropboxAuthTask implements BackgroundTask {
             String displayName = client.users().getCurrentAccount().getName().getDisplayName();
             return true;
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return false;
         }

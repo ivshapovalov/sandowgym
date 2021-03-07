@@ -1,13 +1,16 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.File;
 
+import ru.ivan.sandowgym.common.Common;
+
 public class FtpUploadTask extends FtpTask implements BackgroundTask {
 
-    public FtpUploadTask(SharedPreferences settings, File file) {
-        super(settings, file);
+    public FtpUploadTask(Context context, SharedPreferences settings, File file) {
+        super(context, settings, file);
     }
 
     @Override
@@ -18,7 +21,7 @@ public class FtpUploadTask extends FtpTask implements BackgroundTask {
                 return true;
             } else return false;
         } catch (Exception e) {
-            //e.printStackTrace();
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             return false;
         } finally {
             disconnect();

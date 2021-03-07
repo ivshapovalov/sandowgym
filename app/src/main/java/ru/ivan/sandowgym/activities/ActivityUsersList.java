@@ -37,7 +37,7 @@ public class ActivityUsersList extends AppCompatActivity {
     private final int maxHorizontalButtonCount = 2;
     private final int numberOfViews = 40000;
 
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private final SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(this);
 
     private SharedPreferences mSettings;
     private int rowsNumber;
@@ -105,7 +105,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
     private void pageUsers() {
         List<User> users = new ArrayList<>();
-        users = DB.getAllUsers();
+        users = database.getAllUsers();
         List<User> pageContent = new ArrayList<>();
         pagedUsers.clear();
         int pageNumber = 1;

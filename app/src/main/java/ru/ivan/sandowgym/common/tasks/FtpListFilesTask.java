@@ -1,5 +1,6 @@
 package ru.ivan.sandowgym.common.tasks;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
@@ -13,20 +14,21 @@ import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPFile;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import ru.ivan.sandowgym.activities.ActivityMain;
+import ru.ivan.sandowgym.common.Common;
 
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 
 public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
 
+    private Context context;
     private FTPClient ftpClient;
-
     private SharedPreferences settings;
-
     private String mFtpHost;
     private String mFtpLogin;
     private String mFtpPassword;
 
-    public FtpListFilesTask(SharedPreferences settings) {
+    public FtpListFilesTask(Context context, SharedPreferences settings) {
+        this.context = context;
         this.settings = settings;
     }
 
@@ -52,6 +54,7 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             });
             return fileNames;
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return new ArrayList<>();
         } finally {

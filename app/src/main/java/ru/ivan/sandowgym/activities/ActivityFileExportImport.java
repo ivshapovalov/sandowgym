@@ -330,7 +330,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 //            outputFile = new File(exportDir, "trainings.xlsx");
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
 
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
+            FtpUploadTask ftpUploadTask = new FtpUploadTask(this.getApplicationContext(), mSettings, outputFile);
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
             tasks.add(ftpUploadTask);
@@ -375,7 +375,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
+            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(this.getApplicationContext(), outputFile, client);
 
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
@@ -540,7 +540,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             processingInProgress = true;
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxListFilesTask dropboxListFilesTask = new DropboxListFilesTask(client);
+            DropboxListFilesTask dropboxListFilesTask = new DropboxListFilesTask(this.getApplicationContext(), client);
             AsyncTask<Void, Long, ArrayList<String>> metadatas = dropboxListFilesTask.execute();
             ArrayList<String> fileNames = metadatas.get();
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
@@ -561,7 +561,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxDownloadTask dropboxDownloadTask = new DropboxDownloadTask(outputFile, client);
+            DropboxDownloadTask dropboxDownloadTask = new DropboxDownloadTask(this.getApplicationContext(), outputFile, client);
             ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
 
             List<BackgroundTask> tasks = new ArrayList<>();
@@ -597,7 +597,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 return;
             }
             processingInProgress = true;
-            FtpListFilesTask ftpListFilesTask = new FtpListFilesTask(mSettings);
+            FtpListFilesTask ftpListFilesTask = new FtpListFilesTask(this.getApplicationContext(), mSettings);
             AsyncTask<Void, Long, ArrayList<String>> task = ftpListFilesTask.execute();
             ArrayList<String> fileNames = task.get();
 
@@ -617,7 +617,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         try {
             File outputDir = getCacheDir();
             File outputFile = new File(outputDir, fileName);
-            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(mSettings, outputFile);
+            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(this.getApplicationContext(), mSettings, outputFile);
             ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
 
             List<BackgroundTask> tasks = new ArrayList<>();

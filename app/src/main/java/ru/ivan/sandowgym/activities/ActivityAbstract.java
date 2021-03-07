@@ -15,7 +15,7 @@ import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 
 public abstract class ActivityAbstract extends AppCompatActivity {
 
-    protected final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    protected final SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(this);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,12 +26,12 @@ public abstract class ActivityAbstract extends AppCompatActivity {
     public void defineCurrentUser() {
 
         if (dbCurrentUser == null) {
-            List<User> userList = DB.getAllUsers();
+            List<User> userList = database.getAllUsers();
             if (userList.size() == 1) {
                 User currentUser = userList.get(0);
                 dbCurrentUser = currentUser;
                 currentUser.setIsCurrentUser(1);
-                currentUser.save(DB);
+                currentUser.save(database);
             } else {
                 //ищем активного
                 for (User user : userList) {

@@ -33,12 +33,14 @@ import java.util.Locale;
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.activities.ActivityMain;
 import ru.ivan.sandowgym.database.entities.Exercise;
+import ru.ivan.sandowgym.database.entities.Log;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class Common {
+
     public static SharedPreferences mSettings;
     public static int mRowsOnPageInLists;
     public static String mFtpHost;
@@ -50,6 +52,7 @@ public class Common {
     public static int mBackupScheduleTimeMinutes;
 
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
+    public static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSS";
     public static User dbCurrentUser;
     public static final boolean isDebug = true;
     public static volatile boolean processingInProgress;
@@ -67,6 +70,26 @@ public class Common {
 
         }
         return d;
+    }
+
+    public static String getDate(long milliSeconds) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    public static long getTimeMillis(String dateString) throws ParseException {
+        /*Use date format as according to your need! Ex. - yyyy/MM/dd HH:mm:ss */
+        String myDate = dateString;//"2017/12/20 18:10:45";
+        SimpleDateFormat sdf = new SimpleDateFormat(DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
+        Date date = sdf.parse(myDate);
+        long millis = date.getTime();
+
+        return millis;
     }
 
     public static void getPreferences(Context context) {
@@ -165,6 +188,14 @@ public class Common {
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(1);
         v.startAnimation(anim);
+    }
+
+    public static void saveErrorMessage(Context context, String message) {
+        final SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
+        Log log = new Log.Builder(database.getLogMaxNumber() + 1).
+                addDatetime(Calendar.getInstance().getTimeInMillis()).
+                addText(message).build();
+        database.addLog(log);
     }
 
     public static void displayMessage(Context context, String message, boolean makeToast) {

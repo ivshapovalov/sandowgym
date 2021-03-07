@@ -22,25 +22,26 @@ import java.util.Map;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
-import ru.ivan.sandowgym.database.entities.Exercise;
+import ru.ivan.sandowgym.database.entities.Log;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.hideEditorButton;
+import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
-public class ActivityExercisesList extends ActivityAbstract {
+public class ActivityLogsList extends ActivityAbstract {
 
-    private final int maxVerticalButtonCount = 15;
+    private final int maxVerticalButtonCount = 17;
     private final int maxHorizontalButtonCount = 2;
-    private final int numberOfViews = 10000;
+    private final int numberOfViews = 40000;
 
     private SharedPreferences mSettings;
     private int rowsNumber;
-    private Map<Integer, List<Exercise>> pagedExercices = new HashMap<>();
+    private Map<Integer, List<Log>> pagedLogs = new HashMap<>();
     private int currentPage = 1;
-    private int idIntentExercise;
+    private int idIntentLog;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -50,39 +51,35 @@ public class ActivityExercisesList extends ActivityAbstract {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exercises_list);
+        setContentView(R.layout.activity_logs_list);
 
         if (!Common.isDebug) {
-            int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
+            int mEditorID = getResources().getIdentifier("btLogsDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
             hideEditorButton(btEditor);
         }
-        getPreferencesFromFile();
-        Intent intent = getIntent();
-        idIntentExercise = intent.getIntExtra("currentExerciseId", 0);
 
-        updateExercises();
-        TableRow mRow = findViewById(numberOfViews + idIntentExercise);
+        getPreferencesFromFile();
+
+        Intent intent = getIntent();
+        idIntentLog = intent.getIntExtra("currentLogId", 0);
+        updateLogs();
+
+        TableRow mRow = findViewById(numberOfViews + idIntentLog);
         if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableExercises", "id", getPackageName());
+            int mScrID = getResources().getIdentifier("svTableLogs", "id", getPackageName());
             ScrollView mScrollView = findViewById(mScrID);
             if (mScrollView != null) {
-
                 mScrollView.requestChildFocus(mRow, mRow);
             }
         }
+
         setTitleOfActivity(this);
     }
 
-    private void updateExercises() {
-        pageExercises();
-        showExercises();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private void updateLogs() {
+        pageLogs();
+        showLogs();
     }
 
     private void getPreferencesFromFile() {
@@ -94,68 +91,53 @@ public class ActivityExercisesList extends ActivityAbstract {
         }
     }
 
-    public void btExercisesAdd_onClick(final View view) {
+    public void bt_LogsAdd_onClick(final View view) {
 
         blink(view, this);
-        Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
+        Intent intent = new Intent(getApplicationContext(), ActivityLog.class);
         intent.putExtra("isNew", true);
         startActivity(intent);
 
     }
 
-    public void btExercisesFillDefault_onClick(final View view) {
-
-        blink(view, this);
-        List<Exercise> exercises = Common.createDefaultExercises(database);
-        for (Exercise ex : exercises) {
-            ex.save(database);
-        }
-        updateExercises();
-
-    }
-
-    private void pageExercises() {
-        currentPage = 1;
-        List<Exercise> exercises = new ArrayList<>();
-        if (dbCurrentUser == null) {
-            //exercises = DB.getAllExercises();
-        } else {
-            exercises = database.getAllExercisesOfUser(dbCurrentUser.getId());
-        }
-        pagedExercices.clear();
-        List<Exercise> pageContent = new ArrayList<>();
+    private void pageLogs() {
+        List<Log> logs = database.getAllLogs();
+        List<Log> pageContent = new ArrayList<>();
+        pagedLogs.clear();
         int pageNumber = 1;
-        for (int i = 0; i < exercises.size(); i++) {
-            if (idIntentExercise != 0) {
-                if (exercises.get(i).getId() == idIntentExercise) {
+        for (int i = 0; i < logs.size(); i++) {
+            if (idIntentLog != 0) {
+                if (logs.get(i).getId() == idIntentLog) {
                     currentPage = pageNumber;
                 }
             }
-            pageContent.add(exercises.get(i));
+            pageContent.add(logs.get(i));
             if (pageContent.size() == rowsNumber) {
-                pagedExercices.put(pageNumber, pageContent);
+                pagedLogs.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size() != 0) {
-            pagedExercices.put(pageNumber, pageContent);
+            pagedLogs.put(pageNumber, pageContent);
         }
-        if (pagedExercices.size() == 0) {
+        if (pagedLogs.size() == 0) {
             currentPage = 0;
         }
     }
 
-    private void showExercises() {
+    private void showLogs() {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedExercices.size());
+            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedLogs.size());
         }
 
-        ScrollView sv = findViewById(R.id.svTableExercises);
+        ScrollView sv = findViewById(R.id.svTableLogs);
         try {
+
             sv.removeAllViews();
+
         } catch (NullPointerException e) {
         }
 
@@ -163,80 +145,117 @@ public class ActivityExercisesList extends ActivityAbstract {
 
         mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         mWidth = displaymetrics.widthPixels / maxHorizontalButtonCount;
-        mTextSize = (int) (Math.min(mWidth, mHeight) / 1.5 /
-                getApplicationContext().getResources().getDisplayMetrics().density);
+        mTextSize = (int) (Math.min(mWidth, mHeight) / 3 / getApplicationContext().getResources().getDisplayMetrics().density);
 
         TableRow trowButtons = findViewById(R.id.trowButtons);
+
         if (trowButtons != null) {
             trowButtons.setMinimumHeight(mHeight);
         }
+
         TableLayout layout = new TableLayout(this);
         layout.setStretchAllColumns(true);
+        layout.setShrinkAllColumns(true);
 
-        List<Exercise> page = pagedExercices.get(currentPage);
+        List<Log> page = pagedLogs.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            Exercise exercise = page.get(num);
+            Log log = page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(numberOfViews + exercise.getId());
+            mRow.setId(numberOfViews + log.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    rowExercise_onClick((TableRow) v);
+                    rowLog_onClick((TableRow) v);
                 }
             });
             mRow.setMinimumHeight(mHeight);
             mRow.setBackgroundResource(R.drawable.bt_border);
+            TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            mRow.setLayoutParams(params);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(exercise.getId()));
+            txt.setText(String.valueOf(log.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(3));
             mRow.addView(txt);
 
             txt = new TextView(this);
-            txt.setText(String.valueOf(exercise.getName()));
+            String datetime = Common.getDate(log.getDatetime());
+            txt.setText(datetime);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
-            txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(9));
+            mRow.addView(txt);
+
+            txt = new TextView(this);
+            String text = log.getText();
+            txt.setText(text);
+            txt.setBackgroundResource(R.drawable.bt_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setTextSize(mTextSize);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(10));
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.bt_border);
             layout.addView(mRow);
+
         }
         sv.addView(layout);
     }
 
-    private void rowExercise_onClick(final TableRow view) {
+    private void rowLog_onClick(final TableRow view) {
 
         blink(view, this);
 
         int id = view.getId() % numberOfViews;
 
-        Intent intent = new Intent(getApplicationContext(), ActivityExercise.class);
-        intent.putExtra("currentExerciseId", id);
+        Intent intent = new Intent(getApplicationContext(), ActivityLog.class);
+        intent.putExtra("currentLogId", id);
         intent.putExtra("isNew", false);
         startActivity(intent);
 
     }
 
+    public void btDeleteAllLogs_onClick(final View view) {
+
+        blink(view, this);
+
+        new AlertDialog.Builder(this)
+                .setMessage("Do you wish to delete all logs with content?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (dbCurrentUser != null) {
+                            database.deleteAllLogs();
+                            updateLogs();
+                        }
+                    }
+                }).setNegativeButton("No", null).show();
+
+    }
+
     public void bt_Edit_onClick(final View view) {
         blink(view, this);
-        Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
-        startActivity(dbmanager);
+
+        Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
+        startActivity(intent);
     }
 
     public void buttonHome_onClick(final View view) {
+
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
     }
 
     public void onBackPressed() {
@@ -244,32 +263,15 @@ public class ActivityExercisesList extends ActivityAbstract {
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
 
-    public void btDeleteAllExercises_onClick(final View view) {
-
-        blink(view, this);
-
-        new AlertDialog.Builder(this)
-                .setMessage("Do you wish to delete all user exrecises?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (dbCurrentUser != null) {
-                            database.deleteAllExercisesOfUser(dbCurrentUser.getId());
-                            updateExercises();
-                        }
-                    }
-                }).setNegativeButton("No", null).show();
     }
 
     public void btNextPage_onClick(View view) {
         blink(view, this);
-
-        if (currentPage != pagedExercices.size()) {
+        if (currentPage != pagedLogs.size()) {
             currentPage++;
         }
-        showExercises();
+        showLogs();
     }
 
     public void btPreviousPage_onClick(View view) {
@@ -277,6 +279,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         if (currentPage > 1) {
             currentPage--;
         }
-        showExercises();
+        showLogs();
     }
 }
+

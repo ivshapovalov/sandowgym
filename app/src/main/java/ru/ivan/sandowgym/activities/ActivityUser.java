@@ -26,7 +26,8 @@ import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityUser extends AppCompatActivity {
 
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    private final SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(this);
+
     private User mCurrentUser;
 
     @Override
@@ -39,11 +40,11 @@ public class ActivityUser extends AppCompatActivity {
         boolean mUserIsNew = intent.getBooleanExtra("isNew", false);
 
         if (mUserIsNew) {
-            mCurrentUser = new User.Builder(DB.getUserMaxNumber() + 1).build();
+            mCurrentUser = new User.Builder(database.getUserMaxNumber() + 1).build();
         } else {
             int id = intent.getIntExtra("currentUserId", 0);
             try {
-                mCurrentUser = DB.getUser(id);
+                mCurrentUser = database.getUser(id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
@@ -109,7 +110,7 @@ public class ActivityUser extends AppCompatActivity {
 
         blink(view, this);
         getPropertiesFromScreen();
-        mCurrentUser.save(DB);
+        mCurrentUser.save(database);
         setDBCurrentUser();
         closeActivity();
 
@@ -133,13 +134,13 @@ public class ActivityUser extends AppCompatActivity {
 
         if (mCurrentUser.isCurrentUser() == 1) {
             dbCurrentUser = mCurrentUser;
-            List<User> userList = DB.getAllUsers();
+            List<User> userList = database.getAllUsers();
 
             for (User user : userList) {
 
                 if (user.getId() != mCurrentUser.getId()) {
                     user.setIsCurrentUser(0);
-                    user.save(DB);
+                    user.save(database);
                 }
 
             }
@@ -158,14 +159,14 @@ public class ActivityUser extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentUser.delete(DB);
+                        mCurrentUser.delete(database);
                         if (mCurrentUser.equals(dbCurrentUser)) {
-                            List<User> userList = DB.getAllUsers();
+                            List<User> userList = database.getAllUsers();
                             if (userList.size() == 1) {
                                 User currentUser = userList.get(0);
                                 dbCurrentUser = currentUser;
                                 currentUser.setIsCurrentUser(1);
-                                currentUser.save(DB);
+                                currentUser.save(database);
                             } else {
                                 dbCurrentUser = null;
                             }

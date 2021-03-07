@@ -1,15 +1,17 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.File;
 
 import it.sauronsoftware.ftp4j.FTPClient;
+import ru.ivan.sandowgym.common.Common;
 
 public class FtpDownloadTask extends FtpTask implements BackgroundTask {
 
-    public FtpDownloadTask(SharedPreferences settings, File file) {
-        super(settings, file);
+    public FtpDownloadTask(Context context, SharedPreferences settings, File file) {
+        super(context, settings, file);
     }
 
     @Override
@@ -23,6 +25,7 @@ public class FtpDownloadTask extends FtpTask implements BackgroundTask {
             ftpClient.download(file.getName(), file);
             return true;
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return false;
         } finally {

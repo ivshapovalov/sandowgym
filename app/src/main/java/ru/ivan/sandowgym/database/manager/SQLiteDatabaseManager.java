@@ -6,20 +6,21 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.ivan.sandowgym.database.entities.Exercise;
+import ru.ivan.sandowgym.database.entities.Log;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 
+
 public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "trainingCalendar";
 
     private static final String TABLE_USERS = "users";
@@ -27,6 +28,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String TABLE_TRAININGS = "trainings";
     private static final String TABLE_TRAINING_CONTENT = "training_content";
     private static final String TABLE_WEIGHT_CHANGE_CALENDAR = "weight_change_calendar";
+    private static final String TABLE_LOGS = "logs";
 
     private static final String KEY_EXERCISE_ID = "exercise_id";
     private static final String KEY_EXERCISE_ID_USER = "exercise_id_user";
@@ -61,6 +63,41 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_USER_IS_CURRENT = "user_is_current";
 
+    //logs
+    private static final String KEY_LOG_ID = "log_id";
+    private static final String KEY_LOG_DATETIME = "log_datetime";
+    private static final String KEY_LOG_TEXT = "log_text";
+
+    private static SQLiteDatabaseManager instance;
+    private SQLiteDatabase mDatabase;
+    private int mOpenCounter;
+
+    public static synchronized SQLiteDatabaseManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new SQLiteDatabaseManager(context);
+        }
+
+        return instance;
+    }
+
+    public synchronized SQLiteDatabase openDatabase() {
+        mOpenCounter++;
+        if (mOpenCounter == 1) {
+            // Opening new database
+            mDatabase = this.getWritableDatabase();
+        }
+        return mDatabase;
+    }
+
+    public synchronized void closeDatabase() {
+        mOpenCounter--;
+        if (mOpenCounter == 0) {
+            // Closing database
+            closeDatabase();
+        }
+    }
+
+
     public SQLiteDatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -72,7 +109,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + KEY_USER_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_USER_NAME + " TEXT," + KEY_USER_IS_CURRENT + " INTEGER)";
-        db.execSQL(CREATE_USERS_TABLE);
+        mDatabase.execSQL(CREATE_USERS_TABLE);
 
         //weight change calendar
         String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
@@ -81,17 +118,17 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " INTEGER," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER,"
                 + " FOREIGN KEY(" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
                 + " ON DELETE CASCADE ON UPDATE CASCADE )";
-        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
+        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " ASC)";
-        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC);
+        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC);
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " DESC)";
-        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC);
+        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " ASC)";
-        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC);
+        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC);
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " DESC)";
-        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC);
+        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC);
 
         //exercises
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
@@ -103,12 +140,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " FOREIGN KEY(" + KEY_EXERCISE_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")" +
                 " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        db.execSQL(CREATE_EXERCISES_TABLE);
+        mDatabase.execSQL(CREATE_EXERCISES_TABLE);
 
         String CREATE_EXERCISES_INDEX_USER_ASC = "CREATE INDEX EXERCISES_USER_IDX_ASC ON " + TABLE_EXERCISES + " (" + KEY_EXERCISE_ID_USER + " ASC)";
-        db.execSQL(CREATE_EXERCISES_INDEX_USER_ASC);
+        mDatabase.execSQL(CREATE_EXERCISES_INDEX_USER_ASC);
         String CREATE_EXERCISES_INDEX_USER_DESC = "CREATE INDEX EXERCISES_USER_IDX_DESC ON " + TABLE_EXERCISES + " (" + KEY_EXERCISE_ID_USER + " DESC)";
-        db.execSQL(CREATE_EXERCISES_INDEX_USER_DESC);
+        mDatabase.execSQL(CREATE_EXERCISES_INDEX_USER_DESC);
 
         //trainings
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
@@ -118,18 +155,18 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ") " +
                 " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        db.execSQL(CREATE_TRAININGS_TABLE);
+        mDatabase.execSQL(CREATE_TRAININGS_TABLE);
 
         String CREATE_TRAININGS_INDEX_USER_ASC = "CREATE INDEX TRAININGS_USER_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_ID_USER + " ASC)";
-        db.execSQL(CREATE_TRAININGS_INDEX_USER_ASC);
+        mDatabase.execSQL(CREATE_TRAININGS_INDEX_USER_ASC);
         String CREATE_TRAININGS_INDEX_USER_DESC = "CREATE INDEX TRAININGS_USER_IDX_DESC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_ID_USER + " DESC)";
-        db.execSQL(CREATE_TRAININGS_INDEX_USER_DESC);
+        mDatabase.execSQL(CREATE_TRAININGS_INDEX_USER_DESC);
 
         String CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC = "CREATE INDEX TRAINING_DAY_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_DAY + " ASC)";
-        db.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC);
+        mDatabase.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC);
 
         String CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC = "CREATE INDEX TRAINING_DAY_IDX_DESC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_DAY + " DESC)";
-        db.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC);
+        mDatabase.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC);
 
         String CREATE_TRAINING_CONTENT_TABLE = "CREATE TABLE " + TABLE_TRAINING_CONTENT + "("
                 + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
@@ -146,68 +183,95 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_USER + ") REFERENCES " +
                 TABLE_USERS + "(" + KEY_USER_ID + ") ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        db.execSQL(CREATE_TRAINING_CONTENT_TABLE);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_TABLE);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC = "CREATE INDEX EXERCISE_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " ASC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC = "CREATE INDEX EXERCISE_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " DESC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC);
 
         String CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC = "CREATE INDEX TRAINING_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_TRAINING + " ASC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC);
 
         String CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC = "CREATE INDEX TRAINING_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_TRAINING + " DESC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC = "CREATE INDEX EXERCISE_TRAINING_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " ASC, " + KEY_TRAINING_CONTENT_ID_TRAINING + " ASC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC);
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC = "CREATE INDEX EXERCISE_TRAINING_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " DESC, " + KEY_TRAINING_CONTENT_ID_TRAINING + " DESC)";
-        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC);
+        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC);
+
+        //logs
+        String CREATE_LOGS_TABLE = "CREATE TABLE " + TABLE_LOGS + "("
+                + KEY_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
+                + KEY_LOG_DATETIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + KEY_LOG_TEXT + " TEXT)";
+        mDatabase.execSQL(CREATE_LOGS_TABLE);
+
+        String CREATE_LOGS_INDEX_DATETIME_ASC = "CREATE INDEX LOGS_DATETIME_IDX_ASC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " ASC)";
+        mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
+        String CREATE_LOGS_INDEX_DATETIME_DESC = "CREATE INDEX LOGS_DATETIME_IDX_DEC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " DESC)";
+        mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
+
     }
 
     @Override
-    public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < newVersion) {
+            //logs
+//            String DROP_LOGS_TABLE = "DROP TABLE IF EXISTS " + TABLE_LOGS;
+//            mDatabase.execSQL(DROP_LOGS_TABLE);
+//
+//            String CREATE_LOGS_TABLE = "CREATE TABLE " + TABLE_LOGS + "("
+//                    + KEY_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
+//                    + KEY_LOG_DATETIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + KEY_LOG_TEXT + " TEXT)";
+//            mDatabase.execSQL(CREATE_LOGS_TABLE);
+//
+//            String CREATE_LOGS_INDEX_DATETIME_ASC = "CREATE INDEX LOGS_DATETIME_IDX_ASC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " ASC)";
+//            mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
+//            String CREATE_LOGS_INDEX_DATETIME_DESC = "CREATE INDEX LOGS_DATETIME_IDX_DEC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " DESC)";
+//            mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
+        }
     }
 
     public synchronized void clearDB(SQLiteDatabase db) {
-        db.execSQL("Delete from " + TABLE_WEIGHT_CHANGE_CALENDAR);
-        db.execSQL("Delete from " + TABLE_TRAINING_CONTENT);
-        db.execSQL("Delete from " + TABLE_EXERCISES);
-        db.execSQL("Delete from " + TABLE_TRAININGS);
-        db.execSQL("Delete from  " + TABLE_USERS);
+        mDatabase.execSQL("Delete from " + TABLE_WEIGHT_CHANGE_CALENDAR);
+        mDatabase.execSQL("Delete from " + TABLE_TRAINING_CONTENT);
+        mDatabase.execSQL("Delete from " + TABLE_EXERCISES);
+        mDatabase.execSQL("Delete from " + TABLE_TRAININGS);
+        mDatabase.execSQL("Delete from  " + TABLE_USERS);
+        mDatabase.execSQL("Delete from  " + TABLE_LOGS);
     }
 
     public synchronized void dropDB(SQLiteDatabase db) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGS);
     }
 
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
-        db.execSQL("PRAGMA foreign_keys=ON");
+        mDatabase.execSQL("PRAGMA foreign_keys=ON");
     }
 
     public synchronized void addUser(User user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
+        openDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_USER_ID, user.getId());
         values.put(KEY_USER_NAME, user.getName());
         values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
 
-        db.insert(TABLE_USERS, null, values);
-        db.close();
+        mDatabase.insert(TABLE_USERS, null, values);
+        closeDatabase();
     }
 
     public synchronized void addWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightChangeCalendar.getId());
@@ -215,14 +279,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
 
-        db.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
-        db.close();
+        mDatabase.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
+        closeDatabase();
     }
 
 
     public synchronized void addExercise(Exercise exercise) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
+        openDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_EXERCISE_ID, exercise.getId());
         values.put(KEY_EXERCISE_ID_USER, exercise.getUserId());
@@ -232,23 +295,23 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_EXERCISE_AMOUNT_DEFAULT, exercise.getAmountDefault());
         values.put(KEY_EXERCISE_PICTURE_NAME, exercise.getPicture());
 
-        db.insert(TABLE_EXERCISES, null, values);
-        db.close();
+        mDatabase.insert(TABLE_EXERCISES, null, values);
+        closeDatabase();
     }
 
     public synchronized void addTraining(Training training) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getId());
         values.put(KEY_TRAINING_ID_USER, training.getUserId());
         values.put(KEY_TRAINING_DAY, training.getDay());
-        db.insert(TABLE_TRAININGS, null, values);
-        db.close();
+        mDatabase.insert(TABLE_TRAININGS, null, values);
+        closeDatabase();
     }
 
     public synchronized void addTrainingContent(TrainingContent trainingContent) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_CONTENT_ID, trainingContent.getId());
@@ -259,24 +322,36 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
 
-        db.insert(TABLE_TRAINING_CONTENT, null, values);
-        db.close();
+        mDatabase.insert(TABLE_TRAINING_CONTENT, null, values);
+        closeDatabase();
+    }
+
+    public synchronized void addLog(Log log) {
+        openDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_LOG_ID, log.getId());
+        values.put(KEY_LOG_DATETIME, log.getDatetime());
+        values.put(KEY_LOG_TEXT, log.getText());
+
+        mDatabase.insert(TABLE_LOGS, null, values);
+        closeDatabase();
     }
 
     public synchronized boolean containsEntity(int id, String tableName, String keyColumn) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(tableName, new String[]{keyColumn}, keyColumn + "=?",
+        Cursor cursor = mDatabase.query(tableName, new String[]{keyColumn}, keyColumn + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             return false;
         } else {
             cursor.close();
-            db.close();
+            closeDatabase();
             return true;
         }
     }
@@ -288,13 +363,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_USERS, new String[]{KEY_USER_ID, KEY_USER_NAME, KEY_USER_IS_CURRENT}, KEY_USER_ID + "=?",
+        Cursor cursor = mDatabase.query(TABLE_USERS, new String[]{KEY_USER_ID, KEY_USER_NAME, KEY_USER_IS_CURRENT}, KEY_USER_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         User user = null;
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException("There is no User with id - " + id);
         } else {
             user = new User.Builder(cursor.getInt(cursor.getColumnIndex(KEY_USER_ID)))
@@ -302,7 +377,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .addIsCurrentUser(cursor.getInt(cursor.getColumnIndex(KEY_USER_IS_CURRENT)))
                     .build();
             cursor.close();
-            db.close();
+            closeDatabase();
             return user;
         }
     }
@@ -314,7 +389,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized WeightChangeCalendar getWeightChangeCalendar(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_WEIGHT_CHANGE_CALENDAR, new String[]{KEY_WEIGHT_CHANGE_CALENDAR_ID,
+        Cursor cursor = mDatabase.query(TABLE_WEIGHT_CHANGE_CALENDAR, new String[]{KEY_WEIGHT_CHANGE_CALENDAR_ID,
                         KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, KEY_WEIGHT_CHANGE_CALENDAR_DAY, KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT},
                 KEY_WEIGHT_CHANGE_CALENDAR_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -322,7 +397,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
         WeightChangeCalendar weightChangeCalendar = null;
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException("There is no Weight change calendat with id - " + id);
         } else {
             weightChangeCalendar = new WeightChangeCalendar.Builder(cursor.getInt(cursor.getColumnIndex(KEY_WEIGHT_CHANGE_CALENDAR_ID)))
@@ -331,7 +406,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .build();
 
             cursor.close();
-            db.close();
+            closeDatabase();
             return weightChangeCalendar;
         }
     }
@@ -342,14 +417,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized Exercise getExercise(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_EXERCISES, new String[]{KEY_EXERCISE_ID, KEY_EXERCISE_ID_USER, KEY_EXERCISE_IS_ACTIVE, KEY_EXERCISE_NAME,
+        Cursor cursor = mDatabase.query(TABLE_EXERCISES, new String[]{KEY_EXERCISE_ID, KEY_EXERCISE_ID_USER, KEY_EXERCISE_IS_ACTIVE, KEY_EXERCISE_NAME,
                         KEY_EXERCISE_EXPLANATION, KEY_EXERCISE_AMOUNT_DEFAULT, KEY_EXERCISE_PICTURE_NAME}, KEY_EXERCISE_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         Exercise exercise = null;
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException("There is no Exercise with id - " + id);
         } else {
             exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
@@ -361,7 +436,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .build();
 
             cursor.close();
-            db.close();
+            closeDatabase();
             return exercise;
         }
     }
@@ -370,15 +445,19 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return containsEntity(id, TABLE_TRAININGS, KEY_TRAINING_ID);
     }
 
+    public synchronized boolean containsLog(int id) {
+        return containsEntity(id, TABLE_LOGS, KEY_LOG_ID);
+    }
+
     public synchronized Training getTraining(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID, KEY_TRAINING_DAY}, KEY_TRAINING_ID + "=?",
+        Cursor cursor = mDatabase.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID, KEY_TRAINING_DAY}, KEY_TRAINING_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException("There is no Training with id - " + id);
         } else {
             Training training = new Training
@@ -386,7 +465,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .addDay(cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY)))
                     .build();
             cursor.close();
-            db.close();
+            closeDatabase();
             return training;
         }
     }
@@ -398,12 +477,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized TrainingContent getTrainingContent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
+        Cursor cursor = mDatabase.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException("There is no TrainingContent with id - " + id);
         } else {
             Exercise exercise = null;
@@ -426,7 +505,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .build();
 
             cursor.close();
-            db.close();
+            closeDatabase();
             return trainingContent;
         }
     }
@@ -434,7 +513,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized TrainingContent getTrainingContent(int idExercise, int idTraining) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,
+        Cursor cursor = mDatabase.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,
                         KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT,
                         KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT},
                 KEY_TRAINING_CONTENT_ID_EXERCISE + "=? AND " +
@@ -443,7 +522,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
-            db.close();
+            closeDatabase();
             throw new TableDoesNotContainElementException(
                     String.format("There is no TrainingContent with trainingId = '%s' and exerciseId='%s'", idTraining, idExercise));
         } else {
@@ -466,69 +545,99 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                     .addComment(cursor.getString(cursor.getColumnIndex(KEY_TRAINING_CONTENT_COMMENT)))
                     .build();
             cursor.close();
-            db.close();
+            closeDatabase();
             return trainingContent;
         }
     }
 
+    public synchronized Log getLog(int id) {
+        openDatabase();
+        try {
+            Cursor cursor = mDatabase.query(TABLE_LOGS, new String[]{KEY_LOG_ID, KEY_LOG_DATETIME, KEY_LOG_TEXT}, KEY_LOG_ID + "=?",
+                    new String[]{String.valueOf(id)}, null, null, null, null);
+            if (cursor != null)
+                cursor.moveToFirst();
+            if (cursor.getCount() == 0) {
+                closeDatabase();
+                throw new TableDoesNotContainElementException("There is no LOG with id - " + id);
+            } else {
+                Log log = new Log
+                        .Builder(cursor.getInt(cursor.getColumnIndex(KEY_LOG_ID)))
+                        .addDatetime(cursor.getInt(cursor.getColumnIndex(KEY_LOG_DATETIME)))
+                        .addText(cursor.getString(cursor.getColumnIndex(KEY_LOG_TEXT)))
+                        .build();
+                cursor.close();
+                return log;
+            }
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public synchronized void deleteAllUsers() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_USERS, null, null);
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_USERS, null, null);
+        closeDatabase();
     }
 
     public synchronized void deleteAllWeightChangeCalendar() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, null, null);
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_WEIGHT_CHANGE_CALENDAR, null, null);
+        closeDatabase();
     }
 
     public synchronized void deleteAllWeightChangeCalendarOfUser(int user_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=?", new String[]{String.valueOf(user_id)});
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=?", new String[]{String.valueOf(user_id)});
+        closeDatabase();
     }
 
     public synchronized void deleteAllExercises() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_EXERCISES, null, null);
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_EXERCISES, null, null);
+        closeDatabase();
     }
 
     public synchronized void deleteAllExercisesOfUser(int user_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_EXERCISES, KEY_EXERCISE_ID_USER + "=?", new String[]{String.valueOf(user_id)});
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_EXERCISES, KEY_EXERCISE_ID_USER + "=?", new String[]{String.valueOf(user_id)});
+        closeDatabase();
     }
 
     public synchronized void deleteAllTrainings() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAININGS, null, null);
-        db.close();
+        openDatabase();
+        mDatabase.delete(TABLE_TRAININGS, null, null);
+        closeDatabase();
     }
 
     public synchronized void deleteAllTrainingsOfUser(int user_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
         String whereArgs[] = {String.valueOf(user_id)};
-        db.delete(TABLE_TRAININGS, KEY_TRAINING_ID_USER + "=?", new String[]{String.valueOf(user_id)});
-        db.close();
+        mDatabase.delete(TABLE_TRAININGS, KEY_TRAINING_ID_USER + "=?", new String[]{String.valueOf(user_id)});
+        closeDatabase();
     }
 
     public synchronized void deleteAllTrainingContent() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAINING_CONTENT, null, null);
+        openDatabase();
+        mDatabase.delete(TABLE_TRAINING_CONTENT, null, null);
     }
 
     public synchronized void deleteAllTrainingContentOfUser(int user_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID_USER + "=?", new String[]{String.valueOf(user_id)});
+        openDatabase();
+        mDatabase.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID_USER + "=?", new String[]{String.valueOf(user_id)});
+    }
+
+    public synchronized void deleteAllLogs() {
+        openDatabase();
+        mDatabase.delete(TABLE_LOGS, null, null);
+        closeDatabase();
     }
 
     public synchronized List<User> getAllUsers() {
         String selectQuery = "SELECT  * FROM " + TABLE_USERS;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<User> userList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         ;
@@ -543,7 +652,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return userList;
     }
 
@@ -551,8 +660,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -566,7 +675,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return weightChangeCalendarList;
     }
 
@@ -575,8 +684,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + " WHERE "
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -590,15 +699,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return weightChangeCalendarList;
     }
 
     public synchronized List<Exercise> getAllExercises() {
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
 
         if (cursor.moveToFirst()) {
@@ -615,15 +724,38 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
+    }
+
+    public synchronized List<Log> getAllLogs() {
+        String selectQuery = "SELECT  * FROM " + TABLE_LOGS;
+
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
+
+        List<Log> logs = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
+        ;
+        if (cursor.moveToFirst()) {
+            do {
+                Log log = new Log.Builder(cursor.getInt(cursor.getColumnIndex(KEY_LOG_ID)))
+                        .addDatetime(cursor.getLong(cursor.getColumnIndex(KEY_LOG_DATETIME)))
+                        .addText(cursor.getString(cursor.getColumnIndex(KEY_LOG_TEXT)))
+                        .build();
+                logs.add(log);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        closeDatabase();
+        return logs;
     }
 
     public synchronized List<Exercise> getAllExercisesOfUser(int user_id) {
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "="
                 + user_id + " ORDER BY " + KEY_EXERCISE_ID;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -640,15 +772,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
     }
 
     public synchronized List<Exercise> getAllActiveExercises() {
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1" + " ORDER BY " + KEY_EXERCISE_ID;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -664,15 +796,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
     }
 
     public synchronized List<Exercise> getAllActiveExercisesOfUser(int user_id) {
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1 AND "
                 + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -689,7 +821,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
     }
 
@@ -710,8 +842,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")"
                 + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -724,7 +856,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
     }
 
@@ -745,8 +877,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")"
                 + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -759,14 +891,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return exerciseList;
     }
 
     public synchronized List<Training> getAllTrainings() {
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " ORDER BY " + KEY_TRAINING_DAY;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -778,14 +910,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
     public synchronized List<Training> getAllTrainingsOfUser(int user_id) {
         String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -798,7 +930,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
@@ -812,8 +944,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom
                 + " AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_TRAINING_DAY;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -825,7 +957,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
@@ -840,8 +972,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_TRAINING_ID;// +" LIMIT 10";
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -853,7 +985,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
@@ -867,8 +999,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -880,7 +1012,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
@@ -894,8 +1026,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -909,7 +1041,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsList;
     }
 
@@ -933,8 +1065,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -953,7 +1085,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsContentList;
     }
 
@@ -976,8 +1108,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + "" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -995,7 +1127,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingsContentList;
     }
 
@@ -1012,8 +1144,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " AND " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " desc limit 1";
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -1033,7 +1165,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return weightChangeCalendarList;
     }
 
@@ -1042,8 +1174,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_TRAINING_CONTENT + " WHERE " + KEY_TRAINING_CONTENT_ID_TRAINING
                 + "=" + training_id + " ORDER BY " + KEY_TRAINING_CONTENT_ID;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<TrainingContent> trainingContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -1072,14 +1204,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        closeDatabase();
         return trainingContentList;
     }
 
     public synchronized int getEntityMaxNumber(String tableName, String keyColumn) {
         String countQuery = "SELECT  MAX(" + keyColumn + ") FROM " + tableName + "";
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
+        Cursor cursor = mDatabase.rawQuery(countQuery, null);
 
         cursor.moveToFirst();
         int size = 0;
@@ -1110,34 +1242,38 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return getEntityMaxNumber(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID);
     }
 
+    public synchronized int getLogMaxNumber() {
+        return getEntityMaxNumber(TABLE_LOGS, KEY_LOG_ID);
+    }
+
     public synchronized int updateUser(User user) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_USER_NAME, user.getName());
         values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
-        int rows = db.update(TABLE_USERS, values, KEY_USER_ID + " = ?",
+        int rows = mDatabase.update(TABLE_USERS, values, KEY_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getId())});
-        db.close();
+        closeDatabase();
         return rows;
     }
 
     public synchronized int updateWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getUserId());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
 
-        int rows = db.update(TABLE_WEIGHT_CHANGE_CALENDAR, values, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
+        int rows = mDatabase.update(TABLE_WEIGHT_CHANGE_CALENDAR, values, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
                 new String[]{String.valueOf(weightChangeCalendar.getId())});
-        db.close();
+        closeDatabase();
         return rows;
     }
 
     public synchronized int updateExercise(Exercise exercise) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_EXERCISE_IS_ACTIVE, exercise.getIsActive());
@@ -1147,28 +1283,28 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_EXERCISE_AMOUNT_DEFAULT, exercise.getAmountDefault());
         values.put(KEY_EXERCISE_PICTURE_NAME, exercise.getPicture());
 
-        int rows = db.update(TABLE_EXERCISES, values, KEY_EXERCISE_ID + " = ?",
+        int rows = mDatabase.update(TABLE_EXERCISES, values, KEY_EXERCISE_ID + " = ?",
                 new String[]{String.valueOf(exercise.getId())});
-        db.close();
+        closeDatabase();
         return rows;
     }
 
     public synchronized int updateTraining(Training training) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
 
         values.put(KEY_TRAINING_ID_USER, training.getUserId());
         values.put(KEY_TRAINING_DAY, training.getDay());
 
-        int rows = db.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",
+        int rows = mDatabase.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",
                 new String[]{String.valueOf(training.getId())});
-        db.close();
+        closeDatabase();
         return rows;
     }
 
     public synchronized int updateTrainingContent(TrainingContent trainingContent) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_CONTENT_ID_USER, trainingContent.getUserId());
@@ -1178,57 +1314,76 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
 
-        int rows = db.update(TABLE_TRAINING_CONTENT, values, KEY_TRAINING_CONTENT_ID + " = ?",
+        int rows = mDatabase.update(TABLE_TRAINING_CONTENT, values, KEY_TRAINING_CONTENT_ID + " = ?",
                 new String[]{String.valueOf(trainingContent.getId())});
-        db.close();
+        closeDatabase();
+        return rows;
+    }
+
+    public synchronized int updateLog(Log log) {
+        openDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_LOG_DATETIME, log.getDatetime());
+        values.put(KEY_LOG_TEXT, log.getText());
+        int rows = mDatabase.update(TABLE_LOGS, values, KEY_LOG_ID + " = ?",
+                new String[]{String.valueOf(log.getId())});
+        closeDatabase();
         return rows;
     }
 
     public synchronized void deleteUser(User user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_USERS, KEY_USER_ID + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_USERS, KEY_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getId())});
-        db.close();
+        closeDatabase();
     }
 
     public synchronized void deleteWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_WEIGHT_CHANGE_CALENDAR, KEY_WEIGHT_CHANGE_CALENDAR_ID + " = ?",
                 new String[]{String.valueOf(weightChangeCalendar.getId())});
-        db.close();
+        closeDatabase();
     }
 
     public synchronized void deleteExercise(Exercise exercise) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_EXERCISES, KEY_EXERCISE_ID + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_EXERCISES, KEY_EXERCISE_ID + " = ?",
                 new String[]{String.valueOf(exercise.getId())});
-        db.close();
+        closeDatabase();
     }
 
     public synchronized void deleteTraining(Training training) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAININGS, KEY_TRAINING_ID + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_TRAININGS, KEY_TRAINING_ID + " = ?",
                 new String[]{String.valueOf(training.getId())});
-        db.close();
+        closeDatabase();
     }
 
     public synchronized void deleteTrainingContent(TrainingContent trainingContent) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID + " = ?",
                 new String[]{String.valueOf(trainingContent.getId())});
-        db.close();
+        closeDatabase();
     }
 
     public synchronized void deleteTrainingContentOfTraining(int id_traning) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID_TRAINING + " = ?",
+        openDatabase();
+        mDatabase.delete(TABLE_TRAINING_CONTENT, KEY_TRAINING_CONTENT_ID_TRAINING + " = ?",
                 new String[]{String.valueOf(id_traning)});
-        db.close();
+        closeDatabase();
+    }
+
+    public synchronized void deleteLog(Log log) {
+        openDatabase();
+        mDatabase.delete(TABLE_LOGS, KEY_LOG_ID + " = ?",
+                new String[]{String.valueOf(log.getId())});
+        closeDatabase();
     }
 
     public ArrayList<Cursor> getData(String Query) {
         //get writable database
-        SQLiteDatabase db = this.getWritableDatabase();
+        openDatabase();
         String[] columns = new String[]{"mesage"};
         //an array list of cursor to save two cursors one has results from the query
         //other cursor stores error message if any errors are triggered
@@ -1239,7 +1394,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         try {
             String maxQuery = Query;
             //export the query results will be save in Cursor c
-            Cursor c = db.rawQuery(maxQuery, null);
+            Cursor c = mDatabase.rawQuery(maxQuery, null);
             //add value to cursor2
             Cursor2.addRow(new Object[]{"Success"});
 
@@ -1254,7 +1409,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             }
             return alc;
         } catch (Exception sqlEx) {
-            Log.d("printing exception", sqlEx.getMessage());
+            android.util.Log.d("printing exception", sqlEx.getMessage());
             //if any exceptions are triggered save the error message to cursor an return the arraylist
             Cursor2.addRow(new Object[]{"" + sqlEx.getMessage()});
             alc.set(1, Cursor2);

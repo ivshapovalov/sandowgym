@@ -23,6 +23,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            android:screenOrientation="fullSensor"
         </activity>
         <activity
             android:name=".activities.ActivityExercisesList"
@@ -92,6 +93,14 @@
         <activity
             android:name=".activities.ActivityDigitPickerDialog"
             android:label="@string/digits_view_name"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".activities.ActivityLogsList"
+            android:label="@string/logs_name"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".activities.ActivityLog"
+            android:label="@string/log_name"
             android:screenOrientation="fullSensor" />
     </application>
 </manifest>

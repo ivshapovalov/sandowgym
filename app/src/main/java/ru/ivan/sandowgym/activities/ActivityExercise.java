@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.database.entities.Exercise;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.blink;
@@ -22,7 +21,6 @@ import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityExercise extends ActivityAbstract {
 
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private Exercise mCurrentExercise;
 
     @Override
@@ -35,11 +33,11 @@ public class ActivityExercise extends ActivityAbstract {
         boolean mExerciseIsNew = intent.getBooleanExtra("isNew", false);
 
         if (mExerciseIsNew) {
-            mCurrentExercise = new Exercise.Builder(DB).build();
+            mCurrentExercise = new Exercise.Builder(database).build();
         } else {
             int id = intent.getIntExtra("currentExerciseId", 0);
             try {
-                mCurrentExercise = Exercise.getExerciseFromDB(DB, id);
+                mCurrentExercise = Exercise.getExerciseFromDB(database, id);
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
@@ -151,7 +149,7 @@ public class ActivityExercise extends ActivityAbstract {
 
         blink(view, this);
         fillExerciseFromScreen();
-        mCurrentExercise.save(DB);
+        mCurrentExercise.save(database);
         closeActivity();
     }
 
@@ -174,7 +172,7 @@ public class ActivityExercise extends ActivityAbstract {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentExercise.delete(DB);
+                        mCurrentExercise.delete(database);
                         Intent intent = new Intent(getApplicationContext(), ActivityExercisesList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);

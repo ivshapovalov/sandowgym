@@ -1,5 +1,6 @@
 package ru.ivan.sandowgym.common.tasks;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.dropbox.core.DbxException;
@@ -11,12 +12,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ru.ivan.sandowgym.common.Common;
+
 import static ru.ivan.sandowgym.common.Common.processingInProgress;
 
 public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
+    private Context context;
     private DbxClientV2 client;
 
-    public DropboxListFilesTask(DbxClientV2 client) {
+    public DropboxListFilesTask(Context context, DbxClientV2 client) {
+        this.context = context;
         this.client = client;
     }
     @Override
@@ -36,6 +41,7 @@ public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String
             });
             return fileNames;
         } catch (DbxException e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             return null;
         }
     }

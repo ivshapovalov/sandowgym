@@ -15,7 +15,6 @@ import java.util.Calendar;
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.tasks.Digit;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.blink;
@@ -26,7 +25,6 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
 
     private WeightChangeCalendar mCurrentWeightChangeCalendar;
     private boolean mWeightChangeCalendarIsNew;
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +55,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
     private void defineCurrentWeightChangeCalendar(int mCurrentId, long currentDateInMillis) {
         if (mWeightChangeCalendarIsNew) {
 
-            mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
+            mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(database.getWeightChangeCalendarMaxNumber() + 1).build();
             if ((currentDateInMillis == 0)) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
@@ -76,11 +74,11 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
             }
 
             if (mCurrentId == 0) {
-                mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(DB.getWeightChangeCalendarMaxNumber() + 1).build();
+                mCurrentWeightChangeCalendar = new WeightChangeCalendar.Builder(database.getWeightChangeCalendarMaxNumber() + 1).build();
             } else {
 
                 try {
-                    mCurrentWeightChangeCalendar = DB.getWeightChangeCalendar(mCurrentId);
+                    mCurrentWeightChangeCalendar = database.getWeightChangeCalendar(mCurrentId);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     //возможно удалили элемент
                     tableDoesNotContainElementException.printStackTrace();
@@ -139,7 +137,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
     }
 
     private void saveCurrentWeightChangeCalendarToDB() {
-        mCurrentWeightChangeCalendar.save(DB);
+        mCurrentWeightChangeCalendar.save(database);
         mWeightChangeCalendarIsNew = false;
     }
 
@@ -195,7 +193,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
         blink(view, this);
         fillWeightChangeCalendarFromScreen();
 
-        mCurrentWeightChangeCalendar.save(DB);
+        mCurrentWeightChangeCalendar.save(database);
 
         closeActivity();
 
@@ -223,7 +221,7 @@ public class ActivityWeightChangeCalendar extends ActivityAbstract {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mCurrentWeightChangeCalendar.delete(DB);
+                        mCurrentWeightChangeCalendar.delete(database);
                         Intent intent = new Intent(getApplicationContext(), ActivityWeightChangeCalendarList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);

@@ -1,13 +1,16 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.File;
 
 import it.sauronsoftware.ftp4j.FTPClient;
 import ru.ivan.sandowgym.activities.ActivityMain;
+import ru.ivan.sandowgym.common.Common;
 
 public abstract class FtpTask {
+    Context context;
 
     protected FTPClient ftpClient;
 
@@ -18,18 +21,20 @@ public abstract class FtpTask {
     protected String mFtpLogin;
     protected String mFtpPassword;
 
-    protected FtpTask(SharedPreferences settings, File file) {
-        this();
+    protected FtpTask(Context context, SharedPreferences settings, File file) {
+        this(context);
         this.settings = settings;
         this.file = file;
     }
 
-    public FtpTask(SharedPreferences settings) {
-        this();
+    public FtpTask(Context context, SharedPreferences settings) {
+        this(context);
         this.settings = settings;
     }
 
-    public FtpTask() {
+    public FtpTask(Context context) {
+
+        this.context = context;
         ftpClient = new FTPClient();
     }
 
@@ -40,6 +45,7 @@ public abstract class FtpTask {
             ftpClient.login(mFtpLogin, mFtpPassword);
             return true;
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             //e.printStackTrace();
             return false;
         }
@@ -52,6 +58,7 @@ public abstract class FtpTask {
             ftpClient.login(mFtpLogin, mFtpPassword);
             return true;
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             //e.printStackTrace();
             return false;
         }
@@ -63,6 +70,7 @@ public abstract class FtpTask {
                 ftpClient.logout();
                 ftpClient.disconnect(true);
             } catch (Exception e) {
+                Common.saveErrorMessage(context, e.getStackTrace().toString());
                 e.printStackTrace();
             }
         }

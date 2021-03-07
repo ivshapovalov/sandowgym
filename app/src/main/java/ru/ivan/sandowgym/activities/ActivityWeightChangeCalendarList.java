@@ -25,7 +25,6 @@ import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
@@ -37,8 +36,6 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
     private final int maxVerticalButtonCount = 17;
     private final int maxHorizontalButtonCount = 3;
     private final int numberOfViews = 10000;
-
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     private SharedPreferences mSettings;
     private int rowsNumber = 17;
@@ -108,7 +105,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
         if (dbCurrentUser == null) {
             //exercises = DB.getAllExercises();
         } else {
-            weightChangeCalendarList = DB.getAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
+            weightChangeCalendarList = database.getAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
         }
         pagedWeightChangeCalendar.clear();
         List<WeightChangeCalendar> pageContent = new ArrayList<>();
@@ -239,7 +236,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
                     public void onClick(DialogInterface dialog, int id) {
 
                         if (dbCurrentUser != null) {
-                            DB.deleteAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
+                            database.deleteAllWeightChangeCalendarOfUser(dbCurrentUser.getId());
                             updateweightChangeCalendarList();
                         }
 

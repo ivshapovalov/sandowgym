@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+import ru.ivan.sandowgym.database.entities.Log;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
@@ -48,7 +49,7 @@ public class ActivityMain extends ActivityAbstract {
     public static final String APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT = "training_use_calendar_for_weight";
 
     private final int maxVerticalButtonCount = 10;
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
+    //private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,12 +153,22 @@ public class ActivityMain extends ActivityAbstract {
 
     }
 
+    public void btLogs_onClick(final View view) {
+        blink(view, this);
+        if (isUserDefined()) {
+            Intent intent = new Intent(ActivityMain.this, ActivityLogsList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
+
+
     private boolean isDBNotEmpty() {
 
         List<Exercise> list = new ArrayList<>();
         if (dbCurrentUser == null) {
         } else {
-            list = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
+            list = database.getAllActiveExercisesOfUser(dbCurrentUser.getId());
         }
         if (list.size() == 0) {
             Toast toast = Toast.makeText(ActivityMain.this,
@@ -191,21 +202,9 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     public void btTest_onClick(View view) throws ParseException {
-//        if (Scheduler.activeWorkExists(this).size()>0) { // check if your work is not already scheduled
-////            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
-//            displayMessage(this, "SCHEDULED", true);
-//        } else {
-        Scheduler.scheduleBackupTask(this, 2);
-//        }
-//        WorkManager workManager = WorkManager.getInstance(this);
-//        ListenableFuture<List<WorkInfo>> backupWorkInfos = workManager.getWorkInfosByTag(Scheduler.TAG_BACKUP);
-        //workManager.cancelAllWorkByTag("backupWorkInfos");
-        //System.out.println(backupWorkInfos);
-        //Scheduler.cancelAllWorkers(this);
 
-//        if (mBackupScheduleEnabled) {
-//            Scheduler.scheduleBackupTask(this);
-//        }
+        long time = Calendar.getInstance().getTimeInMillis();
+        database.addLog(new Log.Builder(database.getLogMaxNumber() + 1).addDatetime(time).addText("text1").build());
 
     }
 

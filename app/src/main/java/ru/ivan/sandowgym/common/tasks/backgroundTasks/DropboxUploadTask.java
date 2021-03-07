@@ -11,12 +11,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ru.ivan.sandowgym.common.Common;
+
 public class DropboxUploadTask implements BackgroundTask {
     private Context context;
     private File file;
     private DbxClientV2 client;
 
-    public DropboxUploadTask(File file, DbxClientV2 client) {
+    public DropboxUploadTask(Context context, File file, DbxClientV2 client) {
+        this.context = context;
         this.file = file;
         this.client = client;
     }
@@ -29,17 +32,15 @@ public class DropboxUploadTask implements BackgroundTask {
 
             FileMetadata metadata = client.files().uploadBuilder("/"
                     + file.getName()).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return false;
         } finally {
             try {
                 in.close();
             } catch (IOException e) {
+                Common.saveErrorMessage(context, e.getStackTrace().toString());
                 e.printStackTrace();
             }
         }

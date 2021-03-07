@@ -290,7 +290,7 @@ public class ActivityOptions extends ActivityAbstract {
         try {
             blink(view, this);
             displayMessage(ActivityOptions.this, "Test FTP connection started", true);
-            FtpAuthTask ftpAuthTask = new FtpAuthTask(mSettings);
+            FtpAuthTask ftpAuthTask = new FtpAuthTask(this.getApplicationContext(), mSettings);
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(ftpAuthTask);
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityOptions.this, tasks);
@@ -313,7 +313,7 @@ public class ActivityOptions extends ActivityAbstract {
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-dropboxClient").build();
             DbxClientV2 dropboxClient = new DbxClientV2(config, mDropboxAccessToken);
             if (dropboxClient != null) {
-                DropboxAuthTask dropboxAuthTask = new DropboxAuthTask(dropboxClient);
+                DropboxAuthTask dropboxAuthTask = new DropboxAuthTask(this.getApplicationContext(), dropboxClient);
                 List<BackgroundTask> tasks = new ArrayList<>();
                 tasks.add(dropboxAuthTask);
                 BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityOptions.this, tasks);

@@ -70,11 +70,11 @@ public class FullBackupTask implements BackgroundTask {
             }
             ExportToFileTask exportToFileTask = new ExportToFileTask(context, outputFile, 0, 0);
 
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(mSettings, outputFile);
+            FtpUploadTask ftpUploadTask = new FtpUploadTask(context, mSettings, outputFile);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
             DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
-            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(outputFile, client);
+            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(context, outputFile, client);
 
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.File;
 
+import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.FileExportImport;
 
 public class ExportToFileTask implements BackgroundTask {
@@ -37,6 +38,7 @@ public class ExportToFileTask implements BackgroundTask {
         try {
             new FileExportImport(context,file,mDateFrom,mDateTo).exportToFile();
         } catch (Exception e) {
+            Common.saveErrorMessage(context, e.getStackTrace().toString());
             e.printStackTrace();
             return false;
         }

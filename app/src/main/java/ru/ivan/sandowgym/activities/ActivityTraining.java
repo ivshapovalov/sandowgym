@@ -39,7 +39,6 @@ import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.blink;
@@ -55,7 +54,6 @@ public class ActivityTraining extends ActivityAbstract {
     private final int numberOfViews = 30000;
     private final int maxNumberOfTransferButtons = 7;
 
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
     private int mPlusMinusButtonValue;
     private boolean mUseCalendarForWeight;
@@ -223,9 +221,9 @@ public class ActivityTraining extends ActivityAbstract {
         List<TrainingContent> mTrainingContentNotNullAmount = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullAmount = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+            mTrainingContentNotNullAmount = database.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                     mCurrentTraining.getDay(), mCurrentExercise.getId());
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
+            mWeightChangeCalendarList = database.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
         }
         if (mTrainingContentNotNullAmount.size() == 1) {
@@ -241,7 +239,7 @@ public class ActivityTraining extends ActivityAbstract {
             } catch (Exception e) {
                 mWeightInCalendar = 0;
             }
-            List<TrainingContent> trainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getId());
+            List<TrainingContent> trainingContentList = database.getAllTrainingContentOfTraining(mCurrentTraining.getId());
             for (TrainingContent trainingContent : trainingContentList) {
                 if (trainingContent.getWeight() == 0 && mWeightInCalendar != 0) {
                     trainingContent.setWeight(mWeightInCalendar);
@@ -251,7 +249,7 @@ public class ActivityTraining extends ActivityAbstract {
                             mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
                         }
                     }
-                    trainingContent.save(DB);
+                    trainingContent.save(database);
                 }
             }
 
@@ -267,7 +265,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void defineCurrentTraining(int mCurrentId, long currentDateInMillis) {
         if (mTrainingIsNew) {
-            mCurrentTraining = new Training.Builder(DB).build();
+            mCurrentTraining = new Training.Builder(database).build();
             if (currentDateInMillis == 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.clear(Calendar.MILLISECOND);
@@ -277,10 +275,10 @@ public class ActivityTraining extends ActivityAbstract {
             }
         } else {
             if (mCurrentId == 0) {
-                mCurrentTraining = new Training.Builder(DB).build();
+                mCurrentTraining = new Training.Builder(database).build();
             } else {
                 try {
-                    mCurrentTraining = Training.getTrainingFromDB(DB, mCurrentId);
+                    mCurrentTraining = Training.getTrainingFromDB(database, mCurrentId);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     tableDoesNotContainElementException.printStackTrace();
                 }
@@ -396,8 +394,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void getAllExercisesOfTraining() {
 
-        mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
-        mTrainingContentList = DB.getAllTrainingContentOfTraining(mCurrentTraining.getId());
+        mActiveExercises = database.getAllActiveExercisesOfUser(dbCurrentUser.getId());
+        mTrainingContentList = database.getAllTrainingContentOfTraining(mCurrentTraining.getId());
 
         for (TrainingContent tr : mTrainingContentList) {
             boolean isFound = false;
@@ -414,7 +412,7 @@ public class ActivityTraining extends ActivityAbstract {
                 //добавим в список упражнений упражнение старое
                 Exercise ex = null;
                 try {
-                    ex = Exercise.getExerciseFromDB(DB, idExercise);
+                    ex = Exercise.getExerciseFromDB(database, idExercise);
                 } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                     tableDoesNotContainElementException.printStackTrace();
                 }
@@ -443,7 +441,7 @@ public class ActivityTraining extends ActivityAbstract {
     private void getAllActiveExercises() {
         //при инициализации тренировки создадим сразу контент
         if (dbCurrentUser != null) {
-            mActiveExercises = DB.getAllActiveExercisesOfUser(dbCurrentUser.getId());
+            mActiveExercises = database.getAllActiveExercisesOfUser(dbCurrentUser.getId());
             mTrainingContentList = new ArrayList<>();
             for (Exercise ex : mActiveExercises
             ) {
@@ -471,9 +469,9 @@ public class ActivityTraining extends ActivityAbstract {
         List<TrainingContent> mTrainingContentNotNullAmount = new ArrayList<>();
         List<WeightChangeCalendar> mWeightChangeCalendarList = new ArrayList<>();
         if (dbCurrentUser != null) {
-            mTrainingContentNotNullAmount = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+            mTrainingContentNotNullAmount = database.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                     mCurrentTraining.getDay(), mCurrentExercise.getId());
-            mWeightChangeCalendarList = DB.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
+            mWeightChangeCalendarList = database.getWeightOfUserFromWeightCalendar(dbCurrentUser.getId(),
                     mCurrentTraining.getDay());
         }
         mWeightInCalendar = 0;
@@ -500,7 +498,7 @@ public class ActivityTraining extends ActivityAbstract {
             weight = mExerciseWeightLastDay;
 
         }
-        mCurrentTrainingContent = new TrainingContent.Builder(DB)
+        mCurrentTrainingContent = new TrainingContent.Builder(database)
                 .addExercise(mCurrentExercise)
                 .addTraining(mCurrentTraining)
                 .addWeight(weight)
@@ -561,7 +559,7 @@ public class ActivityTraining extends ActivityAbstract {
             List<TrainingContent> mTrainingsContentList = new ArrayList<>();
 
             if (dbCurrentUser != null) {
-                mTrainingsContentList = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+                mTrainingsContentList = database.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                         mCurrentTraining.getDay(), mCurrentExercise.getId());
             }
             mExerciseAmountLastDay = 0;
@@ -588,7 +586,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void showTrainingContentOnScreen(final int ex_id) {
         try {
-            mCurrentExercise = Exercise.getExerciseFromDB(DB, ex_id);
+            mCurrentExercise = Exercise.getExerciseFromDB(database, ex_id);
         } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
             tableDoesNotContainElementException.printStackTrace();
         }
@@ -660,9 +658,9 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void saveTraining() {
 
-        mCurrentTraining.save(DB);
+        mCurrentTraining.save(database);
         if (mCurrentTrainingContent != null) {
-            mCurrentTrainingContent.save(DB);
+            mCurrentTrainingContent.save(database);
         }
         mTrainingIsNew = false;
     }
@@ -734,7 +732,7 @@ public class ActivityTraining extends ActivityAbstract {
                 mCurrentTrainingContent.setWeight(convertButtonTextToDigit(String.valueOf(btWeight.getText())));
             }
         }
-        mCurrentTrainingContent.save(DB);
+        mCurrentTrainingContent.save(database);
         if (!mTrainingContentList.contains(mCurrentTrainingContent)) {
             mTrainingContentList.add(mCurrentTrainingContent);
         }
@@ -758,8 +756,8 @@ public class ActivityTraining extends ActivityAbstract {
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            List<Training> trainings = DB.getLastTrainingsByDates(mCurrentTraining.getDay());
-                            mCurrentTraining.delete(DB);
+                            List<Training> trainings = database.getLastTrainingsByDates(mCurrentTraining.getDay());
+                            mCurrentTraining.delete(database);
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
                             if (!trainings.isEmpty()) {
                                 intent.putExtra("id", trainings.get(0).getId());
@@ -774,8 +772,8 @@ public class ActivityTraining extends ActivityAbstract {
     public void tvDay_onClick(final View view) {
 
         getPropertiesFromScreen();
-        mCurrentTrainingContent.save(DB);
-        mCurrentTraining.save(DB);
+        mCurrentTrainingContent.save(database);
+        mCurrentTraining.save(database);
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityCalendarView.class);
         intent.putExtra("isNew", mTrainingIsNew);
@@ -923,8 +921,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btAmount_onClick(View view) {
         getPropertiesFromScreen();
-        mCurrentTrainingContent.save(DB);
-        mCurrentTraining.save(DB);
+        mCurrentTrainingContent.save(database);
+        mCurrentTraining.save(database);
         blink(view, this);
         try {
             Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
@@ -950,8 +948,8 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void btWeight_onClick(View view) {
         getPropertiesFromScreen();
-        mCurrentTrainingContent.save(DB);
-        mCurrentTraining.save(DB);
+        mCurrentTrainingContent.save(database);
+        mCurrentTraining.save(database);
         blink(view, this);
         Intent intent = new Intent(ActivityTraining.this, ActivityDigitPickerDialog.class);
         intent.putExtra("isNew", mTrainingIsNew);
@@ -1002,8 +1000,8 @@ public class ActivityTraining extends ActivityAbstract {
     private void btChooseExercise_onClick(final TextView view) {
         blink(view, this);
         getPropertiesFromScreen();
-        mCurrentTrainingContent.save(DB);
-        mCurrentTraining.save(DB);
+        mCurrentTrainingContent.save(database);
+        mCurrentTraining.save(database);
         Intent intent = new Intent(ActivityTraining.this, ActivityExerciseChoice.class);
         intent.putExtra("currentActivity", getClass().getName());
         intent.putExtra("currentTrainingId", mCurrentTraining.getId());
@@ -1138,7 +1136,7 @@ public class ActivityTraining extends ActivityAbstract {
                 List<TrainingContent> mTrainingsContentList = new ArrayList<>();
 
                 if (dbCurrentUser != null) {
-                    mTrainingsContentList = DB.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+                    mTrainingsContentList = database.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
                             mCurrentTraining.getDay(), mCurrentExercise.getId());
                 }
                 int exerciseAmountLastDay = 0;

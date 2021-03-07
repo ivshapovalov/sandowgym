@@ -25,7 +25,6 @@ import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
-import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
@@ -38,7 +37,6 @@ public class ActivityTrainingsList extends ActivityAbstract {
     private final int maxHorizontalButtonsCount = 2;
     private final int numberOfViews = 20000;
 
-    private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
     private SharedPreferences mSettings;
     private int rowsNumber;
     private Map<Integer, List<Training>> pagedTrainings = new HashMap<>();
@@ -65,7 +63,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         if (idIntentTraining == 0) {
             if (mCurrentDateInMillis != 0) {
-                List<Training> trainings = DB.getTrainingsByDates(mCurrentDateInMillis, mCurrentDateInMillis);
+                List<Training> trainings = database.getTrainingsByDates(mCurrentDateInMillis, mCurrentDateInMillis);
                 if (trainings.size() == 1) {
                     idIntentTraining = trainings.get(0).getId();
                 }
@@ -108,7 +106,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         List<Training> trainings = new ArrayList<>();
         if (dbCurrentUser == null) {
         } else {
-            trainings = DB.getAllTrainingsOfUser(dbCurrentUser.getId());
+            trainings = database.getAllTrainingsOfUser(dbCurrentUser.getId());
         }
         pagedTrainings.clear();
         List<Training> pageContent = new ArrayList<>();
@@ -309,7 +307,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (dbCurrentUser != null) {
-                            DB.deleteAllTrainingsOfUser(dbCurrentUser.getId());
+                            database.deleteAllTrainingsOfUser(dbCurrentUser.getId());
                             updateTrainings();
                         }
                     }
