@@ -8,12 +8,23 @@ import java.io.File;
 
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.FileExportImport;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
 
-public class ImportFromFileTask {
+public class ImportFromFileTask implements BackgroundTask {
 
     private Context context;
     private File file;
     private StringBuilder message;
+
+    @Override
+    public String getName() {
+        return "Import from File task";
+    }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
 
     public ImportFromFileTask(Context context, File file) {
         this.context = context;

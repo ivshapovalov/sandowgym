@@ -20,8 +20,8 @@ android {
         applicationId 'ru.ivan.sandowgym'
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 48
-        versionName '4.8'
+        versionCode 51
+        versionName '5.1'
         multiDexEnabled true
     }
 
@@ -39,7 +39,7 @@ android {
                 //output.outputFile = file("$project.buildDir/outputs/apk/sandow_test.apk")
                 //output.outputFile = file("Q://Dropbox/android/sandow_test.apk")
                 //def file = new File("Q://Dropbox/android/sandow_test.apk");
-                output.outputFileName = new File("sandow_${variant.versionName}.apk")
+                output.outputFileName = new File("sandowgym_${variant.versionName}.apk")
             }
         }
     }

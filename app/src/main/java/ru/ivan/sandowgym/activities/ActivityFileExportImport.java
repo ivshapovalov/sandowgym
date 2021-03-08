@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,11 +26,17 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import me.rosuh.filepicker.bean.FileItemBeanImpl;
+import me.rosuh.filepicker.config.AbstractFileFilter;
 import me.rosuh.filepicker.config.FilePickerManager;
+import me.rosuh.filepicker.filetype.DataBaseFileType;
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.filetypes.DataSheetsFileType;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 import ru.ivan.sandowgym.common.tasks.DropboxListFilesTask;
 import ru.ivan.sandowgym.common.tasks.FtpListFilesTask;
@@ -40,6 +48,7 @@ import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpDownloadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
+import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.blink;
@@ -52,12 +61,15 @@ import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
 public class ActivityFileExportImport extends ActivityAbstract {
 
+    private static final String DB_FILETYPE = "db";
+    private static final String EXCEL_FILETYPE = "xlsx";
+
     private SharedPreferences mSettings;
     private String mDropboxAccessToken;
     private long mDateFrom;
     private long mDateTo;
-    private String downloadFile;
-    private String downloadType;
+    private String importFile;
+    private String importType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +80,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
         updateScreen();
         setTitleOfActivity(this);
 
-        if (downloadType != null && downloadFile != null && !"".equals(downloadFile)) {
-            downloadDataFromFile();
+        if (importType != null && importFile != null && !"".equals(importFile)) {
+            importDataFromFile();
         }
     }
 
@@ -77,8 +89,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
     protected void onResume() {
         super.onResume();
 
-        if (downloadType != null && downloadFile != null && !"".equals(downloadFile)) {
-            downloadDataFromFile();
+        if (importType != null && importFile != null && !"".equals(importFile)) {
+            importDataFromFile();
         }
     }
 
@@ -89,42 +101,79 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (resultCode == Activity.RESULT_OK) {
                 List<String> files = FilePickerManager.INSTANCE.obtainData();
                 if (files != null && files.size() == 1) {
-                    String fileName = files.get(0);
-                    downloadFile = fileName;
-                    downloadType = "local";
+                    String fileName = files.get(0).trim();
+                    importFile = fileName;
+                    if (fileName.endsWith(DB_FILETYPE)) {
+                        importType = "db";
+                    } else if (fileName.endsWith(EXCEL_FILETYPE)) {
+                        importType = "excel";
+                    }
                 }
+            } else {
+                processingInProgress = false;
             }
         } else if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                downloadFile = intent.getStringExtra("downloadFile");
-                downloadType = intent.getStringExtra("downloadType");
-
+                importFile = intent.getStringExtra("downloadFile");
+                importType = intent.getStringExtra("downloadType");
             }
             if (resultCode == Activity.RESULT_CANCELED) {
+                processingInProgress = false;
                 //Write your code if there's no result
             }
         }
     }
 
-    void downloadDataFromFile() {
+    void importDataFromFile() {
         final Handler handler = new Handler(Looper.getMainLooper());
-        final String fileName = downloadFile;
-        if (downloadType.equals("local")) {
+        final String fileName = importFile;
+        if (importType.equals("db")) {
+            displayMessage(ActivityFileExportImport.this, "Restore from db file started", true);
+            Runnable r = () -> restoreDbFromLocalFile(fileName);
+            handler.postDelayed(r, 1000);
+        } else if (importType.equals("excel")) {
             displayMessage(ActivityFileExportImport.this, "Import from local file started", true);
             Runnable r = () -> importDataFromLocalFile(fileName);
             handler.postDelayed(r, 1000);
-        } else if (downloadType.equals("dropbox")) {
+        } else if (importType.equals("dropbox")) {
             displayMessage(ActivityFileExportImport.this, "Import from Dropbox started", true);
             Runnable r = () -> importDataFromDropboxFile(fileName);
             handler.postDelayed(r, 1000);
-        } else if (downloadType.equals("ftp")) {
+        } else if (importType.equals("ftp")) {
             displayMessage(ActivityFileExportImport.this, "Import from FTP started", true);
             Runnable r = () -> importDataFromFtpFile(fileName);
             handler.postDelayed(r, 1000);
         }
 
-        downloadFile = null;
-        downloadType = null;
+        importFile = null;
+        importType = null;
+    }
+
+    private void restoreDbFromLocalFile(String fileName) {
+        try {
+            File dbFile = getApplicationContext().getDatabasePath(SQLiteDatabaseManager.DATABASE_NAME);
+            File backupFile = new File(fileName);
+            if (dbFile.exists() && backupFile.exists()) {
+                InputStream input = new FileInputStream(backupFile);
+                FileOutputStream output = new FileOutputStream(dbFile);
+
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, length);
+                }
+                output.flush();
+                output.close();
+                input.close();
+                String message = "The database is successfully restored from " + fileName + "\n Reboot application";
+                displayMessage(ActivityFileExportImport.this, message, true);
+            }
+        } catch (Exception e) {
+            String message = "Database restore failed!";
+            displayMessage(ActivityFileExportImport.this, message, true);
+        } finally {
+            processingInProgress = false;
+        }
     }
 
     private void getIntentParams() {
@@ -405,13 +454,15 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 return;
             }
             processingInProgress = true;
-            File dbFile = getApplicationContext().getDatabasePath("trainingCalendar");
+            File dbFile = getApplicationContext().getDatabasePath(SQLiteDatabaseManager.DATABASE_NAME);
             FileInputStream fis = new FileInputStream(dbFile);
             File outputDir = new File(BACKUP_FOLDER);
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
-            File outputFile = new File(outputDir, "trainingCalendar_copy.db");
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            File outputFile = new File(outputDir, SQLiteDatabaseManager.DATABASE_NAME + "-" + dateFormat.format(new Date()) + ".db");
 
             OutputStream output = new FileOutputStream(outputFile);
 
@@ -444,37 +495,32 @@ public class ActivityFileExportImport extends ActivityAbstract {
     }
 
     private void restoreBD_onYesClick(View view) {
-        try {
-            if (isProcessingInProgress(this.getApplicationContext())) {
-                return;
-            }
-            processingInProgress = true;
-            File dbFile = getApplicationContext().getDatabasePath("trainingCalendar");
-            FileOutputStream output = new FileOutputStream(dbFile);
-
-            File backupDir = new File(BACKUP_FOLDER);
-            if (!backupDir.exists()) {
-                backupDir.mkdirs();
-            }
-            File backupFile = new File(backupDir, "trainingCalendar_copy.db");
-
-            InputStream input = new FileInputStream(backupFile);
-
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = input.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
-            output.flush();
-            output.close();
-            input.close();
-            String message = "The database is successfully restored from " + backupFile.getAbsolutePath() + "\n Reboot application";
-            displayMessage(ActivityFileExportImport.this, message, true);
-        } catch (Exception e) {
-            String message = "Database restoring failed!";
-            displayMessage(ActivityFileExportImport.this, message, true);
+        if (isProcessingInProgress(this.getApplicationContext())) {
+            return;
         }
-        processingInProgress = false;
+        processingInProgress = true;
+
+        FilePickerManager.INSTANCE
+                .from(this).enableSingleChoice()
+                .setTheme(R.style.FilePickerThemeReply)
+                .showHiddenFiles(true)
+                .filter(new AbstractFileFilter() {
+                    @NotNull
+                    @Override
+                    public ArrayList<FileItemBeanImpl> doFilter(@NotNull ArrayList<FileItemBeanImpl> arrayList) {
+                        return new ArrayList<>(arrayList.stream()
+                                .filter(item -> {
+                                    if (item.isDir() || item.getFileType() instanceof DataBaseFileType) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                })
+                                .collect(Collectors.toList()));
+                    }
+                })
+                .forResult(FilePickerManager.REQUEST_CODE);
+
     }
 
     public void btImportFromLocalFile_onClick(final View view) {
@@ -494,9 +540,11 @@ public class ActivityFileExportImport extends ActivityAbstract {
             return;
         }
         processingInProgress = true;
-
         FilePickerManager.INSTANCE
                 .from(this).enableSingleChoice()
+                .setTheme(R.style.FilePickerThemeReply)
+                .showHiddenFiles(true)
+                .registerFileType(Arrays.asList(new DataSheetsFileType()), true)
                 .forResult(FilePickerManager.REQUEST_CODE);
     }
 
@@ -506,8 +554,11 @@ public class ActivityFileExportImport extends ActivityAbstract {
             if (file.exists()) {
                 try {
                     ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), file);
-                    String message = importFromFileTask.executeAndMessage();
-                    displayMessage(ActivityFileExportImport.this, message, true);
+                    List<BackgroundTask> tasks = new ArrayList<>();
+                    tasks.add(importFromFileTask);
+                    BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
+                    AsyncTask<Void, Long, Boolean> doneImport = backgroundTaskExecutor.execute();
+                    doneImport.get();
                 } catch (Exception e) {
                     displayMessage(ActivityFileExportImport.this, "File didn't imported  " + file.getPath(), true);
                 } finally {
@@ -565,11 +616,12 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(dropboxDownloadTask);
+            tasks.add(importFromFileTask);
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
-            AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
-            doneDownload.get();
-            String message = importFromFileTask.executeAndMessage();
-            displayMessage(ActivityFileExportImport.this, message, true);
+            AsyncTask<Void, Long, Boolean> doneImport = backgroundTaskExecutor.execute();
+            doneImport.get();
+            //String message = importFromFileTask.executeAndMessage();
+            //displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             e.printStackTrace();
             displayMessage(ActivityFileExportImport.this, "Import from Dropbox task failed! " + e.getMessage(), true);
@@ -620,11 +672,12 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(ftpDownloadTask);
+            tasks.add(importFromFileTask);
             BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityFileExportImport.this, tasks);
-            AsyncTask<Void, Long, Boolean> doneDownload = backgroundTaskExecutor.execute();
-            doneDownload.get();
-            String message = importFromFileTask.executeAndMessage();
-            displayMessage(ActivityFileExportImport.this, message, true);
+            AsyncTask<Void, Long, Boolean> doneImport = backgroundTaskExecutor.execute();
+            doneImport.get();
+            //String message = importFromFileTask.executeAndMessage();
+            //displayMessage(ActivityFileExportImport.this, message, true);
         } catch (Exception e) {
             e.printStackTrace();
             displayMessage(ActivityFileExportImport.this, "Tasks failed! " + e.getMessage(), true);

@@ -22,8 +22,8 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 
 public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 4;
-    private static final String DATABASE_NAME = "trainingCalendar";
+    private static final int DATABASE_VERSION = 5;
+    public static final String DATABASE_NAME = "sandowgym";
 
     private static final String TABLE_USERS = "users";
     private static final String TABLE_EXERCISES = "exercises";
