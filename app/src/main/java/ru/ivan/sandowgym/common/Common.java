@@ -190,7 +190,7 @@ public class Common {
         v.startAnimation(anim);
     }
 
-    public static void saveErrorMessage(Context context, String message) {
+    public static void saveMessage(Context context, String message) {
         final SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
         Log log = new Log.Builder(database.getLogMaxNumber() + 1).
                 addDatetime(Calendar.getInstance().getTimeInMillis()).
@@ -199,6 +199,8 @@ public class Common {
     }
 
     public static void displayMessage(Context context, String message, boolean makeToast) {
+        saveMessage(context, message);
+
         if (makeToast) {
             Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
             toast.show();
@@ -288,9 +290,9 @@ public class Common {
         if (Common.dbCurrentUser != null) {
             CharSequence title = currentActivity.getTitle();
             if (title.toString().contains("(")) {
-                title = title.subSequence(0, title.toString().indexOf("("));
+                title = title.subSequence(0, title.toString().indexOf("(") - 1);
             }
-            title = title + "(" + Common.dbCurrentUser.getName() + ")";
+            title = title + " (" + Common.dbCurrentUser.getName() + ")";
             currentActivity.setTitle(title);
         } else {
             CharSequence title = currentActivity.getTitle();

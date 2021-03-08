@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -171,7 +170,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
 
         Intent intent = new Intent(ActivityFileExportImport.this, ActivityCalendarView.class);
         intent.putExtra("isBeginDate", isBeginDate);
-        intent.putExtra("currentActivity", "ActivityFileExportImport");
+        intent.putExtra("currentActivity", getClass().getName());
 
         int mDayFromID = getResources().getIdentifier("tvDayFrom", "id", getPackageName());
         TextView tvDayFrom = findViewById(mDayFromID);
@@ -601,7 +600,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
             AsyncTask<Void, Long, ArrayList<String>> task = ftpListFilesTask.execute();
             ArrayList<String> fileNames = task.get();
 
-            Collections.sort(fileNames);
             Intent intent = new Intent(getApplicationContext(), ActivityFilesList.class);
             intent.putExtra("downloadType", "ftp");
             intent.putStringArrayListExtra("downloadFiles", fileNames);

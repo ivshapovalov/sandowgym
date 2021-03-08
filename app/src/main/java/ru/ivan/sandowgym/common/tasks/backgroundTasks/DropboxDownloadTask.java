@@ -5,6 +5,8 @@ import android.content.Context;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,14 +40,14 @@ public class DropboxDownloadTask implements BackgroundTask {
             FileMetadata metadata = client.files().downloadBuilder("/" + file.getName())
                     .download(out);
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             e.printStackTrace();
             return false;
         } finally {
             try {
                 out.close();
             } catch (IOException e) {
-                Common.saveErrorMessage(context, e.getStackTrace().toString());
+                Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
                 e.printStackTrace();
             }
         }

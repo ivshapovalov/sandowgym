@@ -68,6 +68,7 @@ android {
         implementation 'com.android.support:appcompat-v7:28.0.3'
         implementation files('libs/opencsv-3.7.jar')
         implementation files('libs/ftp4j-1.7.2/ftp4j-1.7.2.jar')
+        implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
         implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
         implementation group: 'org.apache.xmlbeans', name: 'xmlbeans', version: '3.1.0'
         implementation 'javax.xml.stream:stax-api:1.0'

@@ -1,11 +1,13 @@
 package ru.ivan.sandowgym.database.manager;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 
 public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "trainingCalendar";
 
     private static final String TABLE_USERS = "users";
@@ -72,11 +74,35 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private SQLiteDatabase mDatabase;
     private int mOpenCounter;
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (db != null && !db.isReadOnly()) {
+            setForeignKeyConstraintsEnabled(db);
+        }
+    }
+
+    private void setForeignKeyConstraintsEnabled(SQLiteDatabase db) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            setForeignKeyConstraintsEnabledPreJellyBean(db);
+        } else {
+            setForeignKeyConstraintsEnabledPostJellyBean(db);
+        }
+    }
+
+    private void setForeignKeyConstraintsEnabledPreJellyBean(SQLiteDatabase db) {
+        db.execSQL("PRAGMA foreign_keys=ON;");
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setForeignKeyConstraintsEnabledPostJellyBean(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
+    }
+
     public static synchronized SQLiteDatabaseManager getInstance(Context context) {
         if (instance == null) {
             instance = new SQLiteDatabaseManager(context);
         }
-
         return instance;
     }
 
@@ -86,6 +112,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             // Opening new database
             mDatabase = this.getWritableDatabase();
         }
+//        if (mDatabase != null && !mDatabase.isReadOnly()) {
+//            // Enable foreign key constraints
+//            mDatabase.execSQL("PRAGMA foreign_keys=ON;");
+//        }
         return mDatabase;
     }
 
@@ -93,10 +123,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         mOpenCounter--;
         if (mOpenCounter == 0) {
             // Closing database
-            closeDatabase();
+            mDatabase.close();
         }
     }
-
 
     public SQLiteDatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -104,12 +133,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     @Override
     public synchronized void onCreate(SQLiteDatabase db) {
-
         //users
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + KEY_USER_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
                 + KEY_USER_NAME + " TEXT," + KEY_USER_IS_CURRENT + " INTEGER)";
-        mDatabase.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_USERS_TABLE);
 
         //weight change calendar
         String CREATE_WEIGHT_CHANGE_CALENDAR_TABLE = "CREATE TABLE " + TABLE_WEIGHT_CHANGE_CALENDAR + "("
@@ -118,17 +146,17 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " INTEGER," + KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT + " INTEGER,"
                 + " FOREIGN KEY(" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")"
                 + " ON DELETE CASCADE ON UPDATE CASCADE )";
-        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_TABLE);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " ASC)";
-        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC);
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_ASC);
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_DAY_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " DESC)";
-        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC);
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_DAY_DESC);
 
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_ASC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " ASC)";
-        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC);
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_ASC);
         String CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC = "CREATE INDEX WEIGHT_CHANGE_CALENDAR_USER_IDX_DESC ON " + TABLE_WEIGHT_CHANGE_CALENDAR + " (" + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + " DESC)";
-        mDatabase.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC);
+        db.execSQL(CREATE_WEIGHT_CHANGE_CALENDAR_INDEX_USER_DESC);
 
         //exercises
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
@@ -140,12 +168,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " FOREIGN KEY(" + KEY_EXERCISE_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ")" +
                 " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        mDatabase.execSQL(CREATE_EXERCISES_TABLE);
+        db.execSQL(CREATE_EXERCISES_TABLE);
 
         String CREATE_EXERCISES_INDEX_USER_ASC = "CREATE INDEX EXERCISES_USER_IDX_ASC ON " + TABLE_EXERCISES + " (" + KEY_EXERCISE_ID_USER + " ASC)";
-        mDatabase.execSQL(CREATE_EXERCISES_INDEX_USER_ASC);
+        db.execSQL(CREATE_EXERCISES_INDEX_USER_ASC);
         String CREATE_EXERCISES_INDEX_USER_DESC = "CREATE INDEX EXERCISES_USER_IDX_DESC ON " + TABLE_EXERCISES + " (" + KEY_EXERCISE_ID_USER + " DESC)";
-        mDatabase.execSQL(CREATE_EXERCISES_INDEX_USER_DESC);
+        db.execSQL(CREATE_EXERCISES_INDEX_USER_DESC);
 
         //trainings
         String CREATE_TRAININGS_TABLE = "CREATE TABLE " + TABLE_TRAININGS + "("
@@ -155,18 +183,18 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + KEY_TRAINING_ID_USER + ") REFERENCES " + TABLE_USERS + "(" + KEY_USER_ID + ") " +
                 " ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        mDatabase.execSQL(CREATE_TRAININGS_TABLE);
+        db.execSQL(CREATE_TRAININGS_TABLE);
 
         String CREATE_TRAININGS_INDEX_USER_ASC = "CREATE INDEX TRAININGS_USER_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_ID_USER + " ASC)";
-        mDatabase.execSQL(CREATE_TRAININGS_INDEX_USER_ASC);
+        db.execSQL(CREATE_TRAININGS_INDEX_USER_ASC);
         String CREATE_TRAININGS_INDEX_USER_DESC = "CREATE INDEX TRAININGS_USER_IDX_DESC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_ID_USER + " DESC)";
-        mDatabase.execSQL(CREATE_TRAININGS_INDEX_USER_DESC);
+        db.execSQL(CREATE_TRAININGS_INDEX_USER_DESC);
 
         String CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC = "CREATE INDEX TRAINING_DAY_IDX_ASC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_DAY + " ASC)";
-        mDatabase.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC);
+        db.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_ASC);
 
         String CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC = "CREATE INDEX TRAINING_DAY_IDX_DESC ON " + TABLE_TRAININGS + " (" + KEY_TRAINING_DAY + " DESC)";
-        mDatabase.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC);
+        db.execSQL(CREATE_TRAININGS_INDEX_TRAINING_DAY_DESC);
 
         String CREATE_TRAINING_CONTENT_TABLE = "CREATE TABLE " + TABLE_TRAINING_CONTENT + "("
                 + KEY_TRAINING_CONTENT_ID + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
@@ -183,35 +211,35 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + KEY_TRAINING_CONTENT_ID_USER + ") REFERENCES " +
                 TABLE_USERS + "(" + KEY_USER_ID + ") ON DELETE CASCADE ON UPDATE CASCADE"
                 + ")";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_TABLE);
+        db.execSQL(CREATE_TRAINING_CONTENT_TABLE);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC = "CREATE INDEX EXERCISE_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " ASC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_ASC);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC = "CREATE INDEX EXERCISE_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " DESC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_DESC);
 
         String CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC = "CREATE INDEX TRAINING_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_TRAINING + " ASC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_ASC);
 
         String CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC = "CREATE INDEX TRAINING_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_TRAINING + " DESC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_TRAINING_DESC);
 
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC = "CREATE INDEX EXERCISE_TRAINING_IDX_ASC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " ASC, " + KEY_TRAINING_CONTENT_ID_TRAINING + " ASC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_ASC);
         String CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC = "CREATE INDEX EXERCISE_TRAINING_IDX_DESC ON " + TABLE_TRAINING_CONTENT + " (" + KEY_TRAINING_CONTENT_ID_EXERCISE + " DESC, " + KEY_TRAINING_CONTENT_ID_TRAINING + " DESC)";
-        mDatabase.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC);
+        db.execSQL(CREATE_TRAINING_CONTENT_INDEX_EXERCISE_AND_TRAINING_DESC);
 
         //logs
         String CREATE_LOGS_TABLE = "CREATE TABLE " + TABLE_LOGS + "("
                 + KEY_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
                 + KEY_LOG_DATETIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + KEY_LOG_TEXT + " TEXT)";
-        mDatabase.execSQL(CREATE_LOGS_TABLE);
+        db.execSQL(CREATE_LOGS_TABLE);
 
         String CREATE_LOGS_INDEX_DATETIME_ASC = "CREATE INDEX LOGS_DATETIME_IDX_ASC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " ASC)";
-        mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
+        db.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
         String CREATE_LOGS_INDEX_DATETIME_DESC = "CREATE INDEX LOGS_DATETIME_IDX_DEC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " DESC)";
-        mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
+        db.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
 
     }
 
@@ -219,45 +247,39 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
             //logs
-//            String DROP_LOGS_TABLE = "DROP TABLE IF EXISTS " + TABLE_LOGS;
-//            mDatabase.execSQL(DROP_LOGS_TABLE);
-//
-//            String CREATE_LOGS_TABLE = "CREATE TABLE " + TABLE_LOGS + "("
-//                    + KEY_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
-//                    + KEY_LOG_DATETIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + KEY_LOG_TEXT + " TEXT)";
-//            mDatabase.execSQL(CREATE_LOGS_TABLE);
-//
-//            String CREATE_LOGS_INDEX_DATETIME_ASC = "CREATE INDEX LOGS_DATETIME_IDX_ASC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " ASC)";
-//            mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
-//            String CREATE_LOGS_INDEX_DATETIME_DESC = "CREATE INDEX LOGS_DATETIME_IDX_DEC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " DESC)";
-//            mDatabase.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
+            String DROP_LOGS_TABLE = "DROP TABLE IF EXISTS " + TABLE_LOGS;
+            db.execSQL(DROP_LOGS_TABLE);
+
+            String CREATE_LOGS_TABLE = "CREATE TABLE " + TABLE_LOGS + "("
+                    + KEY_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
+                    + KEY_LOG_DATETIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + KEY_LOG_TEXT + " TEXT)";
+            db.execSQL(CREATE_LOGS_TABLE);
+
+            String CREATE_LOGS_INDEX_DATETIME_ASC = "CREATE INDEX LOGS_DATETIME_IDX_ASC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " ASC)";
+            db.execSQL(CREATE_LOGS_INDEX_DATETIME_ASC);
+            String CREATE_LOGS_INDEX_DATETIME_DESC = "CREATE INDEX LOGS_DATETIME_IDX_DEC ON " + TABLE_LOGS + " (" + KEY_LOG_DATETIME + " DESC)";
+            db.execSQL(CREATE_LOGS_INDEX_DATETIME_DESC);
         }
     }
 
     public synchronized void clearDB(SQLiteDatabase db) {
-        mDatabase.execSQL("Delete from " + TABLE_WEIGHT_CHANGE_CALENDAR);
-        mDatabase.execSQL("Delete from " + TABLE_TRAINING_CONTENT);
-        mDatabase.execSQL("Delete from " + TABLE_EXERCISES);
-        mDatabase.execSQL("Delete from " + TABLE_TRAININGS);
-        mDatabase.execSQL("Delete from  " + TABLE_USERS);
-        mDatabase.execSQL("Delete from  " + TABLE_LOGS);
+        db.execSQL("Delete from " + TABLE_WEIGHT_CHANGE_CALENDAR);
+        db.execSQL("Delete from " + TABLE_TRAINING_CONTENT);
+        db.execSQL("Delete from " + TABLE_EXERCISES);
+        db.execSQL("Delete from " + TABLE_TRAININGS);
+        db.execSQL("Delete from  " + TABLE_USERS);
+        db.execSQL("Delete from  " + TABLE_LOGS);
     }
 
     public synchronized void dropDB(SQLiteDatabase db) {
-
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        mDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAINING_CONTENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT_CHANGE_CALENDAR);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAININGS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGS);
     }
 
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        super.onOpen(db);
-        mDatabase.execSQL("PRAGMA foreign_keys=ON");
-    }
 
     public synchronized void addUser(User user) {
         openDatabase();
@@ -265,20 +287,17 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_USER_ID, user.getId());
         values.put(KEY_USER_NAME, user.getName());
         values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
-
         mDatabase.insert(TABLE_USERS, null, values);
         closeDatabase();
     }
 
     public synchronized void addWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID, weightChangeCalendar.getId());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getUserId());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT, weightChangeCalendar.getWeight());
-
         mDatabase.insert(TABLE_WEIGHT_CHANGE_CALENDAR, null, values);
         closeDatabase();
     }
@@ -294,14 +313,12 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_EXERCISE_EXPLANATION, exercise.getExplanation());
         values.put(KEY_EXERCISE_AMOUNT_DEFAULT, exercise.getAmountDefault());
         values.put(KEY_EXERCISE_PICTURE_NAME, exercise.getPicture());
-
         mDatabase.insert(TABLE_EXERCISES, null, values);
         closeDatabase();
     }
 
     public synchronized void addTraining(Training training) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_ID, training.getId());
         values.put(KEY_TRAINING_ID_USER, training.getUserId());
@@ -312,7 +329,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized void addTrainingContent(TrainingContent trainingContent) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_CONTENT_ID, trainingContent.getId());
         values.put(KEY_TRAINING_CONTENT_ID_USER, trainingContent.getUserId());
@@ -321,7 +337,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_AMOUNT, trainingContent.getAmount());
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
-
         mDatabase.insert(TABLE_TRAINING_CONTENT, null, values);
         closeDatabase();
     }
@@ -329,17 +344,15 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized void addLog(Log log) {
         openDatabase();
         ContentValues values = new ContentValues();
-
         values.put(KEY_LOG_ID, log.getId());
         values.put(KEY_LOG_DATETIME, log.getDatetime());
         values.put(KEY_LOG_TEXT, log.getText());
-
         mDatabase.insert(TABLE_LOGS, null, values);
         closeDatabase();
     }
 
     public synchronized boolean containsEntity(int id, String tableName, String keyColumn) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        openDatabase();
 
         Cursor cursor = mDatabase.query(tableName, new String[]{keyColumn}, keyColumn + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -361,14 +374,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized User getUser(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
+        openDatabase();
         Cursor cursor = mDatabase.query(TABLE_USERS, new String[]{KEY_USER_ID, KEY_USER_NAME, KEY_USER_IS_CURRENT}, KEY_USER_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         User user = null;
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException("There is no User with id - " + id);
         } else {
@@ -387,8 +400,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized WeightChangeCalendar getWeightChangeCalendar(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
+        openDatabase();
         Cursor cursor = mDatabase.query(TABLE_WEIGHT_CHANGE_CALENDAR, new String[]{KEY_WEIGHT_CHANGE_CALENDAR_ID,
                         KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, KEY_WEIGHT_CHANGE_CALENDAR_DAY, KEY_WEIGHT_CHANGE_CALENDAR_WEIGHT},
                 KEY_WEIGHT_CHANGE_CALENDAR_ID + "=?",
@@ -397,6 +409,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
         WeightChangeCalendar weightChangeCalendar = null;
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException("There is no Weight change calendat with id - " + id);
         } else {
@@ -416,7 +429,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized Exercise getExercise(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        openDatabase();
         Cursor cursor = mDatabase.query(TABLE_EXERCISES, new String[]{KEY_EXERCISE_ID, KEY_EXERCISE_ID_USER, KEY_EXERCISE_IS_ACTIVE, KEY_EXERCISE_NAME,
                         KEY_EXERCISE_EXPLANATION, KEY_EXERCISE_AMOUNT_DEFAULT, KEY_EXERCISE_PICTURE_NAME}, KEY_EXERCISE_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -424,6 +437,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
         Exercise exercise = null;
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException("There is no Exercise with id - " + id);
         } else {
@@ -450,13 +464,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized Training getTraining(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        openDatabase();
 
         Cursor cursor = mDatabase.query(TABLE_TRAININGS, new String[]{KEY_TRAINING_ID, KEY_TRAINING_DAY}, KEY_TRAINING_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException("There is no Training with id - " + id);
         } else {
@@ -475,13 +490,14 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized TrainingContent getTrainingContent(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        openDatabase();
 
         Cursor cursor = mDatabase.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID, KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT, KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT}, KEY_TRAINING_CONTENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException("There is no TrainingContent with id - " + id);
         } else {
@@ -511,8 +527,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized TrainingContent getTrainingContent(int idExercise, int idTraining) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
+        openDatabase();
         Cursor cursor = mDatabase.query(TABLE_TRAINING_CONTENT, new String[]{KEY_TRAINING_CONTENT_ID,
                         KEY_TRAINING_CONTENT_ID_EXERCISE, KEY_TRAINING_CONTENT_ID_TRAINING, KEY_TRAINING_CONTENT_AMOUNT,
                         KEY_TRAINING_CONTENT_WEIGHT, KEY_TRAINING_CONTENT_COMMENT},
@@ -522,6 +537,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
         if (cursor.getCount() == 0) {
+            cursor.close();
             closeDatabase();
             throw new TableDoesNotContainElementException(
                     String.format("There is no TrainingContent with trainingId = '%s' and exerciseId='%s'", idTraining, idExercise));
@@ -558,6 +574,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             if (cursor != null)
                 cursor.moveToFirst();
             if (cursor.getCount() == 0) {
+                cursor.close();
                 closeDatabase();
                 throw new TableDoesNotContainElementException("There is no LOG with id - " + id);
             } else {
@@ -634,13 +651,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<User> getAllUsers() {
-        String selectQuery = "SELECT  * FROM " + TABLE_USERS;
-
         openDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_USERS;
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         List<User> userList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
-        ;
         if (cursor.moveToFirst()) {
             do {
                 User user = new User.Builder(cursor.getInt(cursor.getColumnIndex(KEY_USER_ID)))
@@ -657,12 +671,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<WeightChangeCalendar> getAllWeightChangeCalendar() {
+        openDatabase();
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         if (cursor.moveToFirst()) {
             do {
                 WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar
@@ -680,13 +693,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<WeightChangeCalendar> getAllWeightChangeCalendarOfUser(int user_id) {
+        openDatabase();
+
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_WEIGHT_CHANGE_CALENDAR + " WHERE "
                 + KEY_WEIGHT_CHANGE_CALENDAR_ID_USER + "=" + user_id + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         if (cursor.moveToFirst()) {
             do {
                 WeightChangeCalendar weightChangeCalendar = new WeightChangeCalendar
@@ -704,12 +717,11 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllExercises() {
+        openDatabase();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
-
         if (cursor.moveToFirst()) {
             do {
                 Exercise exercise = new Exercise.Builder(cursor.getInt(cursor.getColumnIndex(KEY_EXERCISE_ID)))
@@ -729,13 +741,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Log> getAllLogs() {
-        String selectQuery = "SELECT  * FROM " + TABLE_LOGS;
-
         openDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_LOGS + " ORDER BY " + KEY_LOG_DATETIME + " DESC";
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         List<Log> logs = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
-        ;
         if (cursor.moveToFirst()) {
             do {
                 Log log = new Log.Builder(cursor.getInt(cursor.getColumnIndex(KEY_LOG_ID)))
@@ -752,9 +761,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllExercisesOfUser(int user_id) {
+        openDatabase();
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_ID_USER + "="
                 + user_id + " ORDER BY " + KEY_EXERCISE_ID;
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -777,9 +786,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllActiveExercises() {
-        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1" + " ORDER BY " + KEY_EXERCISE_ID;
-
         openDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1" + " ORDER BY " + KEY_EXERCISE_ID;
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -801,9 +810,10 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getAllActiveExercisesOfUser(int user_id) {
+        openDatabase();
+
         String selectQuery = "SELECT  * FROM " + TABLE_EXERCISES + " WHERE " + KEY_EXERCISE_IS_ACTIVE + " = 1 AND "
                 + KEY_EXERCISE_ID_USER + "=" + user_id + " ORDER BY " + KEY_EXERCISE_ID;
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -826,6 +836,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getExercisesByDates(long mDateFrom, long mDateTo) {
+        openDatabase();
 
         mDateFrom = mDateFrom == 0 ? Long.MIN_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
@@ -842,7 +853,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")"
                 + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -861,7 +871,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Exercise> getExercisesOfUserByDates(int user_id, long mDateFrom, long mDateTo) {
-
+        openDatabase();
         mDateFrom = mDateFrom == 0 ? Long.MIN_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " AS " + KEY_TRAINING_CONTENT_ID_EXERCISE + ","
@@ -877,7 +887,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " GROUP BY (" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + ")"
                 + " ORDER BY " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Exercise> exerciseList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -896,8 +905,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getAllTrainings() {
-        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " ORDER BY " + KEY_TRAINING_DAY;
         openDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " ORDER BY " + KEY_TRAINING_DAY;
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -915,8 +924,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getAllTrainingsOfUser(int user_id) {
-        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
         openDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -935,6 +944,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getTrainingsByDates(long mDateFrom, long mDateTo) {
+        openDatabase();
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
@@ -944,7 +954,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom
                 + " AND " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_TRAINING_DAY;
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -962,6 +971,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getTrainingsOfUserByDates(int user_id, long mDateFrom, long mDateTo) {
+        openDatabase();
         mDateFrom = mDateFrom == 0 ? Long.MAX_VALUE : mDateFrom;
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
@@ -972,7 +982,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ">= " + mDateFrom + " AND "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_TRAINING_ID;// +" LIMIT 10";
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -990,6 +999,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getLastTrainingsByDates(long mDateTo) {
+        openDatabase();
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
@@ -999,7 +1009,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
@@ -1017,6 +1026,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<Training> getLastTrainingsOfUserByDates(int user_id, long mDateTo) {
+        openDatabase();
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
         String selectQuery = "SELECT  "
                 + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " AS " + KEY_TRAINING_ID + ","
@@ -1026,9 +1036,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " IN (SELECT MAX(" + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + ") FROM " + TABLE_TRAININGS
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ) ORDER BY " + KEY_TRAINING_ID;
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -1046,7 +1054,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<TrainingContent> getLastExerciseNotNullAmount(long mDateTo, int exercise_id) {
-
+        openDatabase();
         mDateTo = mDateTo == 0 ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
@@ -1065,7 +1073,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
@@ -1089,8 +1096,47 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return trainingsContentList;
     }
 
-    public synchronized List<TrainingContent> getLastExerciseNotNullAmountAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
+    public synchronized List<TrainingContent> getLastExerciseAmountAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
+        openDatabase();
+        mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
+        String selectQuery = "SELECT "
+                + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + " AS " + KEY_TRAINING_DAY + ","
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID + " AS " + KEY_TRAINING_CONTENT_ID + ","
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + " AS " + KEY_TRAINING_CONTENT_AMOUNT + ","
+                + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " AS " + KEY_TRAINING_CONTENT_WEIGHT
+                + " FROM (SELECT " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID
+                + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_AMOUNT + "," + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_WEIGHT + " FROM "
+                + TABLE_TRAINING_CONTENT + " WHERE " + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_EXERCISE + " = " + exercise_id + ") AS " + TABLE_TRAINING_CONTENT
+                + " LEFT JOIN (SELECT " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "," + TABLE_TRAININGS + "." + KEY_TRAINING_ID + " FROM "
+                + TABLE_TRAININGS + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_ID_USER + "=" + user_id + ") AS " + TABLE_TRAININGS
+                + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
+                + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + "" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
+
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
+
+        List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
+        if (cursor.moveToFirst()) {
+            do {
+                long day = cursor.getLong(cursor.getColumnIndex(KEY_TRAINING_DAY));
+                int amount = cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_AMOUNT));
+                if (amount != 0 && day != 0) {
+                    TrainingContent trainingContent = new TrainingContent
+                            .Builder(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_ID)))
+                            .addAmount(amount)
+                            .addWeight(cursor.getInt(cursor.getColumnIndex(KEY_TRAINING_CONTENT_WEIGHT)))
+                            .build();
+                    trainingsContentList.add(trainingContent);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        closeDatabase();
+        return trainingsContentList;
+    }
+
+    public synchronized List<TrainingContent> getLastExerciseNotNullAmountAndWeightOfUser(int user_id, long mDateTo, int exercise_id) {
+        openDatabase();
         mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
@@ -1108,7 +1154,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " ON " + TABLE_TRAININGS + "." + KEY_TRAINING_ID + "=" + TABLE_TRAINING_CONTENT + "." + KEY_TRAINING_CONTENT_ID_TRAINING
                 + " WHERE " + TABLE_TRAININGS + "." + KEY_TRAINING_DAY + "<" + mDateTo + "" + " ORDER BY " + KEY_TRAINING_DAY + " desc limit 1";
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         List<TrainingContent> trainingsContentList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
@@ -1132,7 +1177,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized List<WeightChangeCalendar> getWeightOfUserFromWeightCalendar(int user_id, long mDateTo) {
-
+        openDatabase();
         mDateTo = "".equals(0.0) ? Long.MAX_VALUE : mDateTo;
 
         String selectQuery = "SELECT "
@@ -1144,9 +1189,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                 + " AND " + TABLE_WEIGHT_CHANGE_CALENDAR + "." + KEY_WEIGHT_CHANGE_CALENDAR_DAY + "<=" + mDateTo
                 + " ORDER BY " + KEY_WEIGHT_CHANGE_CALENDAR_DAY + " desc limit 1";
 
-        openDatabase();
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-
         List<WeightChangeCalendar> weightChangeCalendarList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {
             do {
@@ -1209,6 +1252,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized int getEntityMaxNumber(String tableName, String keyColumn) {
+        openDatabase();
         String countQuery = "SELECT  MAX(" + keyColumn + ") FROM " + tableName + "";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = mDatabase.rawQuery(countQuery, null);
@@ -1219,6 +1263,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             size = cursor.getInt(0);
         }
         cursor.close();
+        closeDatabase();
         return size;
     }
 
@@ -1248,7 +1293,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateUser(User user) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_USER_NAME, user.getName());
         values.put(KEY_USER_IS_CURRENT, user.isCurrentUser());
@@ -1260,7 +1304,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateWeightChangeCalendar(WeightChangeCalendar weightChangeCalendar) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_DAY, weightChangeCalendar.getDay());
         values.put(KEY_WEIGHT_CHANGE_CALENDAR_ID_USER, weightChangeCalendar.getUserId());
@@ -1274,7 +1317,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateExercise(Exercise exercise) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_EXERCISE_IS_ACTIVE, exercise.getIsActive());
         values.put(KEY_EXERCISE_ID_USER, exercise.getUserId());
@@ -1291,12 +1333,9 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateTraining(Training training) {
         openDatabase();
-
         ContentValues values = new ContentValues();
-
         values.put(KEY_TRAINING_ID_USER, training.getUserId());
         values.put(KEY_TRAINING_DAY, training.getDay());
-
         int rows = mDatabase.update(TABLE_TRAININGS, values, KEY_TRAINING_ID + " = ?",
                 new String[]{String.valueOf(training.getId())});
         closeDatabase();
@@ -1305,7 +1344,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateTrainingContent(TrainingContent trainingContent) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_TRAINING_CONTENT_ID_USER, trainingContent.getUserId());
         values.put(KEY_TRAINING_CONTENT_ID_EXERCISE, trainingContent.getExerciseId());
@@ -1313,7 +1351,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_TRAINING_CONTENT_AMOUNT, trainingContent.getAmount());
         values.put(KEY_TRAINING_CONTENT_WEIGHT, trainingContent.getWeight());
         values.put(KEY_TRAINING_CONTENT_COMMENT, trainingContent.getComment());
-
         int rows = mDatabase.update(TABLE_TRAINING_CONTENT, values, KEY_TRAINING_CONTENT_ID + " = ?",
                 new String[]{String.valueOf(trainingContent.getId())});
         closeDatabase();
@@ -1322,7 +1359,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized int updateLog(Log log) {
         openDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_LOG_DATETIME, log.getDatetime());
         values.put(KEY_LOG_TEXT, log.getText());
@@ -1382,7 +1418,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public ArrayList<Cursor> getData(String Query) {
-        //get writable database
         openDatabase();
         String[] columns = new String[]{"mesage"};
         //an array list of cursor to save two cursors one has results from the query
@@ -1414,7 +1449,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             Cursor2.addRow(new Object[]{"" + sqlEx.getMessage()});
             alc.set(1, Cursor2);
             return alc;
-
+        } finally {
+            closeDatabase();
         }
     }
 }

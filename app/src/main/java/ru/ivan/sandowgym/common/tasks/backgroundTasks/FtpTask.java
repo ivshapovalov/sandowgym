@@ -3,6 +3,8 @@ package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.File;
 
 import it.sauronsoftware.ftp4j.FTPClient;
@@ -45,7 +47,7 @@ public abstract class FtpTask {
             ftpClient.login(mFtpLogin, mFtpPassword);
             return true;
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             //e.printStackTrace();
             return false;
         }
@@ -58,7 +60,7 @@ public abstract class FtpTask {
             ftpClient.login(mFtpLogin, mFtpPassword);
             return true;
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             //e.printStackTrace();
             return false;
         }
@@ -70,7 +72,7 @@ public abstract class FtpTask {
                 ftpClient.logout();
                 ftpClient.disconnect(true);
             } catch (Exception e) {
-                Common.saveErrorMessage(context, e.getStackTrace().toString());
+                Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
                 e.printStackTrace();
             }
         }

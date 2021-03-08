@@ -18,12 +18,13 @@
         android:theme="@style/AppTheme"
         android:versionCode="47"
         android:versionName="4.7">
-        <activity android:name=".activities.ActivityMain">
+        <activity
+            android:name=".activities.ActivityMain"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            android:screenOrientation="fullSensor"
         </activity>
         <activity
             android:name=".activities.ActivityExercisesList"

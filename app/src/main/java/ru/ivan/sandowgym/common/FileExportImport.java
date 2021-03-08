@@ -442,6 +442,7 @@ public class FileExportImport {
         messageTrainingList = new StringBuilder();
         int maxNum = DB.getTrainingContentMaxNumber();
         for (int curTrainingIndex = 0; curTrainingIndex < trainingsList.size(); curTrainingIndex++) {
+            //System.out.println("Handle training " +curTrainingIndex);
             Training curTraining = trainingsList.get(curTrainingIndex);
             messageTrainingList.append(curTraining.getDayString()).append('\n');
             if (DB.containsTraining(curTraining.getId())) {
@@ -449,6 +450,7 @@ public class FileExportImport {
             } else {
                 DB.addTraining(curTraining);
             }
+            //System.out.println("After save training " +curTraining.getId());
 
             for (int curExerciseIndex = 0; curExerciseIndex < exercisesList.size(); curExerciseIndex++) {
                 Exercise curExercise = exercisesList.get(curExerciseIndex);
@@ -462,6 +464,7 @@ public class FileExportImport {
                     curExercise.setIsActive(1);
                     DB.addExercise(curExercise);
                 }
+                //System.out.println("After save exercise " +curExercise.getId());
 
                 TrainingContent trainingContent = new TrainingContent.Builder(++maxNum)
                         .addExercise(curExercise)
@@ -490,6 +493,8 @@ public class FileExportImport {
                 trainingContent.setWeight(convertTextToDigit(weight));
                 trainingContent.setAmount(convertTextToDigit(amount));
 
+                //System.out.println("Before save content exercise " +curExercise.getId()+" training " +curTraining.getId());
+
                 TrainingContent dbTrainingContent;
                 try {
                     dbTrainingContent = DB.getTrainingContent(curExercise.getId(), curTraining.getId());
@@ -499,6 +504,7 @@ public class FileExportImport {
                 } catch (TableDoesNotContainElementException e) {
                     DB.addTrainingContent(trainingContent);
                 }
+                //System.out.println("After save content exercise " +curExercise.getId()+" training " +curTraining.getId());
             }
         }
 

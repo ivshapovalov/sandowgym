@@ -13,6 +13,7 @@ import android.widget.Toast;
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
+import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 
@@ -62,6 +63,14 @@ public class ActivityTools extends ActivityAbstract {
 
     }
 
+    public void btLogs_onClick(final View view) {
+        blink(view, this);
+        if (isUserDefined()) {
+            Intent intent = new Intent(ActivityTools.this, ActivityLogsList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
     public void btClearBD_onClick(final View view) {
 
         new AlertDialog.Builder(this)

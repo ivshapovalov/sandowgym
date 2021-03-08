@@ -3,6 +3,8 @@ package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.File;
 
 import it.sauronsoftware.ftp4j.FTPClient;
@@ -25,7 +27,7 @@ public class FtpDownloadTask extends FtpTask implements BackgroundTask {
             ftpClient.download(file.getName(), file);
             return true;
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             e.printStackTrace();
             return false;
         } finally {

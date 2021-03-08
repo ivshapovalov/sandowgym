@@ -3,6 +3,8 @@ package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.File;
 
 import ru.ivan.sandowgym.common.Common;
@@ -21,7 +23,7 @@ public class FtpUploadTask extends FtpTask implements BackgroundTask {
                 return true;
             } else return false;
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             return false;
         } finally {
             disconnect();

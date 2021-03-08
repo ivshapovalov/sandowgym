@@ -6,6 +6,8 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,14 +35,14 @@ public class DropboxUploadTask implements BackgroundTask {
             FileMetadata metadata = client.files().uploadBuilder("/"
                     + file.getName()).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             e.printStackTrace();
             return false;
         } finally {
             try {
                 in.close();
             } catch (IOException e) {
-                Common.saveErrorMessage(context, e.getStackTrace().toString());
+                Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
                 e.printStackTrace();
             }
         }

@@ -153,16 +153,6 @@ public class ActivityMain extends ActivityAbstract {
 
     }
 
-    public void btLogs_onClick(final View view) {
-        blink(view, this);
-        if (isUserDefined()) {
-            Intent intent = new Intent(ActivityMain.this, ActivityLogsList.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
-    }
-
-
     private boolean isDBNotEmpty() {
 
         List<Exercise> list = new ArrayList<>();

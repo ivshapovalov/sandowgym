@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,10 +44,11 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             ftpClient.setType(FTPClient.TYPE_BINARY);
             FTPFile[] files = ftpClient.list();
             ArrayList<String> fileNames = new ArrayList<>();
-            for (FTPFile file : files
-                    ) {
+            for (FTPFile file : files) {
                 fileNames.add(file.getName());
             }
+            fileNames.remove(0);
+            fileNames.remove(0);
             Collections.sort(fileNames, new Comparator<String>() {
                 @Override
                 public int compare(String o1, String o2) {
@@ -54,7 +57,7 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             });
             return fileNames;
         } catch (Exception e) {
-            Common.saveErrorMessage(context, e.getStackTrace().toString());
+            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
             e.printStackTrace();
             return new ArrayList<>();
         } finally {

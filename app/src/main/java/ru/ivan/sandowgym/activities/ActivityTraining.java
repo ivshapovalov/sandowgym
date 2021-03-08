@@ -1136,7 +1136,7 @@ public class ActivityTraining extends ActivityAbstract {
                 List<TrainingContent> mTrainingsContentList = new ArrayList<>();
 
                 if (dbCurrentUser != null) {
-                    mTrainingsContentList = database.getLastExerciseNotNullAmountAndWeightOfUser(dbCurrentUser.getId(),
+                    mTrainingsContentList = database.getLastExerciseAmountAndWeightOfUser(dbCurrentUser.getId(),
                             mCurrentTraining.getDay(), mCurrentExercise.getId());
                 }
                 int exerciseAmountLastDay = 0;

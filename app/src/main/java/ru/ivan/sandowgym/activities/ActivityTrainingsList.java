@@ -321,7 +321,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         blink(view, this);
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
         intent.putExtra("currentDateInMillis", mCurrentDateInMillis);
-        intent.putExtra("currentActivity", "ActivityTrainingsList");
+        intent.putExtra("currentActivity", getClass().getName());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
