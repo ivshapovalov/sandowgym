@@ -69,8 +69,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ID"
+                        android:layout_weight="50"
                         android:id="@+id/textView"
-                        android:layout_span="10"
                         style="@android:style/TextAppearance.Small"
                         android:textColor="@color/text_color" />
 
@@ -78,7 +78,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvID"
-                        android:layout_span="5"
+                        android:layout_weight="50"
                         style="@android:style/TextAppearance.Small" />
 
                 </TableRow>
@@ -92,8 +92,8 @@
                         style="@android:style/TextAppearance.Small"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_span="10"
                         android:text="DATETIME"
+                        android:layout_weight="50"
                         android:textColor="@color/text_color"
                         android:typeface="normal" />
 
@@ -101,7 +101,7 @@
                         android:id="@+id/tvDatetime"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_span="13"
+                        android:layout_weight="50"
                         android:background="@drawable/textview_border"
                         android:gravity="center"
                         android:textColor="@color/text_color"
@@ -119,20 +119,23 @@
                         android:layout_height="match_parent"
                         android:text="TEXT"
                         android:id="@+id/textView2"
-                        android:layout_span="10"
                         style="@android:style/TextAppearance.Small"
                         android:textColor="@color/text_color" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <EditText
+                        android:id="@+id/etText"
+                        style="@android:style/TextAppearance.Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
+                        android:layout_weight="100"
                         android:ems="10"
-                        android:id="@+id/etText"
-                        android:layout_span="20"
-                        style="@android:style/TextAppearance.Small"
+                        android:inputType="textMultiLine"
                         android:textColor="@color/text_color" />
-
                 </TableRow>
             </TableLayout>
         </ScrollView>

@@ -181,7 +181,7 @@ public class ActivityLogsList extends ActivityAbstract {
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
-            txt.setLayoutParams(paramsTextViewWithSpanInList(3));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(2));
             mRow.addView(txt);
 
             txt = new TextView(this);
@@ -191,7 +191,7 @@ public class ActivityLogsList extends ActivityAbstract {
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
-            txt.setLayoutParams(paramsTextViewWithSpanInList(9));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(4));
             mRow.addView(txt);
 
             txt = new TextView(this);
@@ -201,7 +201,7 @@ public class ActivityLogsList extends ActivityAbstract {
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
-            txt.setLayoutParams(paramsTextViewWithSpanInList(10));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(16));
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.bt_border);

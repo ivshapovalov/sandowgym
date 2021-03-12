@@ -399,14 +399,16 @@
                         android:layout_height="match_parent"
                         android:layout_weight="100"
                         android:clickable="false">
+
                         <ImageView
                             android:id="@+id/ivPicture"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_span="50"
+                            android:layout_weight="50"
+                            android:gravity="center"
                             android:longClickable="false"
                             android:minHeight="300dp"
-                            android:visibility="visible"/>
+                            android:visibility="visible" />
                     </TableRow>
 
                     <TableRow
