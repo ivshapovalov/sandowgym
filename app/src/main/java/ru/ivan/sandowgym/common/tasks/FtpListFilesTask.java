@@ -1,46 +1,34 @@
 package ru.ivan.sandowgym.common.tasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPFile;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
-import ru.ivan.sandowgym.activities.ActivityMain;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
 
     private Context context;
     private FTPClient ftpClient;
-    private SharedPreferences settings;
-    private String mFtpHost;
-    private String mFtpLogin;
-    private String mFtpPassword;
 
-    public FtpListFilesTask(Context context, SharedPreferences settings) {
+    public FtpListFilesTask(Context context) {
         this.context = context;
-        this.settings = settings;
     }
 
     @Override
     protected ArrayList<String> doInBackground(Void... params) {
-        getPreferencesFromFile();
         ftpClient = new FTPClient();
         try {
-            ftpClient.connect(mFtpHost);
-            ftpClient.login(mFtpLogin, mFtpPassword);
+            ftpClient.connect(Constants.mOptionBackupFtpHost);
+            ftpClient.login(Constants.mOptionBackupFtpLogin, Constants.mOptionBackupFtpPassword);
             ftpClient.setType(FTPClient.TYPE_BINARY);
             FTPFile[] files = ftpClient.list();
             ArrayList<String> fileNames = new ArrayList<>();
@@ -57,7 +45,7 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             });
             return fileNames;
         } catch (Exception e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             e.printStackTrace();
             return new ArrayList<>();
         } finally {
@@ -75,34 +63,9 @@ public class FtpListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
             try {
                 ftpClient.logout();
                 ftpClient.disconnect(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (FTPIllegalReplyException e) {
-                e.printStackTrace();
-            } catch (FTPException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Common.saveException(context, e);
             }
-        }
-    }
-
-    private void getPreferencesFromFile() {
-
-        if (settings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST)) {
-            mFtpHost = settings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST, "");
-        } else {
-            mFtpHost = "";
-        }
-
-        if (settings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN)) {
-            mFtpLogin = settings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN, "");
-        } else {
-            mFtpLogin = "";
-        }
-
-        if (settings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD)) {
-            mFtpPassword = settings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
-        } else {
-            mFtpPassword = "";
         }
     }
 }

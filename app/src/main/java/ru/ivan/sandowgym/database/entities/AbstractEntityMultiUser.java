@@ -1,6 +1,6 @@
 package ru.ivan.sandowgym.database.entities;
 
-import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 
 public abstract class AbstractEntityMultiUser extends AbstractEntity {
 
@@ -8,7 +8,7 @@ public abstract class AbstractEntityMultiUser extends AbstractEntity {
 
     public AbstractEntityMultiUser() {
 
-        User currentUser=Common.dbCurrentUser;
+        User currentUser = Constants.dbCurrentUser;
         if (currentUser!=null) {
             this.user = currentUser;
         } else {

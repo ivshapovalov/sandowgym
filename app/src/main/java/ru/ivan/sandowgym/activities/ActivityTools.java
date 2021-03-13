@@ -14,8 +14,8 @@ import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class ActivityTools extends ActivityAbstract {
 

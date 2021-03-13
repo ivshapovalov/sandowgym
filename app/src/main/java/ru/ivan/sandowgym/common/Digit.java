@@ -1,4 +1,4 @@
-package ru.ivan.sandowgym.common.tasks;
+package ru.ivan.sandowgym.common;
 
 public enum Digit {
     AMOUNT("Amount"),

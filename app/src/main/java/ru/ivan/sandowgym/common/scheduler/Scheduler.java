@@ -22,9 +22,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static ru.ivan.sandowgym.common.Common.displayMessage;
-import static ru.ivan.sandowgym.common.Common.mBackupScheduleTimeHour;
-import static ru.ivan.sandowgym.common.Common.mBackupScheduleTimeMinutes;
 import static ru.ivan.sandowgym.common.Common.stringToCalendar;
+import static ru.ivan.sandowgym.common.Constants.mOptionBackupScheduleDateTimeHour;
+import static ru.ivan.sandowgym.common.Constants.mOptionBackupScheduleDateTimeMinutes;
 
 public class Scheduler {
 
@@ -137,8 +137,8 @@ public class Scheduler {
 
         Calendar currentTime = Calendar.getInstance();
         Calendar backupTime = Calendar.getInstance();
-        backupTime.set(Calendar.HOUR_OF_DAY, mBackupScheduleTimeHour);
-        backupTime.set(Calendar.MINUTE, mBackupScheduleTimeMinutes);
+        backupTime.set(Calendar.HOUR_OF_DAY, mOptionBackupScheduleDateTimeHour);
+        backupTime.set(Calendar.MINUTE, mOptionBackupScheduleDateTimeMinutes);
         backupTime.set(Calendar.SECOND, 0);
 
         if (backupTime.before(currentTime)) {

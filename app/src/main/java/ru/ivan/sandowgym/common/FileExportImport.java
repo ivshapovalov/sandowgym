@@ -29,10 +29,10 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
-import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.convertTextToDigit;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Common.getBackupFolder;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class FileExportImport {
     private Context context;
@@ -50,6 +50,7 @@ public class FileExportImport {
     private final String SYMBOL_WEIGHT = "$";
     private final String SYMBOL_DEF_AMOUNT = "%";
     private final String SYMBOL_SPLIT = ";";
+    private final File BACKUP_FOLDER = getBackupFolder();
 
     {
         specialSymbols.add(SYMBOL_ID);
@@ -201,7 +202,7 @@ public class FileExportImport {
         String[] entries = mNewString.toString().split(SYMBOL_SPLIT);
         data.add(entries);
         for (WeightChangeCalendar mWeightChangeCalendar : weightChangeCalendarList
-                ) {
+        ) {
 
             mNewString = new StringBuilder();
             mNewString
@@ -338,7 +339,7 @@ public class FileExportImport {
 
         List<Integer> positions = new ArrayList<>();
         for (String symbol : specialSymbols
-                ) {
+        ) {
             int position = s.indexOf(symbol, currentPosition + 1);
             if (position != -1) {
                 positions.add(position);

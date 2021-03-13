@@ -22,6 +22,10 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.io.File;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,37 +35,19 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.activities.ActivityMain;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Log;
-import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static ru.ivan.sandowgym.common.Constants.BACKUP_FILE_DATE_PATTERN;
 
 public class Common {
 
     public static SharedPreferences mSettings;
-    public static int mRowsOnPageInLists;
-    public static String mFtpHost;
-    public static String mFtpLogin;
-    public static String mFtpPassword;
-    public static String mDropboxAccessToken;
-    public static boolean mBackupScheduleEnabled;
-    public static int mBackupScheduleTimeHour;
-    public static int mBackupScheduleTimeMinutes;
-
-    public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
-    public static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSS";
-    public static User dbCurrentUser;
-    public static final boolean isDebug = true;
-    public static volatile boolean processingInProgress;
-    private static final int MAX_NOTIFICATION_CHARSEQUENCE_LENGTH = 5 * 1024;
-
-    public static final String BACKUP_FOLDER = Environment.getExternalStorageDirectory() + "/sandow_backup/";
 
     public static Date convertStringToDate(final String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_STRING);
         Date d = null;
         try {
             d = dateFormat.parse(String.valueOf(date));
@@ -74,7 +60,7 @@ public class Common {
 
     public static String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat(DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
+        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
 
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
@@ -85,60 +71,66 @@ public class Common {
     public static long getTimeMillis(String dateString) throws ParseException {
         /*Use date format as according to your need! Ex. - yyyy/MM/dd HH:mm:ss */
         String myDate = dateString;//"2017/12/20 18:10:45";
-        SimpleDateFormat sdf = new SimpleDateFormat(DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
         Date date = sdf.parse(myDate);
         long millis = date.getTime();
 
         return millis;
     }
 
-    public static void getPreferences(Context context) {
-        mSettings = context.getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+    public static void updatePreferences(Context context) {
+        mSettings = context.getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            mRowsOnPageInLists = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        if (mSettings.contains(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            Constants.mOptionRowsOnPageInLists = mSettings.getInt(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
-            mRowsOnPageInLists = 17;
-        }
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST)) {
-            mFtpHost = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_HOST, "");
-        } else {
-            mFtpHost = "";
+            Constants.mOptionRowsOnPageInLists = 17;
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN)) {
-            mFtpLogin = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_LOGIN, "");
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_LOCAL_FOLDER)) {
+            Constants.mOptionBackupLocalFolder = mSettings.getString(Constants.APP_PREFERENCES_BACKUP_LOCAL_FOLDER, "");
         } else {
-            mFtpLogin = "";
+            Constants.mOptionBackupLocalFolder = "";
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD)) {
-            mFtpPassword = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_FTP_HOST)) {
+            Constants.mOptionBackupFtpHost = mSettings.getString(Constants.APP_PREFERENCES_BACKUP_FTP_HOST, "");
         } else {
-            mFtpPassword = "";
-        }
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
-            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
-        } else {
-            mDropboxAccessToken = "";
-        }
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED)) {
-            mBackupScheduleEnabled = mSettings.getBoolean(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED, false);
-        } else {
-            mBackupScheduleEnabled = false;
+            Constants.mOptionBackupFtpHost = "";
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR)) {
-            mBackupScheduleTimeHour = mSettings.getInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR, 0);
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_FTP_LOGIN)) {
+            Constants.mOptionBackupFtpLogin = mSettings.getString(Constants.APP_PREFERENCES_BACKUP_FTP_LOGIN, "");
         } else {
-            mBackupScheduleTimeHour = 0;
+            Constants.mOptionBackupFtpLogin = "";
         }
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES)) {
-            mBackupScheduleTimeMinutes = mSettings.getInt(ActivityMain.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES, 0);
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_FTP_PASSWORD)) {
+            Constants.mOptionBackupFtpPassword = mSettings.getString(Constants.APP_PREFERENCES_BACKUP_FTP_PASSWORD, "");
         } else {
-            mBackupScheduleTimeMinutes = 0;
+            Constants.mOptionBackupFtpPassword = "";
+        }
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
+            Constants.mOptionBackupDropboxAccessToken = mSettings.getString(Constants.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
+        } else {
+            Constants.mOptionBackupDropboxAccessToken = "";
+        }
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED)) {
+            Constants.mOptionBackupScheduleEnabled = mSettings.getBoolean(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_ENABLED, false);
+        } else {
+            Constants.mOptionBackupScheduleEnabled = false;
+        }
+
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR)) {
+            Constants.mOptionBackupScheduleDateTimeHour = mSettings.getInt(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_HOUR, 0);
+        } else {
+            Constants.mOptionBackupScheduleDateTimeHour = 0;
+        }
+
+        if (mSettings.contains(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES)) {
+            Constants.mOptionBackupScheduleDateTimeMinutes = mSettings.getInt(Constants.APP_PREFERENCES_BACKUP_SCHEDULE_TIME_MINUTES, 0);
+        } else {
+            Constants.mOptionBackupScheduleDateTimeMinutes = 0;
         }
 
     }
@@ -153,7 +145,7 @@ public class Common {
 
     public static String convertDateToString(final Date date) {
 
-        SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        SimpleDateFormat dateformat = new SimpleDateFormat(Constants.DATE_FORMAT_STRING);
         String sDate = "";
         try {
             sDate = dateformat.format(date);
@@ -198,6 +190,12 @@ public class Common {
         database.addLog(log);
     }
 
+    public static void saveException(Context context, Exception e) {
+        saveMessage(context, ExceptionUtils.getStackTrace(e));
+        saveMessage(context, ExceptionUtils.getMessage(e));
+    }
+
+
     public static void displayMessage(Context context, String message, boolean makeToast) {
         saveMessage(context, message);
 
@@ -231,9 +229,9 @@ public class Common {
         List<CharSequence> newNotifications = new ArrayList<>();
         CharSequence cs = notifications.toString();
         while (true) {
-            if (cs.length() > MAX_NOTIFICATION_CHARSEQUENCE_LENGTH) {
-                CharSequence csOld = cs.subSequence(0, MAX_NOTIFICATION_CHARSEQUENCE_LENGTH);
-                cs = cs.subSequence(MAX_NOTIFICATION_CHARSEQUENCE_LENGTH, cs.length());
+            if (cs.length() > Constants.MAX_NOTIFICATION_CHARSEQUENCE_LENGTH) {
+                CharSequence csOld = cs.subSequence(0, Constants.MAX_NOTIFICATION_CHARSEQUENCE_LENGTH);
+                cs = cs.subSequence(Constants.MAX_NOTIFICATION_CHARSEQUENCE_LENGTH, cs.length());
                 newNotifications.add(csOld);
             } else {
                 newNotifications.add(cs);
@@ -267,7 +265,7 @@ public class Common {
     }
 
     public static boolean isProcessingInProgress(Context context) {
-        if (processingInProgress) {
+        if (Constants.processingInProgress) {
             Toast.makeText(context,
                     "Sorry, other background processing in progress. Please wait!", Toast.LENGTH_SHORT).show();
             return true;
@@ -287,12 +285,12 @@ public class Common {
     }
 
     public static void setTitleOfActivity(Activity currentActivity) {
-        if (Common.dbCurrentUser != null) {
+        if (Constants.dbCurrentUser != null) {
             CharSequence title = currentActivity.getTitle();
             if (title.toString().contains("(")) {
                 title = title.subSequence(0, title.toString().indexOf("(") - 1);
             }
-            title = title + " (" + Common.dbCurrentUser.getName() + ")";
+            title = title + " (" + Constants.dbCurrentUser.getName() + ")";
             currentActivity.setTitle(title);
         } else {
             CharSequence title = currentActivity.getTitle();
@@ -577,5 +575,31 @@ public class Common {
                 .build());
 
         return exercises;
+    }
+
+    public static File getBackupFile(String prefix, String postfix) {
+
+        File outputDir = getBackupFolder();
+        DateFormat dateFormat = new SimpleDateFormat(BACKUP_FILE_DATE_PATTERN);
+        Date date = new Date();
+        String fileName = prefix + "-" + dateFormat.format(date) + postfix;
+
+        return new File(outputDir, fileName);
+
+    }
+
+    public static File getBackupFolder() {
+        String backupFolder;
+        if (Constants.mOptionBackupLocalFolder == null || Constants.mOptionBackupLocalFolder.isEmpty()) {
+            backupFolder = Environment.getExternalStorageDirectory().toString();
+        } else {
+            backupFolder = Constants.mOptionBackupLocalFolder;
+        }
+
+        File outputDir = new File(backupFolder);
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        return outputDir;
     }
 }

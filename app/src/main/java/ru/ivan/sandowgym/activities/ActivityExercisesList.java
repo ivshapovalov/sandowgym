@@ -22,13 +22,14 @@ import java.util.Map;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class ActivityExercisesList extends ActivityAbstract {
 
@@ -52,7 +53,7 @@ public class ActivityExercisesList extends ActivityAbstract {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercises_list);
 
-        if (!Common.isDebug) {
+        if (!Constants.IS_DEBUG) {
             int mEditorID = getResources().getIdentifier("btExercisesDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
             hideEditorButton(btEditor);
@@ -86,9 +87,9 @@ public class ActivityExercisesList extends ActivityAbstract {
     }
 
     private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        mSettings = getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rowsNumber = mSettings.getInt(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
             rowsNumber = 17;
         }

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -55,7 +55,7 @@ public class ActivityUsersList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
 
-        if (!Common.isDebug) {
+        if (!Constants.IS_DEBUG) {
             int mEditorID = getResources().getIdentifier("btUsersDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
             hideEditorButton(btEditor);
@@ -85,9 +85,9 @@ public class ActivityUsersList extends AppCompatActivity {
     }
 
     private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        mSettings = getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rowsNumber = mSettings.getInt(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
             rowsNumber = 17;
         }

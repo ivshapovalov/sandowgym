@@ -13,7 +13,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.tasks.Digit;
+import ru.ivan.sandowgym.common.Digit;
 import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 

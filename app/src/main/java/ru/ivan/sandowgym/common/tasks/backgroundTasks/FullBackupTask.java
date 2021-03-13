@@ -1,48 +1,32 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import ru.ivan.sandowgym.activities.ActivityMain;
+import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 
-import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class FullBackupTask implements BackgroundTask {
     private Context context;
-    private SharedPreferences mSettings;
-    private String mDropboxAccessToken;
     private boolean doInBackground;
 
     public FullBackupTask(Context context, boolean doInBackground) {
         this.context = context;
         this.doInBackground = doInBackground;
-        getPreferencesFromFile();
+        Common.updatePreferences(context);
 
-    }
-
-    private void getPreferencesFromFile() {
-        mSettings = context.getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
-            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
-        } else {
-            mDropboxAccessToken = "";
-        }
     }
 
     @Override
@@ -52,15 +36,9 @@ public class FullBackupTask implements BackgroundTask {
         }
         displayMessage(context, "Full backup started", false);
         processingInProgress = true;
-        File outputDir = new File(BACKUP_FOLDER);
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        Date date = new Date();
-        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
+
+        File outputFile = Common.getBackupFile("sandow-gym", ".xlsx");
         //fileName = "sandow-gym-20210305-172135.xlsx";
-        File outputFile = new File(outputDir, fileName);
         //for tests
 //                File exportDir = new File(Environment.getExternalStorageDirectory(), "");
 //                outputFile = new File(exportDir, "trainings.xlsx");
@@ -70,10 +48,10 @@ public class FullBackupTask implements BackgroundTask {
             }
             ExportToFileTask exportToFileTask = new ExportToFileTask(context, outputFile, 0, 0);
 
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(context, mSettings, outputFile);
+            FtpUploadTask ftpUploadTask = new FtpUploadTask(context, outputFile);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
+            DbxClientV2 client = new DbxClientV2(config, Constants.mOptionBackupDropboxAccessToken);
             DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(context, outputFile, client);
 
             List<BackgroundTask> tasks = new ArrayList<>();
@@ -89,6 +67,7 @@ public class FullBackupTask implements BackgroundTask {
             }
         } catch (Exception e) {
             displayMessage(context, "Full backup failed", false);
+            Common.saveException(context, e);
             processingInProgress = false;
             return false;
         }

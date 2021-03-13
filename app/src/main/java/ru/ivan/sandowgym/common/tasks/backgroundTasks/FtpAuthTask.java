@@ -1,9 +1,6 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
 
@@ -11,12 +8,12 @@ import ru.ivan.sandowgym.common.Common;
 
 public class FtpAuthTask extends FtpTask implements BackgroundTask {
 
-    public FtpAuthTask(Context context, SharedPreferences settings, File file) {
-        super(context, settings, file);
+    public FtpAuthTask(Context context, File file) {
+        super(context, file);
     }
 
-    public FtpAuthTask(Context context, SharedPreferences settings) {
-        super(context, settings);
+    public FtpAuthTask(Context context) {
+        super(context);
     }
 
     @Override
@@ -26,7 +23,7 @@ public class FtpAuthTask extends FtpTask implements BackgroundTask {
                 return true;
             } else return false;
         } catch (Exception e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             return false;
         } finally {
             disconnect();

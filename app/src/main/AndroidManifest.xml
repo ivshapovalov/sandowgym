@@ -3,6 +3,7 @@
           package="ru.ivan.sandowgym">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -53,6 +54,7 @@
         <activity
             android:name=".activities.ActivityOptions"
             android:label="@string/options_name"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.ActivityTrainingOptions"

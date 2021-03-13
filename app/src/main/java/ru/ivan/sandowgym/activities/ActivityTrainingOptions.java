@@ -11,7 +11,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.tasks.Digit;
+import ru.ivan.sandowgym.common.Constants;
+import ru.ivan.sandowgym.common.Digit;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
@@ -65,12 +66,12 @@ public class ActivityTrainingOptions extends ActivityAbstract {
             }
         }
         SharedPreferences.Editor editor = mSettings.edit();
-        editor.putInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, mUseCalendarForWeight);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, mShowPicture);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, mShowAmountDefaultButton);
-        editor.putBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, mShowAmountLastDayButton);
+        editor.putInt(Constants.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, mPlusMinusButtonValue);
+        editor.putBoolean(Constants.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, mUseCalendarForWeight);
+        editor.putBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, mShowExplanation);
+        editor.putBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_PICTURE, mShowPicture);
+        editor.putBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, mShowAmountDefaultButton);
+        editor.putBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, mShowAmountLastDayButton);
         editor.apply();
     }
 
@@ -82,23 +83,23 @@ public class ActivityTrainingOptions extends ActivityAbstract {
     }
 
     private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+        mSettings = getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
-            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
+        if (mSettings.contains(Constants.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
+            mPlusMinusButtonValue = mSettings.getInt(Constants.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
         } else {
             mPlusMinusButtonValue = 10;
         }
 
-        mUseCalendarForWeight = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
+        mUseCalendarForWeight = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
 
-        mShowExplanation = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
+        mShowExplanation = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
 
-        mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
+        mShowPicture = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        mShowAmountDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
+        mShowAmountDefaultButton = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
 
-        mShowAmountLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
+        mShowAmountLastDayButton = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {

@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.dropbox.core.v2.DbxClientV2;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import ru.ivan.sandowgym.common.Common;
 
 public class DropboxAuthTask implements BackgroundTask {
@@ -23,7 +21,7 @@ public class DropboxAuthTask implements BackgroundTask {
             String displayName = client.users().getCurrentAccount().getName().getDisplayName();
             return true;
         } catch (Exception e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             e.printStackTrace();
             return false;
         }

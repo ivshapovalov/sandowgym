@@ -925,7 +925,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized List<Training> getAllTrainingsOfUser(int user_id) {
         openDatabase();
-        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id + " ORDER BY " + KEY_TRAINING_DAY + " DESC";
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAININGS + " WHERE " + KEY_TRAINING_ID_USER + "=" + user_id +
+                " ORDER BY " + KEY_TRAINING_DAY + " DESC, " + KEY_TRAINING_ID + " DESC";
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<Training> trainingsList = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
         if (cursor.moveToFirst()) {

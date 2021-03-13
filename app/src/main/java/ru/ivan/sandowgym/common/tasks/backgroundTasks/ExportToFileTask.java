@@ -2,8 +2,6 @@ package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
 import android.content.Context;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import java.io.File;
 
 import ru.ivan.sandowgym.common.Common;
@@ -27,9 +25,9 @@ public class ExportToFileTask implements BackgroundTask {
         return "Export to file task";
     }
 
-    public ExportToFileTask(Context context,File file, long mDateFrom, long mDateTo
+    public ExportToFileTask(Context context, File file, long mDateFrom, long mDateTo
     ) {
-        this.context=context;
+        this.context = context;
         this.file = file;
         this.mDateFrom = mDateFrom;
         this.mDateTo = mDateTo;
@@ -38,9 +36,9 @@ public class ExportToFileTask implements BackgroundTask {
     @Override
     public boolean execute() {
         try {
-            new FileExportImport(context,file,mDateFrom,mDateTo).exportToFile();
+            new FileExportImport(context, file, mDateFrom, mDateTo).exportToFile();
         } catch (Exception e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             e.printStackTrace();
             return false;
         }

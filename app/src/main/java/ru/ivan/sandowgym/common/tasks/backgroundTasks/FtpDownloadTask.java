@@ -1,33 +1,30 @@
 package ru.ivan.sandowgym.common.tasks.backgroundTasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
 
 import it.sauronsoftware.ftp4j.FTPClient;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 
 public class FtpDownloadTask extends FtpTask implements BackgroundTask {
 
-    public FtpDownloadTask(Context context, SharedPreferences settings, File file) {
-        super(context, settings, file);
+    public FtpDownloadTask(Context context, File file) {
+        super(context, file);
     }
 
     @Override
     public boolean execute() {
-        getPreferencesFromFile();
 
         ftpClient = new FTPClient();
         try {
-            ftpClient.connect(mFtpHost);
-            ftpClient.login(mFtpLogin, mFtpPassword);
+            ftpClient.connect(Constants.mOptionBackupFtpHost);
+            ftpClient.login(Constants.mOptionBackupFtpLogin, Constants.mOptionBackupFtpPassword);
             ftpClient.download(file.getName(), file);
             return true;
         } catch (Exception e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             e.printStackTrace();
             return false;
         } finally {

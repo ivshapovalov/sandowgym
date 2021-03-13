@@ -11,7 +11,7 @@ import java.util.List;
 import ru.ivan.sandowgym.database.entities.User;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public abstract class ActivityAbstract extends AppCompatActivity {
 

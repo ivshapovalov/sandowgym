@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Constants;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class ActivityFilesList extends AppCompatActivity {
 
@@ -67,9 +68,9 @@ public class ActivityFilesList extends AppCompatActivity {
     }
 
     private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
+        mSettings = getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
+            rowsNumber = mSettings.getInt(Constants.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
         } else {
             rowsNumber = 17;
         }

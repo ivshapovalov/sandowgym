@@ -2,10 +2,8 @@ package ru.ivan.sandowgym.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,19 +21,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import me.rosuh.filepicker.bean.FileItemBeanImpl;
 import me.rosuh.filepicker.config.AbstractFileFilter;
+import me.rosuh.filepicker.config.FilePickerConfig;
 import me.rosuh.filepicker.config.FilePickerManager;
 import me.rosuh.filepicker.filetype.DataBaseFileType;
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 import ru.ivan.sandowgym.common.filetypes.DataSheetsFileType;
 import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 import ru.ivan.sandowgym.common.tasks.DropboxListFilesTask;
@@ -50,22 +48,19 @@ import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpUploadTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
-import static ru.ivan.sandowgym.common.Common.BACKUP_FOLDER;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class ActivityFileExportImport extends ActivityAbstract {
 
     private static final String DB_FILETYPE = "db";
     private static final String EXCEL_FILETYPE = "xlsx";
 
-    private SharedPreferences mSettings;
-    private String mDropboxAccessToken;
     private long mDateFrom;
     private long mDateTo;
     private String importFile;
@@ -75,8 +70,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_export_import);
+        Common.updatePreferences(this);
         getIntentParams();
-        getPreferencesFromFile();
         updateScreen();
         setTitleOfActivity(this);
 
@@ -328,14 +323,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         displayMessage(ActivityFileExportImport.this, "Export to File started", false);
         processingInProgress = true;
 
-        File outputDir = new File(BACKUP_FOLDER);
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        Date date = new Date();
-        String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-        File outputFile = new File(outputDir, fileName);
+        File outputFile = Common.getBackupFile("sandow-gym", ".xlsx");
         try {
             if (outputFile.createNewFile()) {
             }
@@ -369,16 +357,12 @@ public class ActivityFileExportImport extends ActivityAbstract {
             }
             displayMessage(ActivityFileExportImport.this, "Export to FTP started", false);
             processingInProgress = true;
-            File outputDir = getCacheDir();
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            Date date = new Date();
-            String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-            File outputFile = new File(outputDir, fileName);
+            File outputFile = Common.getBackupFile("sandow-gym", ".xlsx");
 //            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
 //            outputFile = new File(exportDir, "trainings.xlsx");
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
 
-            FtpUploadTask ftpUploadTask = new FtpUploadTask(this.getApplicationContext(), mSettings, outputFile);
+            FtpUploadTask ftpUploadTask = new FtpUploadTask(this.getApplicationContext(), outputFile);
             List<BackgroundTask> tasks = new ArrayList<>();
             tasks.add(exportToFileTask);
             tasks.add(ftpUploadTask);
@@ -411,18 +395,14 @@ public class ActivityFileExportImport extends ActivityAbstract {
             }
             displayMessage(ActivityFileExportImport.this, "Export to Dropbox started", false);
             processingInProgress = true;
-            File outputDir = getCacheDir();
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            Date date = new Date();
-            String fileName = "sandow-gym-" + dateFormat.format(date) + ".xlsx";
-            File outputFile = new File(outputDir, fileName);
+            File outputFile = Common.getBackupFile("sandow-gym", ".xlsx");
             //for tests
 //            File exportDir = new File(Environment.getExternalStorageDirectory(), "");
 //            outputFile = new File(exportDir, "trainings.xlsx");
             ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, mDateFrom, mDateTo);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
+            DbxClientV2 client = new DbxClientV2(config, Constants.mOptionBackupDropboxAccessToken);
             DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(this.getApplicationContext(), outputFile, client);
 
             List<BackgroundTask> tasks = new ArrayList<>();
@@ -456,13 +436,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
             processingInProgress = true;
             File dbFile = getApplicationContext().getDatabasePath(SQLiteDatabaseManager.DATABASE_NAME);
             FileInputStream fis = new FileInputStream(dbFile);
-            File outputDir = new File(BACKUP_FOLDER);
-            if (!outputDir.exists()) {
-                outputDir.mkdirs();
-            }
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            File outputFile = new File(outputDir, SQLiteDatabaseManager.DATABASE_NAME + "-" + dateFormat.format(new Date()) + ".db");
+            File outputFile = Common.getBackupFile(SQLiteDatabaseManager.DATABASE_NAME, ".db");
 
             OutputStream output = new FileOutputStream(outputFile);
 
@@ -544,6 +519,8 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 .from(this).enableSingleChoice()
                 .setTheme(R.style.FilePickerThemeReply)
                 .showHiddenFiles(true)
+                .storageType("Download", FilePickerConfig.STORAGE_CUSTOM_ROOT_PATH)
+                .setCustomRootPath(Common.getBackupFolder().toString())
                 .registerFileType(Arrays.asList(new DataSheetsFileType()), true)
                 .forResult(FilePickerManager.REQUEST_CODE);
     }
@@ -589,7 +566,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             }
             processingInProgress = true;
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
+            DbxClientV2 client = new DbxClientV2(config, Constants.mOptionBackupDropboxAccessToken);
             DropboxListFilesTask dropboxListFilesTask = new DropboxListFilesTask(this.getApplicationContext(), client);
             AsyncTask<Void, Long, ArrayList<String>> metadatas = dropboxListFilesTask.execute();
             ArrayList<String> fileNames = metadatas.get();
@@ -610,7 +587,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
             File outputFile = new File(outputDir, fileName);
 
             DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
-            DbxClientV2 client = new DbxClientV2(config, mDropboxAccessToken);
+            DbxClientV2 client = new DbxClientV2(config, Constants.mOptionBackupDropboxAccessToken);
             DropboxDownloadTask dropboxDownloadTask = new DropboxDownloadTask(this.getApplicationContext(), outputFile, client);
             ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
 
@@ -648,7 +625,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
                 return;
             }
             processingInProgress = true;
-            FtpListFilesTask ftpListFilesTask = new FtpListFilesTask(this.getApplicationContext(), mSettings);
+            FtpListFilesTask ftpListFilesTask = new FtpListFilesTask(this.getApplicationContext());
             AsyncTask<Void, Long, ArrayList<String>> task = ftpListFilesTask.execute();
             ArrayList<String> fileNames = task.get();
 
@@ -667,7 +644,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
         try {
             File outputDir = getCacheDir();
             File outputFile = new File(outputDir, fileName);
-            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(this.getApplicationContext(), mSettings, outputFile);
+            FtpDownloadTask ftpDownloadTask = new FtpDownloadTask(this.getApplicationContext(), outputFile);
             ImportFromFileTask importFromFileTask = new ImportFromFileTask(this.getApplicationContext(), outputFile);
 
             List<BackgroundTask> tasks = new ArrayList<>();
@@ -686,14 +663,5 @@ public class ActivityFileExportImport extends ActivityAbstract {
         }
     }
 
-    private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN)) {
-            mDropboxAccessToken = mSettings.getString(ActivityMain.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN, "");
-        } else {
-            mDropboxAccessToken = "";
-        }
-    }
 }
 

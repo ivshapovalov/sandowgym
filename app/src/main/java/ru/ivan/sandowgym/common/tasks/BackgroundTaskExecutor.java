@@ -8,7 +8,7 @@ import java.util.List;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
 
 import static ru.ivan.sandowgym.common.Common.displayMessage;
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class BackgroundTaskExecutor extends AsyncTask<Void, Long, Boolean> {
 

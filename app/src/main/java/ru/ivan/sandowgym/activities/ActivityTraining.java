@@ -34,7 +34,8 @@ import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.tasks.Digit;
+import ru.ivan.sandowgym.common.Constants;
+import ru.ivan.sandowgym.common.Digit;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.entities.TrainingContent;
@@ -45,9 +46,9 @@ import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertDateToString;
 import static ru.ivan.sandowgym.common.Common.convertMillisToDate;
 import static ru.ivan.sandowgym.common.Common.convertStringToDate;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class ActivityTraining extends ActivityAbstract {
 
@@ -90,7 +91,6 @@ public class ActivityTraining extends ActivityAbstract {
 
         Intent intent = getIntent();
         mTrainingIsNew = intent.getBooleanExtra("isNew", false);
-
         long currentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
 
         boolean weightIsNeedToUpdate = false;
@@ -143,7 +143,10 @@ public class ActivityTraining extends ActivityAbstract {
 
             updateCurrentWeightOfTrainingContent();
         }
-
+        int selectedTrainingId = intent.getIntExtra("selectedTrainingId", 0);
+        if (selectedTrainingId != 0) {
+            fillTrainingContentBySelectedTraining(selectedTrainingId);
+        }
         showTrainingContentOnScreen();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -156,6 +159,7 @@ public class ActivityTraining extends ActivityAbstract {
 //            btOptions.setOnClickListener(viewClickListener);
 //        }
     }
+
 
 //    View.OnClickListener viewClickListener = new View.OnClickListener() {
 //        @Override
@@ -668,7 +672,7 @@ public class ActivityTraining extends ActivityAbstract {
     public void btClose_onClick(final View view) {
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
-        intent.putExtra("id", mCurrentTraining.getId());
+        intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -760,7 +764,7 @@ public class ActivityTraining extends ActivityAbstract {
                             mCurrentTraining.delete(database);
                             Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
                             if (!trainings.isEmpty()) {
-                                intent.putExtra("id", trainings.get(0).getId());
+                                intent.putExtra("currentTrainingId", trainings.get(0).getId());
                             }
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
@@ -1025,22 +1029,22 @@ public class ActivityTraining extends ActivityAbstract {
 
     private void getPreferencesFromFile() {
 
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
+        mSettings = getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
-            mPlusMinusButtonValue = mSettings.getInt(ActivityMain.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
+        if (mSettings.contains(Constants.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE)) {
+            mPlusMinusButtonValue = mSettings.getInt(Constants.APP_PREFERENCES_TRAINING_PLUS_MINUS_BUTTON_VALUE, 10);
         } else {
             mPlusMinusButtonValue = 10;
         }
 
-        mUseCalendarForWeight = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
-        mShowExplanation = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
+        mUseCalendarForWeight = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_USE_CALENDAR_FOR_WEIGHT, false);
+        mShowExplanation = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_EXPLANATION, false);
 
-        mShowPicture = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
+        mShowPicture = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_PICTURE) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_PICTURE, false);
 
-        mShowAmountDefaultButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
+        mShowAmountDefaultButton = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_DEFAULT_BUTTON, false);
 
-        mShowAmountLastDayButton = mSettings.contains(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(ActivityMain.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
+        mShowAmountLastDayButton = mSettings.contains(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON) && mSettings.getBoolean(Constants.APP_PREFERENCES_TRAINING_SHOW_AMOUNT_LAST_DAY_BUTTON, false);
     }
 
     private void setPreferencesOnScreen() {
@@ -1112,7 +1116,7 @@ public class ActivityTraining extends ActivityAbstract {
 
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), ActivityTrainingsList.class);
-        intent.putExtra("id", mCurrentTraining.getId());
+        intent.putExtra("currentTrainingId", mCurrentTraining.getId());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -1179,6 +1183,51 @@ public class ActivityTraining extends ActivityAbstract {
             showExercise();
             displayMessage(ActivityTraining.this, "You filled training amount by default exercise values", false);
         }
+    }
+
+    public void btFillTrainingBySelectedTraining_onClick(MenuItem item) {
+        getPropertiesFromScreen();
+        mCurrentTrainingContent.save(database);
+        mCurrentTraining.save(database);
+        Intent intent = new Intent(ActivityTraining.this, ActivityTrainingsList.class);
+        intent.putExtra("forSelect", true);
+        intent.putExtra("currentActivity", getClass().getName());
+        intent.putExtra("currentTrainingId", mCurrentTraining.getId());
+        intent.putExtra("currentExerciseIndex", mCurrentExerciseNumberInList);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    private void fillTrainingContentBySelectedTraining(int selectedTrainingId) {
+        Training mSelectedTraining = null;
+        if (mActiveExercises.size() != 0) {
+            Exercise mCurrentExerciseBefore = mCurrentExercise;
+            TrainingContent mCurrentTrainingContentBefore = mCurrentTrainingContent;
+            List<TrainingContent> mSelectedTrainingsContentList = new ArrayList<>();
+
+            if (dbCurrentUser != null) {
+                mSelectedTrainingsContentList = database.getAllTrainingContentOfTraining(selectedTrainingId);
+                mSelectedTraining = database.getTraining(selectedTrainingId);
+            }
+            for (TrainingContent mSelectedTrainingContent : mSelectedTrainingsContentList) {
+                mCurrentExercise = mSelectedTrainingContent.getExercise();
+                if (isTrainingContentNew()) {
+                    createNewTrainingContent();
+                }
+                mCurrentTrainingContent.setAmount(mSelectedTrainingContent.getAmount());
+                mCurrentTrainingContent.setWeight(mSelectedTrainingContent.getWeight());
+                mCurrentTrainingContent.setComment(mSelectedTrainingContent.getComment());
+                saveTraining();
+            }
+            mCurrentExercise = mCurrentExerciseBefore;
+            mCurrentTrainingContent = mCurrentTrainingContentBefore;
+            showExercise();
+        }
+        String message = "You filled training content by selected training: ";
+        if (mSelectedTraining != null) {
+            message += "№" + mSelectedTraining.getId() + " dated " + mSelectedTraining.getDayString();
+        }
+        displayMessage(ActivityTraining.this, message, false);
     }
 
     private class SwipeDetectorActivity extends AppCompatActivity implements View.OnTouchListener {

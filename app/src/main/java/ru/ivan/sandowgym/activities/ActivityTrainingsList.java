@@ -1,10 +1,8 @@
 package ru.ivan.sandowgym.activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -22,28 +20,28 @@ import java.util.List;
 import java.util.Map;
 
 import ru.ivan.sandowgym.R;
-import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
 import ru.ivan.sandowgym.database.entities.Training;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.convertMillisToString;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class ActivityTrainingsList extends ActivityAbstract {
     private final int maxVerticalButtonsCount = 15;
     private final int maxHorizontalButtonsCount = 2;
     private final int numberOfViews = 20000;
 
-    private SharedPreferences mSettings;
-    private int rowsNumber;
     private Map<Integer, List<Training>> pagedTrainings = new HashMap<>();
     private int currentPage = 1;
-    private int idIntentTraining;
-
-    private long mCurrentDateInMillis = 0;
+    private int mCurrentTrainingId;
+    private boolean mCallerForSelect;
+    private String mCallerActivity;
+    private int mCallerExerciseIndex;
+    private long mCallerDateInMillis = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,34 +49,34 @@ public class ActivityTrainingsList extends ActivityAbstract {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainings_list);
 
-        if (!Common.isDebug) {
+        if (!Constants.IS_DEBUG) {
             int mEditorID = getResources().getIdentifier("btTrainingsDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
             hideEditorButton(btEditor);
         }
 
         Intent intent = getIntent();
-        mCurrentDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
-        idIntentTraining = intent.getIntExtra("id", 0);
+        mCallerForSelect = intent.getBooleanExtra("forSelect", false);
+        mCallerActivity = intent.getStringExtra("currentActivity");
+        mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0);
+        mCallerDateInMillis = intent.getLongExtra("currentDateInMillis", 0);
+        mCurrentTrainingId = intent.getIntExtra("currentTrainingId", 0);
 
-        if (idIntentTraining == 0) {
-            if (mCurrentDateInMillis != 0) {
-                List<Training> trainings = database.getTrainingsByDates(mCurrentDateInMillis, mCurrentDateInMillis);
+        if (mCurrentTrainingId == 0) {
+            if (mCallerDateInMillis != 0) {
+                List<Training> trainings = database.getTrainingsByDates(mCallerDateInMillis, mCallerDateInMillis);
                 if (trainings.size() == 1) {
-                    idIntentTraining = trainings.get(0).getId();
+                    mCurrentTrainingId = trainings.get(0).getId();
                 }
             }
         }
-        getPreferencesFromFile();
         updateTrainings();
-        if (idIntentTraining != 0) {
-            TableRow mRow = findViewById(numberOfViews + idIntentTraining);
+        if (mCurrentTrainingId != 0) {
+            TableRow mRow = findViewById(numberOfViews + mCurrentTrainingId);
             if (mRow != null) {
-
                 int mScrID = getResources().getIdentifier("svTableTrainings", "id", getPackageName());
                 ScrollView mScrollView = findViewById(mScrID);
                 if (mScrollView != null) {
-
                     mScrollView.requestChildFocus(mRow, mRow);
                 }
             }
@@ -87,10 +85,10 @@ public class ActivityTrainingsList extends ActivityAbstract {
         int mDayID = getResources().getIdentifier("btDay", "id", getPackageName());
         Button btDay = findViewById(mDayID);
         if (btDay != null) {
-            if (mCurrentDateInMillis == 0) {
+            if (mCallerDateInMillis == 0) {
                 btDay.setText("");
             } else {
-                btDay.setText(convertMillisToString(mCurrentDateInMillis));
+                btDay.setText(convertMillisToString(mCallerDateInMillis));
             }
         }
 
@@ -112,13 +110,13 @@ public class ActivityTrainingsList extends ActivityAbstract {
         List<Training> pageContent = new ArrayList<>();
         int pageNumber = 1;
         for (int i = 0; i < trainings.size(); i++) {
-            if (idIntentTraining != 0) {
-                if (trainings.get(i).getId() == idIntentTraining) {
+            if (mCurrentTrainingId != 0) {
+                if (trainings.get(i).getId() == mCurrentTrainingId) {
                     currentPage = pageNumber;
                 }
             }
             pageContent.add(trainings.get(i));
-            if (pageContent.size() == rowsNumber) {
+            if (pageContent.size() == Constants.mOptionRowsOnPageInLists) {
                 pagedTrainings.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
@@ -129,15 +127,6 @@ public class ActivityTrainingsList extends ActivityAbstract {
         }
         if (pagedTrainings.size() == 0) {
             currentPage = 0;
-        }
-    }
-
-    private void getPreferencesFromFile() {
-        mSettings = getSharedPreferences(ActivityMain.APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS)) {
-            rowsNumber = mSettings.getInt(ActivityMain.APP_PREFERENCES_ROWS_ON_PAGE_IN_LISTS, 17);
-        } else {
-            rowsNumber = 17;
         }
     }
 
@@ -198,7 +187,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             long currentDay = page.get(num).getDay();
-            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis == currentDay) {
+            if (mCallerDateInMillis != 0 && mCallerDateInMillis == currentDay) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -211,7 +200,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
             txt.setHeight(mHeight);
             txt.setTextSize(mTextSize);
             txt.setBackgroundResource(R.drawable.bt_border);
-            if (mCurrentDateInMillis != 0 && mCurrentDateInMillis == currentDay) {
+            if (mCallerDateInMillis != 0 && mCallerDateInMillis == currentDay) {
                 txt.setTextColor(Color.RED);
             } else {
                 txt.setTextColor(getResources().getColor(R.color.text_color));
@@ -250,12 +239,26 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         blink(view, this);
         int id = view.getId() % numberOfViews;
-        Intent intent = new Intent(getApplicationContext(), ActivityTraining.class);
-        intent.putExtra("currentTrainingId", id);
+        Class<?> myClass = null;
+        Intent intent;
+        if (mCallerForSelect) {
+            try {
+                myClass = Class.forName(mCallerActivity);
+                //myClass = Class.forName(getPackageName() + ".activities." + mCallerActivity);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            intent = new Intent(ActivityTrainingsList.this, myClass);
+            intent.putExtra("currentTrainingId", mCurrentTrainingId);
+            intent.putExtra("selectedTrainingId", id);
+            intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
+        } else {
+            intent = new Intent(ActivityTrainingsList.this, ActivityTraining.class);
+            intent.putExtra("currentTrainingId", id);
+        }
         intent.putExtra("isNew", false);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
 
     private void txtTrainingCopy_onClick(final TableRow view) {
@@ -320,7 +323,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         blink(view, this);
         Intent intent = new Intent(ActivityTrainingsList.this, ActivityCalendarView.class);
-        intent.putExtra("currentDateInMillis", mCurrentDateInMillis);
+        intent.putExtra("currentDateInMillis", mCallerDateInMillis);
         intent.putExtra("currentActivity", getClass().getName());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -334,7 +337,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
         if (btDay != null) {
 
             btDay.setText("");
-            mCurrentDateInMillis = 0;
+            mCallerDateInMillis = 0;
             showTrainings();
         }
     }

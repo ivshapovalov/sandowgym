@@ -7,8 +7,6 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,7 +14,7 @@ import java.util.List;
 
 import ru.ivan.sandowgym.common.Common;
 
-import static ru.ivan.sandowgym.common.Common.processingInProgress;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String>> {
     private Context context;
@@ -26,11 +24,11 @@ public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String
         this.context = context;
         this.client = client;
     }
+
     @Override
     protected ArrayList<String> doInBackground(Void... params) {
-
         try {
-            List<Metadata> metadatas= client.files().listFolder("").getEntries();
+            List<Metadata> metadatas = client.files().listFolder("").getEntries();
             ArrayList<String> fileNames = new ArrayList<>();
             for (Metadata file : metadatas) {
                 fileNames.add(file.getName());
@@ -43,7 +41,7 @@ public class DropboxListFilesTask extends AsyncTask<Void, Long, ArrayList<String
             });
             return fileNames;
         } catch (DbxException e) {
-            Common.saveMessage(context, ExceptionUtils.getStackTrace(e));
+            Common.saveException(context, e);
             return null;
         }
     }

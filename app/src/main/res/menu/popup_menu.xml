@@ -4,6 +4,10 @@
         android:onClick="btFillTrainingByLast_onClick"
         android:title="By last" />
     <item
+        android:id="@+id/fillTrainingByChosenTraining"
+        android:onClick="btFillTrainingBySelectedTraining_onClick"
+        android:title="By selected" />
+    <item
         android:id="@+id/fillTrainingByDefault"
         android:onClick="btFillTrainingByDefault_onClick"
         android:title="By default" />

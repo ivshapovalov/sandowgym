@@ -21,8 +21,8 @@ import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.blink;
-import static ru.ivan.sandowgym.common.Common.dbCurrentUser;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
+import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
 public class ActivityUser extends AppCompatActivity {
 
