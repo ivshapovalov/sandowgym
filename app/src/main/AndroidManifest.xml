@@ -17,8 +17,8 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="51"
-        android:versionName="5.1">
+        android:versionCode="53"
+        android:versionName="5.3">
         <activity
             android:name=".activities.ActivityMain"
             android:screenOrientation="fullSensor">
@@ -104,6 +104,14 @@
         <activity
             android:name=".activities.ActivityLog"
             android:label="@string/log_name"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".activities.ActivityScheduledTasksList"
+            android:label="@string/scheduled_tasks_name"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".activities.ActivityScheduledTask"
+            android:label="@string/scheduled_task_name"
             android:screenOrientation="fullSensor" />
     </application>
 </manifest>

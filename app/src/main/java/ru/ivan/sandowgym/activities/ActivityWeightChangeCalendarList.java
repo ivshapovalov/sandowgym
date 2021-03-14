@@ -135,7 +135,7 @@ public class ActivityWeightChangeCalendarList extends ActivityAbstract {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage)+"/"+ pagedWeightChangeCalendar.size());
+            pageNumber.setText(currentPage + "/" + pagedWeightChangeCalendar.size());
         }
         ScrollView sv = findViewById(R.id.svTableWeightChangeCalendarList);
         try {

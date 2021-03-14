@@ -19,9 +19,7 @@ public class FtpAuthTask extends FtpTask implements BackgroundTask {
     @Override
     public boolean execute() {
         try {
-            if (connect()) {
-                return true;
-            } else return false;
+            return connect();
         } catch (Exception e) {
             Common.saveException(context, e);
             return false;

@@ -132,8 +132,7 @@ public class TrainingContent extends AbstractEntityMultiUser implements Saveble,
         }
 
         public TrainingContent build() {
-            TrainingContent trainingContent = new TrainingContent(this);
-            return trainingContent;
+            return new TrainingContent(this);
         }
     }
 }

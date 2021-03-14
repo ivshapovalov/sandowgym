@@ -23,7 +23,7 @@ import java.util.Map;
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.Constants;
-import ru.ivan.sandowgym.database.entities.Log;
+import ru.ivan.sandowgym.database.entities.ScheduledTask;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
@@ -32,7 +32,7 @@ import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
-public class ActivityLogsList extends ActivityAbstract {
+public class ActivityScheduledTasksList extends ActivityAbstract {
 
     private final int maxVerticalButtonCount = 17;
     private final int maxHorizontalButtonCount = 2;
@@ -40,9 +40,9 @@ public class ActivityLogsList extends ActivityAbstract {
 
     private SharedPreferences mSettings;
     private int rowsNumber;
-    private Map<Integer, List<Log>> pagedLogs = new HashMap<>();
+    private Map<Integer, List<ScheduledTask>> pagedScheduledTasks = new HashMap<>();
     private int currentPage = 1;
-    private int idIntentLog;
+    private int idIntentScheduledTask;
 
     private int mHeight = 0;
     private int mWidth = 0;
@@ -52,10 +52,10 @@ public class ActivityLogsList extends ActivityAbstract {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_logs_list);
+        setContentView(R.layout.activity_scheduled_tasks_list);
 
         if (!Constants.IS_DEBUG) {
-            int mEditorID = getResources().getIdentifier("btLogsDBEditor", "id", getPackageName());
+            int mEditorID = getResources().getIdentifier("btScheduledTasksDBEditor", "id", getPackageName());
             Button btEditor = findViewById(mEditorID);
             hideEditorButton(btEditor);
         }
@@ -63,24 +63,23 @@ public class ActivityLogsList extends ActivityAbstract {
         getPreferencesFromFile();
 
         Intent intent = getIntent();
-        idIntentLog = intent.getIntExtra("currentLogId", 0);
-        updateLogs();
+        idIntentScheduledTask = intent.getIntExtra("currentScheduledTaskId", 0);
+        updateScheduledTasks();
 
-        TableRow mRow = findViewById(numberOfViews + idIntentLog);
+        TableRow mRow = findViewById(numberOfViews + idIntentScheduledTask);
         if (mRow != null) {
-            int mScrID = getResources().getIdentifier("svTableLogs", "id", getPackageName());
+            int mScrID = getResources().getIdentifier("svTableScheduledTasks", "id", getPackageName());
             ScrollView mScrollView = findViewById(mScrID);
             if (mScrollView != null) {
                 mScrollView.requestChildFocus(mRow, mRow);
             }
         }
-
         setTitleOfActivity(this);
     }
 
-    private void updateLogs() {
-        pageLogs();
-        showLogs();
+    private void updateScheduledTasks() {
+        pageScheduledTasks();
+        showScheduledTasks();
     }
 
     private void getPreferencesFromFile() {
@@ -92,53 +91,42 @@ public class ActivityLogsList extends ActivityAbstract {
         }
     }
 
-    public void bt_LogsAdd_onClick(final View view) {
-
-        blink(view, this);
-        Intent intent = new Intent(getApplicationContext(), ActivityLog.class);
-        intent.putExtra("isNew", true);
-        startActivity(intent);
-
-    }
-
-    private void pageLogs() {
-        List<Log> logs = database.getAllLogs();
-        List<Log> pageContent = new ArrayList<>();
-        pagedLogs.clear();
+    private void pageScheduledTasks() {
+        List<ScheduledTask> tasks = database.getAllScheduledTasks();
+        List<ScheduledTask> pageContent = new ArrayList<>();
+        pagedScheduledTasks.clear();
         int pageNumber = 1;
-        for (int i = 0; i < logs.size(); i++) {
-            if (idIntentLog != 0) {
-                if (logs.get(i).getId() == idIntentLog) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (idIntentScheduledTask != 0) {
+                if (tasks.get(i).getId() == idIntentScheduledTask) {
                     currentPage = pageNumber;
                 }
             }
-            pageContent.add(logs.get(i));
+            pageContent.add(tasks.get(i));
             if (pageContent.size() == rowsNumber) {
-                pagedLogs.put(pageNumber, pageContent);
+                pagedScheduledTasks.put(pageNumber, pageContent);
                 pageContent = new ArrayList<>();
                 pageNumber++;
             }
         }
         if (pageContent.size() != 0) {
-            pagedLogs.put(pageNumber, pageContent);
+            pagedScheduledTasks.put(pageNumber, pageContent);
         }
-        if (pagedLogs.size() == 0) {
+        if (pagedScheduledTasks.size() == 0) {
             currentPage = 0;
         }
     }
 
-    private void showLogs() {
+    private void showScheduledTasks() {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(currentPage + "/" + pagedLogs.size());
+            pageNumber.setText(currentPage + "/" + pagedScheduledTasks.size());
         }
 
-        ScrollView sv = findViewById(R.id.svTableLogs);
+        ScrollView sv = findViewById(R.id.svTableScheduledTasks);
         try {
-
             sv.removeAllViews();
-
         } catch (NullPointerException e) {
         }
 
@@ -158,17 +146,17 @@ public class ActivityLogsList extends ActivityAbstract {
         layout.setStretchAllColumns(true);
         layout.setShrinkAllColumns(true);
 
-        List<Log> page = pagedLogs.get(currentPage);
+        List<ScheduledTask> page = pagedScheduledTasks.get(currentPage);
         if (page == null) return;
         int currentPageSize = page.size();
         for (int num = 0; num < currentPageSize; num++) {
-            Log log = page.get(num);
+            ScheduledTask task = page.get(num);
             TableRow mRow = new TableRow(this);
-            mRow.setId(numberOfViews + log.getId());
+            mRow.setId(numberOfViews + task.getId());
             mRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    rowLog_onClick((TableRow) v);
+                    rowScheduledTask_onClick((TableRow) v);
                 }
             });
             mRow.setMinimumHeight(mHeight);
@@ -177,7 +165,7 @@ public class ActivityLogsList extends ActivityAbstract {
             mRow.setLayoutParams(params);
 
             TextView txt = new TextView(this);
-            txt.setText(String.valueOf(log.getId()));
+            txt.setText(String.valueOf(task.getId()));
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
@@ -186,8 +174,8 @@ public class ActivityLogsList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            String datetime = Common.getDate(log.getDatetime());
-            txt.setText(datetime);
+            String datetimePlan = Common.getDate(task.getDatetimePlan());
+            txt.setText(datetimePlan);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
@@ -196,13 +184,33 @@ public class ActivityLogsList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            String text = log.getText();
-            txt.setText(text);
+            String datetimeFact = Common.getDate(task.getDatetimeFact());
+            txt.setText(datetimeFact);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);
             txt.setTextSize(mTextSize);
             txt.setTextColor(getResources().getColor(R.color.text_color));
-            txt.setLayoutParams(paramsTextViewWithSpanInList(16));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(4));
+            mRow.addView(txt);
+
+            txt = new TextView(this);
+            String status = task.getStatus().getName();
+            txt.setText(status);
+            txt.setBackgroundResource(R.drawable.bt_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setTextSize(mTextSize);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(4));
+            mRow.addView(txt);
+
+            txt = new TextView(this);
+            String performed = task.isPerformed() ? "true" : "false";
+            txt.setText(performed);
+            txt.setBackgroundResource(R.drawable.bt_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setTextSize(mTextSize);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(3));
             mRow.addView(txt);
 
             mRow.setBackgroundResource(R.drawable.bt_border);
@@ -212,31 +220,31 @@ public class ActivityLogsList extends ActivityAbstract {
         sv.addView(layout);
     }
 
-    private void rowLog_onClick(final TableRow view) {
+    private void rowScheduledTask_onClick(final TableRow view) {
 
         blink(view, this);
 
         int id = view.getId() % numberOfViews;
 
-        Intent intent = new Intent(getApplicationContext(), ActivityLog.class);
-        intent.putExtra("currentLogId", id);
+        Intent intent = new Intent(getApplicationContext(), ActivityScheduledTask.class);
+        intent.putExtra("currentScheduledTaskId", id);
         intent.putExtra("isNew", false);
         startActivity(intent);
 
     }
 
-    public void btDeleteAllLogs_onClick(final View view) {
+    public void btDeleteAllScheduledTasks_onClick(final View view) {
 
         blink(view, this);
 
         new AlertDialog.Builder(this)
-                .setMessage("Do you wish to delete all logs with content?")
+                .setMessage("Do you wish to delete all scheduled tasks?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (dbCurrentUser != null) {
-                            database.deleteAllLogs();
-                            updateLogs();
+                            database.deleteAllScheduledTasks();
+                            updateScheduledTasks();
                         }
                     }
                 }).setNegativeButton("No", null).show();
@@ -245,13 +253,11 @@ public class ActivityLogsList extends ActivityAbstract {
 
     public void bt_Edit_onClick(final View view) {
         blink(view, this);
-
         Intent intent = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
         startActivity(intent);
     }
 
     public void buttonHome_onClick(final View view) {
-
         blink(view, this);
         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -260,7 +266,6 @@ public class ActivityLogsList extends ActivityAbstract {
     }
 
     public void onBackPressed() {
-
         Intent intent = new Intent(getApplicationContext(), ActivityTools.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -269,10 +274,10 @@ public class ActivityLogsList extends ActivityAbstract {
 
     public void btNextPage_onClick(View view) {
         blink(view, this);
-        if (currentPage != pagedLogs.size()) {
+        if (currentPage != pagedScheduledTasks.size()) {
             currentPage++;
         }
-        showLogs();
+        showScheduledTasks();
     }
 
     public void btPreviousPage_onClick(View view) {
@@ -280,7 +285,7 @@ public class ActivityLogsList extends ActivityAbstract {
         if (currentPage > 1) {
             currentPage--;
         }
-        showLogs();
+        showScheduledTasks();
     }
 }
 

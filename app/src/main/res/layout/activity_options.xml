@@ -30,8 +30,8 @@
                 <Button
                     android:id="@+id/buttonCancel"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="50"
                     android:background="@android:drawable/spinner_dropdown_background"
                     android:onClick="buttonCancel_onClick"
@@ -42,8 +42,8 @@
                 <Button
                     android:id="@+id/buttonSave"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="50"
                     android:background="@android:drawable/spinner_dropdown_background"
                     android:onClick="buttonSave_onClick"
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="75"
                     android:ems="10"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine" />
             </TableRow>
 
             <TableRow
@@ -204,7 +204,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="75"
                     android:ems="10"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine" />
             </TableRow>
 
             <TableRow
@@ -231,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="65"
                     android:ems="10"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine" />
 
                 <ImageButton
                     android:id="@+id/ibFTPTestConnectionButton"
@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="65"
                     android:ems="10"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine" />
 
                 <ImageButton
                     android:id="@+id/ibDropboxTestConnectionButton"
@@ -360,7 +360,24 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </TableRow>
+            <!--            <TableRow-->
+            <!--                android:id="@+id/tableRow13"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="15dp"-->
+            <!--                android:background="@drawable/bt_border">-->
 
+            <!--                <Button-->
+            <!--                    android:id="@+id/btBackupScheduleTest"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:layout_marginTop="10dp"-->
+            <!--                    android:layout_weight="100"-->
+            <!--                    android:background="@android:drawable/spinner_dropdown_background"-->
+            <!--                    android:onClick="btBackupScheduleSaveTest_onClick"-->
+            <!--                    android:text="SAVE TEST"-->
+            <!--                    android:textColor="@color/text_color" />-->
+            <!--            </TableRow>-->
             <TableRow
                 android:id="@+id/tableRow11"
                 android:layout_width="match_parent"

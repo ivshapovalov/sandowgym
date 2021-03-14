@@ -37,7 +37,7 @@ public class ActivityTools extends ActivityAbstract {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         for (int i = 0; i <= maxVerticalButtonCount; i++) {
-            int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
+            int btID = getResources().getIdentifier("btMain" + i, "id", getPackageName());
             Button btName = findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
@@ -71,6 +71,17 @@ public class ActivityTools extends ActivityAbstract {
             startActivity(intent);
         }
     }
+
+
+    public void btScheduledTasks_onClick(View view) {
+        blink(view, this);
+        if (isUserDefined()) {
+            Intent intent = new Intent(ActivityTools.this, ActivityScheduledTasksList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
+
     public void btClearBD_onClick(final View view) {
 
         new AlertDialog.Builder(this)
@@ -102,4 +113,5 @@ public class ActivityTools extends ActivityAbstract {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
 }

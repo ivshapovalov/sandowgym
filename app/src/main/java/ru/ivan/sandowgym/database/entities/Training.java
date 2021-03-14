@@ -78,8 +78,7 @@ public class Training extends AbstractEntityMultiUser implements Saveble, Deleta
         }
 
         public Training build() {
-            Training training = new Training(this);
-            return training;
+            return new Training(this);
         }
     }
 }

@@ -93,8 +93,7 @@ public class User extends AbstractEntity implements Saveble, Deletable {
         }
 
         public User build() {
-            User user = new User(this);
-            return user;
+            return new User(this);
         }
     }
 }

@@ -93,8 +93,7 @@ public class Log extends AbstractEntity implements Saveble, Deletable {
         }
 
         public Log build() {
-            Log user = new Log(this);
-            return user;
+            return new Log(this);
         }
     }
 }

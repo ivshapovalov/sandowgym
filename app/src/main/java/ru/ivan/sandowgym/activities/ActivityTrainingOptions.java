@@ -129,8 +129,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                             mUseCalendarForWeight = true;
                             break;
                         case R.id.rbUseCalendarForWeightNo:
-                            mUseCalendarForWeight = false;
-                            break;
                         default:
                             mUseCalendarForWeight = false;
                             break;
@@ -158,8 +156,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                             mShowPicture = true;
                             break;
                         case R.id.rbShowPictureNo:
-                            mShowPicture = false;
-                            break;
                         default:
                             mShowPicture = false;
                             break;
@@ -187,8 +183,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                             mShowExplanation = true;
                             break;
                         case R.id.rbShowExplanationNo:
-                            mShowExplanation = false;
-                            break;
                         default:
                             mShowExplanation = false;
                             break;
@@ -217,8 +211,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                             mShowAmountDefaultButton = true;
                             break;
                         case R.id.rbShowAmountDefaultButtonNo:
-                            mShowAmountDefaultButton = false;
-                            break;
                         default:
                             mShowAmountDefaultButton = false;
                             break;
@@ -246,8 +238,6 @@ public class ActivityTrainingOptions extends ActivityAbstract {
                             mShowAmountLastDayButton = true;
                             break;
                         case R.id.rbShowAmountLastDayButtonNo:
-                            mShowAmountLastDayButton = false;
-                            break;
                         default:
                             mShowAmountLastDayButton = false;
                             break;

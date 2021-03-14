@@ -121,8 +121,7 @@ public class Exercise extends AbstractEntityMultiUser implements Saveble, Deleta
         }
 
         public Exercise build() {
-            Exercise exercise = new Exercise(this);
-            return exercise;
+            return new Exercise(this);
         }
     }
 

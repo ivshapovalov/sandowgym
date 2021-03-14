@@ -83,7 +83,6 @@ public class ActivityFileExportImport extends ActivityAbstract {
     @Override
     protected void onResume() {
         super.onResume();
-
         if (importType != null && importFile != null && !"".equals(importFile)) {
             importDataFromFile();
         }
@@ -92,7 +91,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
 
-        if (requestCode == FilePickerManager.INSTANCE.REQUEST_CODE) {
+        if (requestCode == FilePickerManager.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 List<String> files = FilePickerManager.INSTANCE.obtainData();
                 if (files != null && files.size() == 1) {
@@ -485,11 +484,7 @@ public class ActivityFileExportImport extends ActivityAbstract {
                     public ArrayList<FileItemBeanImpl> doFilter(@NotNull ArrayList<FileItemBeanImpl> arrayList) {
                         return new ArrayList<>(arrayList.stream()
                                 .filter(item -> {
-                                    if (item.isDir() || item.getFileType() instanceof DataBaseFileType) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
+                                    return item.isDir() || item.getFileType() instanceof DataBaseFileType;
                                 })
                                 .collect(Collectors.toList()));
                     }

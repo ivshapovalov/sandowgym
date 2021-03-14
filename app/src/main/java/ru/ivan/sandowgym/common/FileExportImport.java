@@ -134,7 +134,7 @@ public class FileExportImport {
                     mNewString
                             .append(mCurrentExercise.getName())
                             .append("(").append(SYMBOL_ID)
-                            .append(String.valueOf(mCurrentExercise.getId()))
+                            .append(mCurrentExercise.getId())
                             .append(SYMBOL_DEF_AMOUNT)
                             .append(mCurrentExercise.getAmountDefault())
                             .append(")")
@@ -479,7 +479,7 @@ public class FileExportImport {
                 if (indexSymbolBrackets != -1) {
                     amount = cellValue.substring(0, indexSymbolBrackets);
                 } else {
-                    amount = cellValue.substring(0);
+                    amount = cellValue;
                 }
 
                 String weight;

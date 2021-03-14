@@ -100,7 +100,7 @@ public class ActivityFilesList extends AppCompatActivity {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedFiles.size());
+            pageNumber.setText(currentPage + "/" + pagedFiles.size());
         }
 
         ScrollView sv = findViewById(R.id.svTableFiles);

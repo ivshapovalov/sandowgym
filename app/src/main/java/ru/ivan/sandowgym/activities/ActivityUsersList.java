@@ -134,7 +134,7 @@ public class ActivityUsersList extends AppCompatActivity {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedUsers.size());
+            pageNumber.setText(currentPage + "/" + pagedUsers.size());
         }
 
         ScrollView sv = findViewById(R.id.svTableUsers);
@@ -189,7 +189,7 @@ public class ActivityUsersList extends AppCompatActivity {
             mRow.addView(txt);
 
             txt = new TextView(this);
-            String name = String.valueOf(user.getName()) + ((user.isCurrentUser() == 1) ? " (CURRENT)" : "");
+            String name = user.getName() + ((user.isCurrentUser() == 1) ? " (CURRENT)" : "");
             txt.setText(name);
             txt.setBackgroundResource(R.drawable.bt_border);
             txt.setGravity(Gravity.CENTER);

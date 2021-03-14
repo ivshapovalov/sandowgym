@@ -249,8 +249,8 @@ public class ActivityTraining extends ActivityAbstract {
                     trainingContent.setWeight(mWeightInCalendar);
                     if (mCurrentTrainingContent != null) {
                         if (trainingContent.getId() == mCurrentTrainingContent.getId()) {
-                            trainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
-                            mCurrentTrainingContent.setWeight(mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar);
+                            trainingContent.setWeight(Math.max(mExerciseWeightLastDay, mWeightInCalendar));
+                            mCurrentTrainingContent.setWeight(Math.max(mExerciseWeightLastDay, mWeightInCalendar));
                         }
                     }
                     trainingContent.save(database);
@@ -497,7 +497,7 @@ public class ActivityTraining extends ActivityAbstract {
 
         int weight = 0;
         if (mUseCalendarForWeight) {
-            weight = mExerciseWeightLastDay > mWeightInCalendar ? mExerciseWeightLastDay : mWeightInCalendar;
+            weight = Math.max(mExerciseWeightLastDay, mWeightInCalendar);
         } else {
             weight = mExerciseWeightLastDay;
 
@@ -555,7 +555,7 @@ public class ActivityTraining extends ActivityAbstract {
         Button btDefaultAmount = findViewById(R.id.btAmountDefault);
         if (btDefaultAmount != null) {
             int mAmountDefault = mCurrentExercise.getAmountDefault();
-            btDefaultAmount.setText("DEFAULT VOL: " + String.valueOf(mAmountDefault == 0 ? "--" : mAmountDefault));
+            btDefaultAmount.setText("DEFAULT VOL: " + (mAmountDefault == 0 ? "--" : mAmountDefault));
         }
 
         Button btYesterdayAmount = findViewById(R.id.btAmountLastDay);
@@ -574,7 +574,7 @@ public class ActivityTraining extends ActivityAbstract {
                     mExerciseAmountLastDay = 0;
                 }
             }
-            btYesterdayAmount.setText("LAST VOL: " + String.valueOf("".equals(mExerciseAmountLastDay) ? "--" : mExerciseAmountLastDay));
+            btYesterdayAmount.setText("LAST VOL: " + ("".equals(mExerciseAmountLastDay) ? "--" : mExerciseAmountLastDay));
         }
 
         int mWeight = getResources().getIdentifier("btWeight", "id", getPackageName());
@@ -825,7 +825,7 @@ public class ActivityTraining extends ActivityAbstract {
                 digit = 0;
             }
             digit = digit + dx;
-            digit = digit < 0 ? 0 : digit;
+            digit = Math.max(digit, 0);
             bt.setText(String.valueOf(digit));
         }
     }
@@ -1052,25 +1052,25 @@ public class ActivityTraining extends ActivityAbstract {
         Button btAmountPlus = findViewById(R.id.btAmountPlus);
 
         if (btAmountPlus != null) {
-            btAmountPlus.setText(String.valueOf("+" + mPlusMinusButtonValue));
+            btAmountPlus.setText("+" + mPlusMinusButtonValue);
         }
 
         Button btAmountMinus = findViewById(R.id.btAmountMinus);
 
         if (btAmountMinus != null) {
-            btAmountMinus.setText(String.valueOf("-" + mPlusMinusButtonValue));
+            btAmountMinus.setText("-" + mPlusMinusButtonValue);
         }
 
         Button btWeightPlus = findViewById(R.id.btWeightPlus);
 
         if (btWeightPlus != null) {
-            btWeightPlus.setText(String.valueOf("+" + mPlusMinusButtonValue));
+            btWeightPlus.setText("+" + mPlusMinusButtonValue);
         }
 
         Button btWeightMinus = findViewById(R.id.btWeightMinus);
 
         if (btWeightMinus != null) {
-            btWeightMinus.setText(String.valueOf("-" + mPlusMinusButtonValue));
+            btWeightMinus.setText("-" + mPlusMinusButtonValue);
         }
 
         ImageView ivPicture = findViewById(R.id.ivPicture);
@@ -1122,7 +1122,7 @@ public class ActivityTraining extends ActivityAbstract {
     }
 
     public void btFill_onClick(View view) {
-        Button buttonFill = (Button) findViewById(R.id.buttonFill);
+        Button buttonFill = findViewById(R.id.buttonFill);
         PopupMenu popup = new PopupMenu(ActivityTraining.this, buttonFill);
         popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
         popup.show();

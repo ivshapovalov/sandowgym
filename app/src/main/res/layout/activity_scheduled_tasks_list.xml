@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".activities.ActivityLogsList">
+    tools:context=".activities.ActivityScheduledTasksList">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/btLogsDBEditor"
+                android:id="@+id/btScheduledTasksDBEditor"
                 android:onClick="bt_Edit_onClick"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_gravity="center_vertical"
@@ -50,14 +50,12 @@
                 android:layout_span="12"
                 android:text="CLEAR"
                 android:textColor="@color/text_color" />
-
-
         </TableRow>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/svTableLogs"
+            android:id="@+id/svTableScheduledTasks"
             android:layout_marginTop="20dp"
             android:layout_weight="100">
 
@@ -104,7 +102,5 @@
                 android:background="@drawable/bt_border"
                 android:textColor="@color/text_color" />
         </TableRow>
-
     </TableLayout>
-
 </RelativeLayout>

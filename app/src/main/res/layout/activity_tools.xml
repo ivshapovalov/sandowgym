@@ -82,6 +82,20 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:id="@+id/btMain8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="30"
+                    android:background="@drawable/bt_border"
+                    android:onClick="btScheduledTasks_onClick"
+                    android:text="@string/scheduled_tasks_name"
+                    android:textColor="@color/text_color" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="CLEAR DATABASE"

@@ -22,7 +22,6 @@ import com.dropbox.core.v2.DbxClientV2;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,7 +68,7 @@ public class ActivityOptions extends ActivityAbstract {
         Common.updatePreferences(this);
         readOptions();
 
-        ImageButton ibFTPTestConnectionButton = (ImageButton) findViewById(R.id.ibFTPTestConnectionButton);
+        ImageButton ibFTPTestConnectionButton = findViewById(R.id.ibFTPTestConnectionButton);
 
         ibFTPTestConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +77,7 @@ public class ActivityOptions extends ActivityAbstract {
             }
         });
 
-        ImageButton ibDropboxTestConnectionButton = (ImageButton) findViewById(R.id.ibDropboxTestConnectionButton);
+        ImageButton ibDropboxTestConnectionButton = findViewById(R.id.ibDropboxTestConnectionButton);
 
         ibDropboxTestConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +114,6 @@ public class ActivityOptions extends ActivityAbstract {
         mOptionActivityBackupScheduleDateTimeMinutes = Constants.mOptionBackupScheduleDateTimeMinutes;
     }
 
-
     private void saveOptions() {
         Constants.mOptionRowsOnPageInLists = mOptionActivityRowsOnPageInLists;
         Constants.mOptionBackupLocalFolder = mOptionActivityBackupLocalFolder;
@@ -142,13 +140,11 @@ public class ActivityOptions extends ActivityAbstract {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
-
-        if (requestCode == FilePickerManager.INSTANCE.REQUEST_CODE) {
+        if (requestCode == FilePickerManager.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 List<String> files = FilePickerManager.INSTANCE.obtainData();
                 if (files != null && files.size() == 1) {
-                    String fileName = files.get(0).trim();
-                    mOptionActivityNewBackupLocalFolder = fileName;
+                    mOptionActivityNewBackupLocalFolder = files.get(0).trim();
                 }
             }
         }
@@ -181,21 +177,17 @@ public class ActivityOptions extends ActivityAbstract {
 
             };
 
-    //Для показания минут настраиваем отображение 0 впереди чисел со значением меньше 10:
     private static String pad(int c) {
         if (c >= 10)
             return String.valueOf(c);
         else
-            return "0" + String.valueOf(c);
+            return "0" + c;
     }
 
-
     public void buttonSave_onClick(View view) {
-
         blink(view, this);
         savePreferences();
         this.finish();
-
     }
 
     private void savePreferences() {
@@ -258,21 +250,22 @@ public class ActivityOptions extends ActivityAbstract {
 
             }
         }
-
         saveOptions();
+        handleSchedule();
+    }
 
-        Scheduler.cancelAllWorks(this);
-
+    private void handleSchedule() {
         if (Constants.mOptionBackupScheduleEnabled) {
-            Scheduler.scheduleBackupTask(this);
+            Scheduler.cancelAllWorks(this);
+            Scheduler.scheduleNewDailyBackupTask(this);
+        } else {
+            Scheduler.cancelAllWorks(this);
         }
     }
 
     public void buttonCancel_onClick(final View view) {
-
         blink(view, this);
         this.finish();
-
     }
 
     private void setPreferencesOnScreen() {
@@ -344,8 +337,6 @@ public class ActivityOptions extends ActivityAbstract {
                             mOptionActivityBackupScheduleEnabled = true;
                             break;
                         case R.id.rbScheduledBackupNo:
-                            mOptionActivityBackupScheduleEnabled = false;
-                            break;
                         default:
                             mOptionActivityBackupScheduleEnabled = false;
                             break;
@@ -358,9 +349,13 @@ public class ActivityOptions extends ActivityAbstract {
 
     void changeBackupScheduleButtonsVisibility() {
         timeDisplay = findViewById(R.id.tvBackupScheduleTime);
-        timeDisplay.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
+        timeDisplay.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.GONE);
         Button btBackupsSchedule = findViewById(R.id.btBackupScheduleTimeShow);
-        btBackupsSchedule.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.INVISIBLE);
+        btBackupsSchedule.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.GONE);
+        if (!mOptionActivityBackupScheduleEnabled) {
+            mOptionActivityBackupScheduleDateTimeHour = 0;
+            mOptionActivityBackupScheduleDateTimeMinutes = 0;
+        }
     }
 
     public void ibFTPTestConnection_onClick(View view) {
@@ -406,24 +401,24 @@ public class ActivityOptions extends ActivityAbstract {
         }
     }
 
+    //TODO delete
     public void btBackupScheduleTimeShow_onClick(View view) {
         if (mOptionActivityBackupScheduleEnabled) {
-            try {
-                List<String> backups = Scheduler.getActiveWorks(this);
-                if (backups.size() > 0) {
-                    //            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
-                    String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
-                            backups.stream().map(Object::toString)
-                                    .collect(Collectors.joining(System.getProperty("line.separator")));
-                    // srt= "SCHEDULED BACKUPS: "+backups.toString().replaceAll("\\[|\\]|,",System.getProperty("line.separator"));
-                    displayMessage(this, srt, true);
-                } else {
-                    Scheduler.scheduleBackupTask(this);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            List<String> backups = Scheduler.getActiveWorks(this);
+            if (backups.size() > 0) {
+                //            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
+                String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
+                        backups.stream().map(Object::toString)
+                                .collect(Collectors.joining(System.getProperty("line.separator")));
+                // srt= "SCHEDULED BACKUPS: "+backups.toString().replaceAll("\\[|\\]|,",System.getProperty("line.separator"));
+                displayMessage(this, srt, true);
             }
+
         }
+    }
+
+    public void btBackupScheduleSaveTest_onClick(View view) {
+        //handleSchedule();
     }
 
     public void ibSelectBackupLocalFolder_onClick(View view) {
@@ -436,11 +431,7 @@ public class ActivityOptions extends ActivityAbstract {
                     public ArrayList<FileItemBeanImpl> doFilter(@NotNull ArrayList<FileItemBeanImpl> arrayList) {
                         return new ArrayList<>(arrayList.stream()
                                 .filter(item -> {
-                                    if (item.isDir()) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
+                                    return item.isDir();
                                 })
                                 .collect(Collectors.toList()));
                     }

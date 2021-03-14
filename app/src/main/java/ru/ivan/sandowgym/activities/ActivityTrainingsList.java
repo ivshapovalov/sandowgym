@@ -142,7 +142,7 @@ public class ActivityTrainingsList extends ActivityAbstract {
 
         Button pageNumber = findViewById(R.id.btPageNumber);
         if (pageNumber != null) {
-            pageNumber.setText(String.valueOf(currentPage) + "/" + pagedTrainings.size());
+            pageNumber.setText(currentPage + "/" + pagedTrainings.size());
         }
 
         ScrollView sv = findViewById(R.id.svTableTrainings);

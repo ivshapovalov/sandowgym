@@ -15,7 +15,6 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +23,6 @@ import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
-import ru.ivan.sandowgym.database.entities.Log;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
@@ -67,7 +65,7 @@ public class ActivityMain extends ActivityAbstract {
         DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
         int mHeight = displaymetrics.heightPixels / maxVerticalButtonCount;
         for (int i = 0; i <= maxVerticalButtonCount; i++) {
-            int btID = getResources().getIdentifier("btMain" + String.valueOf(i), "id", getPackageName());
+            int btID = getResources().getIdentifier("btMain" + i, "id", getPackageName());
             Button btName = findViewById(btID);
             if (btName != null) {
                 btName.setHeight(mHeight);
@@ -177,13 +175,20 @@ public class ActivityMain extends ActivityAbstract {
 
     public void btTest_onClick(View view) throws ParseException {
 
-        long time = Calendar.getInstance().getTimeInMillis();
-        database.addLog(new Log.Builder(database.getLogMaxNumber() + 1).addDatetime(time).addText("text1").build());
+//        long time = Calendar.getInstance().getTimeInMillis();
+//        database.addScheduledTask(new ScheduledTask.Builder(database.getScheduledTaskMaxNumber() + 1)
+//                .addDatetimePlan(time)
+//                .addDatetimeFact(time)
+//                .addStatus(ScheduledTask.Status.RUNNING)
+//                .setPerformed(true)
+//                .build());
+        Scheduler.scheduleNewBackupTask(this, 1);
+
 
     }
 
     public void btTestClear_onClick(View view) {
-        Scheduler.cancelAllWorks(this);
+        //Scheduler.cancelAllWorks(this);
 //        if (mBackupScheduleEnabled) {
 //            try {
 //                List<String> backups = Scheduler.activeWorkExists(this);
