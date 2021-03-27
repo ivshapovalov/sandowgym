@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import ru.ivan.sandowgym.common.Common
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask
 import ru.ivan.sandowgym.database.entities.ScheduledTask
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager
 import java.util.*
@@ -47,10 +48,10 @@ class BackupWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun doBackup(): Boolean {
         return try {
-//            val fullBackupTask = FullBackupTask(applicationContext, false)
-//            return fullBackupTask.execute()
-            Common.displayMessage(applicationContext, "TASK EXECUTED", false)
-            true
+            val fullBackupTask = FullBackupTask(applicationContext, false)
+            return fullBackupTask.execute()
+//            Common.displayMessage(applicationContext, "TASK EXECUTED", false)
+//            true
         } catch (e: Exception) {
             e.printStackTrace()
             false
