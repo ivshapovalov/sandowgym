@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.database.entities.ScheduledTask;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
+import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.saveException;
@@ -35,7 +36,8 @@ import static ru.ivan.sandowgym.common.Constants.mOptionBackupScheduleDateTimeMi
 
 public class Scheduler {
 
-    public static final String TAG_BACKUP = "backup";
+    public static final String TAG_BACKUP_DAILY = "backup_daily";
+    public static final String TAG_BACKUP_MANUAL = "backup_manual";
     public static final String TAG_BACKUP_ID = "backupId";
     public static final String TAG_BACKUP_AT = "backupAt";
 
@@ -43,8 +45,7 @@ public class Scheduler {
         List<String> backups = new ArrayList<>();
         WorkManager instance = WorkManager.getInstance(context);
         try {
-            outer:
-            for (WorkInfo workInfo : instance.getWorkInfosByTag(Scheduler.TAG_BACKUP).get()) {
+            for (WorkInfo workInfo : instance.getWorkInfosByTag(Scheduler.TAG_BACKUP_DAILY).get()) {
                 WorkInfo.State state = workInfo.getState();
                 if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
                     String time = "";
@@ -55,7 +56,26 @@ public class Scheduler {
                             Calendar workDateTime = stringToCalendar(time, "yyyy-MM-dd HH:mm:ss");
                             Calendar currentDateTime = Calendar.getInstance();
                             if (workDateTime.after(currentDateTime)) {
-                                backups.add(time + ":" + state.toString());
+                                backups.add(time + ":" + state.toString() + " DAILY");
+                            } else {
+                                //instance.getWorkInfosByTag(tag).cancel(false);
+                            }
+                        }
+                    }
+                }
+            }
+            for (WorkInfo workInfo : instance.getWorkInfosByTag(Scheduler.TAG_BACKUP_MANUAL).get()) {
+                WorkInfo.State state = workInfo.getState();
+                if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
+                    String time = "";
+                    for (String tag : workInfo.getTags()) {
+                        if (tag.startsWith(Scheduler.TAG_BACKUP_AT)) {
+                            time = tag.substring(tag.indexOf(":") + 1).trim();
+                            System.out.println(time);
+                            Calendar workDateTime = stringToCalendar(time, "yyyy-MM-dd HH:mm:ss");
+                            Calendar currentDateTime = Calendar.getInstance();
+                            if (workDateTime.after(currentDateTime)) {
+                                backups.add(time + ":" + state.toString() + " MANUAL");
                             } else {
                                 //instance.getWorkInfosByTag(tag).cancel(false);
                             }
@@ -75,7 +95,7 @@ public class Scheduler {
     public static Map<String, String> getActiveWorkByDatetime(Context context, String searchingDatetime) throws ParseException {
         Map<String, String> backups = new HashMap<>();
         WorkManager instance = WorkManager.getInstance(context);
-        ListenableFuture<List<WorkInfo>> statuses = instance.getWorkInfosByTag(Scheduler.TAG_BACKUP);
+        ListenableFuture<List<WorkInfo>> statuses = instance.getWorkInfosByTag(Scheduler.TAG_BACKUP_DAILY);
         try {
             List<WorkInfo> workInfoList = statuses.get();
             outer:
@@ -99,12 +119,51 @@ public class Scheduler {
         }
     }
 
-    public static void cancelAllWorks(Context context, boolean filter, int excludeId) {
+    public static void cancelOverdueTasks(Context context) {
         SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
         WorkManager workManager = WorkManager.getInstance(context);
 
-        ArrayList handlingStatuses = new ArrayList(Arrays.asList(ScheduledTask.Status.ENQUEUED));
-        List<ScheduledTask> scheduledTasksFromDb = database.getScheduledTasksByStatus(handlingStatuses);
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("status", new ArrayList(Arrays.asList(ScheduledTask.Status.ENQUEUED)));
+        List<ScheduledTask> allScheduledTasksFromDb = database.getScheduledTasksByParams(params);
+        allScheduledTasksFromDb
+                .forEach(handlingTask -> {
+                    String tag = TAG_BACKUP_ID + ":" + handlingTask.getId();
+                    Calendar backupTimePlan = Calendar.getInstance();
+                    backupTimePlan.setTimeInMillis(handlingTask.getDatetimePlan());
+                    Calendar currentTime = Calendar.getInstance();
+
+                    if (backupTimePlan.before(currentTime)) {
+                        workManager.cancelAllWorkByTag(tag);
+                        handlingTask.setStatus(ScheduledTask.Status.OVERDUE);
+                        database.updateScheduledTask(handlingTask);
+                    }
+                });
+    }
+
+    public static List<ScheduledTask> getActiveDailyWorks(Context context) {
+        SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("status", new ArrayList(Arrays.asList(ScheduledTask.Status.ENQUEUED)));
+        params.put("type", new ArrayList(Arrays.asList(ScheduledTask.Type.DAILY)));
+        List<ScheduledTask> allScheduledTasksFromDb = database.getScheduledTasksByParams(params);
+        List<ScheduledTask> actualScheduledTasks = new ArrayList<>();
+        allScheduledTasksFromDb
+                .forEach(handlingTask -> {
+                    Calendar backupTimePlan = Calendar.getInstance();
+                    backupTimePlan.setTimeInMillis(handlingTask.getDatetimePlan());
+                    Calendar currentTime = Calendar.getInstance();
+                    if (backupTimePlan.after(currentTime)) {
+                        actualScheduledTasks.add(handlingTask);
+                    }
+                });
+        return actualScheduledTasks;
+    }
+
+    public static void cancelAllWorks(Context context, Map<String, List<String>> params, boolean filter, int excludeId) {
+        SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
+        WorkManager workManager = WorkManager.getInstance(context);
+        List<ScheduledTask> scheduledTasksFromDb = database.getScheduledTasksByParams(params);
         scheduledTasksFromDb.stream()
                 .filter(handlingTask -> !filter || handlingTask.getId() != excludeId)
                 .forEach(handlingTask -> {
@@ -114,9 +173,10 @@ public class Scheduler {
                     handlingTask.setStatus(ScheduledTask.Status.CANCELLED);
                     database.updateScheduledTask(handlingTask);
                 });
-        workManager.cancelAllWorkByTag(Scheduler.TAG_BACKUP);
+        //TODO For what?
+        //workManager.cancelAllWorkByTag(Scheduler.TAG_BACKUP);
 
-        ListenableFuture<List<WorkInfo>> scheduledTasksFromScheduler = workManager.getWorkInfosByTag(Scheduler.TAG_BACKUP);
+        ListenableFuture<List<WorkInfo>> scheduledTasksFromScheduler = workManager.getWorkInfosByTag(Scheduler.TAG_BACKUP_DAILY);
         List<WorkInfo> workInfoList = null;
         try {
             workInfoList = scheduledTasksFromScheduler.get();
@@ -133,9 +193,13 @@ public class Scheduler {
                             }
                             boolean done = workManager.getWorkInfosByTag(tag).cancel(false);
                             if (done) {
-                                ScheduledTask task = database.getScheduledTask(taskId);
-                                task.setStatus(ScheduledTask.Status.CANCELLED);
-                                database.updateScheduledTask(task);
+                                try {
+                                    ScheduledTask task = database.getScheduledTask(taskId);
+                                    task.setStatus(ScheduledTask.Status.CANCELLED);
+                                    database.updateScheduledTask(task);
+                                } catch (TableDoesNotContainElementException e) {
+
+                                }
                             }
                             break;
                         }
@@ -148,8 +212,8 @@ public class Scheduler {
         }
     }
 
-    public static void cancelAllWorks(Context context) {
-        cancelAllWorks(context, false, 0);
+    public static void cancelAllWorks(Context context, Map<String, List<String>> params) {
+        cancelAllWorks(context, params, false, 0);
 //        SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
 //        WorkManager workManager = WorkManager.getInstance(context);
 //
@@ -200,9 +264,14 @@ public class Scheduler {
 
         String tag = TAG_BACKUP_ID + ":" + interruptedTaskId;
         //workManager.cancelAllWorkByTag(tag);
-        ScheduledTask cancelledTask = database.getScheduledTask(interruptedTaskId);
-        cancelledTask.setStatus(ScheduledTask.Status.CANCELLED);
-        database.updateScheduledTask(cancelledTask);
+        ScheduledTask cancelledTask;
+        try {
+            cancelledTask = database.getScheduledTask(interruptedTaskId);
+            cancelledTask.setStatus(ScheduledTask.Status.CANCELLED);
+            database.updateScheduledTask(cancelledTask);
+        } catch (TableDoesNotContainElementException e) {
+
+        }
 
         ListenableFuture<List<WorkInfo>> workInfosByTag = workManager.getWorkInfosByTag(tag);
         try {
@@ -211,9 +280,13 @@ public class Scheduler {
                 if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
                     Operation done = workManager.cancelWorkById(workInfo.getId());
                     if (done.getResult().isDone()) {
-                        cancelledTask = database.getScheduledTask(interruptedTaskId);
-                        cancelledTask.setStatus(ScheduledTask.Status.CANCELLED);
-                        database.updateScheduledTask(cancelledTask);
+                        try {
+                            cancelledTask = database.getScheduledTask(interruptedTaskId);
+                            cancelledTask.setStatus(ScheduledTask.Status.CANCELLED);
+                            database.updateScheduledTask(cancelledTask);
+                        } catch (TableDoesNotContainElementException e) {
+
+                        }
                     }
                 }
             }
@@ -247,16 +320,57 @@ public class Scheduler {
         int newTaskId = database.addScheduledTask(new ScheduledTask.Builder(database.getScheduledTaskMaxNumber() + 1)
                 .addDatetimePlan(backupTime.getTimeInMillis())
                 .addStatus(ScheduledTask.Status.ENQUEUED)
+                .addType(ScheduledTask.Type.DAILY)
                 .setPerformed(false)
                 .build());
 
-        String message = "Scheduler: next backup on " + Common.getDate(backupTime.getTimeInMillis());
+        String message = "Scheduler: next daily backup on " + Common.getDate(backupTime.getTimeInMillis());
         displayMessage(context, message, false);
         WorkRequest backupRequest =
                 new OneTimeWorkRequest.Builder(BackupWorker.class)
                         .setInitialDelay(millisDiff, TimeUnit.MILLISECONDS)
                         .setConstraints(constraints)
-                        .addTag(TAG_BACKUP)
+                        .addTag(TAG_BACKUP_DAILY)
+                        .addTag(TAG_BACKUP_ID + ":" + newTaskId)
+                        .addTag(TAG_BACKUP_AT + ":" + Common.getDateTime(backupTime.getTime()))
+                        .build();
+        WorkManager
+                .getInstance(context)
+                .enqueue(backupRequest);
+    }
+
+    public static void scheduleNewManualBackupTask(Context context, ScheduledTask task) {
+        SQLiteDatabaseManager database = SQLiteDatabaseManager.getInstance(context);
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .build();
+
+        Calendar currentTime = Calendar.getInstance();
+        Calendar backupTime = Calendar.getInstance();
+        backupTime.setTimeInMillis(task.getDatetimePlan());
+
+        if (backupTime.before(currentTime)) {
+            backupTime.add(Calendar.HOUR_OF_DAY, 24);
+        }
+        long millisDiff = backupTime.getTimeInMillis() - currentTime.getTimeInMillis();
+
+        int newTaskId = database.addScheduledTask(new ScheduledTask.Builder(database.getScheduledTaskMaxNumber() + 1)
+                .addDatetimePlan(backupTime.getTimeInMillis())
+                .addStatus(ScheduledTask.Status.ENQUEUED)
+                .addType(ScheduledTask.Type.MANUAL)
+                .setPerformed(false)
+                .build());
+
+        String message = "Scheduler: next manual backup on " + Common.getDate(backupTime.getTimeInMillis());
+        displayMessage(context, message, false);
+        WorkRequest backupRequest =
+                new OneTimeWorkRequest.Builder(BackupWorker.class)
+                        .setInitialDelay(millisDiff, TimeUnit.MILLISECONDS)
+                        .setConstraints(constraints)
+                        .addTag(TAG_BACKUP_MANUAL)
                         .addTag(TAG_BACKUP_ID + ":" + newTaskId)
                         .addTag(TAG_BACKUP_AT + ":" + Common.getDateTime(backupTime.getTime()))
                         .build();
@@ -290,6 +404,7 @@ public class Scheduler {
                 .addDatetimePlan(backupTime.getTimeInMillis())
                 //.addDatetimeFact(backupTime.getTimeInMillis())
                 .addStatus(ScheduledTask.Status.ENQUEUED)
+                .addType(ScheduledTask.Type.DAILY)
                 .setPerformed(false)
                 .build());
 
@@ -299,7 +414,7 @@ public class Scheduler {
                 new OneTimeWorkRequest.Builder(BackupWorker.class)
                         .setInitialDelay(millisDiff, TimeUnit.MILLISECONDS)
                         .setConstraints(constraints)
-                        .addTag(TAG_BACKUP)
+                        .addTag(TAG_BACKUP_DAILY)
                         .addTag(TAG_BACKUP_ID + ":" + newTaskId)
                         .addTag(TAG_BACKUP_AT + ":" + Common.getDateTime(backupTime.getTime()))
                         .build();

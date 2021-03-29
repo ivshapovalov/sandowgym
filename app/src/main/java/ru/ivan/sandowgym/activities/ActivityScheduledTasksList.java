@@ -19,18 +19,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
 import ru.ivan.sandowgym.common.Constants;
+import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.database.entities.ScheduledTask;
 import ru.ivan.sandowgym.database.manager.AndroidDatabaseManager;
 
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.hideEditorButton;
 import static ru.ivan.sandowgym.common.Common.paramsTextViewWithSpanInList;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
+import static ru.ivan.sandowgym.common.scheduler.Scheduler.cancelWork;
 
 public class ActivityScheduledTasksList extends ActivityAbstract {
 
@@ -47,6 +51,8 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
     private int mHeight = 0;
     private int mWidth = 0;
     private int mTextSize = 0;
+
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +210,16 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
             mRow.addView(txt);
 
             txt = new TextView(this);
+            String type = task.getType().getName();
+            txt.setText(type);
+            txt.setBackgroundResource(R.drawable.bt_border);
+            txt.setGravity(Gravity.CENTER);
+            txt.setTextSize(mTextSize);
+            txt.setTextColor(getResources().getColor(R.color.text_color));
+            txt.setLayoutParams(paramsTextViewWithSpanInList(4));
+            mRow.addView(txt);
+
+            txt = new TextView(this);
             String performed = task.isPerformed() ? "true" : "false";
             txt.setText(performed);
             txt.setBackgroundResource(R.drawable.bt_border);
@@ -234,15 +250,17 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
     }
 
     public void btDeleteAllScheduledTasks_onClick(final View view) {
-
         blink(view, this);
-
         new AlertDialog.Builder(this)
                 .setMessage("Do you wish to delete all scheduled tasks?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (dbCurrentUser != null) {
+                            List<ScheduledTask> allScheduledTasks = database.getAllScheduledTasks();
+                            allScheduledTasks.forEach(handlingTask -> {
+                                cancelWork(context, handlingTask.getId());
+                            });
                             database.deleteAllScheduledTasks();
                             updateScheduledTasks();
                         }
@@ -286,6 +304,26 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
             currentPage--;
         }
         showScheduledTasks();
+    }
+
+    public void bt_TaskAdd_onClick(View view) {
+        blink(view, this);
+        Intent intent = new Intent(getApplicationContext(), ActivityScheduledTask.class);
+        intent.putExtra("isNew", true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public void btShowWorks_onClick(View view) {
+        if (Constants.mOptionBackupScheduleEnabled) {
+            List<String> backups = Scheduler.getActiveWorks(this);
+            if (backups.size() > 0) {
+                String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
+                        backups.stream().map(Object::toString)
+                                .collect(Collectors.joining(System.getProperty("line.separator")));
+                displayMessage(this, srt, true);
+            }
+        }
     }
 }
 

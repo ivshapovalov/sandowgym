@@ -7,6 +7,7 @@ import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 public class ScheduledTask extends AbstractEntity implements Saveble, Deletable {
 
     private int id;
+    private Type type;
     private long datetimePlan;
     private long datetimeFact;
     private boolean performed;
@@ -18,6 +19,7 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
         this.datetimeFact = builder.datetimeFact;
         this.performed = builder.performed;
         this.status = builder.status;
+        this.type = builder.type;
     }
 
     public int getId() {
@@ -60,6 +62,14 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
         this.status = status;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     @Override
     public void save(SQLiteDatabaseManager db) {
         if (db.containsScheduledTask(this.getId())) {
@@ -97,6 +107,7 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
         private long datetimeFact;
         private boolean performed;
         private Status status;
+        private Type type;
 
         public Builder(int id) {
             this.id = id;
@@ -122,6 +133,11 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
             return this;
         }
 
+        public Builder addType(Type type) {
+            this.type = type;
+            return this;
+        }
+
         public ScheduledTask build() {
             return new ScheduledTask(this);
         }
@@ -132,11 +148,27 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
         RUNNING("RUNNING"),
         ENQUEUED("ENQUEUED"),
         FAILED("FAILED"),
-        CANCELLED("CANCELLED");
+        CANCELLED("CANCELLED"),
+        OVERDUE("OVERDUE");
 
         private final String name;
 
         Status(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum Type {
+        MANUAL("MANUAL"),
+        DAILY("DAILY");
+
+        private final String name;
+
+        Type(String name) {
             this.name = name;
         }
 

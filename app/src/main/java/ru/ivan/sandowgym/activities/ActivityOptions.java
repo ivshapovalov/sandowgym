@@ -23,7 +23,10 @@ import com.dropbox.core.v2.DbxClientV2;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import me.rosuh.filepicker.bean.FileItemBeanImpl;
@@ -37,6 +40,7 @@ import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxAuthTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FtpAuthTask;
+import ru.ivan.sandowgym.database.entities.ScheduledTask;
 
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.displayMessage;
@@ -255,11 +259,12 @@ public class ActivityOptions extends ActivityAbstract {
     }
 
     private void handleSchedule() {
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("status", new ArrayList(Arrays.asList(ScheduledTask.Status.ENQUEUED)));
+        params.put("type", new ArrayList(Arrays.asList(ScheduledTask.Type.DAILY)));
+        Scheduler.cancelAllWorks(this, params);
         if (Constants.mOptionBackupScheduleEnabled) {
-            Scheduler.cancelAllWorks(this);
             Scheduler.scheduleNewDailyBackupTask(this);
-        } else {
-            Scheduler.cancelAllWorks(this);
         }
     }
 

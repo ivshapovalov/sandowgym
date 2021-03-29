@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Log;
@@ -25,7 +26,7 @@ import ru.ivan.sandowgym.database.entities.WeightChangeCalendar;
 
 public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "sandowgym";
 
     private static final String TABLE_USERS = "users";
@@ -80,6 +81,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     private static final String KEY_SCHEDULED_TASK_DATETIME_FACT = "scheduled_task_datetime_fact";
     private static final String KEY_SCHEDULED_TASK_PERFORMED = "scheduled_task_performed";
     private static final String KEY_SCHEDULED_TASK_STATUS = "scheduled_task_status";
+    private static final String KEY_SCHEDULED_TASK_TYPE = "scheduled_task_type";
 
     private static SQLiteDatabaseManager instance;
     private SQLiteDatabase mDatabase;
@@ -132,7 +134,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
 
     public synchronized void closeDatabase() {
         mOpenCounter--;
-        if (mOpenCounter == 0) {
+        if (mOpenCounter <= 0) {
             // Closing database
             mDatabase.close();
         }
@@ -256,7 +258,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         String CREATE_SCHEDULED_TASKS_TABLE = "CREATE TABLE " + TABLE_SCHEDULED_TASKS + "("
                 + KEY_SCHEDULED_TASK_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
                 + KEY_SCHEDULED_TASK_DATETIME_PLAN + " TIMESTAMP , " + KEY_SCHEDULED_TASK_DATETIME_FACT + " TIMESTAMP, "
-                + KEY_SCHEDULED_TASK_PERFORMED + " INTEGER," + KEY_SCHEDULED_TASK_STATUS + " TEXT )";
+                + KEY_SCHEDULED_TASK_PERFORMED + " INTEGER," + KEY_SCHEDULED_TASK_STATUS + " TEXT ,"
+                + KEY_SCHEDULED_TASK_TYPE + " TEXT )";
         db.execSQL(CREATE_SCHEDULED_TASKS_TABLE);
 
         String CREATE_SCHEDULED_TASKS_INDEX_DATETIME_PLAN_ASC = "CREATE INDEX SCHEDULED_TASKS_DATETIME_PLAN_IDX_ASC ON " + TABLE_SCHEDULED_TASKS + " (" + KEY_SCHEDULED_TASK_DATETIME_PLAN + " ASC)";
@@ -280,7 +283,8 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
             String CREATE_SCHEDULED_TASKS_TABLE = "CREATE TABLE " + TABLE_SCHEDULED_TASKS + "("
                     + KEY_SCHEDULED_TASK_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT  NOT NULL,"
                     + KEY_SCHEDULED_TASK_DATETIME_PLAN + " TIMESTAMP , " + KEY_SCHEDULED_TASK_DATETIME_FACT + " TIMESTAMP, "
-                    + KEY_SCHEDULED_TASK_PERFORMED + " INTEGER," + KEY_SCHEDULED_TASK_STATUS + " TEXT )";
+                    + KEY_SCHEDULED_TASK_PERFORMED + " INTEGER," + KEY_SCHEDULED_TASK_STATUS + " TEXT ,"
+                    + KEY_SCHEDULED_TASK_TYPE + " TEXT )";
             db.execSQL(CREATE_SCHEDULED_TASKS_TABLE);
 
             String CREATE_SCHEDULED_TASKS_INDEX_DATETIME_PLAN_ASC = "CREATE INDEX SCHEDULED_TASKS_DATETIME_PLAN_IDX_ASC ON " + TABLE_SCHEDULED_TASKS + " (" + KEY_SCHEDULED_TASK_DATETIME_PLAN + " ASC)";
@@ -393,6 +397,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_SCHEDULED_TASK_DATETIME_FACT, task.getDatetimeFact());
         values.put(KEY_SCHEDULED_TASK_PERFORMED, task.isPerformed());
         values.put(KEY_SCHEDULED_TASK_STATUS, task.getStatus().getName());
+        values.put(KEY_SCHEDULED_TASK_TYPE, task.getType().getName());
         long id = mDatabase.insert(TABLE_SCHEDULED_TASKS, null, values);
         closeDatabase();
         return (int) id;
@@ -646,13 +651,13 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         openDatabase();
         try {
             Cursor cursor = mDatabase.query(TABLE_SCHEDULED_TASKS, new String[]{KEY_SCHEDULED_TASK_ID, KEY_SCHEDULED_TASK_DATETIME_PLAN,
-                            KEY_SCHEDULED_TASK_DATETIME_FACT, KEY_SCHEDULED_TASK_PERFORMED, KEY_SCHEDULED_TASK_STATUS}, KEY_SCHEDULED_TASK_ID + "=?",
+                            KEY_SCHEDULED_TASK_DATETIME_FACT, KEY_SCHEDULED_TASK_PERFORMED, KEY_SCHEDULED_TASK_STATUS, KEY_SCHEDULED_TASK_TYPE},
+                    KEY_SCHEDULED_TASK_ID + "=?",
                     new String[]{String.valueOf(id)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
             if (cursor.getCount() == 0) {
                 cursor.close();
-                closeDatabase();
                 throw new TableDoesNotContainElementException("There is no SCHEDULED TASK with id - " + id);
             } else {
                 ScheduledTask task = new ScheduledTask
@@ -661,6 +666,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .addDatetimeFact(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_DATETIME_FACT)))
                         .setPerformed(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULED_TASK_PERFORMED)) != 0)
                         .addStatus(ScheduledTask.Status.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_STATUS))))
+                        .addType(ScheduledTask.Type.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_TYPE))))
                         .build();
                 cursor.close();
                 return task;
@@ -857,6 +863,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .addDatetimeFact(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_DATETIME_FACT)))
                         .setPerformed(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_PERFORMED)) != 0)
                         .addStatus(ScheduledTask.Status.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_STATUS))))
+                        .addType(ScheduledTask.Type.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_TYPE))))
                         .build();
                 tasks.add(task);
             } while (cursor.moveToNext());
@@ -866,10 +873,48 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         return tasks;
     }
 
-    public synchronized List<ScheduledTask> getScheduledTasksByStatus(List<String> statuses) {
+//    public synchronized List<ScheduledTask> getScheduledTasksByStatus(List<String> statuses) {
+//        openDatabase();
+//        String selectQuery = "SELECT  * FROM " + TABLE_SCHEDULED_TASKS
+//                + " WHERE " + KEY_SCHEDULED_TASK_STATUS + " IN (\"" + StringUtils.join(statuses, "\",\"") + "\") "
+//                + " ORDER BY " + KEY_SCHEDULED_TASK_DATETIME_PLAN + " DESC";
+//        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
+//        List<ScheduledTask> tasks = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
+//        if (cursor.moveToFirst()) {
+//            do {
+//                ScheduledTask task = new ScheduledTask.Builder(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULED_TASK_ID)))
+//                        .addDatetimePlan(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_DATETIME_PLAN)))
+//                        .addDatetimeFact(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_DATETIME_FACT)))
+//                        .setPerformed(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_PERFORMED)) != 0)
+//                        .addStatus(ScheduledTask.Status.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_STATUS))))
+//                        .build();
+//                tasks.add(task);
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        closeDatabase();
+//        return tasks;
+//    }
+
+    public synchronized List<ScheduledTask> getScheduledTasksByParams(Map<String, List<String>> params) {
         openDatabase();
+
+        String conditions = "";
+        for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+            switch (entry.getKey()) {
+                case "type":
+                    conditions += KEY_SCHEDULED_TASK_TYPE;
+                    break;
+                case "status":
+                    conditions += KEY_SCHEDULED_TASK_STATUS;
+                    break;
+            }
+            conditions += " IN (\"" + StringUtils.join(entry.getValue(), "\",\"") + "\")  AND ";
+
+        }
+        String whereClause = conditions.isEmpty() ? "" : (" WHERE " + conditions.substring(0, conditions.length() - 4));
         String selectQuery = "SELECT  * FROM " + TABLE_SCHEDULED_TASKS
-                + " WHERE " + KEY_SCHEDULED_TASK_STATUS + " IN (\"" + StringUtils.join(statuses, "\",\"") + "\") "
+                + whereClause
                 + " ORDER BY " + KEY_SCHEDULED_TASK_DATETIME_PLAN + " DESC";
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         List<ScheduledTask> tasks = new ArrayList<>(cursor.moveToFirst() ? cursor.getCount() : 0);
@@ -880,6 +925,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
                         .addDatetimeFact(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_DATETIME_FACT)))
                         .setPerformed(cursor.getLong(cursor.getColumnIndex(KEY_SCHEDULED_TASK_PERFORMED)) != 0)
                         .addStatus(ScheduledTask.Status.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_STATUS))))
+                        .addType(ScheduledTask.Type.valueOf(cursor.getString(cursor.getColumnIndex(KEY_SCHEDULED_TASK_TYPE))))
                         .build();
                 tasks.add(task);
             } while (cursor.moveToNext());
@@ -1384,7 +1430,6 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     public synchronized int getEntityMaxNumber(String tableName, String keyColumn) {
         openDatabase();
         String countQuery = "SELECT  MAX(" + keyColumn + ") FROM " + tableName + "";
-        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = mDatabase.rawQuery(countQuery, null);
 
         cursor.moveToFirst();
@@ -1509,6 +1554,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
         values.put(KEY_SCHEDULED_TASK_DATETIME_FACT, task.getDatetimeFact());
         values.put(KEY_SCHEDULED_TASK_PERFORMED, task.isPerformed());
         values.put(KEY_SCHEDULED_TASK_STATUS, task.getStatus().getName());
+        values.put(KEY_SCHEDULED_TASK_TYPE, task.getType().getName());
         int rows = mDatabase.update(TABLE_SCHEDULED_TASKS, values, KEY_SCHEDULED_TASK_ID + " = ?",
                 new String[]{String.valueOf(task.getId())});
         closeDatabase();

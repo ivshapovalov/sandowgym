@@ -22,6 +22,7 @@ public class ActivityCalendarView extends AppCompatActivity {
     private long mOldDateFromInMillis;
     private long mNewDateInMillis;
     private long mOldDateToInMillis;
+    private boolean mIsTimeRemains;
 
     private boolean mCallerIsNew;
     private int mCallerTrainingID;
@@ -48,6 +49,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
         mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex",0);
         mCallerWeightChangeCalendarID=intent.getIntExtra("currentWeightChangeCalendarId",0);
+        mIsTimeRemains = intent.getBooleanExtra("isTimeRemains", false);
 
         try {
             mOldDateFromInMillis = intent.getLongExtra("currentDateInMillis",0);
@@ -94,10 +96,16 @@ public class ActivityCalendarView extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year,
                                             int month, int dayOfMonth) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.clear(Calendar.MILLISECOND);
-                calendar.set(year,month,dayOfMonth,0,0,0);
-                mNewDateInMillis =calendar.getTimeInMillis();
+                Calendar newCalendar = Calendar.getInstance();
+                newCalendar.clear(Calendar.MILLISECOND);
+                if (mIsTimeRemains) {
+                    Calendar oldCalendar = Calendar.getInstance();
+                    oldCalendar.setTimeInMillis(mNewDateInMillis);
+                    newCalendar.set(year, month, dayOfMonth, oldCalendar.get(Calendar.HOUR_OF_DAY), oldCalendar.get(Calendar.MINUTE), 0);
+                } else {
+                    newCalendar.set(year, month, dayOfMonth, 0, 0, 0);
+                }
+                mNewDateInMillis = newCalendar.getTimeInMillis();
 
             }
         });

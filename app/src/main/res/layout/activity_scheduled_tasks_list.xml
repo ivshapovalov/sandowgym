@@ -18,37 +18,61 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/buttonHome"
+                android:layout_weight="20"
                 android:onClick="buttonHome_onClick"
-                android:layout_span="12"
                 android:background="@drawable/bt_border"
                 android:text="HOME"
                 android:textColor="@color/text_color" />
 
             <Button
-                android:layout_width="match_parent"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="ADD"
+                android:layout_weight="20"
+                android:id="@+id/btTaskAdd"
+                android:onClick="bt_TaskAdd_onClick"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bt_border"
+                android:textColor="@color/text_color" />
+
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/btScheduledTasksDBEditor"
                 android:onClick="bt_Edit_onClick"
+                android:layout_weight="20"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bt_border"
-                android:layout_span="12"
                 android:text="EDITOR"
                 android:textColor="@color/text_color" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="20"
                 android:id="@+id/btTrainingsClear"
                 android:background="@drawable/bt_border"
                 android:onClick="btDeleteAllScheduledTasks_onClick"
                 android:layout_gravity="center_vertical"
-                android:layout_span="12"
                 android:text="CLEAR"
+                android:textColor="@color/text_color" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:id="@+id/btWorksShow"
+                android:background="@drawable/bt_border"
+                android:onClick="btShowWorks_onClick"
+                android:layout_gravity="center_vertical"
+                android:text="SHOW WORKS"
                 android:textColor="@color/text_color" />
         </TableRow>
 
