@@ -20,11 +20,11 @@ import java.util.List;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
-import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
 
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.checkOverdueBackups;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
 
@@ -42,6 +42,7 @@ public class ActivityMain extends ActivityAbstract {
         Common.updatePreferences(this);
         setTitleOfActivity(this);
         setPermissions();
+        checkOverdueBackups(this);
     }
 
     private void setPermissions() {
@@ -182,9 +183,8 @@ public class ActivityMain extends ActivityAbstract {
 //                .addStatus(ScheduledTask.Status.RUNNING)
 //                .setPerformed(true)
 //                .build());
-        Scheduler.scheduleNewBackupTask(this, 1);
-
-
+        //Scheduler.scheduleNewBackupTask(this, 1);
+        //checkOverdueBackups(this);
     }
 
     public void btTestClear_onClick(View view) {

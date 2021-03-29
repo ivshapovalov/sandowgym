@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.ivan.sandowgym.R;
+import ru.ivan.sandowgym.common.scheduler.Scheduler;
 import ru.ivan.sandowgym.database.entities.Exercise;
 import ru.ivan.sandowgym.database.entities.Log;
+import ru.ivan.sandowgym.database.entities.ScheduledTask;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -45,6 +47,14 @@ import static ru.ivan.sandowgym.common.Constants.BACKUP_FILE_DATE_PATTERN;
 public class Common {
 
     public static SharedPreferences mSettings;
+
+    public static void checkOverdueBackups(Context context) {
+        Scheduler.cancelOverdueTasks(context);
+        List<ScheduledTask> actualDailyScheduledTasks = Scheduler.getActiveDailyWorks(context);
+        if (Constants.mOptionBackupScheduleEnabled && actualDailyScheduledTasks.size() == 0) {
+            Scheduler.scheduleNewDailyBackupTask(context);
+        }
+    }
 
     public static Date convertStringToDate(final String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_STRING);
@@ -58,15 +68,19 @@ public class Common {
         return d;
     }
 
-    public static String getDate(long milliSeconds) {
+    public static String getDate(long milliSeconds, String pattern) {
         // Create a DateFormatter object for displaying date in specified format.
         if (milliSeconds == 0) return "";
-        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATETIME_FORMAT_STRING/*"yyyy/MM/dd HH:mm:ss"*/);
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern/*"yyyy/MM/dd HH:mm:ss"*/);
 
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
+    }
+
+    public static String getDate(long milliSeconds) {
+        return getDate(milliSeconds, Constants.DATETIME_FORMAT_STRING);
     }
 
     public static String getDateTime(Date date) {

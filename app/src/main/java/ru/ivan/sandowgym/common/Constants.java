@@ -6,6 +6,7 @@ public class Constants {
     public static final String BACKUP_FILE_DATE_PATTERN = "yyyyMMdd-HHmmss";
     public static final int MAX_NOTIFICATION_CHARSEQUENCE_LENGTH = 5 * 1024;
     public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
+    public static final String TIME_FORMAT_STRING = "HH:mm";
     public static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final boolean IS_DEBUG = true;
 

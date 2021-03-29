@@ -17,10 +17,15 @@ class BackupWorker(appContext: Context, workerParams: WorkerParameters) :
         val database = SQLiteDatabaseManager.getInstance(applicationContext)
 
         var taskId = 0
+        var type = ScheduledTask.Type.DAILY
         outer@ for (tag in this.tags) {
             if (tag.startsWith(Scheduler.TAG_BACKUP_ID)) {
                 taskId = Integer.valueOf(tag.substring(tag.indexOf(":") + 1).trim { it <= ' ' })
                 break@outer
+            } else if (tag.startsWith(Scheduler.TAG_BACKUP_DAILY)) {
+                type = ScheduledTask.Type.DAILY
+            } else if (tag.startsWith(Scheduler.TAG_BACKUP_MANUAL)) {
+                type = ScheduledTask.Type.MANUAL
             }
         }
         val task: ScheduledTask = database.getScheduledTask(taskId)
@@ -28,9 +33,13 @@ class BackupWorker(appContext: Context, workerParams: WorkerParameters) :
         task.status = ScheduledTask.Status.RUNNING
         database.updateScheduledTask(task)
 
-        Scheduler.cancelAllWorks(applicationContext, true, taskId)
-        Scheduler.scheduleNewDailyBackupTask(applicationContext)
-
+        if (type == ScheduledTask.Type.DAILY) {
+            val params = hashMapOf(
+                    "status" to Arrays.asList(ScheduledTask.Status.ENQUEUED.name),
+                    "type" to Arrays.asList(ScheduledTask.Type.DAILY.name))
+            Scheduler.cancelAllWorks(applicationContext, params, true, taskId)
+            Scheduler.scheduleNewDailyBackupTask(applicationContext)
+        }
         val done = doBackup()
         task.isPerformed = true
         return if (done) {
