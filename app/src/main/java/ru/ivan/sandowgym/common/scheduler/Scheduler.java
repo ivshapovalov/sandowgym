@@ -357,12 +357,10 @@ public class Scheduler {
         }
         long millisDiff = backupTime.getTimeInMillis() - currentTime.getTimeInMillis();
 
-        int newTaskId = database.addScheduledTask(new ScheduledTask.Builder(database.getScheduledTaskMaxNumber() + 1)
-                .addDatetimePlan(backupTime.getTimeInMillis())
-                .addStatus(ScheduledTask.Status.ENQUEUED)
-                .addType(ScheduledTask.Type.MANUAL)
-                .setPerformed(false)
-                .build());
+        int taskId = task.getId();
+        if (!database.containsScheduledTask(taskId)) {
+            taskId = database.addScheduledTask(task);
+        }
 
         String message = "Scheduler: next manual backup on " + Common.getDate(backupTime.getTimeInMillis());
         displayMessage(context, message, false);
@@ -371,7 +369,7 @@ public class Scheduler {
                         .setInitialDelay(millisDiff, TimeUnit.MILLISECONDS)
                         .setConstraints(constraints)
                         .addTag(TAG_BACKUP_MANUAL)
-                        .addTag(TAG_BACKUP_ID + ":" + newTaskId)
+                        .addTag(TAG_BACKUP_ID + ":" + taskId)
                         .addTag(TAG_BACKUP_AT + ":" + Common.getDateTime(backupTime.getTime()))
                         .build();
         WorkManager

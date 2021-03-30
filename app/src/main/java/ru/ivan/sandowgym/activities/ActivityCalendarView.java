@@ -28,6 +28,7 @@ public class ActivityCalendarView extends AppCompatActivity {
     private int mCallerTrainingID;
     private int mCallerExerciseIndex;
     private int mCallerWeightChangeCalendarID;
+    private int mCallerScheduledTaskId;
     private String mCallerActivity;
 
     @Override
@@ -49,6 +50,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         mCallerTrainingID = intent.getIntExtra("currentTrainingId", 0);
         mCallerExerciseIndex = intent.getIntExtra("currentExerciseIndex",0);
         mCallerWeightChangeCalendarID=intent.getIntExtra("currentWeightChangeCalendarId",0);
+        mCallerScheduledTaskId = intent.getIntExtra("currentScheduledTaskId", 0);
         mIsTimeRemains = intent.getBooleanExtra("isTimeRemains", false);
 
         try {
@@ -130,6 +132,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         intent.putExtra("currentTrainingId", mCallerTrainingID);
         intent.putExtra("currentExerciseIndex", mCallerExerciseIndex);
         intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
+        intent.putExtra("currentScheduledTaskId", mCallerScheduledTaskId);
         if (mIsBeginDate) {
             intent.putExtra("currentDateInMillis", mNewDateInMillis);
             intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
@@ -160,6 +163,7 @@ public class ActivityCalendarView extends AppCompatActivity {
         intent.putExtra("currentWeightChangeCalendarId", mCallerWeightChangeCalendarID);
         intent.putExtra("currentDateInMillis", mOldDateFromInMillis);
         intent.putExtra("currentDateToInMillis", mOldDateToInMillis);
+        intent.putExtra("currentScheduledTaskId", mCallerScheduledTaskId);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

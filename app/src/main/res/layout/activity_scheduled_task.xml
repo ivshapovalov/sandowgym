@@ -242,10 +242,11 @@
                         style="@android:style/TextAppearance.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:layout_weight="100"
                         android:background="@drawable/bt_border"
-                        android:onClick="btCancelTask_onClick"
-                        android:text="CANCEL TASK"
+                        android:onClick="btInterruptTask_onClick"
+                        android:text="INTERRUPT TASK"
                         android:textColor="@color/text_color" />
 
                 </TableRow>

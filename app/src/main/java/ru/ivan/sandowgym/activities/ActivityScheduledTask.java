@@ -22,6 +22,7 @@ import ru.ivan.sandowgym.database.entities.ScheduledTask;
 import ru.ivan.sandowgym.database.manager.TableDoesNotContainElementException;
 
 import static ru.ivan.sandowgym.common.Common.blink;
+import static ru.ivan.sandowgym.common.Common.displayMessage;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 import static ru.ivan.sandowgym.common.scheduler.Scheduler.cancelWork;
 
@@ -34,9 +35,9 @@ public class ActivityScheduledTask extends ActivityAbstract {
 
     private ScheduledTask mCurrentScheduledTask;
 
-    private boolean mScheduledTaskIsNew;
     private int mDatetimePlanHour = 0;
     private int mDatetimePlanMinutes = 0;
+    private boolean mScheduledTaskIsNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,9 @@ public class ActivityScheduledTask extends ActivityAbstract {
         } else {
             try {
                 mCurrentScheduledTask = database.getScheduledTask(id);
+                if (currentDateInMillis != 0) {
+                    mCurrentScheduledTask.setDatetimePlan(currentDateInMillis);
+                }
             } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
                 tableDoesNotContainElementException.printStackTrace();
             }
@@ -93,7 +97,8 @@ public class ActivityScheduledTask extends ActivityAbstract {
         TextView tvDatePlan = findViewById(mDatePlanID);
         if (tvDatePlan != null) {
             tvDatePlan.setText(Common.getDate(mCurrentScheduledTask.getDatetimePlan(), Constants.DATE_FORMAT_STRING));
-            if (mScheduledTaskIsNew) {
+            if (mCurrentScheduledTask.getType().equals(ScheduledTask.Type.MANUAL) &&
+                    mCurrentScheduledTask.getStatus().equals(ScheduledTask.Status.ENQUEUED)) {
                 tvDatePlan.setEnabled(true);
             } else {
                 tvDatePlan.setEnabled(false);
@@ -108,7 +113,8 @@ public class ActivityScheduledTask extends ActivityAbstract {
         if (timeDisplay != null) {
             timeDisplay.setText(new StringBuilder().append(pad(mDatetimePlanHour))
                     .append(":").append(pad(mDatetimePlanMinutes)));
-            if (mScheduledTaskIsNew) {
+            if (mCurrentScheduledTask.getType().equals(ScheduledTask.Type.MANUAL) &&
+                    mCurrentScheduledTask.getStatus().equals(ScheduledTask.Status.ENQUEUED)) {
                 timeDisplay.setEnabled(true);
             } else {
                 timeDisplay.setEnabled(false);
@@ -142,16 +148,33 @@ public class ActivityScheduledTask extends ActivityAbstract {
     public void btSave_onClick(final View view) {
 
         blink(view, this);
-        Scheduler.scheduleNewManualBackupTask(this, mCurrentScheduledTask);
-        mCurrentScheduledTask.save(database);
-        mScheduledTaskIsNew = false;
+        ScheduledTask task = null;
+        try {
+            task = database.getScheduledTask(mCurrentScheduledTask.getId());
+        } catch (TableDoesNotContainElementException e) {
+        }
+        if (!mCurrentScheduledTask.equals(task)) {
+            if (mCurrentScheduledTask.getStatus().equals(ScheduledTask.Status.ENQUEUED)) {
+                Scheduler.cancelWork(this, mCurrentScheduledTask.getId());
+                Scheduler.scheduleNewManualBackupTask(this, mCurrentScheduledTask);
+                mCurrentScheduledTask.save(database);
+            } else {
+                Common.displayMessage(this, "Task '" + mCurrentScheduledTask.getId() + "' is " + mCurrentScheduledTask.getStatus() + " already", true);
+            }
+        }
         closeActivity();
-
     }
 
     public void btClose_onClick(final View view) {
         blink(view, this);
-        closeActivity();
+        new AlertDialog.Builder(this)
+                .setMessage("Do you want to close current scheduled task?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        closeActivity();
+                    }
+                }).setNegativeButton("No", null).show();
     }
 
     private void closeActivity() {
@@ -162,14 +185,13 @@ public class ActivityScheduledTask extends ActivityAbstract {
     }
 
     public void btDelete_onClick(final View view) {
-
         blink(view, this);
         new AlertDialog.Builder(this)
                 .setMessage("Do you want to delete current scheduled task?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        btCancelTask_onClick(view);
+                        btInterruptTask_onClick(view);
                         mCurrentScheduledTask.delete(database);
                         Intent intent = new Intent(getApplicationContext(), ActivityScheduledTasksList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -178,30 +200,59 @@ public class ActivityScheduledTask extends ActivityAbstract {
                 }).setNegativeButton("No", null).show();
     }
 
-    public void btCancelTask_onClick(View view) {
-        cancelWork(this, mCurrentScheduledTask.getId());
-        try {
-            mCurrentScheduledTask = database.getScheduledTask(mCurrentScheduledTask.getId());
-        } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
-            tableDoesNotContainElementException.printStackTrace();
+    public void btInterruptTask_onClick(View view) {
+        if (!mCurrentScheduledTask.getStatus().equals(ScheduledTask.Status.ENQUEUED)) {
+            Common.displayMessage(this, "Task '" + mCurrentScheduledTask.getId() + "' is " + mCurrentScheduledTask.getStatus() + " already", true);
+        } else {
+            new AlertDialog.Builder(this)
+                    .setMessage("Do you want to interrupt current scheduled task?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        cancelWork(this, mCurrentScheduledTask.getId());
+                        try {
+                            mCurrentScheduledTask = database.getScheduledTask(mCurrentScheduledTask.getId());
+                            showScheduledTaskOnScreen();
+                            Common.displayMessage(this, "Task '" + mCurrentScheduledTask.getId() + "' interrupted", true);
+                        } catch (TableDoesNotContainElementException tableDoesNotContainElementException) {
+                            tableDoesNotContainElementException.printStackTrace();
+                            Common.displayMessage(this, "Task '" + mCurrentScheduledTask.getId() + "' does not exist", true);
+                        }
+                    }).setNegativeButton("No", null).show();
         }
-        showScheduledTaskOnScreen();
     }
 
     public void tvDatePlan_onClick(View view) {
         blink(view, this);
-        Intent intent = new Intent(ActivityScheduledTask.this, ActivityCalendarView.class);
-        intent.putExtra("isNew", true);
-        intent.putExtra("currentActivity", getClass().getName());
-        intent.putExtra("currentScheduledTaskId", mCurrentScheduledTask.getId());
-        intent.putExtra("currentDateInMillis", mCurrentScheduledTask.getDatetimePlan());
-        intent.putExtra("isTimeRemains", true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        ScheduledTask task = mCurrentScheduledTask;
+        try {
+            task = database.getScheduledTask(mCurrentScheduledTask.getId());
+        } catch (TableDoesNotContainElementException e) {
+        }
+        if (task.getStatus().equals(ScheduledTask.Status.RUNNING)) {
+            displayMessage(this, "Failed. Task is already running!", true);
+        } else {
+            Intent intent = new Intent(ActivityScheduledTask.this, ActivityCalendarView.class);
+            intent.putExtra("isNew", mScheduledTaskIsNew);
+            intent.putExtra("currentActivity", getClass().getName());
+            intent.putExtra("currentScheduledTaskId", mCurrentScheduledTask.getId());
+            intent.putExtra("currentDateInMillis", mCurrentScheduledTask.getDatetimePlan());
+            intent.putExtra("isTimeRemains", true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
     public void tvTimePlan_onClick(View view) {
-        showDialog(TIME_DIALOG_ID);
+        ScheduledTask task = mCurrentScheduledTask;
+        try {
+            task = database.getScheduledTask(mCurrentScheduledTask.getId());
+        } catch (TableDoesNotContainElementException e) {
+        }
+        if (task.getStatus().equals(ScheduledTask.Status.RUNNING)) {
+            displayMessage(this, "Failed. Task is already running!", true);
+        } else {
+            showDialog(TIME_DIALOG_ID);
+        }
     }
 
     @Override
@@ -226,7 +277,7 @@ public class ActivityScheduledTask extends ActivityAbstract {
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(mCurrentScheduledTask.getDatetimePlan());
-                calendar.set(Calendar.HOUR, mDatetimePlanHour);
+                calendar.set(Calendar.HOUR_OF_DAY, mDatetimePlanHour);
                 calendar.set(Calendar.MINUTE, mDatetimePlanMinutes);
                 mCurrentScheduledTask.setDatetimePlan(calendar.getTimeInMillis());
 

@@ -1,5 +1,7 @@
 package ru.ivan.sandowgym.database.entities;
 
+import java.util.Objects;
+
 import ru.ivan.sandowgym.database.interfaces.Deletable;
 import ru.ivan.sandowgym.database.interfaces.Saveble;
 import ru.ivan.sandowgym.database.manager.SQLiteDatabaseManager;
@@ -90,15 +92,18 @@ public class ScheduledTask extends AbstractEntity implements Saveble, Deletable 
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        ScheduledTask user = (ScheduledTask) o;
-        return id == user.id;
-
+        ScheduledTask that = (ScheduledTask) o;
+        return id == that.id &&
+                datetimePlan == that.datetimePlan &&
+                datetimeFact == that.datetimeFact &&
+                performed == that.performed &&
+                type == that.type &&
+                status == that.status;
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return Objects.hash(id, type, datetimePlan, datetimeFact, performed, status);
     }
 
     public static class Builder extends AbstractEntity {

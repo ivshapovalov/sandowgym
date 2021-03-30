@@ -516,7 +516,7 @@ public class SQLiteDatabaseManager extends SQLiteOpenHelper {
     }
 
     public synchronized boolean containsScheduledTask(int id) {
-        return containsEntity(id, TABLE_LOGS, KEY_LOG_ID);
+        return containsEntity(id, TABLE_SCHEDULED_TASKS, KEY_SCHEDULED_TASK_ID);
     }
 
     public synchronized Training getTraining(int id) {
