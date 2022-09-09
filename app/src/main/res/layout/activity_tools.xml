@@ -42,7 +42,7 @@
                     android:id="@+id/btMain1"
                     android:layout_span="30"
                     android:onClick="btExportImport_onClick"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:textColor="@color/text_color" />
             </TableRow>
 
@@ -57,7 +57,7 @@
                     android:id="@+id/btMain6"
                     android:onClick="btOptions_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:textColor="@color/text_color"
                     android:singleLine="true"/>
             </TableRow>
@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btLogs_onClick"
                     android:text="@string/logs_name"
                     android:textColor="@color/text_color" />
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btScheduledTasks_onClick"
                     android:text="@string/scheduled_tasks_name"
                     android:textColor="@color/text_color" />
@@ -102,7 +102,7 @@
                     android:id="@+id/btMain50"
                     android:onClick="btClearBD_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:textColor="@color/text_color" />
             </TableRow>
 
@@ -117,7 +117,7 @@
                     android:id="@+id/btMain2"
                     android:onClick="btAbout_onClick"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:textColor="@color/text_color"/>
             </TableRow>
 

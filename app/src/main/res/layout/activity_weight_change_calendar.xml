@@ -21,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btClose_onClick"
                 android:text="CLOSE"
                 android:textColor="@color/text_color"/>
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btSave_onClick"
                 android:text="SAVE"
                 android:textColor="@color/text_color"/>
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btDelete_onClick"
                 android:text="DELETE"
                 android:textColor="@color/text_color"/>
@@ -125,7 +125,7 @@
                         android:layout_height="match_parent"
                         android:layout_span="20"
                         android:layout_weight="1"
-                        android:background="@drawable/bt_border"
+                        android:background="@drawable/rounded_corners2"
                         android:hint="Click to enter"
                         android:onClick="btWeight_onClick"
                         android:textColor="@color/text_color"

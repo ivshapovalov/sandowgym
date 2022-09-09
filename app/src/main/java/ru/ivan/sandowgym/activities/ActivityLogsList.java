@@ -1,5 +1,6 @@
 package ru.ivan.sandowgym.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,12 +9,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MotionEventCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +80,6 @@ public class ActivityLogsList extends ActivityAbstract {
                 mScrollView.requestChildFocus(mRow, mRow);
             }
         }
-
         setTitleOfActivity(this);
     }
 
@@ -282,5 +287,6 @@ public class ActivityLogsList extends ActivityAbstract {
         }
         showLogs();
     }
+
 }
 

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -13,25 +14,40 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import ru.ivan.sandowgym.R;
 import ru.ivan.sandowgym.common.Common;
+import ru.ivan.sandowgym.common.Constants;
+import ru.ivan.sandowgym.common.scheduler.Scheduler;
+import ru.ivan.sandowgym.common.tasks.BackgroundTaskExecutor;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.BackgroundTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.DropboxUploadTask;
+import ru.ivan.sandowgym.common.tasks.backgroundTasks.ExportToFileTask;
 import ru.ivan.sandowgym.common.tasks.backgroundTasks.FullBackupTask;
 import ru.ivan.sandowgym.database.entities.Exercise;
+import ru.ivan.sandowgym.database.entities.ScheduledTask;
 
+import static java.lang.Thread.sleep;
 import static ru.ivan.sandowgym.common.Common.blink;
 import static ru.ivan.sandowgym.common.Common.checkOverdueBackups;
+import static ru.ivan.sandowgym.common.Common.displayMessage;
+import static ru.ivan.sandowgym.common.Common.isProcessingInProgress;
 import static ru.ivan.sandowgym.common.Common.setTitleOfActivity;
 import static ru.ivan.sandowgym.common.Constants.dbCurrentUser;
+import static ru.ivan.sandowgym.common.Constants.processingInProgress;
 
 public class ActivityMain extends ActivityAbstract {
 
     private final int maxVerticalButtonCount = 10;
-    //private final SQLiteDatabaseManager DB = new SQLiteDatabaseManager(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +58,7 @@ public class ActivityMain extends ActivityAbstract {
         Common.updatePreferences(this);
         setTitleOfActivity(this);
         setPermissions();
-        checkOverdueBackups(this);
+        //checkOverdueBackups(this);
     }
 
     private void setPermissions() {
@@ -175,7 +191,34 @@ public class ActivityMain extends ActivityAbstract {
     }
 
     public void btTest_onClick(View view) throws ParseException {
+        try {
+            blink(view, this);
+            if (isProcessingInProgress(this.getApplicationContext())) {
+                return;
+            }
+            displayMessage(ActivityMain.this, "Export to Dropbox started", false);
+            processingInProgress = true;
 
+            //for tests
+            File exportDir = new File(Environment.getExternalStorageDirectory()+"/Download", "");
+            File outputFile = new File(exportDir, "trainings.xlsx");
+            ExportToFileTask exportToFileTask = new ExportToFileTask(this.getApplicationContext(), outputFile, 0, 0);
+
+            DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox-client").build();
+            DbxClientV2 client = new DbxClientV2(config, Constants.APP_PREFERENCES_BACKUP_DROPBOX_ACCESS_TOKEN);
+            DropboxUploadTask dropboxUploadTask = new DropboxUploadTask(this.getApplicationContext(), outputFile, client);
+
+            List<BackgroundTask> tasks = new ArrayList<>();
+            tasks.add(exportToFileTask);
+            tasks.add(dropboxUploadTask);
+            BackgroundTaskExecutor backgroundTaskExecutor = new BackgroundTaskExecutor(ActivityMain.this, tasks);
+            backgroundTaskExecutor.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            displayMessage(ActivityMain.this, "Export to Dropbox failed! " + e.getMessage(), false);
+            processingInProgress = false;
+        }
+        System.out.println("End");
 //        long time = Calendar.getInstance().getTimeInMillis();
 //        database.addScheduledTask(new ScheduledTask.Builder(database.getScheduledTaskMaxNumber() + 1)
 //                .addDatetimePlan(time)
@@ -183,8 +226,23 @@ public class ActivityMain extends ActivityAbstract {
 //                .addStatus(ScheduledTask.Status.RUNNING)
 //                .setPerformed(true)
 //                .build());
-        //Scheduler.scheduleNewBackupTask(this, 1);
-        //checkOverdueBackups(this);
+//        Calendar backup=Calendar.getInstance();
+//        backup.add(Calendar.MINUTE,-1);
+//        ScheduledTask manualTask=new ScheduledTask.Builder(database.getScheduledTaskMaxNumber()+1)
+//                .addType(ScheduledTask.Type.MANUAL)
+//                .addStatus(ScheduledTask.Status.ENQUEUED)
+//                .addDatetimePlan(backup.getTimeInMillis())
+//                .build();
+//        Scheduler.scheduleNewManualBackupTask(this, manualTask);
+//        try {
+//            sleep(1);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        Scheduler.scheduleNewDailyBackupTask(this, -30);
+
+
+//        checkOverdueBackups(this);
     }
 
     public void btTestClear_onClick(View view) {

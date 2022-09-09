@@ -24,7 +24,7 @@
                 android:onClick="btClose_onClick"
                 android:layout_span="10"
                 style="@android:style/TextAppearance.Small"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -35,7 +35,7 @@
                 android:onClick="btSave_onClick"
                 android:layout_span="10"
                 style="@android:style/TextAppearance.Small"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -46,7 +46,7 @@
                 android:onClick="btDelete_onClick"
                 android:layout_span="10"
                 style="@android:style/TextAppearance.Small"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
         </TableRow>

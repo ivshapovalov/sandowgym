@@ -17,8 +17,8 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="54"
-        android:versionName="5.4">
+        android:versionCode="55"
+        android:versionName="5.5">
         <activity
             android:name=".activities.ActivityMain"
             android:screenOrientation="fullSensor">

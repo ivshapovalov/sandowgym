@@ -15,7 +15,7 @@
             android:id="@+id/trowButtons"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bt_border">
+            android:background="@drawable/rounded_corners2">
 
             <Button
                 android:id="@+id/buttonHome"
@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_span="8"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="buttonHome_onClick"
                 android:text="HOME"
                 android:textColor="@color/text_color"/>
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_span="8"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btUsersAdd_onClick"
                 android:text="ADD"
                 android:textColor="@color/text_color"/>
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="bt_Edit_onClick"
                 android:text="EDITOR"
                 android:textColor="@color/text_color"/>
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tableRow3"
-            android:background="@drawable/bt_border">
+            android:background="@drawable/rounded_corners2">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -76,7 +76,7 @@
                 android:id="@+id/button23"
                 android:onClick="btPreviousPage_onClick"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="PREVIOUS PAGE"
                 android:textColor="@color/text_color"/>
 
@@ -87,7 +87,7 @@
                 android:id="@+id/btPageNumber"
                 android:layout_span="6"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"
                 android:nestedScrollingEnabled="true"
                 android:clickable="false"/>
@@ -101,7 +101,7 @@
                 android:onClick="btNextPage_onClick"
                 android:layout_span="10"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"/>
         </TableRow>
 

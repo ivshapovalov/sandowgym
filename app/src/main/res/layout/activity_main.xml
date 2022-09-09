@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btUsers_onClick"
                     android:text="@string/users_list_name"
                     android:textColor="@color/text_color" />
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:nestedScrollingEnabled="true"
                     android:onClick="btWeightCalendarList_onClick"
                     android:text="@string/weight_calendar_change_list_name"
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btExercises_onClick"
                     android:text="@string/exercises_list_name"
                     android:textColor="@color/text_color" />
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btTrainings_onClick"
                     android:text="@string/trainings_list_name"
                     android:textColor="@color/text_color" />
@@ -106,7 +106,7 @@
             <!--                    android:layout_width="match_parent"-->
             <!--                    android:layout_height="wrap_content"-->
             <!--                    android:layout_span="30"-->
-            <!--                    android:background="@drawable/bt_border"-->
+            <!--                    android:background="@drawable/rounded_corners2"-->
             <!--                    android:onClick="btNewTraining_onClick"-->
             <!--                    android:text="NEW TRAINING"-->
             <!--                    android:textColor="@color/text_color" />-->
@@ -121,40 +121,40 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="30"
-                    android:background="@drawable/bt_border"
+                    android:background="@drawable/rounded_corners2"
                     android:onClick="btTools_onClick"
                     android:text="@string/tools"
                     android:textColor="@color/text_color" />
             </TableRow>
 
-            <!--            <TableRow-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent">-->
+                        <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
 
-            <!--                <Button-->
-            <!--                    android:id="@+id/buttonTest"-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_span="30"-->
-            <!--                    android:background="@drawable/bt_border"-->
-            <!--                    android:onClick="btTest_onClick"-->
-            <!--                    android:text="TEST"-->
-            <!--                    android:textColor="@color/text_color" />-->
-            <!--            </TableRow>-->
-            <!--                        <TableRow-->
-            <!--                            android:layout_width="match_parent"-->
-            <!--                            android:layout_height="match_parent">-->
+                                        <Button
+                                            android:id="@+id/buttonTest"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_span="30"
+                                            android:background="@drawable/rounded_corners2"
+                                            android:onClick="btTest_onClick"
+                                            android:text="TEST"
+                                            android:textColor="@color/text_color" />
+                                    </TableRow>
+<!--                                    <TableRow-->
+            <!--                                        android:layout_width="match_parent"-->
+            <!--                                        android:layout_height="match_parent">-->
 
-            <!--                            <Button-->
-            <!--                                android:id="@+id/buttonTestClear"-->
-            <!--                                android:layout_width="wrap_content"-->
-            <!--                                android:layout_height="wrap_content"-->
-            <!--                                android:layout_span="30"-->
-            <!--                                android:background="@drawable/bt_border"-->
-            <!--                                android:onClick="btTestClear_onClick"-->
-            <!--                                android:text="CLEAR"-->
-            <!--                                android:textColor="@color/text_color" />-->
-            <!--                        </TableRow>-->
+            <!--                                        <Button-->
+            <!--                                            android:id="@+id/buttonTestClear"-->
+            <!--                                            android:layout_width="wrap_content"-->
+            <!--                                            android:layout_height="wrap_content"-->
+            <!--                                            android:layout_span="30"-->
+            <!--                                            android:background="@drawable/rounded_corners2"-->
+            <!--                                            android:onClick="btTestClear_onClick"-->
+            <!--                                            android:text="CLEAR"-->
+            <!--                                            android:textColor="@color/text_color" />-->
+            <!--                                    </TableRow>-->
 
             <TableRow
                 android:layout_width="wrap_content"

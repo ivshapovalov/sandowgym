@@ -50,7 +50,7 @@ public class Common {
 
     public static void checkOverdueBackups(Context context) {
         Scheduler.cancelOverdueTasks(context);
-        List<ScheduledTask> actualDailyScheduledTasks = Scheduler.getActiveDailyWorks(context);
+        List<ScheduledTask> actualDailyScheduledTasks = Scheduler.getActualDailyWorks(context);
         if (Constants.mOptionBackupScheduleEnabled && actualDailyScheduledTasks.size() == 0) {
             Scheduler.scheduleNewDailyBackupTask(context);
         }

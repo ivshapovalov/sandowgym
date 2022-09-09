@@ -16,6 +16,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -305,6 +306,7 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
         }
         showScheduledTasks();
     }
+    List<String> handledTasks = new ArrayList<>();
 
     public void bt_TaskAdd_onClick(View view) {
         blink(view, this);
@@ -316,7 +318,11 @@ public class ActivityScheduledTasksList extends ActivityAbstract {
 
     public void btShowWorks_onClick(View view) {
         if (Constants.mOptionBackupScheduleEnabled) {
-            List<String> backups = Scheduler.getActiveWorks(this);
+            Map<String, List<String>> params = new HashMap<>();
+            params.put("status", new ArrayList(Arrays.asList(ScheduledTask.Status.ENQUEUED.getName())));
+            params.put("type", new ArrayList(Arrays.asList(ScheduledTask.Type.DAILY.getName(),ScheduledTask.Type.MANUAL.getName())));
+            params.put("time", new ArrayList(Arrays.asList("after")));
+            List<String> backups = Scheduler.getWorks(this,params);
             if (backups.size() > 0) {
                 String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
                         backups.stream().map(Object::toString)

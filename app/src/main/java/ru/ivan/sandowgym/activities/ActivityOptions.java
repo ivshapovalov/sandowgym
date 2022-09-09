@@ -355,8 +355,6 @@ public class ActivityOptions extends ActivityAbstract {
     void changeBackupScheduleButtonsVisibility() {
         timeDisplay = findViewById(R.id.tvBackupScheduleTime);
         timeDisplay.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.GONE);
-        Button btBackupsSchedule = findViewById(R.id.btBackupScheduleTimeShow);
-        btBackupsSchedule.setVisibility(mOptionActivityBackupScheduleEnabled ? View.VISIBLE : View.GONE);
         if (!mOptionActivityBackupScheduleEnabled) {
             mOptionActivityBackupScheduleDateTimeHour = 0;
             mOptionActivityBackupScheduleDateTimeMinutes = 0;
@@ -404,26 +402,6 @@ public class ActivityOptions extends ActivityAbstract {
             e.printStackTrace();
             displayMessage(ActivityOptions.this, "Test Dropbox connection failed ", true);
         }
-    }
-
-    //TODO delete
-    public void btBackupScheduleTimeShow_onClick(View view) {
-        if (mOptionActivityBackupScheduleEnabled) {
-            List<String> backups = Scheduler.getActiveWorks(this);
-            if (backups.size() > 0) {
-                //            scheduleWork(Scheduler.TAG_BACKUP); // schedule your work
-                String srt = "SCHEDULED BACKUPS: " + System.getProperty("line.separator") +
-                        backups.stream().map(Object::toString)
-                                .collect(Collectors.joining(System.getProperty("line.separator")));
-                // srt= "SCHEDULED BACKUPS: "+backups.toString().replaceAll("\\[|\\]|,",System.getProperty("line.separator"));
-                displayMessage(this, srt, true);
-            }
-
-        }
-    }
-
-    public void btBackupScheduleSaveTest_onClick(View view) {
-        //handleSchedule();
     }
 
     public void ibSelectBackupLocalFolder_onClick(View view) {

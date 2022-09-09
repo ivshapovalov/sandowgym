@@ -24,7 +24,7 @@
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
                 android:layout_span="6"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="HOME"
                 android:textColor="@color/text_color" />
 
@@ -38,7 +38,7 @@
                 android:onClick="bt_TrainingsAdd_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="10"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -48,7 +48,7 @@
                 android:onClick="bt_Edit_onClick"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:layout_span="10"
                 android:text="EDITOR"
                 android:textColor="@color/text_color" />
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/btTrainingsClear"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btDeleteAllTrainings_onClick"
                 android:layout_gravity="center_vertical"
                 android:layout_span="10"
@@ -79,7 +79,7 @@
                 android:layout_span="8"
                 android:clickable="false"
                 android:enabled="true"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -87,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/btDay"
                 android:layout_span="11"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btDay_onClick"
                 android:textColor="@color/text_color" />
 
@@ -100,7 +100,7 @@
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:onClick="btTrainingsFilterDelete_onClick"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
         </TableRow>
@@ -118,7 +118,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tableRow2"
-            android:background="@drawable/bt_border">
+            android:background="@drawable/rounded_corners2">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -127,7 +127,7 @@
                 android:id="@+id/button9"
                 android:onClick="btPreviousPage_onClick"
                 android:layout_span="13"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="PREVIOUS PAGE"
                 android:textColor="@color/text_color"/>
 
@@ -138,7 +138,7 @@
                 android:id="@+id/btPageNumber"
                 android:layout_span="10"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"
                 android:nestedScrollingEnabled="true"
                 android:clickable="false"/>
@@ -152,7 +152,7 @@
                 android:onClick="btNextPage_onClick"
                 android:layout_span="13"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"/>
         </TableRow>
 

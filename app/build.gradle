@@ -1,11 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
 
 android {
 //    dexOptions {
 //        javaMaxHeapSize "4g"
 //    }
+//    buildFeatures {
+//        viewBinding true
+//    }
+
+
     lintOptions {
         abortOnError false
     }
@@ -14,14 +19,14 @@ android {
         sandow {
         }
     }
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId 'ru.ivan.sandowgym'
         minSdkVersion 24
-        targetSdkVersion 28
-        versionCode 54
-        versionName '5.4'
+        targetSdkVersion 30
+        versionCode 55
+        versionName '5.5'
         multiDexEnabled true
     }
 
@@ -63,7 +68,7 @@ android {
         implementation "androidx.work:work-runtime-ktx:$work_version"
 
         implementation fileTree(include: ['*.jar'], dir: 'libs')
-        implementation 'com.dropbox.core:dropbox-core-sdk:3.0.0'
+        implementation 'com.dropbox.core:dropbox-core-sdk:5.3.0'
         testImplementation 'junit:junit:4.12'
         implementation 'com.android.support:appcompat-v7:28.0.3'
         implementation files('libs/opencsv-3.7.jar')

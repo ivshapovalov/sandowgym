@@ -23,7 +23,7 @@
                 android:id="@+id/buttonHome"
                 android:layout_weight="20"
                 android:onClick="buttonHome_onClick"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="HOME"
                 android:textColor="@color/text_color" />
 
@@ -36,7 +36,7 @@
                 android:id="@+id/btTaskAdd"
                 android:onClick="bt_TaskAdd_onClick"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -47,7 +47,7 @@
                 android:layout_weight="20"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="EDITOR"
                 android:textColor="@color/text_color" />
 
@@ -57,7 +57,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="20"
                 android:id="@+id/btTrainingsClear"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btDeleteAllScheduledTasks_onClick"
                 android:layout_gravity="center_vertical"
                 android:text="CLEAR"
@@ -69,7 +69,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="20"
                 android:id="@+id/btWorksShow"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btShowWorks_onClick"
                 android:layout_gravity="center_vertical"
                 android:text="SHOW WORKS"
@@ -89,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tableRow3"
-            android:background="@drawable/bt_border">
+            android:background="@drawable/rounded_corners2">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -98,7 +98,7 @@
                 android:id="@+id/button23"
                 android:onClick="btPreviousPage_onClick"
                 android:layout_span="15"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="PREVIOUS PAGE"
                 android:textColor="@color/text_color" />
 
@@ -109,7 +109,7 @@
                 android:id="@+id/btPageNumber"
                 android:layout_span="6"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"
                 android:nestedScrollingEnabled="true"
                 android:clickable="false" />
@@ -123,7 +123,7 @@
                 android:onClick="btNextPage_onClick"
                 android:layout_span="15"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
         </TableRow>
     </TableLayout>

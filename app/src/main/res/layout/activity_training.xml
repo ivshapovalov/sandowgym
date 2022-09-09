@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="7"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:gravity="center"
                 android:onClick="btClose_onClick"
                 android:text="CLOSE"
@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="7"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:gravity="center"
                 android:onClick="btSave_onClick"
                 android:text="SAVE"
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="6"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:gravity="center"
                 android:onClick="btDelete_onClick"
                 android:text="DELETE"
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="6"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:gravity="center"
                 android:onClick="btOptions_onClick"
                 android:text="OPTIONS"
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="4"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:gravity="center"
                 android:onClick="btFill_onClick"
                 android:text="FILL"
@@ -174,7 +174,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:onClick="btAmountDefault_onClick"
                             android:text="DEFAULT"
                             android:textColor="@color/text_color"
@@ -184,7 +184,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:onClick="btAmountLastDay_onClick"
                             android:text="LAST"
                             android:textColor="@color/text_color"/>
@@ -200,8 +200,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="10"
-                            android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:text="AMOUNT"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
@@ -215,7 +214,7 @@
                             android:textSize="15sp"
                             android:gravity="center"
                             android:layout_span="10"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:textColor="@color/text_color"/>
 
                         <Button
@@ -223,7 +222,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="5"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:gravity="center"
                             android:onClick="btAmountChange_onClick"
                             android:text="-1"
@@ -234,9 +233,8 @@
                             android:id="@+id/btAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_span="20"
-                            android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:layout_span="15"
+                            android:background="@drawable/rounded_corners2"
                             android:hint="Click to enter"
                             android:onClick="btAmount_onClick"
                             android:textColor="@color/text_color"
@@ -247,7 +245,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="5"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:gravity="center"
                             android:onClick="btAmountChange_onClick"
                             android:text="+1"
@@ -264,8 +262,7 @@
                             android:textSize="15sp"
                             android:gravity="center"
                             android:layout_span="10"
-                            android:layout_weight="11"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:textColor="@color/text_color"/>
                     </TableRow>
 
@@ -279,8 +276,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="10"
-                            android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:text="Weight"
                             android:textColor="@color/text_color"
                             android:visibility="visible"/>
@@ -295,7 +291,7 @@
                             android:textSize="15sp"
                             android:gravity="center"
                             android:layout_span="10"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:textColor="@color/text_color"/>
 
                         <Button
@@ -303,7 +299,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="5"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:gravity="center"
                             android:onClick="btWeightChange_onClick"
                             android:text="-1"
@@ -313,9 +309,8 @@
                             android:id="@+id/btWeight"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_span="20"
-                            android:layout_weight="1"
-                            android:background="@drawable/bt_border"
+                            android:layout_span="15"
+                            android:background="@drawable/rounded_corners2"
                             android:hint="Click to enter"
                             android:onClick="btWeight_onClick"
                             android:textColor="@color/text_color"
@@ -326,7 +321,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_span="5"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:gravity="center"
                             android:onClick="btWeightChange_onClick"
                             android:text="+1"
@@ -343,8 +338,7 @@
                             android:textSize="15sp"
                             android:gravity="center"
                             android:layout_span="10"
-                            android:layout_weight="11"
-                            android:background="@drawable/bt_border"
+                            android:background="@drawable/rounded_corners2"
                             android:textColor="@color/text_color"/>
                     </TableRow>
 
@@ -359,7 +353,7 @@
                     <!--android:layout_height="match_parent"-->
                     <!--android:layout_span="10"-->
                     <!--android:layout_weight="1"-->
-                    <!--android:background="@drawable/bt_border"-->
+                    <!--android:background="@drawable/rounded_corners2"-->
                     <!--android:text="WEIGHT"-->
                     <!--android:textColor="@color/text_color"-->
                     <!--android:visibility="visible"/>-->
@@ -369,7 +363,7 @@
                     <!--android:layout_height="match_parent"-->
                     <!--android:layout_span="40"-->
                     <!--android:layout_weight="1"-->
-                    <!--android:background="@drawable/bt_border"-->
+                    <!--android:background="@drawable/rounded_corners2"-->
                     <!--android:hint="Click to enter"-->
                     <!--android:onClick="btWeight_onClick"-->
                     <!--android:textColor="@color/text_color"-->

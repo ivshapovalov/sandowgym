@@ -11,7 +11,7 @@
         android:id="@+id/trowButtons"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bt_border">
+        android:background="@drawable/rounded_corners2">
         <Button
             android:id="@+id/btTrainingsClear"
             style="?android:attr/buttonStyleSmall"
@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_span="26"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:onClick="btClose_onClick"
             android:text="CLOSE"
             android:textColor="@color/text_color"/>
@@ -36,7 +36,7 @@
         android:id="@+id/tableRow3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bt_border">
+        android:background="@drawable/rounded_corners2">
 
         <Button
             android:id="@+id/button23"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_span="10"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:onClick="btPreviousPage_onClick"
             android:text="PREVIOUS PAGE"
             android:textColor="@color/text_color"/>
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_span="6"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:clickable="false"
             android:nestedScrollingEnabled="true"
             android:textColor="@color/text_color"/>
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_span="10"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:onClick="btNextPage_onClick"
             android:text="NEXT PAGE"
             android:textColor="@color/text_color"/>

@@ -25,7 +25,7 @@
             android:onClick="buttonCancel_onClick"
             android:text="CANCEL"
             android:textSize="12sp"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:textColor="@color/text_color" />
 
         <Button
@@ -38,7 +38,7 @@
             android:onClick="buttonSave_onClick"
             android:text="SAVE"
             android:textSize="12sp"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:textColor="@color/text_color" />
 
     </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_height="match_parent"
             android:layout_span="20"
             android:layout_weight="50"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             android:hint="Click to enter"
             android:onClick="btDigitPlusMinus_onClick"
             android:textColor="@color/text_color"

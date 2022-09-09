@@ -5,6 +5,7 @@ import android.content.Context;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
+import com.dropbox.core.v2.users.FullAccount;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +29,10 @@ public class DropboxUploadTask implements BackgroundTask {
     public boolean execute() {
         InputStream in = null;
         try {
+
+            FullAccount account = client.users().getCurrentAccount();
+            System.out.println(account.getName().getDisplayName());
+
             in = new FileInputStream(file.getPath());
 
             FileMetadata metadata = client.files().uploadBuilder("/"

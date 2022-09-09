@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/trowButtons"
-            android:background="@drawable/bt_border">
+            android:background="@drawable/rounded_corners2">
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -25,7 +25,7 @@
                 android:id="@+id/buttonHome"
                 android:onClick="buttonHome_onClick"
                 android:layout_span="9"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="HOME"
                 android:textColor="@color/text_color" />
 
@@ -37,7 +37,7 @@
                 android:id="@+id/btExercisesAdd"
                 android:onClick="btExercisesAdd_onClick"
                 android:layout_span="8"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -48,7 +48,7 @@
                 android:id="@+id/btExercisesFillDefault"
                 android:onClick="btExercisesFillDefault_onClick"
                 android:layout_span="14"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
             <Button
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btExercisesClear"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:onClick="btDeleteAllExercises_onClick"
                 android:layout_span="8"
                 android:text="CLEAR"
@@ -70,7 +70,7 @@
                 android:layout_span="9"
                 android:text="EDITOR"
                 style="?android:attr/buttonStyleSmall"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color" />
 
         </TableRow>
@@ -89,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tableRow"
-            android:background="@drawable/bt_border"
+            android:background="@drawable/rounded_corners2"
             >
 
             <Button
@@ -99,7 +99,7 @@
                 android:id="@+id/button7"
                 android:onClick="btPreviousPage_onClick"
                 android:layout_span="19"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:text="PREVIOUS PAGE"
                 android:textColor="@color/text_color"/>
 
@@ -110,7 +110,7 @@
                 android:id="@+id/btPageNumber"
                 android:layout_span="10"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"
                 android:nestedScrollingEnabled="true"
                 android:clickable="false"/>
@@ -124,7 +124,7 @@
                 android:onClick="btNextPage_onClick"
                 android:layout_span="19"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/bt_border"
+                android:background="@drawable/rounded_corners2"
                 android:textColor="@color/text_color"/>
 
         </TableRow>
